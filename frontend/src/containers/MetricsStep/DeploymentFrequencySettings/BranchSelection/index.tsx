@@ -47,12 +47,13 @@ export const BranchSelection = (props: BranchSelectionProps) => {
   const selectedBranchesWithMeta = useMemo(() => {
     return branches.map((item) => {
       const metaInfo = branchesFormData.find((branch) => branch.value === item);
+      const shouldVerifyBranches = sourceControlFields.token !== '';
 
       return metaInfo
         ? metaInfo
         : {
             value: item,
-            needVerify: sourceControlFields.token !== '',
+            needVerify: shouldVerifyBranches,
           };
     });
   }, [branches, branchesFormData, sourceControlFields.token]);
@@ -72,8 +73,9 @@ export const BranchSelection = (props: BranchSelectionProps) => {
   const updateBranchesMeta = (values: string[]) => {
     const branchesWithMeta = values.map((branch) => {
       const formData = branchesFormData.find((item) => item.value === branch);
+      const shouldVerifyBranches = sourceControlFields.token !== '';
 
-      return formData ? formData : { value: branch, needVerify: sourceControlFields.token !== '' };
+      return formData ? formData : { value: branch, needVerify: shouldVerifyBranches };
     });
 
     dispatch(

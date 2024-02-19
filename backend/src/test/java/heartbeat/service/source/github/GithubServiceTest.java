@@ -276,7 +276,7 @@ class GithubServiceTest {
 	}
 
 	@Test
-	void CommitTimeInPrLeadTimeShouldBeZeroWhenCommitInfoIsRevert() {
+	void CommitTimeInPrLeadTimeShouldBeZeroWhenCommitInfoIsNotNullGivenCommitIsReverted() {
 		commitInfo = CommitInfo.builder().commit(Commit.builder().message("Revert commit message").build()).build();
 		LeadTime expect = LeadTime.builder()
 			.commitId("111")
@@ -297,7 +297,7 @@ class GithubServiceTest {
 	}
 
 	@Test
-	void CommitTimeInPrLeadTimeShouldBeZeroWhenCommitInfoIsRevertInLowerCase() {
+	void CommitTimeInPrLeadTimeShouldBeZeroWhenCommitInfoIsInLowerCaseGivenCommitIsReverted() {
 		commitInfo = CommitInfo.builder().commit(Commit.builder().message("revert commit message").build()).build();
 		LeadTime expect = LeadTime.builder()
 			.commitId("111")

@@ -232,8 +232,7 @@ public class GitHubService {
 		long pipelineLeadTime = jobFinishTime - prMergedTime;
 		long prLeadTime;
 		long totalTime;
-		if (commitInfo.getCommit().getMessage().startsWith("Revert")
-				|| commitInfo.getCommit().getMessage().startsWith("revert")) {
+		if (commitInfo.getCommit().getMessage().toLowerCase().startsWith("revert")) {
 			prLeadTime = 0;
 		}
 		else {

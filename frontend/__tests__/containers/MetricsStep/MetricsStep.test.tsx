@@ -331,7 +331,7 @@ describe('MetricsStep', () => {
       setup();
 
       await waitFor(() => {
-        expect(screen.getByRole('button', { name: /retry/i })).toBeInTheDocument();
+        expect(screen.getByText(/try again/i)).toBeInTheDocument();
       });
     });
   });

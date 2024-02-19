@@ -6,10 +6,11 @@ export const StyledErrorSection = styled.div({
   flexDirection: 'column',
   alignItems: 'center',
   justifyContent: 'center',
+  padding: '1.5rem 0',
 });
 
 export const StyledImgSection = styled.img({
-  height: '3.8rem',
+  height: '5.75rem',
   marginBottom: '1rem',
 });
 

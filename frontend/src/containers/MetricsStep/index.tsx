@@ -15,11 +15,11 @@ import {
 } from '@src/containers/MetricsStep/style';
 import { DeploymentFrequencySettings } from '@src/containers/MetricsStep/DeploymentFrequencySettings';
 import { selectMetricsContent, updateMetricsState } from '@src/context/Metrics/metricsSlice';
+import { StyledRetryButton, StyledErrorMessage } from '@src/containers/MetricsStep/style';
 import { CYCLE_TIME_SETTINGS_TYPES, DONE, REQUIRED_DATA } from '@src/constants/resources';
 import { closeAllNotifications } from '@src/context/notification/NotificationSlice';
 import { Classification } from '@src/containers/MetricsStep/Classification';
 import { shouldMetricsLoad } from '@src/context/stepper/StepperSlice';
-import { StyledRetryButton } from '@src/containers/MetricsStep/style';
 import DateRangeViewer from '@src/components/Common/DateRangeViewer';
 import { HEARTBEAT_EXCEPTION_CODE } from '@src/constants/resources';
 import { useGetBoardInfoEffect } from '@src/hooks/useGetBoardInfo';
@@ -89,10 +89,9 @@ const MetricsStep = () => {
       {isShowCrewsAndRealDone && (
         <MetricSelectionWrapper>
           {isLoading && <Loading />}
+          <MetricsSelectionTitle>Board configuration</MetricsSelectionTitle>
           {isEmpty(errorMessage) ? (
             <>
-              <MetricsSelectionTitle>Board configuration</MetricsSelectionTitle>
-
               <Crews options={users} title={'Crew settings'} label={'Included Crews'} />
 
               {requiredData.includes(REQUIRED_DATA.CYCLE_TIME) && <CycleTime />}
@@ -117,12 +116,8 @@ const MetricsStep = () => {
                   errorMessage.message
                 ) : (
                   <>
-                    {errorMessage.message}
-                    {
-                      <StyledRetryButton variant='text' disabled={isLoading} onClick={getInfo}>
-                        Retry
-                      </StyledRetryButton>
-                    }
+                    <StyledErrorMessage>{errorMessage.message}</StyledErrorMessage>
+                    {<StyledRetryButton onClick={getInfo}>try again</StyledRetryButton>}
                   </>
                 )
               }

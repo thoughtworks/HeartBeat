@@ -182,9 +182,12 @@ describe('getRealDoneStatus', () => {
 describe('formatDuplicatedNameWithSuffix function', () => {
   it('should add suffix for duplicated name', () => {
     const duplicatedName = 'Story testing';
-    const mockTargetFields = [
+    const basicTargetFields = [
       { flag: true, key: 'issue', name: 'Issue' },
       { flag: false, key: 'type', name: 'Type' },
+    ];
+    const mockTargetFields = [
+      ...basicTargetFields,
       { flag: true, key: 'custom_field10060', name: duplicatedName },
       { flag: false, key: 'custom_field10061', name: duplicatedName },
     ];
@@ -192,7 +195,7 @@ describe('formatDuplicatedNameWithSuffix function', () => {
     const result = formatDuplicatedNameWithSuffix(mockTargetFields);
 
     const expectResult = [
-      ...mockTargetFields,
+      ...basicTargetFields,
       { flag: true, key: 'custom_field10060', name: `${duplicatedName}-1` },
       { flag: false, key: 'custom_field10061', name: `${duplicatedName}-2` },
     ];

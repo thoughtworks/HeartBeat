@@ -181,18 +181,20 @@ describe('getRealDoneStatus', () => {
 
 describe('formatDuplicatedNameWithSuffix function', () => {
   it('should add suffix for duplicated name', () => {
+    const duplicatedName = 'Story testing';
     const mockTargetFields = [
       { flag: true, key: 'issue', name: 'Issue' },
       { flag: false, key: 'type', name: 'Type' },
-      { flag: true, key: 'custom_field10060', name: 'Story testing' },
-      { flag: false, key: 'custom_field10061', name: 'Story testing' },
+      { flag: true, key: 'custom_field10060', name: duplicatedName },
+      { flag: false, key: 'custom_field10061', name: duplicatedName },
     ];
+
     const result = formatDuplicatedNameWithSuffix(mockTargetFields);
+
     const expectResult = [
-      { flag: true, key: 'issue', name: 'Issue' },
-      { flag: false, key: 'type', name: 'Type' },
-      { flag: true, key: 'custom_field10060', name: 'Story testing-1' },
-      { flag: false, key: 'custom_field10061', name: 'Story testing-2' },
+      ...mockTargetFields,
+      { flag: true, key: 'custom_field10060', name: `${duplicatedName}-1` },
+      { flag: false, key: 'custom_field10061', name: `${duplicatedName}-2` },
     ];
     expect(result).toStrictEqual(expectResult);
   });

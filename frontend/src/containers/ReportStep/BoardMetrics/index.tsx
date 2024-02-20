@@ -16,7 +16,12 @@ import {
   StyledShowMore,
   StyledTitleWrapper,
 } from '@src/containers/ReportStep/BoardMetrics/BoardMetrics';
-import { filterAndMapCycleTimeSettings, getJiraBoardToken, getRealDoneStatus } from '@src/utils/util';
+import {
+  filterAndMapCycleTimeSettings,
+  formatDuplicatedNameWithSuffix,
+  getJiraBoardToken,
+  getRealDoneStatus,
+} from '@src/utils/util';
 import { BoardReportRequestDTO, ReportRequestDTO } from '@src/clients/report/dto/request';
 import { ReportTitle } from '@src/components/Common/ReportGrid/ReportTitle';
 import { selectMetricsContent } from '@src/context/Metrics/metricsSlice';
@@ -86,7 +91,7 @@ const BoardMetrics = ({
         treatFlagCardAsBlock,
         users,
         assigneeFilter,
-        targetFields,
+        targetFields: formatDuplicatedNameWithSuffix(targetFields),
         doneColumn: getRealDoneStatus(cycleTimeSettings, cycleTimeSettingsType, doneColumn),
       },
       csvTimeStamp: csvTimeStamp,

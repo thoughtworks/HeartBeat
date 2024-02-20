@@ -82,6 +82,7 @@ jest.mock('@src/constants/emojis/emoji', () => ({
 }));
 
 jest.mock('@src/utils/util', () => ({
+  ...jest.requireActual('@src/utils/util'),
   exportToJsonFile: jest.fn(),
   getJiraBoardToken: jest.fn(),
   transformToCleanedBuildKiteEmoji: jest.fn(),

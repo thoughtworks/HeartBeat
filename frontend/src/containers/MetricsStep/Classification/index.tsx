@@ -3,6 +3,7 @@ import { saveTargetFields, selectClassificationWarningMessage } from '@src/conte
 import { MetricsSettingTitle } from '@src/components/Common/MetricsSettingTitle';
 import { WarningNotification } from '@src/components/Common/WarningNotification';
 import { Checkbox, createFilterOptions, TextField } from '@mui/material';
+import { formatDuplicatedNameWithSuffix } from '@src/utils/util';
 import { useAppDispatch } from '@src/hooks/useAppDispatch';
 import { ALL_OPTION_META } from '@src/constants/resources';
 import { Z_INDEX } from '@src/constants/commons';
@@ -15,35 +16,9 @@ export interface classificationProps {
   targetFields: ITargetFieldType[];
 }
 
-export const suffixForDuplicateNames = (targetFields: ITargetFieldType[]) => {
-  const nameSumMap = new Map<string, number>();
-  const nameCountMap = new Map<string, number>();
-
-  targetFields.forEach((item) => {
-    const name = item.name;
-    const count = nameCountMap.get(item.name) || 0;
-    nameSumMap.set(name, count + 1);
-    nameCountMap.set(name, count + 1);
-  });
-
-  return targetFields.map((item) => {
-    const newItem = { ...item };
-    const name = newItem.name;
-    const count = nameCountMap.get(newItem.name) as number;
-    const maxCount = nameSumMap.get(newItem.name) as number;
-
-    if (maxCount > 1) {
-      newItem.name = `${newItem.name}-${maxCount - count + 1}`;
-      nameCountMap.set(name, count - 1);
-    }
-
-    return newItem;
-  });
-};
-
 export const Classification = ({ targetFields, title, label }: classificationProps) => {
   const dispatch = useAppDispatch();
-  const targetFieldsWithSuffix = useMemo(() => suffixForDuplicateNames(targetFields), [targetFields]);
+  const targetFieldsWithSuffix = formatDuplicatedNameWithSuffix(targetFields);
   const classificationWarningMessage = useAppSelector(selectClassificationWarningMessage);
   const selectedOptions = targetFieldsWithSuffix.filter(({ flag }) => flag);
   const isAllSelected = useMemo(() => {

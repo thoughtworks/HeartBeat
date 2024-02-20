@@ -6,6 +6,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
+import com.google.gson.reflect.TypeToken;
 import heartbeat.client.JiraFeignClient;
 import heartbeat.client.component.JiraUriGenerator;
 import heartbeat.client.dto.board.jira.AllCardsResponseDTO;
@@ -55,7 +56,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Type;
 import java.net.URI;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -389,7 +392,7 @@ public class JiraService {
 		JsonArray elements = JsonParser.parseString(allCardResponse).getAsJsonObject().get("issues").getAsJsonArray();
 		List<Map<String, JsonElement>> customFieldMapList = new ArrayList<>();
 		ArrayList<Double> storyPointList = new ArrayList<>();
-		ArrayList<Sprint> sprintList = new ArrayList<>();
+		Map<String, Sprint> sprintMap = new HashMap<>();
 		Map<String, String> resultMap = targetFields.stream()
 			.collect(Collectors.toMap(TargetField::getKey, TargetField::getName));
 		CardCustomFieldKey cardCustomFieldKey = covertCustomFieldKey(targetFields);
@@ -418,10 +421,14 @@ public class JiraService {
 					JsonElement fieldValue = jsonElement.get(customFieldKey);
 					if (customFieldValue.equals("Sprint") && !fieldValue.isJsonNull() && fieldValue.isJsonArray()) {
 						JsonArray jsonArray = fieldValue.getAsJsonArray();
-						if (!jsonArray.isJsonNull() && jsonArray.size() > 0) {
-							JsonElement targetField = jsonArray.get(jsonArray.size() - 1);
-							Sprint sprint = gson.fromJson(targetField, Sprint.class);
-							sprintList.add(sprint);
+						if (!jsonArray.isJsonNull() && !jsonArray.isEmpty()) {
+							Type listType = new TypeToken<List<Sprint>>() {
+							}.getType();
+							List<Sprint> sprints = gson.fromJson(jsonArray, listType);
+							sprints.sort(Comparator.comparing(Sprint::getCompleteDate,
+									Comparator.nullsLast(Comparator.comparing(ZonedDateTime::parse))));
+							sprintMap.put(element.getAsJsonObject().get("key").getAsString(),
+									sprints.get(sprints.size() - 1));
 						}
 					}
 					else if (customFieldValue.equals("Story point estimate") && !fieldValue.isJsonNull()
@@ -436,7 +443,7 @@ public class JiraService {
 					else if (customFieldValue.equals("Flagged") && !fieldValue.isJsonNull()
 							&& fieldValue.isJsonArray()) {
 						JsonArray jsonArray = fieldValue.getAsJsonArray();
-						if (!jsonArray.isJsonNull() && jsonArray.size() > 0) {
+						if (!jsonArray.isJsonNull() && !jsonArray.isEmpty()) {
 							JsonElement targetField = jsonArray.get(jsonArray.size() - 1);
 							fieldValue = targetField.getAsJsonObject().get("value");
 						}
@@ -447,10 +454,12 @@ public class JiraService {
 			customFieldMapList.add(customFieldMap);
 		}
 		for (int index = 0; index < customFieldMapList.size(); index++) {
-			allCardsResponseDTO.getIssues().get(index).getFields().setCustomFields(customFieldMapList.get(index));
+			jiraCards.get(index).getFields().setCustomFields(customFieldMapList.get(index));
 		}
-		for (int index = 0; index < sprintList.size(); index++) {
-			allCardsResponseDTO.getIssues().get(index).getFields().setSprint(sprintList.get(index));
+
+		for (int index = 0; index < jiraCards.size(); index++) {
+			String key = jiraCards.get(index).getKey();
+			jiraCards.get(index).getFields().setSprint(sprintMap.get(key));
 		}
 		return allCardsResponseDTO;
 	}
@@ -766,7 +775,6 @@ public class JiraService {
 				case "sprint" -> cardCustomFieldKey.setSprint(value.getKey());
 				case "flagged" -> cardCustomFieldKey.setFlagged(value.getKey());
 				default -> {
-
 				}
 			}
 		}

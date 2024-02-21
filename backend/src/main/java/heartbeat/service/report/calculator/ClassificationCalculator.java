@@ -162,8 +162,7 @@ public class ClassificationCalculator {
 				case "status" -> tempFields.put(fieldName, jiraCardFields.getStatus());
 				case "issuetype" -> tempFields.put(fieldName, jiraCardFields.getIssuetype());
 				case "reporter" -> tempFields.put(fieldName, jiraCardFields.getReporter());
-				case "statusCategoryChangeData" ->
-					tempFields.put(fieldName, jiraCardFields.getStatuscategorychangedate());
+				case "statusCategoryChangeData" -> tempFields.put(fieldName, jiraCardFields.getLastStatusChangeDate());
 				case "storyPoints" -> tempFields.put(fieldName, jiraCardFields.getStoryPoints());
 				case "fixVersions" -> tempFields.put(fieldName, jiraCardFields.getFixVersions());
 				case "project" -> tempFields.put(fieldName, jiraCardFields.getProject());

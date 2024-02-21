@@ -5,31 +5,32 @@ import com.google.gson.JsonElement;
 import com.opencsv.CSVWriter;
 import heartbeat.controller.board.dto.response.JiraCardDTO;
 import heartbeat.controller.report.dto.request.ReportType;
+import heartbeat.controller.report.dto.response.AvgChangeFailureRate;
+import heartbeat.controller.report.dto.response.AvgDeploymentFrequency;
+import heartbeat.controller.report.dto.response.AvgLeadTimeForChanges;
+import heartbeat.controller.report.dto.response.AvgMeanTimeToRecovery;
 import heartbeat.controller.report.dto.response.BoardCSVConfig;
-import heartbeat.controller.report.dto.response.LeadTimeInfo;
-import heartbeat.controller.report.dto.response.PipelineCSVInfo;
-import heartbeat.controller.report.dto.response.ReportResponse;
 import heartbeat.controller.report.dto.response.BoardCSVConfigEnum;
-import heartbeat.controller.report.dto.response.Velocity;
+import heartbeat.controller.report.dto.response.ChangeFailureRate;
+import heartbeat.controller.report.dto.response.ChangeFailureRateOfPipeline;
+import heartbeat.controller.report.dto.response.Classification;
+import heartbeat.controller.report.dto.response.ClassificationNameValuePair;
 import heartbeat.controller.report.dto.response.CycleTime;
 import heartbeat.controller.report.dto.response.CycleTimeForSelectedStepItem;
-import heartbeat.controller.report.dto.response.Classification;
 import heartbeat.controller.report.dto.response.DeploymentFrequency;
-import heartbeat.controller.report.dto.response.ClassificationNameValuePair;
 import heartbeat.controller.report.dto.response.DeploymentFrequencyOfPipeline;
 import heartbeat.controller.report.dto.response.LeadTimeForChanges;
 import heartbeat.controller.report.dto.response.LeadTimeForChangesOfPipelines;
-import heartbeat.controller.report.dto.response.AvgDeploymentFrequency;
-import heartbeat.controller.report.dto.response.AvgLeadTimeForChanges;
+import heartbeat.controller.report.dto.response.LeadTimeInfo;
 import heartbeat.controller.report.dto.response.MeanTimeToRecovery;
-import heartbeat.controller.report.dto.response.ChangeFailureRate;
-import heartbeat.controller.report.dto.response.AvgChangeFailureRate;
-import heartbeat.controller.report.dto.response.AvgMeanTimeToRecovery;
 import heartbeat.controller.report.dto.response.MeanTimeToRecoveryOfPipeline;
-import heartbeat.controller.report.dto.response.ChangeFailureRateOfPipeline;
+import heartbeat.controller.report.dto.response.PipelineCSVInfo;
+import heartbeat.controller.report.dto.response.ReportResponse;
+import heartbeat.controller.report.dto.response.Velocity;
 import heartbeat.exception.FileIOException;
 import heartbeat.exception.GenerateReportException;
 import heartbeat.util.DecimalUtil;
+import io.micrometer.core.instrument.util.TimeUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
@@ -41,9 +42,6 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-
-import io.micrometer.core.instrument.util.TimeUtils;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -294,7 +292,9 @@ public class CSVFileGenerator {
 				rowData[1] = cardDTO.getBaseInfo().getFields().getSummary();
 				rowData[2] = cardDTO.getBaseInfo().getFields().getIssuetype().getName();
 				rowData[3] = cardDTO.getBaseInfo().getFields().getStatus().getName();
-				rowData[4] = convertToSimpleISOFormat(cardDTO.getBaseInfo().getFields().getStatuscategorychangedate());
+				if (cardDTO.getBaseInfo().getFields().getLastStatusChangeDate() != null) {
+					rowData[4] = convertToSimpleISOFormat(cardDTO.getBaseInfo().getFields().getLastStatusChangeDate());
+				}
 				rowData[5] = String.valueOf(cardDTO.getBaseInfo().getFields().getStoryPoints());
 				if (cardDTO.getBaseInfo().getFields().getAssignee() != null) {
 					rowData[6] = cardDTO.getBaseInfo().getFields().getAssignee().getDisplayName();

@@ -68,13 +68,4 @@ class TimeUtilTest {
 		Assertions.assertEquals("349:33:56", result);
 	}
 
-	@Test
-	void shouldCompareToDateString() {
-		String preDateString = "2023-11-28T14:02:03.724+0800";
-		String nextDateString = "2029-11-28T14:02:03.724+0800";
-		int result = TimeUtil.compareToDateString(preDateString, nextDateString);
-
-		Assertions.assertEquals(1, result);
-	}
-
 }

@@ -35,8 +35,6 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static heartbeat.util.TimeUtil.compareToDateString;
-
 @Service
 @Log4j2
 @RequiredArgsConstructor
@@ -83,14 +81,14 @@ public class KanbanCsvService {
 				allDoneCards.sort((preCard, nextCard) -> {
 					Status preStatus = preCard.getBaseInfo().getFields().getStatus();
 					Status nextStatus = nextCard.getBaseInfo().getFields().getStatus();
-					String preDateString = preCard.getBaseInfo().getFields().getStatuscategorychangedate();
-					String nextDateString = nextCard.getBaseInfo().getFields().getStatuscategorychangedate();
-					if (Objects.isNull(preStatus) || Objects.isNull(nextStatus) || Objects.isNull(preDateString)
-							|| Objects.isNull(nextDateString)) {
+					Long preDateTimeStamp = preCard.getBaseInfo().getFields().getLastStatusChangeDate();
+					Long nextDateTimeStamp = nextCard.getBaseInfo().getFields().getLastStatusChangeDate();
+					if (Objects.isNull(preStatus) || Objects.isNull(nextStatus) || Objects.isNull(preDateTimeStamp)
+							|| Objects.isNull(nextDateTimeStamp)) {
 						return jiraColumns.size() + 1;
 					}
 					else {
-						return compareToDateString(preDateString, nextDateString);
+						return nextDateTimeStamp.compareTo(preDateTimeStamp);
 					}
 				});
 			}
@@ -104,10 +102,10 @@ public class KanbanCsvService {
 				nonDoneCards.sort((preCard, nextCard) -> {
 					Status preStatus = preCard.getBaseInfo().getFields().getStatus();
 					Status nextStatus = nextCard.getBaseInfo().getFields().getStatus();
-					String preDateString = preCard.getBaseInfo().getFields().getStatuscategorychangedate();
-					String nextDateString = nextCard.getBaseInfo().getFields().getStatuscategorychangedate();
-					if (Objects.isNull(preStatus) || Objects.isNull(nextStatus) || Objects.isNull(preDateString)
-							|| Objects.isNull(nextDateString)) {
+					Long preDateTimeStamp = preCard.getBaseInfo().getFields().getLastStatusChangeDate();
+					Long nextDateTimeStamp = nextCard.getBaseInfo().getFields().getLastStatusChangeDate();
+					if (Objects.isNull(preStatus) || Objects.isNull(nextStatus) || Objects.isNull(preDateTimeStamp)
+							|| Objects.isNull(nextDateTimeStamp)) {
 						return jiraColumns.size() + 1;
 					}
 					else {
@@ -117,7 +115,7 @@ public class KanbanCsvService {
 								- getIndexForStatus(jiraColumns, preCardStatusName);
 
 						if (statusIndexComparison == 0) {
-							return compareToDateString(preDateString, nextDateString);
+							return nextDateTimeStamp.compareTo(preDateTimeStamp);
 						}
 
 						return statusIndexComparison;
@@ -206,8 +204,7 @@ public class KanbanCsvService {
 				case "status" -> tempFields.put(fieldName, jiraCardFields.getStatus());
 				case "issuetype" -> tempFields.put(fieldName, jiraCardFields.getIssuetype());
 				case "reporter" -> tempFields.put(fieldName, jiraCardFields.getReporter());
-				case "statusCategoryChangeData" ->
-					tempFields.put(fieldName, jiraCardFields.getStatuscategorychangedate());
+				case "statusCategoryChangeData" -> tempFields.put(fieldName, jiraCardFields.getLastStatusChangeDate());
 				case "storyPoints" -> tempFields.put(fieldName, jiraCardFields.getStoryPoints());
 				case "fixVersions" -> tempFields.put(fieldName, jiraCardFields.getFixVersions());
 				case "project" -> tempFields.put(fieldName, jiraCardFields.getProject());

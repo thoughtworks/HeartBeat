@@ -242,7 +242,7 @@ class CSVFileGeneratorTest {
 
 	@Test
 	void shouldMakeCsvDirWhenNotExistGivenDataTypeIsBoard() {
-		String csvDirPath = "./csv";
+		String csvDirPath = "./app/output/csv";
 		File csvDir = new File(csvDirPath);
 		deleteDirectory(csvDir);
 		List<JiraCardDTO> cardDTOList = BoardCsvFixture.MOCK_JIRA_CARD_DTO();

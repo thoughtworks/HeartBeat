@@ -652,6 +652,7 @@ public class JiraService {
 		if (realDoneHistory.isPresent()) {
 			if (nonNull(allDoneCard.getFields().getStatus())) {
 				allDoneCard.getFields().getStatus().setName(realDoneHistory.get().getTo().getDisplayValue());
+				allDoneCard.getFields().setLastStatusChangeDate(realDoneHistory.get().getTimestamp());
 			}
 			return true;
 		}
@@ -831,6 +832,7 @@ public class JiraService {
 			CycleTimeInfoDTO cycleTimeInfoDTO = getCycleTime(cardHistoryResponseDTO, request.isTreatFlagCardAsBlock(),
 					keyFlagged, request.getStatus());
 
+			setLastStatusChangeTimeInCard(card, cardHistoryResponseDTO);
 			List<String> assigneeSet = getAssigneeSetWithDisplayName(baseUrl, card, request.getToken());
 			if (users.stream().anyMatch(assigneeSet::contains)) {
 				CardCycleTime cardCycleTime = calculateCardCycleTime(card.getKey(),
@@ -842,8 +844,19 @@ public class JiraService {
 				matchedCards.add(jiraCardDTO);
 			}
 		});
-
 		return matchedCards;
+	}
+
+	private void setLastStatusChangeTimeInCard(JiraCard card, CardHistoryResponseDTO cardHistoryResponseDTO) {
+		Optional<Long> lastStatusChangeTime = cardHistoryResponseDTO.getItems()
+			.stream()
+			.filter(history -> STATUS_FIELD_ID.equals(history.getFieldId()))
+			.map(HistoryDetail::getTimestamp)
+			.max(Long::compareTo);
+
+		if (lastStatusChangeTime.isPresent() && nonNull(card.getFields())) {
+			card.getFields().setLastStatusChangeDate(lastStatusChangeTime.get());
+		}
 	}
 
 	private List<String> getAssigneeSetWithDisplayName(URI baseUrl, JiraCard card, String token) {

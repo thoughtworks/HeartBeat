@@ -66,33 +66,17 @@ first: Int ---- 10
 |------------|---------------|
 | scopes     | nodes.scopes  |
 
-- *Test GraphQL API curl*
+*Test GraphQL API curl*
 ```
 curl --request POST \
   --url https://graphql.buildkite.com/v1 \
   --header 'Authorization: Bearer bkua_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' \
-  --header 'accept: */*' \
-  --header 'accept-language: zh-CN,zh;q=0.9' \
-  --header 'authority: buildkite.com' \
-  --header 'content-type: text/plain;charset=UTF-8' \
-  --header 'cookie: _gcl_au=1.1.2007074802.1706774556; hubspotutk=0133eef6a4cdfbd0ad47a423bb4e57be; _first_lead_source=Inbound Link; _first_referrer=https://buildkite.com/organizations/new; _first_landing_page=https://buildkite.com/; _ga=GA1.1.192694063.1706774657; _clck=61mr22%7C2%7Cfiw%7C0%7C1492; _gd_visitor=9a64428e-a3d2-4873-8f55-1cdb4cf7bdae; _gd_svisitor=4c8ec817d47d0000e830be64ed01000020ed3c00; bk_logged_in=true; __hstc=192284981.0133eef6a4cdfbd0ad47a423bb4e57be.1706774556734.1706774556734.1707272714127.2; __hssrc=1; ajs_user_id=0189961f-5727-4637-96ed-d17f2da8a176; ajs_anonymous_id=cc6c336c-1a6e-4617-a593-cc1efded28ba; _session_lead_source=Organic Search; _ga_08J9WTTHMP=GS1.1.1707374915.10.1.1707376653.0.0.0; _buildkite_sess=T1oE9T2LIzST3Vs1vuuP4zRU9IEQqCf334fAKqgNMkr3lnZlP8kVIpiT0354TIk4J3jF9U1w2VByz6bI6sb3n5hSrybi9xrbsaOG2ADiPPUraBrVsvqXPHTSeYxCIM1qA8xvqtBYIJLTBnDRp4ukylGpgiyP%2FXcfIt9ezSEVgvZkIU1uYydQg3MmcovqK015dmRmIt0mLctGEKUJWkJb083zILaLwVbSy2ZOJ8b1xZyMpwvDRmzQTyfgVfeje%2FckJlS6GpO4BYYqAZmkbY%2FIK5c3C3yOCHxgIANeeZjiAOucOS3JDFFrG%2BgqB%2BREqqohD%2FszPl04a0ZIRGL%2FNvw7uCjbNVdB0dX4uuJKWmaY8krdN32IkKLVFnS7ucAQg%2Fz9xGxF8BDFKNwtQgNu08IimvGN93ji92dA1orjyU8N1BL2ExlYhY8%2BTPz6yRNZL%2Fv6R9w2nJJFV%2FcoeOaqCJ9NBZ9GIzlPHU8KWFq5K52sm%2B%2FEMg0v1rk4nvQjRiIsHrbWNzU6Fun9FeXiZowDTtF7lsjVI81wKU3gbI7W5Ei7keVcszYZnmZA0HsjjCU5XyNzhy8wFyWyYTyKzEwK2rZKyjkGV%2B7f2IErHg%3D%3D--OIowTENdx5jGvECr--AknuTsX3upcjmwD2%2FdCm5g%3D%3D; _dd_s=rum=2&id=7f7ebe2c-b20f-4381-b183-a809d1198010&created=1707374913716&expire=1707377674518' \
-  --header 'origin: https://buildkite.com' \
-  --header 'referer: https://buildkite.com/user/graphql/console' \
-  --header 'sec-ch-ua: "Not A(Brand";v="99", "Google Chrome";v="121", "Chromium";v="121"' \
-  --header 'sec-ch-ua-mobile: ?0' \
-  --header 'sec-ch-ua-platform: "macOS"' \
-  --header 'sec-fetch-dest: empty' \
-  --header 'sec-fetch-mode: cors' \
-  --header 'sec-fetch-site: same-origin' \
-  --header 'user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36' \
-  --header 'x-buildkite-frontend-version: 0895f00e8839e8164c40774a9e2bff1afb8008ff' \
-  --header 'x-csrf-token: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' \
-  --cookie '_gcl_au=1.1.2007074802.1706774556; hubspotutk=0133eef6a4cdfbd0ad47a423bb4e57be; _first_lead_source=Inbound Link; _first_referrer=https://buildkite.com/organizations/new; _first_landing_page=https://buildkite.com/; _ga=GA1.1.192694063.1706774657; _clck=61mr22%7C2%7Cfiw%7C0%7C1492; _gd_visitor=9a64428e-a3d2-4873-8f55-1cdb4cf7bdae; _gd_svisitor=4c8ec817d47d0000e830be64ed01000020ed3c00; bk_logged_in=true; __hstc=192284981.0133eef6a4cdfbd0ad47a423bb4e57be.1706774556734.1706774556734.1707272714127.2; __hssrc=1; ajs_user_id=0189961f-5727-4637-96ed-d17f2da8a176; ajs_anonymous_id=cc6c336c-1a6e-4617-a593-cc1efded28ba; _session_lead_source=Organic Search; _ga_08J9WTTHMP=GS1.1.1707374915.10.1.1707376653.0.0.0; _buildkite_sess=T1oE9T2LIzST3Vs1vuuP4zRU9IEQqCf334fAKqgNMkr3lnZlP8kVIpiT0354TIk4J3jF9U1w2VByz6bI6sb3n5hSrybi9xrbsaOG2ADiPPUraBrVsvqXPHTSeYxCIM1qA8xvqtBYIJLTBnDRp4ukylGpgiyP%2FXcfIt9ezSEVgvZkIU1uYydQg3MmcovqK015dmRmIt0mLctGEKUJWkJb083zILaLwVbSy2ZOJ8b1xZyMpwvDRmzQTyfgVfeje%2FckJlS6GpO4BYYqAZmkbY%2FIK5c3C3yOCHxgIANeeZjiAOucOS3JDFFrG%2BgqB%2BREqqohD%2FszPl04a0ZIRGL%2FNvw7uCjbNVdB0dX4uuJKWmaY8krdN32IkKLVFnS7ucAQg%2Fz9xGxF8BDFKNwtQgNu08IimvGN93ji92dA1orjyU8N1BL2ExlYhY8%2BTPz6yRNZL%2Fv6R9w2nJJFV%2FcoeOaqCJ9NBZ9GIzlPHU8KWFq5K52sm%2B%2FEMg0v1rk4nvQjRiIsHrbWNzU6Fun9FeXiZowDTtF7lsjVI81wKU3gbI7W5Ei7keVcszYZnmZA0HsjjCU5XyNzhy8wFyWyYTyKzEwK2rZKyjkGV%2B7f2IErHg%3D%3D--OIowTENdx5jGvECr--AknuTsX3upcjmwD2%2FdCm5g%3D%3D; _dd_s=rum=2&id=7f7ebe2c-b20f-4381-b183-a809d1198010&created=1707374913716&expire=1707377674518' \
+  --cookie _buildkite_sess=D0yuaeNvwM3lK%252Fx4hF%252Fxx29yrpvGVGcJ%252FOtWKD%252Bo1Ow5HJm97XeC%252BmcdhAAQPemcPeU7tiTj1gWdAXcxh48pe7YubJiMcnfZ5JhXznVTfOTf60XGz0I8vTXI9zDq9mTgWhR6pmQkhxfJM%252FvTphFYCOmya5Xsxi%252Bi2IZJPWdTbjYK7zJPLfv58%252BYW9txVRXy5iOfQrWupFDFCVwhmrPTeebG4xJEoKJUFxaBXWZq20ioyZI3oSm7iU3061gMd5D%252Fg1AA4ZVyWoUw6uxMZeJ75v9pU23zsloxZjCu%252BdjCEx8qyccdVOmipnIfgt34biDVs3PGKBgTJBTtogEF%252Fk6%252BDwyJRYv27cFOCYTY5qfTQl1xZYsHsl3Z%252Fc3BiP3dmzohf21EeJZTVVESleOmVQKpDx%252FqaMJSF8DOilooaDVLGIhqRFsR%252BxuXZEBFFRVV6Ww8RE85K5LprWUmqgNHK3bSPkiM93lzBrf%252BZ1JOrQPW5VL0bwcMjRGH8p4dBL7ujHBLIUdDNA%252BtcVK7mvXTfnAyfGc7I6SLEN0VUcFGGoSB9990IiwL%252F%252BQxvZa65K5P%252BvM%252F0hCCNDwZZbg6OXironwcmSM9nYwKbPmFS3A%253D%253D--%252BWqyTEL6ragnLU39--aPtuW95uRlR090Ci3F9Ieg%253D%253D \
   --data '{"query":"query getTokenScope {\n  organization(slug: \"thoughtworks-Heartbeat\") {\n    apiAccessTokens(first: 1) {\n      nodes {\n        scopes\n      }\n    }\n  }\n}","operationName":"getTokenScope"}'
-
 ```
+bkua_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx ---- "buildKite_token"
 
-2.We need to get buildKite organisation info. 
+2.We need to get buildKite organisation info.
 *Existing REST API*
 - GET v2/organizations
 Key info we need as follows:
@@ -122,30 +106,13 @@ slug: ID ---- "organization-slug"
 | slug       | slug        |
 | name       | name        |
 
-- *Test GraphQL API curl*
+*Test GraphQL API curl*
 ```
 curl --request POST \
   --url https://graphql.buildkite.com/v1 \
   --header 'Authorization: Bearer bkua_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' \
-  --header 'accept: */*' \
-  --header 'accept-language: zh-CN,zh;q=0.9' \
-  --header 'authority: buildkite.com' \
-  --header 'content-type: text/plain;charset=UTF-8' \
-  --header 'cookie: _gcl_au=1.1.2007074802.1706774556; hubspotutk=0133eef6a4cdfbd0ad47a423bb4e57be; _first_lead_source=Inbound Link; _first_referrer=https://buildkite.com/organizations/new; _first_landing_page=https://buildkite.com/; _ga=GA1.1.192694063.1706774657; _clck=61mr22%7C2%7Cfiw%7C0%7C1492; _gd_visitor=9a64428e-a3d2-4873-8f55-1cdb4cf7bdae; _gd_svisitor=4c8ec817d47d0000e830be64ed01000020ed3c00; bk_logged_in=true; __hstc=192284981.0133eef6a4cdfbd0ad47a423bb4e57be.1706774556734.1706774556734.1707272714127.2; __hssrc=1; ajs_user_id=0189961f-5727-4637-96ed-d17f2da8a176; ajs_anonymous_id=cc6c336c-1a6e-4617-a593-cc1efded28ba; _session_lead_source=Organic Search; _ga_08J9WTTHMP=GS1.1.1707374915.10.1.1707376653.0.0.0; _buildkite_sess=T1oE9T2LIzST3Vs1vuuP4zRU9IEQqCf334fAKqgNMkr3lnZlP8kVIpiT0354TIk4J3jF9U1w2VByz6bI6sb3n5hSrybi9xrbsaOG2ADiPPUraBrVsvqXPHTSeYxCIM1qA8xvqtBYIJLTBnDRp4ukylGpgiyP%2FXcfIt9ezSEVgvZkIU1uYydQg3MmcovqK015dmRmIt0mLctGEKUJWkJb083zILaLwVbSy2ZOJ8b1xZyMpwvDRmzQTyfgVfeje%2FckJlS6GpO4BYYqAZmkbY%2FIK5c3C3yOCHxgIANeeZjiAOucOS3JDFFrG%2BgqB%2BREqqohD%2FszPl04a0ZIRGL%2FNvw7uCjbNVdB0dX4uuJKWmaY8krdN32IkKLVFnS7ucAQg%2Fz9xGxF8BDFKNwtQgNu08IimvGN93ji92dA1orjyU8N1BL2ExlYhY8%2BTPz6yRNZL%2Fv6R9w2nJJFV%2FcoeOaqCJ9NBZ9GIzlPHU8KWFq5K52sm%2B%2FEMg0v1rk4nvQjRiIsHrbWNzU6Fun9FeXiZowDTtF7lsjVI81wKU3gbI7W5Ei7keVcszYZnmZA0HsjjCU5XyNzhy8wFyWyYTyKzEwK2rZKyjkGV%2B7f2IErHg%3D%3D--OIowTENdx5jGvECr--AknuTsX3upcjmwD2%2FdCm5g%3D%3D; _dd_s=rum=2&id=7f7ebe2c-b20f-4381-b183-a809d1198010&created=1707374913716&expire=1707377674518' \
-  --header 'origin: https://buildkite.com' \
-  --header 'referer: https://buildkite.com/user/graphql/console' \
-  --header 'sec-ch-ua: "Not A(Brand";v="99", "Google Chrome";v="121", "Chromium";v="121"' \
-  --header 'sec-ch-ua-mobile: ?0' \
-  --header 'sec-ch-ua-platform: "macOS"' \
-  --header 'sec-fetch-dest: empty' \
-  --header 'sec-fetch-mode: cors' \
-  --header 'sec-fetch-site: same-origin' \
-  --header 'user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36' \
-  --header 'x-buildkite-frontend-version: 0895f00e8839e8164c40774a9e2bff1afb8008ff' \
-  --header 'x-csrf-token: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' \
-  --cookie '_gcl_au=1.1.2007074802.1706774556; hubspotutk=0133eef6a4cdfbd0ad47a423bb4e57be; _first_lead_source=Inbound Link; _first_referrer=https://buildkite.com/organizations/new; _first_landing_page=https://buildkite.com/; _ga=GA1.1.192694063.1706774657; _clck=61mr22%7C2%7Cfiw%7C0%7C1492; _gd_visitor=9a64428e-a3d2-4873-8f55-1cdb4cf7bdae; _gd_svisitor=4c8ec817d47d0000e830be64ed01000020ed3c00; bk_logged_in=true; __hstc=192284981.0133eef6a4cdfbd0ad47a423bb4e57be.1706774556734.1706774556734.1707272714127.2; __hssrc=1; ajs_user_id=0189961f-5727-4637-96ed-d17f2da8a176; ajs_anonymous_id=cc6c336c-1a6e-4617-a593-cc1efded28ba; _session_lead_source=Organic Search; _ga_08J9WTTHMP=GS1.1.1707374915.10.1.1707376653.0.0.0; _buildkite_sess=T1oE9T2LIzST3Vs1vuuP4zRU9IEQqCf334fAKqgNMkr3lnZlP8kVIpiT0354TIk4J3jF9U1w2VByz6bI6sb3n5hSrybi9xrbsaOG2ADiPPUraBrVsvqXPHTSeYxCIM1qA8xvqtBYIJLTBnDRp4ukylGpgiyP%2FXcfIt9ezSEVgvZkIU1uYydQg3MmcovqK015dmRmIt0mLctGEKUJWkJb083zILaLwVbSy2ZOJ8b1xZyMpwvDRmzQTyfgVfeje%2FckJlS6GpO4BYYqAZmkbY%2FIK5c3C3yOCHxgIANeeZjiAOucOS3JDFFrG%2BgqB%2BREqqohD%2FszPl04a0ZIRGL%2FNvw7uCjbNVdB0dX4uuJKWmaY8krdN32IkKLVFnS7ucAQg%2Fz9xGxF8BDFKNwtQgNu08IimvGN93ji92dA1orjyU8N1BL2ExlYhY8%2BTPz6yRNZL%2Fv6R9w2nJJFV%2FcoeOaqCJ9NBZ9GIzlPHU8KWFq5K52sm%2B%2FEMg0v1rk4nvQjRiIsHrbWNzU6Fun9FeXiZowDTtF7lsjVI81wKU3gbI7W5Ei7keVcszYZnmZA0HsjjCU5XyNzhy8wFyWyYTyKzEwK2rZKyjkGV%2B7f2IErHg%3D%3D--OIowTENdx5jGvECr--AknuTsX3upcjmwD2%2FdCm5g%3D%3D; _dd_s=rum=2&id=7f7ebe2c-b20f-4381-b183-a809d1198010&created=1707374913716&expire=1707377674518' \
+  --cookie _buildkite_sess=SEidEy235RBixLtf562nrUMPH7V8cNsv%252BGSw3YlThtPzzStIAJNZZtiQdP4olTqHSluwEW7%252Fxz0iFG4JBQEsR5Z6i8oFrPUv8uwgJ3HB1Ica5%252BdENKjCkU%252BhlFxiC8Y3aZJ%252BcWFbs7kj19LkdnLOVjui%252Fs5NVJ5CiODclJAm3Pyz8cLuubFGpCKFbIAku28kPLx91dCA9ffK5FM75L4bKg1Z5ZFSvyKnPiZl2Kl4SAq3CCFbrAzTWzBVid2rleZB425W%252BOB6l3p2bXbYwBx33g6aBNYSDnUpDYdVOdCUSAUTH4OTTkzoegSgO0r9y7wlE1evsi3O2rdOsABmCysdDOjwicklwp%252FRlydVgpdKwzcF1Zt%252Be2Yrp7ZWIlpxmebaDv%252BQE1CSMoNe%252BuLgjFp%252Buxo1aSqKzzdpTqRvnw1Ixtj7q%252BiSvcdWm%252B69IvLS%252B%252ByTcP61EZtUO55UlXM4cT9pNJ8p7k%252FJrD24oL4HU5QD1mCqSc%252FDr9gwjDiFmDypkmjS0%252FWniaQ5f9FiY%252FBw38fZcdUeYtRSCOgdpCO2ceIj1t8HHSobUewYDRdbrh%252FHcyNuVl2CCwrY1N%252FvBfQ75tdIlB1AL5PHV7D1Hw%253D%253D--jN3hfZb6pbJTKg%252BV--D0AidyTIdPICbgK9QTDTGQ%253D%253D \
   --data '{"query":"query getTokenScope {\n  organization(slug:\"thoughtworks-Heartbeat\") {\n    slug\n    name\n    }\n}","operationName":"getTokenScope"}'
-
 ```
 
 3.We need to get our pipeline info.
@@ -198,35 +165,18 @@ first: Int ---- 10
 | repository  | edges.node.repository.url  |
 | steps       | edges.node.steps.yaml      |
 
-- *Test GraphQL API curl*
+*Test GraphQL API curl*
 ```
 curl --request POST \
   --url https://graphql.buildkite.com/v1 \
   --header 'Authorization: Bearer bkua_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' \
-  --header 'accept: */*' \
-  --header 'accept-language: zh-CN,zh;q=0.9' \
-  --header 'authority: buildkite.com' \
-  --header 'content-type: text/plain;charset=UTF-8' \
-  --header 'cookie: _gcl_au=1.1.2007074802.1706774556; hubspotutk=0133eef6a4cdfbd0ad47a423bb4e57be; _first_lead_source=Inbound Link; _first_referrer=https://buildkite.com/organizations/new; _first_landing_page=https://buildkite.com/; _ga=GA1.1.192694063.1706774657; _clck=61mr22%7C2%7Cfiw%7C0%7C1492; _gd_visitor=9a64428e-a3d2-4873-8f55-1cdb4cf7bdae; _gd_svisitor=4c8ec817d47d0000e830be64ed01000020ed3c00; bk_logged_in=true; __hstc=192284981.0133eef6a4cdfbd0ad47a423bb4e57be.1706774556734.1706774556734.1707272714127.2; __hssrc=1; ajs_user_id=0189961f-5727-4637-96ed-d17f2da8a176; ajs_anonymous_id=cc6c336c-1a6e-4617-a593-cc1efded28ba; _session_lead_source=Organic Search; _ga_08J9WTTHMP=GS1.1.1707374915.10.1.1707376653.0.0.0; _buildkite_sess=T1oE9T2LIzST3Vs1vuuP4zRU9IEQqCf334fAKqgNMkr3lnZlP8kVIpiT0354TIk4J3jF9U1w2VByz6bI6sb3n5hSrybi9xrbsaOG2ADiPPUraBrVsvqXPHTSeYxCIM1qA8xvqtBYIJLTBnDRp4ukylGpgiyP%2FXcfIt9ezSEVgvZkIU1uYydQg3MmcovqK015dmRmIt0mLctGEKUJWkJb083zILaLwVbSy2ZOJ8b1xZyMpwvDRmzQTyfgVfeje%2FckJlS6GpO4BYYqAZmkbY%2FIK5c3C3yOCHxgIANeeZjiAOucOS3JDFFrG%2BgqB%2BREqqohD%2FszPl04a0ZIRGL%2FNvw7uCjbNVdB0dX4uuJKWmaY8krdN32IkKLVFnS7ucAQg%2Fz9xGxF8BDFKNwtQgNu08IimvGN93ji92dA1orjyU8N1BL2ExlYhY8%2BTPz6yRNZL%2Fv6R9w2nJJFV%2FcoeOaqCJ9NBZ9GIzlPHU8KWFq5K52sm%2B%2FEMg0v1rk4nvQjRiIsHrbWNzU6Fun9FeXiZowDTtF7lsjVI81wKU3gbI7W5Ei7keVcszYZnmZA0HsjjCU5XyNzhy8wFyWyYTyKzEwK2rZKyjkGV%2B7f2IErHg%3D%3D--OIowTENdx5jGvECr--AknuTsX3upcjmwD2%2FdCm5g%3D%3D; _dd_s=rum=2&id=7f7ebe2c-b20f-4381-b183-a809d1198010&created=1707374913716&expire=1707377674518' \
-  --header 'origin: https://buildkite.com' \
-  --header 'referer: https://buildkite.com/user/graphql/console' \
-  --header 'sec-ch-ua: "Not A(Brand";v="99", "Google Chrome";v="121", "Chromium";v="121"' \
-  --header 'sec-ch-ua-mobile: ?0' \
-  --header 'sec-ch-ua-platform: "macOS"' \
-  --header 'sec-fetch-dest: empty' \
-  --header 'sec-fetch-mode: cors' \
-  --header 'sec-fetch-site: same-origin' \
-  --header 'user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36' \
-  --header 'x-buildkite-frontend-version: 0895f00e8839e8164c40774a9e2bff1afb8008ff' \
-  --header 'x-csrf-token: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' \
-  --cookie '_gcl_au=1.1.2007074802.1706774556; hubspotutk=0133eef6a4cdfbd0ad47a423bb4e57be; _first_lead_source=Inbound Link; _first_referrer=https://buildkite.com/organizations/new; _first_landing_page=https://buildkite.com/; _ga=GA1.1.192694063.1706774657; _clck=61mr22%7C2%7Cfiw%7C0%7C1492; _gd_visitor=9a64428e-a3d2-4873-8f55-1cdb4cf7bdae; _gd_svisitor=4c8ec817d47d0000e830be64ed01000020ed3c00; bk_logged_in=true; __hstc=192284981.0133eef6a4cdfbd0ad47a423bb4e57be.1706774556734.1706774556734.1707272714127.2; __hssrc=1; ajs_user_id=0189961f-5727-4637-96ed-d17f2da8a176; ajs_anonymous_id=cc6c336c-1a6e-4617-a593-cc1efded28ba; _session_lead_source=Organic Search; _ga_08J9WTTHMP=GS1.1.1707374915.10.1.1707376653.0.0.0; _buildkite_sess=T1oE9T2LIzST3Vs1vuuP4zRU9IEQqCf334fAKqgNMkr3lnZlP8kVIpiT0354TIk4J3jF9U1w2VByz6bI6sb3n5hSrybi9xrbsaOG2ADiPPUraBrVsvqXPHTSeYxCIM1qA8xvqtBYIJLTBnDRp4ukylGpgiyP%2FXcfIt9ezSEVgvZkIU1uYydQg3MmcovqK015dmRmIt0mLctGEKUJWkJb083zILaLwVbSy2ZOJ8b1xZyMpwvDRmzQTyfgVfeje%2FckJlS6GpO4BYYqAZmkbY%2FIK5c3C3yOCHxgIANeeZjiAOucOS3JDFFrG%2BgqB%2BREqqohD%2FszPl04a0ZIRGL%2FNvw7uCjbNVdB0dX4uuJKWmaY8krdN32IkKLVFnS7ucAQg%2Fz9xGxF8BDFKNwtQgNu08IimvGN93ji92dA1orjyU8N1BL2ExlYhY8%2BTPz6yRNZL%2Fv6R9w2nJJFV%2FcoeOaqCJ9NBZ9GIzlPHU8KWFq5K52sm%2B%2FEMg0v1rk4nvQjRiIsHrbWNzU6Fun9FeXiZowDTtF7lsjVI81wKU3gbI7W5Ei7keVcszYZnmZA0HsjjCU5XyNzhy8wFyWyYTyKzEwK2rZKyjkGV%2B7f2IErHg%3D%3D--OIowTENdx5jGvECr--AknuTsX3upcjmwD2%2FdCm5g%3D%3D; _dd_s=rum=2&id=7f7ebe2c-b20f-4381-b183-a809d1198010&created=1707374913716&expire=1707377674518' \
+  --cookie _buildkite_sess=%252B5NK%252BSJ%252FJht88i4AeJxBsmNNg8yaAONhZx6LJm%252Fsl%252F8%252B18cHqLjkgxL%252BoLrQHAD%252F4R8Ef1T%252B%252Bm5J7UPsQGoACdOBLLJV7CXmAo0SxVGrpnDwG30aBjn4Geyw9xOqbpcs7EdX3uL%252B98RtCz7dKyPFICnQ5xOzB5NE2HYV5snx%252B322UOoPCehZqbTnsEyduxG1fLtF4Gq1dL7Ngd6IQ97aSjLiGjb5E4hWzoCIiZFo44gVppQOEkH%252FQMa5nbl3tcaLgvRhumt94ryq1w6iOPWfKAIE0XTg29FpIQKtNh9a%252B6KtphrUeLBteqlUm%252FOX7hAdlOAmI9yZvElpGNyyFGHOj%252BcMVcIsr9RXfYifYCQ87akHLHaGTH54diUDEBeCV62x691tDfJ5pe6e0sB%252FdENCuRI5pmyjYkcTs97Nb7Vkhw1cGZEeLX6K84eTXaEzhpCKf2x%252FPyBa6g2c3DgHK1bARvoXJ%252FY58OYJE7PkT%252B7NBcASjth9ndaHW5EAkl848%252BpBa3eLJKqL6u2Oi4nE1V8AmoLL2ST6lsXEI4Hvdqb2Xd2PiMn%252F%252BwbhBwi%252FAmUUZinff%252FNAR8mR6VISLgCd2%252F1uOiOd8xQgMyTj3g%253D%253D--UZ0oC72jNwq2AN3M--jbrgE0zCrqimk0W3vTH9uA%253D%253D \
   --data '{"query":"query getPipelineInfo {\n  organization(slug: \"thoughtworks-Heartbeat\") {\n    pipelines(first: 1) {\n      edges {\n        node {\n          slug\n          name\n          repository {\n            url\n          }\n          steps {\n            yaml\n          }\n        }\n      }\n    }\n  }\n}","operationName":"getPipelineInfo"}'
-
 ```
 
-4.We need to get our pipeline steps info.
+4.We need to page get pipeline steps info.
 *Existing REST API*
-- `GET v2/organizations/{organizationId}/pipelines/{pipelineId}/builds`
+- `GET v2/organizations/{organizationId}/pipelines/{pipelineId}/builds?per_page= &page= `
 Key info we need as follows:
 ```
 {
@@ -251,12 +201,19 @@ Key info we need as follows:
 ```
 
 *Using GraphQL API*
-We find almost all steps info we need can get from this scheme. But we can't get the exact name of jobs in a build. So we still need to do more research if we want to get the key info about pipeline steps info.
+We find to paginate steps info we need can get from this scheme.
 GraphQL Scheme:
 ```
 query getPipelineStepsInfo {
   pipeline(slug: "thoughtworks-Heartbeat/heartbeat") {
-    builds(first: 1) {
+    builds(first: Int, after: String, before: String) {
+      count
+      pageInfo {
+        hasPreviousPage
+        hasNextPage
+        endCursor
+        startCursor
+      }
       edges {
         node {
           state
@@ -274,7 +231,7 @@ query getPipelineStepsInfo {
               email
             }
           }
-          jobs(first: 1) {
+          jobs(first: Int) {
             edges {
               node {
                 ... on JobTypeCommand {
@@ -319,6 +276,17 @@ last: Int
 Returns the last n elements from the list.
 
 state: [BuildStates!]
+
+- Paging implementation.
+
+We can implement paging queries by entering the following parameters:
+
+first: page size.
+
+after: entering the end cursor of the current page. Page down
+
+before: entering the start cursor of the current page. Page up
+
 - Field correspondence
 
 | REST API               | graphQL API                            |
@@ -335,28 +303,12 @@ state: [BuildStates!]
 | steps.jobs.startedAt   | builds.edges.node.jobs.node.startedAt  |
 | steps.jobs.finishedAt  | builds.edges.node.jobs.node.finishedAt |
 
-- *Test GraphQL API curl*
+*Test GraphQL API curl*
 ```
 curl --request POST \
-  --url https://graphql.buildkite.com/v1 \
+  --url 'https://graphql.buildkite.com/v1?=' \
   --header 'Authorization: Bearer bkua_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' \
-  --header 'accept: */*' \
-  --header 'accept-language: zh-CN,zh;q=0.9' \
-  --header 'authority: buildkite.com' \
-  --header 'content-type: text/plain;charset=UTF-8' \
-  --header 'cookie: _gcl_au=1.1.2007074802.1706774556; hubspotutk=0133eef6a4cdfbd0ad47a423bb4e57be; _first_lead_source=Inbound Link; _first_referrer=https://buildkite.com/organizations/new; _first_landing_page=https://buildkite.com/; _ga=GA1.1.192694063.1706774657; _clck=61mr22%7C2%7Cfiw%7C0%7C1492; _gd_visitor=9a64428e-a3d2-4873-8f55-1cdb4cf7bdae; _gd_svisitor=4c8ec817d47d0000e830be64ed01000020ed3c00; bk_logged_in=true; __hstc=192284981.0133eef6a4cdfbd0ad47a423bb4e57be.1706774556734.1706774556734.1707272714127.2; __hssrc=1; ajs_user_id=0189961f-5727-4637-96ed-d17f2da8a176; ajs_anonymous_id=cc6c336c-1a6e-4617-a593-cc1efded28ba; _session_lead_source=Organic Search; _ga_08J9WTTHMP=GS1.1.1707374915.10.1.1707376653.0.0.0; _buildkite_sess=T1oE9T2LIzST3Vs1vuuP4zRU9IEQqCf334fAKqgNMkr3lnZlP8kVIpiT0354TIk4J3jF9U1w2VByz6bI6sb3n5hSrybi9xrbsaOG2ADiPPUraBrVsvqXPHTSeYxCIM1qA8xvqtBYIJLTBnDRp4ukylGpgiyP%2FXcfIt9ezSEVgvZkIU1uYydQg3MmcovqK015dmRmIt0mLctGEKUJWkJb083zILaLwVbSy2ZOJ8b1xZyMpwvDRmzQTyfgVfeje%2FckJlS6GpO4BYYqAZmkbY%2FIK5c3C3yOCHxgIANeeZjiAOucOS3JDFFrG%2BgqB%2BREqqohD%2FszPl04a0ZIRGL%2FNvw7uCjbNVdB0dX4uuJKWmaY8krdN32IkKLVFnS7ucAQg%2Fz9xGxF8BDFKNwtQgNu08IimvGN93ji92dA1orjyU8N1BL2ExlYhY8%2BTPz6yRNZL%2Fv6R9w2nJJFV%2FcoeOaqCJ9NBZ9GIzlPHU8KWFq5K52sm%2B%2FEMg0v1rk4nvQjRiIsHrbWNzU6Fun9FeXiZowDTtF7lsjVI81wKU3gbI7W5Ei7keVcszYZnmZA0HsjjCU5XyNzhy8wFyWyYTyKzEwK2rZKyjkGV%2B7f2IErHg%3D%3D--OIowTENdx5jGvECr--AknuTsX3upcjmwD2%2FdCm5g%3D%3D; _dd_s=rum=2&id=7f7ebe2c-b20f-4381-b183-a809d1198010&created=1707374913716&expire=1707377674518' \
-  --header 'origin: https://buildkite.com' \
-  --header 'referer: https://buildkite.com/user/graphql/console' \
-  --header 'sec-ch-ua: "Not A(Brand";v="99", "Google Chrome";v="121", "Chromium";v="121"' \
-  --header 'sec-ch-ua-mobile: ?0' \
-  --header 'sec-ch-ua-platform: "macOS"' \
-  --header 'sec-fetch-dest: empty' \
-  --header 'sec-fetch-mode: cors' \
-  --header 'sec-fetch-site: same-origin' \
-  --header 'user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36' \
-  --header 'x-buildkite-frontend-version: 0895f00e8839e8164c40774a9e2bff1afb8008ff' \
-  --header 'x-csrf-token: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' \
-  --cookie '_gcl_au=1.1.2007074802.1706774556; hubspotutk=0133eef6a4cdfbd0ad47a423bb4e57be; _first_lead_source=Inbound Link; _first_referrer=https://buildkite.com/organizations/new; _first_landing_page=https://buildkite.com/; _ga=GA1.1.192694063.1706774657; _clck=61mr22%7C2%7Cfiw%7C0%7C1492; _gd_visitor=9a64428e-a3d2-4873-8f55-1cdb4cf7bdae; _gd_svisitor=4c8ec817d47d0000e830be64ed01000020ed3c00; bk_logged_in=true; __hstc=192284981.0133eef6a4cdfbd0ad47a423bb4e57be.1706774556734.1706774556734.1707272714127.2; __hssrc=1; ajs_user_id=0189961f-5727-4637-96ed-d17f2da8a176; ajs_anonymous_id=cc6c336c-1a6e-4617-a593-cc1efded28ba; _session_lead_source=Organic Search; _ga_08J9WTTHMP=GS1.1.1707374915.10.1.1707376653.0.0.0; _buildkite_sess=T1oE9T2LIzST3Vs1vuuP4zRU9IEQqCf334fAKqgNMkr3lnZlP8kVIpiT0354TIk4J3jF9U1w2VByz6bI6sb3n5hSrybi9xrbsaOG2ADiPPUraBrVsvqXPHTSeYxCIM1qA8xvqtBYIJLTBnDRp4ukylGpgiyP%2FXcfIt9ezSEVgvZkIU1uYydQg3MmcovqK015dmRmIt0mLctGEKUJWkJb083zILaLwVbSy2ZOJ8b1xZyMpwvDRmzQTyfgVfeje%2FckJlS6GpO4BYYqAZmkbY%2FIK5c3C3yOCHxgIANeeZjiAOucOS3JDFFrG%2BgqB%2BREqqohD%2FszPl04a0ZIRGL%2FNvw7uCjbNVdB0dX4uuJKWmaY8krdN32IkKLVFnS7ucAQg%2Fz9xGxF8BDFKNwtQgNu08IimvGN93ji92dA1orjyU8N1BL2ExlYhY8%2BTPz6yRNZL%2Fv6R9w2nJJFV%2FcoeOaqCJ9NBZ9GIzlPHU8KWFq5K52sm%2B%2FEMg0v1rk4nvQjRiIsHrbWNzU6Fun9FeXiZowDTtF7lsjVI81wKU3gbI7W5Ei7keVcszYZnmZA0HsjjCU5XyNzhy8wFyWyYTyKzEwK2rZKyjkGV%2B7f2IErHg%3D%3D--OIowTENdx5jGvECr--AknuTsX3upcjmwD2%2FdCm5g%3D%3D; _dd_s=rum=2&id=7f7ebe2c-b20f-4381-b183-a809d1198010&created=1707374913716&expire=1707377674518' \
-  --data '{"query":"query getPipelineStepsInfo {\n  pipeline(slug: \"thoughtworks-Heartbeat/heartbeat\") {\n    builds(first: 1) {\n      edges {\n        node {\n          state\n          branch\n          commit\n          number\n          createdAt\n          createdBy {\n            ... on User {\n              name\n              email\n            }\n            ... on UnregisteredUser {\n              name\n              email\n            }\n          }\n          jobs(first: 1) {\n            edges {\n              node {\n                ... on JobTypeCommand {\n                  label\n                  state\n                  startedAt\n                  finishedAt\n                }\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n}","operationName":"getPipelineStepsInfo"}'
-
+  --cookie _buildkite_sess=PNyVyr57yDltibvQf%252BGnZEJubAlR4vvkrghZ93VcUyMZidg7gCeGp0sizJXz4zio%252BnIXvZWkSsQy59MVhlUjjkmcu2XPPXODoYStrON7SLeTDQdikgKDG27oaq%252FqP%252FbrXPHmloAAN7X0I3Obj%252FcnLp2z1O6W%252F2LEJyokAXIfK7hTEUBIplcdunM7sU0PJ%252BoJoqmCvEPbT7dYCcz6zThh897MlLa2QzUs7HZ6KKD1XW9qM1vfHusCKE8%252FD749meabIh%252BdbnKzx3%252BgYfdeJveogyd4lhEK9BfVK3d0z4Yj1Em9CQFGtyGJTmGdi39HKGz3zBIHcjnKs8%252B2LQgVztTmkXisLH5iRckPot9IpYtNMq9zaxM0LOlv%252Bvesm0op%252BcWcGmtkSNaYYiX1gOtdo6VDtWvChZ5mvIwqqOwKABY9DEE2p1%252BblrOAUL2gJGyzz9X%252BkKDuXtURyJHy0KQXLupX8FNDxt7qXwWFcevNrLpaZ7gPuatxySty2RQ7wPAbvUzGqSJnZCRdIPSMKuWZqFT1TvhN%252BNUO8KigInmPc8XkbsdNfLYxVlzQMmGF51ISFTQ76koqO2GU2r5sP%252BGPqn2JH8GRtn7uSDj9ig%253D%253D--kbRI%252BB%252F73oRIqtFx--wXLuR4VNS5ZTQLDFL%252FEDHw%253D%253D \
+  --data '{"query":"query getPipelineStepsInfo {\n  pipeline(slug: \"thoughtworks-Heartbeat/heartbeat\") {\n    builds(first: 2) {\n      count\n      pageInfo {\n        hasPreviousPage\n        hasNextPage\n        endCursor\n        startCursor\n      }\n      edges {\n        node {\n          state\n          branch\n          commit\n          number\n          createdAt\n          createdBy {\n            ... on User {\n              name\n              email\n            }\n            ... on UnregisteredUser {\n              name\n              email\n            }\n          }\n          jobs(first: 100) {\n            edges {\n              node {\n                ... on JobTypeCommand {\n                  label\n                  state\n                  startedAt\n                  finishedAt\n                }\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n}","operationName":"getPipelineStepsInfo"}'
 ```
+

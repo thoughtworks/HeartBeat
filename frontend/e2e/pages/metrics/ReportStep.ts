@@ -13,6 +13,7 @@ export class ReportStep {
   readonly failureRate: Locator;
   readonly meanTimeToRecovery: Locator;
   readonly showMoreLinks: Locator;
+  readonly previousButton: Locator;
   readonly backButton: Locator;
   readonly exportPipelineDataButton: Locator;
   readonly exportBoardData: Locator;
@@ -34,10 +35,15 @@ export class ReportStep {
       '[data-test-id="Mean Time To Recovery"] [data-test-id="report-section"]',
     );
     this.showMoreLinks = this.page.getByText('show more >');
+    this.previousButton = page.getByRole('button', { name: 'Previous' });
     this.backButton = this.page.getByText('Back');
     this.exportMetricData = this.page.getByText('Export metric data');
     this.exportBoardData = this.page.getByText('Export board data');
     this.exportPipelineDataButton = this.page.getByText('Export pipeline data');
+  }
+
+  async goToPreviousStep() {
+    await this.previousButton.click();
   }
 
   //eslint-disable-next-line @typescript-eslint/no-unused-vars

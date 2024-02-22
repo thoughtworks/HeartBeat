@@ -47,6 +47,7 @@ export const Crews = ({ options, title, label, type = 'board' }: crewsProps) => 
     <>
       <MetricsSettingTitle title={title} />
       <MultiAutoComplete
+        ariaLabel='Included Crews multiple select'
         optionList={options}
         isError={isEmptyCrewData && isBoardCrews}
         isSelectAll={isAllSelected}

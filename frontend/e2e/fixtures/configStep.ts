@@ -2,9 +2,9 @@ export const config = {
   projectName: 'Heartbeat Metrics',
   dateRange: {
     startDate: '2024-01-15T00:00:00.000+08:00',
-    endDate: '2024-01-19T23:59:59.999+08:00',
+    endDate: '2024-01-30T23:59:59.999+08:00',
   },
-  calendarType: 'Regular Calendar(Weekend Considered)',
+  calendarType: 'Calendar with Chinese Holiday',
   metrics: [
     'Velocity',
     'Cycle time',

@@ -46,6 +46,7 @@ export const Classification = ({ targetFields, title, label }: classificationPro
       <MetricsSettingTitle title={title} />
       {classificationWarningMessage && <WarningNotification message={classificationWarningMessage} />}
       <TypedStyledAutocompleted
+        aria-label='Classification Setting AutoComplete'
         multiple
         options={targetFieldsWithSuffix}
         disableCloseOnSelect
@@ -64,7 +65,7 @@ export const Classification = ({ targetFields, title, label }: classificationPro
         renderOption={(props, option: ITargetFieldType, state) => {
           const selectAllProps = option.key === 'all' ? { checked: isAllSelected } : {};
           return (
-            <li {...props}>
+            <li {...props} data-testid={option.key}>
               <Checkbox style={{ marginRight: '0.5rem' }} checked={state.selected} {...selectAllProps} />
               {option.name as string}
             </li>

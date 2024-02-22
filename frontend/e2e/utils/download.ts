@@ -2,7 +2,12 @@ import { expect, Locator, Page } from '@playwright/test';
 import path from 'path';
 import fs from 'fs';
 
-export const checkDownloadReport = async (page: Page, downloadButton: Locator, savedFileName: string) => {
+export const downloadFileAndCheck = async (
+  page: Page,
+  downloadButton: Locator,
+  savedFileName: string,
+  validator: (fileDataString: string) => Promise<void>,
+) => {
   const downloadPromise = page.waitForEvent('download');
 
   await expect(downloadButton).toBeEnabled();
@@ -14,6 +19,12 @@ export const checkDownloadReport = async (page: Page, downloadButton: Locator, s
   const downloadPath = await download.path();
   const fileDataString = fs.readFileSync(downloadPath, 'utf8');
 
-  expect(fileDataString.length).toBeGreaterThan(0);
+  await validator(fileDataString);
   await download.delete();
+};
+
+export const checkDownloadReport = async (page: Page, downloadButton: Locator, savedFileName: string) => {
+  await downloadFileAndCheck(page, downloadButton, savedFileName, async (fileDataString) =>
+    expect(fileDataString.length).toBeGreaterThan(0),
+  );
 };

@@ -101,6 +101,7 @@ export const BranchSelection = (props: BranchSelectionProps) => {
   return (
     <BranchSelectionWrapper>
       <Autocomplete
+        aria-label='Pipeline Branch AutoComplete'
         multiple
         options={branchesOptions}
         disableCloseOnSelect

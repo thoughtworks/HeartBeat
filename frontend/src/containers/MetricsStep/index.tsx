@@ -130,7 +130,7 @@ const MetricsStep = () => {
         requiredData.includes(REQUIRED_DATA.CHANGE_FAILURE_RATE) ||
         requiredData.includes(REQUIRED_DATA.LEAD_TIME_FOR_CHANGES) ||
         requiredData.includes(REQUIRED_DATA.MEAN_TIME_TO_RECOVERY)) && (
-        <MetricSelectionWrapper>
+        <MetricSelectionWrapper aria-label='Pipeline Configuration Section'>
           <MetricsSelectionTitle>Pipeline configuration</MetricsSelectionTitle>
           <DeploymentFrequencySettings />
         </MetricSelectionWrapper>

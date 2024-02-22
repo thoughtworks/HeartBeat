@@ -1,9 +1,8 @@
 import { config as configStepData } from '../../fixtures/configStep';
-import { CONFIG_STEP_SAVING_FILENAME } from '../../fixtures';
+import { METRICS_STEP_SAVING_FILENAME } from '../../fixtures';
+import { downloadFileAndCheck } from '../../utils/download';
 import { expect, Locator, Page } from '@playwright/test';
 import { Dayjs } from 'dayjs';
-import path from 'path';
-import fs from 'fs';
 
 interface IBoardData {
   boardId: string;
@@ -145,11 +144,16 @@ export class ConfigStep {
     await expect(this.page).toHaveURL(/\//);
   }
 
-  async selectRegularCalendar() {
-    await this.regularCalendar.click();
-
-    await expect(this.chineseCalendar).not.toBeChecked();
-    await expect(this.regularCalendar).toBeChecked();
+  async selectRegularCalendar(calendarType: string) {
+    if (calendarType === 'Calendar with Chinese Holiday') {
+      await this.chineseCalendar.click();
+      await expect(this.chineseCalendar).toBeChecked();
+      await expect(this.regularCalendar).not.toBeChecked();
+    } else {
+      await this.regularCalendar.click();
+      await expect(this.regularCalendar).toBeChecked();
+      await expect(this.chineseCalendar).not.toBeChecked();
+    }
   }
 
   async selectDateRange(fromDay: Dayjs, toDay: Dayjs) {
@@ -226,7 +230,7 @@ export class ConfigStep {
     await this.boardTokenInput.fill(token);
   }
 
-  async fillAndVerifyBoardConfig(boardData: IBoardData) {
+  async fillAndverifyBoardConfig(boardData: IBoardData) {
     await this.fillBoardConfigForm(boardData);
 
     await expect(this.boardVerifyButton).toBeEnabled();
@@ -273,26 +277,16 @@ export class ConfigStep {
   }
 
   async saveConfigStepAsJSONThenVerifyDownloadFile(json: typeof configStepData) {
-    const downloadPromise = this.page.waitForEvent('download');
-
-    await expect(this.saveAsButton).toBeEnabled();
-
-    await this.saveAsButton.click();
-    const download = await downloadPromise;
-    const savePath = path.resolve(__dirname, '..', '..', './temp', `./${CONFIG_STEP_SAVING_FILENAME}`);
-    await download.saveAs(savePath);
-
-    const downloadPath = await download.path();
-    const fileData = JSON.parse(fs.readFileSync(downloadPath, 'utf8'));
-
-    expect(fileData).toEqual(json);
-
-    await download.delete();
+    return downloadFileAndCheck(this.page, this.saveAsButton, METRICS_STEP_SAVING_FILENAME, async (fileDataString) => {
+      const fileData = JSON.parse(fileDataString);
+      expect(fileData).toEqual(json);
+    });
   }
 
   async goToMetrics() {
     await this.nextButton.click();
   }
+
   async verifyAllConfig() {
     await this.boardVerifyButton.click();
     await this.pipelineToolVerifyButton.click();

@@ -12,6 +12,7 @@ type Props = {
   isError: boolean;
   testId?: string;
   isBoardCrews?: boolean;
+  ariaLabel?: string;
 };
 const MultiAutoComplete = ({
   optionList,
@@ -22,11 +23,13 @@ const MultiAutoComplete = ({
   isError,
   testId,
   isBoardCrews = true,
+  ariaLabel = '',
 }: Props) => {
   const filter = createFilterOptions();
 
   return (
     <StyledAutocompleted
+      aria-label={ariaLabel}
       multiple
       data-testid={testId}
       options={optionList}

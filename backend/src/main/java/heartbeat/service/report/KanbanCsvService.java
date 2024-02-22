@@ -104,8 +104,7 @@ public class KanbanCsvService {
 					Status nextStatus = nextCard.getBaseInfo().getFields().getStatus();
 					Long preDateTimeStamp = preCard.getBaseInfo().getFields().getLastStatusChangeDate();
 					Long nextDateTimeStamp = nextCard.getBaseInfo().getFields().getLastStatusChangeDate();
-					if (Objects.isNull(preStatus) || Objects.isNull(nextStatus) || Objects.isNull(preDateTimeStamp)
-							|| Objects.isNull(nextDateTimeStamp)) {
+					if (Objects.isNull(preStatus) || Objects.isNull(nextStatus)) {
 						return jiraColumns.size() + 1;
 					}
 					else {
@@ -114,7 +113,8 @@ public class KanbanCsvService {
 						int statusIndexComparison = getIndexForStatus(jiraColumns, nextCardStatusName)
 								- getIndexForStatus(jiraColumns, preCardStatusName);
 
-						if (statusIndexComparison == 0) {
+						if (statusIndexComparison == 0 && Objects.nonNull(preDateTimeStamp)
+								&& Objects.nonNull(nextDateTimeStamp)) {
 							return nextDateTimeStamp.compareTo(preDateTimeStamp);
 						}
 

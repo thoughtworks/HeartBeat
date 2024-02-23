@@ -62,6 +62,7 @@ export default defineConfig(({ command }) => {
       ...basicConfig,
       plugins: [react()],
       server: {
+        host: '0.0.0.0',
         port: 4321,
         proxy: {
           '/api/v1': 'http://localhost:4322',

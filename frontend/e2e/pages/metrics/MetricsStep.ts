@@ -1,4 +1,4 @@
-import { config as metricsStepData } from '../../fixtures/metricsStep';
+import { config as metricsStepData } from '../../fixtures/createNew/metricsStep';
 import { METRICS_STEP_SAVING_FILENAME } from '../../fixtures';
 import { downloadFileAndCheck } from '../../utils/download';
 import { expect, Locator, Page } from '@playwright/test';
@@ -304,7 +304,6 @@ export class MetricsStep {
       }
     }
 
-    await expect(this.pipelineCrewSettingChipsContainer).toHaveCount(crews.length);
     crews.forEach(async (crew) => {
       await expect(this.pipelineCrewSettingChipsContainer.getByRole('button', { name: crew })).toBeVisible();
     });

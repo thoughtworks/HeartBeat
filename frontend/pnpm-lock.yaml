@@ -124,6 +124,9 @@ devDependencies:
   autoprefixer:
     specifier: ^10.4.14
     version: 10.4.15(postcss@8.4.33)
+  csv-parse:
+    specifier: ^5.5.3
+    version: 5.5.3
   eslint:
     specifier: ^8.56.0
     version: 8.56.0
@@ -4875,6 +4878,10 @@ packages:
 
   /csstype@3.1.3:
     resolution: {integrity: sha512-M1uQkMl8rQK/szD0LNhtqxIPLpimGm8sOBwU7lLnCpSbTyY3yeU1Vc7l4KT5zT4s/yOxHH5O7tIuuLOCnLADRw==}
+
+  /csv-parse@5.5.3:
+    resolution: {integrity: sha512-v0KW6C0qlZzoGjk6u5tLmVfyZxNgPGXZsWTXshpAgKVGmGXzaVWGdlCFxNx5iuzcXT/oJN1HHM9DZKwtAtYa+A==}
+    dev: true
 
   /cuint@0.2.2:
     resolution: {integrity: sha512-d4ZVpCW31eWwCMe1YT3ur7mUDnTXbgwyzaL320DrcRT45rfjYxkt5QWLrmOJ+/UEAI2+fQgKe/fCjR8l4TpRgw==}

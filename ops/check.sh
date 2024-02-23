@@ -157,14 +157,17 @@ dot_star_check() {
 e2e_container_check() {
   docker build -t "heartbeat_e2e:latest" ./ -f ./ops/infra/Dockerfile.e2e
 
-  docker run --rm \
+  docker run \
+    --name hb_e2e_runner \
     -e "APP_ORIGIN=${APP_HTTP_SCHEDULE:-}://${AWS_EC2_IP_E2E:-}:${AWS_EC2_IP_E2E_PORT:-}" \
     -e "E2E_TOKEN_JIRA=${E2E_TOKEN_JIRA:-}" \
     -e "E2E_TOKEN_BUILD_KITE=${E2E_TOKEN_BUILD_KITE:-}" \
     -e "E2E_TOKEN_GITHUB=${E2E_TOKEN_GITHUB:-}" \
-    -e "CI='true'" \
+    -e "CI=${CI:-}" \
     heartbeat_e2e:latest \
-    pnpm run e2e
+    pnpm run e2e:major-ci
+
+  docker rm hb_e2e_runner
 }
 
 e2e_check(){
@@ -176,7 +179,7 @@ e2e_check(){
   pnpm exec playwright install
   pnpm exec playwright install msedge
   pnpm exec playwright install chrome
-  pnpm run e2e
+  pnpm run e2e:ci
 }
 
 if [[ "$#" -le 0 ]]; then

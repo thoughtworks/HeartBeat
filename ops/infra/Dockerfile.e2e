@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/playwright
+FROM mcr.microsoft.com/playwright:latest
 COPY ./frontend /app
 
 ENV TZ=Asia/Shanghai
@@ -6,6 +6,5 @@ ENV PATH /app/node_modules/.bin:$PATH
 WORKDIR /app
 RUN npm install -g pnpm
 RUN pnpm install --frozen-lockfile -p
-RUN pnpm exec playwright install
 RUN pnpm exec playwright install msedge
 RUN pnpm exec playwright install chrome

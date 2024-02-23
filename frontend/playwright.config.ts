@@ -1,5 +1,5 @@
+import { E2E_EXPECT_TIMEOUT, VIEWPORT_DEFAULT } from 'e2e/fixtures';
 import { defineConfig, devices } from '@playwright/test';
-import { VIEWPORT_DEFAULT } from 'e2e/fixtures';
 
 /**
  * See https://playwright.dev/docs/test-configuration.
@@ -17,8 +17,7 @@ export default defineConfig({
   timeout: 3 * 60 * 1000,
   testDir: './e2e',
   expect: {
-    timeout: 60 * 1000,
-    toHaveScreenshot: { maxDiffPixels: 100 },
+    timeout: E2E_EXPECT_TIMEOUT,
   },
   /* Run tests in files in parallel */
   fullyParallel: true,

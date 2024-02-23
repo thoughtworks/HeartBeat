@@ -1,5 +1,6 @@
-import { config as metricsStepData } from '../fixtures/metricsStep';
-import { config as configStepData } from '../fixtures/configStep';
+import { BOARD_METRICS_RESULT, DORA_METRICS_RESULT } from '../fixtures/createNew/reportResult';
+import { config as metricsStepData } from '../fixtures/createNew/metricsStep';
+import { config as configStepData } from '../fixtures/createNew/configStep';
 import { test } from '../fixtures/testWithExtendFixtures';
 import { clearTempDir } from 'e2e/utils/clearTempDir';
 import { format } from 'e2e/utils/dateTime';
@@ -53,19 +54,25 @@ test('Create a new project', async ({ homePage, configStep, metricsStep, reportS
   await metricsStep.selectClassifications(metricsStepData.classification);
   await metricsStep.selectDefaultGivenPipelineSetting(metricsStepData.deployment);
   await metricsStep.selectGivenPipelineCrews(metricsStepData.pipelineCrews);
-  // await metricsStep.goToPreviousStep();
-  // await configStep.waitForShown();
-  // await configStep.goToMetrics();
-  // await metricsStep.waitForShown();
   await metricsStep.saveConfigStepAsJSONThenVerifyDownloadFile(metricsStepData);
   await metricsStep.goToReportPage();
-  await reportStep.goToPreviousStep();
-  await metricsStep.waitForShown();
-  await metricsStep.goToReportPage();
 
-  // await reportStep.confirmGeneratedReport();
-  // await reportStep.checkBoardMetrics('17', '9', '4.92', '9.30');
-  // await reportStep.checkBoardMetricsDetails('create-a-new-project-Board-Metrics.png');
-  // await reportStep.checkDoraMetrics('6.12', '0.50', '6.62', '6.60', '17.50% (7/40)', '1.90');
-  // await reportStep.checkDoraMetricsDetails('create-a-new-project-DORA-Metrics.png');
+  await reportStep.confirmGeneratedReport();
+  await reportStep.checkBoardMetrics(
+    BOARD_METRICS_RESULT.Velocity,
+    BOARD_METRICS_RESULT.Throughput,
+    BOARD_METRICS_RESULT.AverageCycleTime4SP,
+    BOARD_METRICS_RESULT.AverageCycleTime4Card,
+  );
+  await reportStep.checkBoardMetricsDetails('create-a-new-project-Board-Metrics.png', 9);
+  await reportStep.checkDoraMetrics(
+    DORA_METRICS_RESULT.PrLeadTime,
+    DORA_METRICS_RESULT.PipelineLeadTime,
+    DORA_METRICS_RESULT.TotalLeadTime,
+    DORA_METRICS_RESULT.DeploymentFrequency,
+    DORA_METRICS_RESULT.FailureRate,
+    DORA_METRICS_RESULT.MeanTimeToRecovery,
+  );
+  await reportStep.checkDoraMetricsDetails('create-a-new-project-DORA-Metrics.png');
+  await reportStep.checkMetricDownloadData();
 });

@@ -5,7 +5,7 @@ set -euo pipefail
 source ./ops/base.sh
 
 display_help() {
-  echo "Usage: $0 {frontend|backend|stub|e2e-runner}" >&2
+  echo "Usage: $0 {frontend|backend|stub}" >&2
   echo
   echo "   frontend     build frontend"
   echo "   backend      build backend"

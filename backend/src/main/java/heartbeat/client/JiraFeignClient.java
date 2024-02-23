@@ -44,15 +44,11 @@ public interface JiraFeignClient {
 	@GetMapping(path = "/rest/api/2/issue/createmeta?projectKeys={projectKey}&expand=projects.issuetypes.fields")
 	FieldResponseDTO getTargetField(URI baseUrl, @PathVariable String projectKey, @RequestHeader String authorization);
 
-	@Cacheable(cacheNames = "boardVerification", key = "#boardId+'-'+#authorization")
 	@GetMapping(path = "/rest/agile/1.0/board/{boardId}")
 	JiraBoardVerifyDTO getBoard(URI baseUrl, @PathVariable String boardId, @RequestHeader String authorization);
 
 	@Cacheable(cacheNames = "boardProject", key = "#projectIdOrKey+'-'+#authorization")
 	@GetMapping(path = "rest/api/2/project/{projectIdOrKey}")
 	JiraBoardProject getProject(URI baseUrl, @PathVariable String projectIdOrKey, @RequestHeader String authorization);
-
-	@GetMapping()
-	void getSite(URI baseUrl);
 
 }

@@ -482,18 +482,6 @@ class JiraServiceTest {
 	}
 
 	@Test
-	void shouldCallJiraFeignClientSiteAndThrowNotFoundWhenVerifyJiraBoard() {
-		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
-		BoardVerifyRequestParam boardVerifyRequestParam = BOARD_VERIFY_REQUEST_BUILDER().build();
-
-		when(urlGenerator.getUri(any())).thenReturn(URI.create(SITE_ATLASSIAN_NET));
-		doThrow(new NotFoundException("site is incorrect")).when(jiraFeignClient).getSite(baseUrl);
-
-		Throwable thrown = catchThrowable(() -> jiraService.verify(boardTypeJira, boardVerifyRequestParam));
-		assertThat(thrown).isInstanceOf(RuntimeException.class).hasMessageContaining("site is incorrect");
-	}
-
-	@Test
 	void shouldCallJiraFeignClientAndThrowBaseExceptionWhenVerifyJiraBoard() {
 		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
 		BoardVerifyRequestParam boardVerifyRequestParam = BOARD_VERIFY_REQUEST_BUILDER().build();

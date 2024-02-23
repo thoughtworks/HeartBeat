@@ -115,7 +115,6 @@ public class JiraService {
 		if (!BoardType.JIRA.equals(boardType)) {
 			throw new BadRequestException("boardType param is not correct");
 		}
-		checkSite(baseUrl);
 
 		try {
 			JiraBoardVerifyDTO jiraBoardVerifyDTO = jiraFeignClient.getBoard(baseUrl,
@@ -214,16 +213,6 @@ public class JiraService {
 
 	private boolean isIgnoredTargetField(TargetField targetField) {
 		return (FIELDS_IGNORE.contains(targetField.getKey())) || FIELDS_IGNORE.contains(targetField.getName());
-	}
-
-	private void checkSite(URI baseUrl) {
-		try {
-			jiraFeignClient.getSite(baseUrl);
-		}
-		catch (NotFoundException e) {
-			log.error("Failed to call Jira to verify board url, url: {}", baseUrl);
-			throw new NotFoundException("site is incorrect");
-		}
 	}
 
 	public CardCollection getStoryPointsAndCycleTimeForDoneCards(StoryPointsAndCycleTimeRequest request,

@@ -10,6 +10,7 @@ import heartbeat.client.dto.board.jira.JiraBoardConfigDTO;
 import heartbeat.client.dto.board.jira.JiraCardField;
 import heartbeat.client.dto.board.jira.Status;
 import heartbeat.controller.board.dto.request.BoardRequestParam;
+import heartbeat.controller.board.dto.request.CardStepsEnum;
 import heartbeat.controller.board.dto.response.CardCollection;
 import heartbeat.controller.board.dto.response.JiraCardDTO;
 import heartbeat.controller.board.dto.response.JiraColumnDTO;
@@ -43,6 +44,8 @@ public class KanbanCsvService {
 	private static final String[] FIELD_NAMES = { "assignee", "summary", "status", "issuetype", "reporter",
 			"timetracking", "statusCategoryChangeData", "storyPoints", "fixVersions", "project", "parent", "priority",
 			"labels" };
+
+	private static final String[] IGNORE_COLUMNS = { CardStepsEnum.DONE.toString() };
 
 	private final CSVFileGenerator csvFileGenerator;
 
@@ -133,6 +136,8 @@ public class KanbanCsvService {
 		List<BoardCSVConfig> newExtraFields = updateExtraFieldsWithCardField(extraFields, cardDTOList);
 		List<BoardCSVConfig> allBoardFields = insertExtraFieldsAfterCycleTime(newExtraFields, fixedBoardFields);
 
+		var ignoreColumns = Arrays.stream(IGNORE_COLUMNS).toList();
+
 		// append OriginCycleTime
 		cardDTOList.stream().flatMap(cardDTO -> {
 			if (cardDTO.getOriginCycleTime() != null) {
@@ -144,6 +149,7 @@ public class KanbanCsvService {
 		})
 			.map(CycleTimeInfo::getColumn)
 			.distinct()
+			.filter(column -> !ignoreColumns.contains(column))
 			.forEach(column -> allBoardFields.add(BoardCSVConfig.builder()
 				.label("OriginCycleTime: " + column)
 				.value("cycleTimeFlat." + column)
@@ -178,7 +184,7 @@ public class KanbanCsvService {
 			boolean hasUpdated = false;
 			for (JiraCardDTO card : cardDTOList) {
 				if (card.getBaseInfo() != null) { // this is trying to filter out the
-													// empty row
+					// empty row
 					Map<String, Object> tempFields = extractFields(card.getBaseInfo().getFields());
 					if (!hasUpdated) {
 						String extendField = getFieldDisplayValue(tempFields.get(field.getOriginKey()));

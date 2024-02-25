@@ -29,5 +29,5 @@ springdoc:
     path: /api-docs
 
 heartbeat:
-  version: 1.1.4
+  version: 1.1.5
 

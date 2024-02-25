@@ -5,6 +5,9 @@
 /dist
 /tmp
 /out-tsc
+/logs
+/app
+frontend/cypress/
 # Only exists if Bazel was run
 /bazel-out
 

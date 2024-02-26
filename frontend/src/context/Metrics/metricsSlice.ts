@@ -128,9 +128,12 @@ const findKeyByValues = (arrayA: { [key: string]: string }[], arrayB: string[]):
 const setSelectUsers = (users: string[], importedCrews: string[]) =>
   users.filter((item: string) => importedCrews?.includes(item));
 
-const setPipelineCrews = (pipelineCrews: string[], importedPipelineCrews: string[]) => {
+const setPipelineCrews = (isProjectCreated: boolean, pipelineCrews: string[], importedPipelineCrews: string[]) => {
   if (_.isEmpty(pipelineCrews)) {
     return [];
+  }
+  if (isProjectCreated) {
+    return pipelineCrews;
   }
   return pipelineCrews.filter((item: string) => importedPipelineCrews?.includes(item));
 };
@@ -342,7 +345,8 @@ export const metricsSlice = createSlice({
     updatePipelineSettings: (state, action) => {
       const { pipelineList, isProjectCreated, pipelineCrews } = action.payload;
       const { importedDeployment, importedPipelineCrews } = state.importedData;
-      state.pipelineCrews = isProjectCreated ? pipelineCrews : setPipelineCrews(pipelineCrews, importedPipelineCrews);
+
+      state.pipelineCrews = setPipelineCrews(isProjectCreated, pipelineCrews, importedPipelineCrews);
       const orgNames: Array<string> = _.uniq(pipelineList.map((item: pipeline) => item.orgName));
       const filteredPipelineNames = (organization: string) =>
         pipelineList
@@ -395,8 +399,7 @@ export const metricsSlice = createSlice({
       const updatedImportedPipelineStep = importedDeployment.find((pipeline) => pipeline.id === id)?.step ?? '';
       const updatedImportedPipelineBranches = importedDeployment.find((pipeline) => pipeline.id === id)?.branches ?? [];
       const selectedPipelineStep = state.deploymentFrequencySettings.find((pipeline) => pipeline.id === id)?.step ?? '';
-      const validPipelineCrews = _.filter(pipelineCrews, (crew) => importedPipelineCrews.includes(crew));
-      state.pipelineCrews = validPipelineCrews;
+      state.pipelineCrews = _.filter(pipelineCrews, (crew) => importedPipelineCrews.includes(crew));
       const stepWarningMessage = (selectedStep: string) => (steps.includes(selectedStep) ? null : MESSAGE.STEP_WARNING);
 
       const validStep = (selectedStep: string): string => (steps.includes(selectedStep) ? selectedStep : '');

@@ -513,6 +513,48 @@ class KanbanCsvServiceTest {
 	}
 
 	@Test
+	void shouldAddFixedFieldsWhenItIsNotInSettingsFieldsAndCardHasOriginCycleTimeAndColumnIsDone()
+			throws URISyntaxException {
+		URI uri = new URI("site-uri");
+		when(urlGenerator.getUri(any())).thenReturn(uri);
+		when(jiraService.getJiraBoardConfig(any(), any(), any())).thenReturn(JiraBoardConfigDTO.builder().build());
+		when(jiraService.getJiraColumns(any(), any(), any())).thenReturn(JiraColumnResult.builder()
+			.jiraColumnResponse(List
+				.of(JiraColumnDTO.builder().value(ColumnValue.builder().statuses(List.of("BLOCKED")).build()).build()))
+			.build());
+		JiraCardDTO jiraCardDTO = JiraCardDTO.builder()
+			.baseInfo(JiraCard.builder().fields(MOCK_JIRA_CARD()).build())
+			.build();
+		JiraCardDTO blockedJiraCard = JiraCardDTO.builder()
+			.baseInfo(JiraCard.builder().fields(MOCK_JIRA_CARD()).build())
+			.originCycleTime(List.of(CycleTimeInfo.builder().column("DONE").day(30.7859).build()))
+			.build();
+		List<JiraCardDTO> NonDoneJiraCardDTOList = new ArrayList<>() {
+			{
+				add(blockedJiraCard);
+			}
+		};
+		kanbanCsvService.generateCsvInfo(
+				GenerateReportRequest.builder()
+					.jiraBoardSetting(JiraBoardSetting.builder()
+						.targetFields(List.of(
+								TargetField.builder().name("assignee").flag(true).key("key-assignee").build(),
+								TargetField.builder().name("fake-target1").flag(true).key("key-target1").build(),
+								TargetField.builder().name("fake-target2").flag(false).key("key-target2").build()))
+						.build())
+					.build(),
+				CardCollection.builder().jiraCardDTOList(List.of(jiraCardDTO)).build(),
+				CardCollection.builder().jiraCardDTOList(NonDoneJiraCardDTOList).build());
+
+		verify(csvFileGenerator).convertBoardDataToCSV(anyList(), csvFieldsCaptor.capture(), anyList(), any());
+		assertEquals(23, csvFieldsCaptor.getValue().size());
+		BoardCSVConfig targetValue = csvFieldsCaptor.getValue().get(22);
+		assertEquals("cardCycleTime.steps.review", targetValue.getValue());
+		assertEquals("Review Days", targetValue.getLabel());
+		assertNull(targetValue.getOriginKey());
+	}
+
+	@Test
 	void shouldAddFixedFieldsWithCorrectValueFormatWhenCustomFieldValueInstanceOfListAndContainsStringKeyOrValueOrNameOrDisplayName()
 			throws URISyntaxException {
 		URI uri = new URI("site-uri");

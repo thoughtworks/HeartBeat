@@ -25,7 +25,9 @@
     "e2e:ui": "dotenvx run --env-file=./e2e/.env.local -- pnpm exec playwright test --ui --headed",
     "e2e:report": "pnpm exec playwright show-report",
     "e2e:codegen": "pnpm exec playwright codegen 13.215.41.120:4321",
+    "e2e:build-docker-image": "docker build -t 'heartbeat_e2e:latest' ../ -f ../ops/infra/Dockerfile.e2e",
     "e2e:updateSnapshots": "pnpm run e2e:local --update-snapshots",
+    "e2e:updateSnapshots-docker": "docker run --rm --network=host -v $(pwd)/e2e:/app/e2e -w /app -it heartbeat_e2e:latest pnpm run e2e:updateSnapshots",
     "prepare": "cd .. && husky install frontend/.husky",
     "license-compliance": "license-compliance -r detailed",
     "type-check": "tsc --noEmit"

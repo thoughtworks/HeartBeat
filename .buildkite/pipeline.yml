@@ -117,6 +117,10 @@ steps:
       - "check-frontend-license"
       - "check-backend-license"
     command: ./ops/check.sh e2e-container
+    plugins:
+      - artifacts#v1.9.0:
+          upload: "./e2e-reports.tar.gz"
+          expire_in: "${RETENTION_DAYS} days"
 
   - label: ":rocket: Deploy prod"
     if: build.branch == "main" && (build.message =~ /(?i)\[frontend\]/ || build.message =~ /(?i)\[backend\]/)

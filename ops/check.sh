@@ -157,6 +157,8 @@ dot_star_check() {
 e2e_container_check() {
   docker build -t "heartbeat_e2e:latest" ./ -f ./ops/infra/Dockerfile.e2e
 
+  set +e
+  local result
   docker run \
     --name hb_e2e_runner \
     -e "APP_ORIGIN=${APP_HTTP_SCHEDULE:-}://${AWS_EC2_IP_E2E:-}:${AWS_EC2_IP_E2E_PORT:-}" \
@@ -166,8 +168,13 @@ e2e_container_check() {
     -e "CI=${CI:-}" \
     heartbeat_e2e:latest \
     pnpm run e2e:major-ci
+  result=$?
+  set -e
 
+  docker cp hb_e2e_runner:/app/e2e/reports ./e2e-reports
   docker rm hb_e2e_runner
+  tar -zcvf ./e2e-reports.tar.gz ./e2e-reports
+  exit $result
 }
 
 e2e_check(){

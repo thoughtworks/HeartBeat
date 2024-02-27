@@ -10,6 +10,7 @@ import {
   saveDoneColumn,
   selectMetricsContent,
   setCycleTimeSettingsType,
+  updateMetricsBoardDirtyStatus,
 } from '@src/context/Metrics/metricsSlice';
 import {
   StyledRadioGroup,
@@ -56,6 +57,7 @@ const CycleTimeTable = () => {
       );
       isColumnAsKey && resetRealDoneColumn(name, value);
       dispatch(updateCycleTimeSettings(newCycleTimeSettings));
+      dispatch(updateMetricsBoardDirtyStatus(true));
     },
     [cycleTimeSettings, dispatch, isColumnAsKey, resetRealDoneColumn],
   );
@@ -87,6 +89,7 @@ const CycleTimeTable = () => {
       ),
     );
     dispatch(saveDoneColumn([]));
+    dispatch(updateMetricsBoardDirtyStatus(true));
   };
 
   return (

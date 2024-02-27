@@ -5,23 +5,26 @@ import {
   StyledTextField,
   StyledTypeSelections,
 } from '@src/components/Common/ConfigForms';
+import { updateMetricsBoardDirtyStatus } from '@src/context/Metrics/metricsSlice';
 import { KEYS, useVerifyBoardEffect } from '@src/hooks/useVerifyBoardEffect';
 import { ResetButton, VerifyButton } from '@src/components/Common/Buttons';
+import { useAppSelector, useAppDispatch } from '@src/hooks/useAppDispatch';
 import { InputLabel, ListItemText, MenuItem, Select } from '@mui/material';
 import { ConfigSelectionTitle } from '@src/containers/MetricsStep/style';
 import { selectIsBoardVerified } from '@src/context/config/configSlice';
 import { BOARD_TYPES, CONFIG_TITLE } from '@src/constants/resources';
-import { useAppSelector } from '@src/hooks/useAppDispatch';
 import { Loading } from '@src/components/Loading';
 import { FormEvent, useMemo } from 'react';
 
 export const Board = () => {
+  const dispatch = useAppDispatch();
   const isVerified = useAppSelector(selectIsBoardVerified);
   const { verifyJira, isLoading, fields, updateField, validateField, resetFields } = useVerifyBoardEffect();
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     await verifyJira();
+    dispatch(updateMetricsBoardDirtyStatus(false));
   };
 
   const isDisableVerifyButton = useMemo(

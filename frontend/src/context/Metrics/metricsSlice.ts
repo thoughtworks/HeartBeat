@@ -34,6 +34,7 @@ export interface ICycleTimeSetting {
 }
 
 export interface savedMetricsSettingState {
+  isBoarConfigDirty: boolean;
   jiraColumns: { key: string; value: { name: string; statuses: string[] } }[];
   targetFields: { name: string; key: string; flag: boolean }[];
   users: string[];
@@ -64,6 +65,7 @@ export interface savedMetricsSettingState {
 }
 
 const initialState: savedMetricsSettingState = {
+  isBoarConfigDirty: false,
   jiraColumns: [],
   targetFields: [],
   users: [],
@@ -237,6 +239,10 @@ export const metricsSlice = createSlice({
             }
           : deploymentFrequencySetting;
       });
+    },
+
+    updateMetricsBoardDirtyStatus: (state, action) => {
+      state.isBoarConfigDirty = action.payload;
     },
 
     updateMetricsImportedData: (state, action) => {
@@ -473,7 +479,10 @@ export const {
   updatePipelineStep,
   setCycleTimeSettingsType,
   resetMetricData,
+  updateMetricsBoardDirtyStatus,
 } = metricsSlice.actions;
+
+export const selectMetricsBoardIsDirty = (state: RootState) => state.metrics.isBoarConfigDirty;
 
 export const selectDeploymentFrequencySettings = (state: RootState) => state.metrics.deploymentFrequencySettings;
 

@@ -1,5 +1,9 @@
+import {
+  saveTargetFields,
+  selectClassificationWarningMessage,
+  updateMetricsBoardDirtyStatus,
+} from '@src/context/Metrics/metricsSlice';
 import { TypedStyledAutocompleted, ITargetFieldType } from '@src/components/Common/MultiAutoComplete/styles';
-import { saveTargetFields, selectClassificationWarningMessage } from '@src/context/Metrics/metricsSlice';
 import { MetricsSettingTitle } from '@src/components/Common/MetricsSettingTitle';
 import { WarningNotification } from '@src/components/Common/WarningNotification';
 import { Checkbox, createFilterOptions, TextField } from '@mui/material';
@@ -37,7 +41,7 @@ export const Classification = ({ targetFields, title, label }: classificationPro
       ...targetField,
       flag: !!nextSelectedOptions.find((option) => option.key === targetField.key),
     }));
-
+    dispatch(updateMetricsBoardDirtyStatus(true));
     dispatch(saveTargetFields(updatedTargetFields));
   };
 

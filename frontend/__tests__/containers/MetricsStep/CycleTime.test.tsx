@@ -320,7 +320,7 @@ describe('CycleTime', () => {
     setup();
     await userEvent.click(screen.getByRole('radio', { name: cycleTimeTypeLabels[1] }));
 
-    expect(mockedUseAppDispatch).toHaveBeenCalledTimes(3);
+    expect(mockedUseAppDispatch).toHaveBeenCalledTimes(4);
     expect(mockedUseAppDispatch).toHaveBeenCalledWith(setCycleTimeSettingsType(CYCLE_TIME_SETTINGS_TYPES.BY_STATUS));
     expect(mockedUseAppDispatch).toHaveBeenCalledWith(
       updateCycleTimeSettings(

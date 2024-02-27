@@ -1,4 +1,8 @@
-import { selectAssigneeFilter, updateAssigneeFilter } from '@src/context/Metrics/metricsSlice';
+import {
+  selectAssigneeFilter,
+  updateAssigneeFilter,
+  updateMetricsBoardDirtyStatus,
+} from '@src/context/Metrics/metricsSlice';
 import { StyledRadioGroup } from '@src/containers/MetricsStep/Crews/style';
 import { useAppDispatch } from '@src/hooks/useAppDispatch';
 import { FormControlLabel, Radio } from '@mui/material';
@@ -11,6 +15,7 @@ export const AssigneeFilter = () => {
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     dispatch(updateAssigneeFilter(event.target.value));
+    dispatch(updateMetricsBoardDirtyStatus(true));
   };
 
   return (

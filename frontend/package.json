@@ -20,7 +20,7 @@
     "e2e:major": "pnpm run e2e --project='Google Chrome'",
     "e2e:ci": "dotenvx run --env-file=./e2e/.env.ci -- pnpm run e2e",
     "e2e:major-ci": "dotenvx run --env-file=./e2e/.env.ci -- pnpm run e2e:major",
-    "e2e:local": "dotenvx run --env-file=./e2e/.env.local -- pnpm run e2e",
+    "e2e:local": "dotenvx run --env-file=./e2e/.env.local -- pnpm run e2e:major",
     "e2e:with-server": "ts-node --project tsconfig.scripts.json ./scripts/runE2eWithServer.ts 'pnpm run e2e:local'",
     "e2e:ui": "dotenvx run --env-file=./e2e/.env.local -- pnpm exec playwright test --ui --headed",
     "e2e:report": "pnpm exec playwright show-report",

@@ -64,7 +64,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -88,10 +88,14 @@ public class JiraService {
 
 	public static final int QUERY_COUNT = 100;
 
+	public static final int NONE_DONE_MAX_QUERY_COUNT = 50;
+
 	public static final List<String> FIELDS_IGNORE = List.of("summary", "description", "attachment", "duedate",
 			"issuelinks", "Development", "Start date", "Rank", "Issue color");
 
 	private static final String DONE_CARD_TAG = "done";
+
+	private static final String NONE_DONE_CARD_TAG = "nonDone";
 
 	private final ThreadPoolTaskExecutor customTaskExecutor;
 
@@ -358,7 +362,7 @@ public class JiraService {
 			BoardRequestParam boardRequestParam) {
 		String jql = parseJiraJql(boardType, doneColumns, boardRequestParam);
 
-		return getCardList(baseUrl, boardRequestParam, jql, "done");
+		return getCardList(baseUrl, boardRequestParam, jql, "done", QUERY_COUNT);
 	}
 
 	private JiraCardWithFields getAllCards(BoardType boardType, URI baseUrl, BoardRequestParam boardRequestParam) {
@@ -370,7 +374,7 @@ public class JiraService {
 		else {
 			throw new BadRequestException("boardType param is not correct");
 		}
-		return getCardList(baseUrl, boardRequestParam, jql, "all");
+		return getCardList(baseUrl, boardRequestParam, jql, "all", QUERY_COUNT);
 	}
 
 	private AllCardsResponseDTO formatAllCards(String allCardResponse, List<TargetField> targetFields) {
@@ -446,9 +450,9 @@ public class JiraService {
 			jiraCards.get(index).getFields().setCustomFields(customFieldMapList.get(index));
 		}
 
-		for (int index = 0; index < jiraCards.size(); index++) {
-			String key = jiraCards.get(index).getKey();
-			jiraCards.get(index).getFields().setSprint(sprintMap.get(key));
+		for (JiraCard jiraCard : jiraCards) {
+			String key = jiraCard.getKey();
+			jiraCard.getFields().setSprint(sprintMap.get(key));
 		}
 		return allCardsResponseDTO;
 	}
@@ -745,9 +749,7 @@ public class JiraService {
 						stepsDay.setReview(stepsDay.getReview() + cycleTimeInfo.getDay());
 						total += cycleTimeInfo.getDay();
 					}
-					case ANALYSE -> {
-						stepsDay.setAnalyse(stepsDay.getAnalyse() + cycleTimeInfo.getDay());
-					}
+					case ANALYSE -> stepsDay.setAnalyse(stepsDay.getAnalyse() + cycleTimeInfo.getDay());
 					default -> {
 					}
 				}
@@ -870,31 +872,32 @@ public class JiraService {
 			BoardRequestParam boardRequestParam) {
 		String jql;
 		if (status.isEmpty()) {
-			jql = "sprint in openSprints() ";
+			jql = "sprint in openSprints() ORDER BY updated DESC";
 		}
 		else {
-			jql = "sprint in openSprints() AND status not in ('" + String.join("','", status) + "')";
+			jql = "sprint in openSprints() AND status not in ('" + String.join("','", status)
+					+ "') ORDER BY updated DESC";
 		}
 
-		return getCardList(baseUrl, boardRequestParam, jql, "nonDone");
+		return getCardList(baseUrl, boardRequestParam, jql, NONE_DONE_CARD_TAG, NONE_DONE_MAX_QUERY_COUNT);
 	}
 
 	private JiraCardWithFields getAllNonDoneCardsForKanBan(URI baseUrl, List<String> status,
 			BoardRequestParam boardRequestParam) {
 		String jql;
 		if (status.isEmpty()) {
-			jql = "";
+			jql = "ORDER BY updated DESC";
 		}
 		else {
-			jql = "status not in ('" + String.join("','", status) + "')";
+			jql = "status not in ('" + String.join("','", status) + "') ORDER BY updated DESC";
 		}
-		return getCardList(baseUrl, boardRequestParam, jql, "nonDone");
+		return getCardList(baseUrl, boardRequestParam, jql, NONE_DONE_CARD_TAG, NONE_DONE_MAX_QUERY_COUNT);
 	}
 
 	private JiraCardWithFields getCardList(URI baseUrl, BoardRequestParam boardRequestParam, String jql,
-			String cardType) {
+			String cardType, int queryCount) {
 		log.info("Start to get first-page xxx card information form kanban, _param {}", cardType);
-		String allCardResponse = jiraFeignClient.getJiraCards(baseUrl, boardRequestParam.getBoardId(), QUERY_COUNT, 0,
+		String allCardResponse = jiraFeignClient.getJiraCards(baseUrl, boardRequestParam.getBoardId(), queryCount, 0,
 				jql, boardRequestParam.getToken());
 		if (allCardResponse.isEmpty()) {
 			return JiraCardWithFields.builder().jiraCards(Collections.emptyList()).build();
@@ -904,9 +907,9 @@ public class JiraService {
 		List<TargetField> targetField = getTargetField(baseUrl, boardRequestParam);
 		AllCardsResponseDTO allCardsResponseDTO = formatAllCards(allCardResponse, targetField);
 
-		List<JiraCard> cards = new ArrayList<>(new HashSet<>(allCardsResponseDTO.getIssues()));
+		List<JiraCard> cards = new ArrayList<>(new LinkedHashSet<>(allCardsResponseDTO.getIssues()));
 		int pages = (int) Math.ceil(Double.parseDouble(allCardsResponseDTO.getTotal()) / QUERY_COUNT);
-		if (pages <= 1) {
+		if (cardType.equals(NONE_DONE_CARD_TAG) || pages <= 1) {
 			return JiraCardWithFields.builder().jiraCards(cards).targetFields(targetField).build();
 		}
 

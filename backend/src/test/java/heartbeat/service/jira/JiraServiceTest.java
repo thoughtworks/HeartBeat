@@ -52,6 +52,7 @@ import java.util.concurrent.CompletionException;
 
 import static heartbeat.controller.board.BoardRequestFixture.BOARD_REQUEST_BUILDER;
 import static heartbeat.controller.board.dto.request.BoardVerifyRequestFixture.BOARD_VERIFY_REQUEST_BUILDER;
+import static heartbeat.service.board.jira.JiraService.NONE_DONE_MAX_QUERY_COUNT;
 import static heartbeat.service.board.jira.JiraService.QUERY_COUNT;
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.ALL_DONE_CARDS_RESPONSE_FOR_ASSIGNEE_FILTER_TEST;
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.ALL_DONE_CARDS_RESPONSE_FOR_MULTIPLE_STATUS;
@@ -512,7 +513,6 @@ class JiraServiceTest {
 	void shouldCallJiraFeignClientAndThrowNotFoundExceptionWhenGetJiraBoardConfig() throws JsonProcessingException {
 		JiraBoardConfigDTO jiraBoardConfigDTO = JIRA_BOARD_CONFIG_RESPONSE_BUILDER().build();
 		StatusSelfDTO doneStatusSelf = DONE_STATUS_SELF_RESPONSE_BUILDER().build();
-		StatusSelfDTO doingStatusSelf = DOING_STATUS_SELF_RESPONSE_BUILDER().build();
 		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
 		String token = "token";
 		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().build();
@@ -1202,14 +1202,14 @@ class JiraServiceTest {
 		StoryPointsAndCycleTimeRequest storyPointsAndCycleTimeRequest = STORY_POINTS_FORM_ALL_DONE_CARD().build();
 		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().build();
 		String jqlForKanban = "status not in ('" + String.join("','", storyPointsAndCycleTimeRequest.getStatus())
-				+ "')";
+				+ "') ORDER BY updated DESC";
 		String jqlForActiveSprint = "sprint in openSprints() AND status not in ('"
-				+ String.join("','", storyPointsAndCycleTimeRequest.getStatus()) + "')";
+				+ String.join("','", storyPointsAndCycleTimeRequest.getStatus()) + "') ORDER BY updated DESC";
 		when(urlGenerator.getUri(any())).thenReturn(baseUrl);
-		when(jiraFeignClient.getJiraCards(baseUrl, BOARD_ID, QUERY_COUNT, 0, jqlForActiveSprint,
+		when(jiraFeignClient.getJiraCards(baseUrl, BOARD_ID, NONE_DONE_MAX_QUERY_COUNT, 0, jqlForActiveSprint,
 				boardRequestParam.getToken()))
 			.thenReturn("");
-		when(jiraFeignClient.getJiraCards(baseUrl, BOARD_ID, QUERY_COUNT, 0, jqlForKanban,
+		when(jiraFeignClient.getJiraCards(baseUrl, BOARD_ID, NONE_DONE_MAX_QUERY_COUNT, 0, jqlForKanban,
 				boardRequestParam.getToken()))
 			.thenReturn(objectMapper.writeValueAsString(ALL_NON_DONE_CARDS_RESPONSE_FOR_STORY_POINT_BUILDER().build()));
 
@@ -1232,13 +1232,13 @@ class JiraServiceTest {
 		StoryPointsAndCycleTimeRequest storyPointsAndCycleTimeRequest = STORY_POINTS_FORM_ALL_DONE_CARD_WITH_EMPTY_STATUS()
 			.build();
 		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().build();
-		String jqlForKanban = "";
-		String jqlForActiveSprint = "sprint in openSprints() ";
+		String jqlForKanban = "ORDER BY updated DESC";
+		String jqlForActiveSprint = "sprint in openSprints() ORDER BY updated DESC";
 		when(urlGenerator.getUri(any())).thenReturn(baseUrl);
-		when(jiraFeignClient.getJiraCards(baseUrl, BOARD_ID, QUERY_COUNT, 0, jqlForActiveSprint,
+		when(jiraFeignClient.getJiraCards(baseUrl, BOARD_ID, NONE_DONE_MAX_QUERY_COUNT, 0, jqlForActiveSprint,
 				boardRequestParam.getToken()))
 			.thenReturn("");
-		when(jiraFeignClient.getJiraCards(baseUrl, BOARD_ID, QUERY_COUNT, 0, jqlForKanban,
+		when(jiraFeignClient.getJiraCards(baseUrl, BOARD_ID, NONE_DONE_MAX_QUERY_COUNT, 0, jqlForKanban,
 				boardRequestParam.getToken()))
 			.thenReturn(objectMapper.writeValueAsString(ALL_NON_DONE_CARDS_RESPONSE_FOR_STORY_POINT_BUILDER().build()));
 
@@ -1260,10 +1260,10 @@ class JiraServiceTest {
 		StoryPointsAndCycleTimeRequest storyPointsAndCycleTimeRequest = STORY_POINTS_FORM_ALL_DONE_CARD_WITH_EMPTY_STATUS()
 			.build();
 		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().build();
-		String jqlForActiveSprint = "sprint in openSprints() ";
+		String jqlForActiveSprint = "sprint in openSprints() ORDER BY updated DESC";
 		String allDoneCards = JiraBoardConfigDTOFixture.JIRA_CARD_WITH_TWO_SPRINT;
 		when(urlGenerator.getUri(any())).thenReturn(baseUrl);
-		when(jiraFeignClient.getJiraCards(baseUrl, BOARD_ID, QUERY_COUNT, 0, jqlForActiveSprint,
+		when(jiraFeignClient.getJiraCards(baseUrl, BOARD_ID, NONE_DONE_MAX_QUERY_COUNT, 0, jqlForActiveSprint,
 				boardRequestParam.getToken()))
 			.thenReturn(allDoneCards);
 		when(jiraFeignClient.getTargetField(any(), any(), any())).thenReturn(ALL_FIELD_RESPONSE_BUILDER().build());

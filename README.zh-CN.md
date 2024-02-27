@@ -194,11 +194,13 @@ _Image 3-15，Change Failure Rate Report_
 
 ### 3.4.1 导出看板数据 / Export board data
 
-本功能会导出看板数据到 csv 文件，该文件包含两个部分：
+本功能会导出看板数据到 csv 文件
 
-**Part 1:** 在所选择时间段内所有的 Jira Ticket
+#### 3.4.1.1 导出已完成card
+在所选择时间段内导出所有已完成的card
 
-**Part 2:** 在所选时间段内所有未完成的 Jira Ticket，并且会根据状态进行排序。(Image 3-16)
+#### 3.4.1.2 导出未完成card
+在所选时间段内拉取最新修改的50张cards，导出时先根据heartBeat的状态排序，然后再根据最近状态改变时间排序。(Image 3-16)
 
 ![Image 3-16](https://user-images.githubusercontent.com/995849/89784291-01f3b380-db4b-11ea-8f5a-d475e80014fb.png)\
 _Image 3-16，Exported Board Data_

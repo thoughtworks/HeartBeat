@@ -394,7 +394,7 @@ public class JiraService {
 		for (JsonElement element : elements) {
 			JsonObject jsonElement = element.getAsJsonObject().get("fields").getAsJsonObject();
 			JsonElement storyPoints = jsonElement.getAsJsonObject().get(cardCustomFieldKey.getStoryPoints());
-			if (storyPoints == null || storyPoints.isJsonNull()) {
+			if (storyPoints == null || storyPoints.isJsonNull() || cardCustomFieldKey.isInTargetField()) {
 				storyPointList.add(0.0);
 			}
 			else {
@@ -794,6 +794,8 @@ public class JiraService {
 
 			if (!storyPointsKey.isEmpty()) {
 				cardCustomFieldKey.setStoryPoints(storyPointsKey);
+				cardCustomFieldKey
+					.setInTargetField(model.stream().map(TargetField::getKey).toList().contains(storyPointsKey));
 			}
 			if (!flaggedKey.isEmpty()) {
 				cardCustomFieldKey.setFlagged(flaggedKey);

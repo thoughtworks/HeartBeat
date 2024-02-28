@@ -10,6 +10,7 @@ import { useAppSelector } from '@src/hooks';
 import { useState } from 'react';
 
 export const Advance = () => {
+  const url = 'https://github.com/au-heartbeat/Heartbeat/blob/main/README.md';
   const dispatch = useAppDispatch();
   const advancedSettings = useAppSelector(selectAdvancedSettings);
   const [open, setOpen] = useState(!!advancedSettings);
@@ -77,25 +78,30 @@ export const Advance = () => {
               </IconButton>
             </StyledTooltip>
           </TooltipContainer>
-          <Link underline='none'>how to set up?</Link>
         </TitleAndTooltipContainer>
       </AdvancedContainer>
 
       {open && (
-        <AdvancedForm>
-          {fields.map(({ key, col, value }, index) => (
-            <TextField
-              variant='standard'
-              sx={{ gridColumn: `span ${col}` }}
-              key={index}
-              label={key}
-              value={value}
-              data-testid={key}
-              inputProps={{ 'aria-label': `input ${key}` }}
-              onChange={(e) => updateField(key, e.target.value)}
-            />
-          ))}
-        </AdvancedForm>
+        <>
+          <AdvancedForm>
+            {fields.map(({ key, col, value }, index) => (
+              <TextField
+                variant='standard'
+                sx={{ gridColumn: `span ${col}` }}
+                key={index}
+                label={key}
+                value={value}
+                data-testid={key}
+                inputProps={{ 'aria-label': `input ${key}` }}
+                onChange={(e) => updateField(key, e.target.value)}
+                placeholder={'Customized filed key'}
+              />
+            ))}
+          </AdvancedForm>
+          <Link underline='none' href={url} target='_blank' rel='noopener'>
+            how to setup
+          </Link>
+        </>
       )}
     </>
   );

@@ -1,0 +1,435 @@
+---
+title: GitHub GraphQL API about replacing existing REST API
+description: GitHub GraphQL API about replacing existing REST API
+---
+
+## Background
+
+Currently, our GitHub API are all REST API, and the REST API has the problem of over-fetching or multiple requests.
+
+## Expect
+
+We want to use the GraphQL API to retrieve the key information we need. With the data obtained this way, we can calculate related metrics.
+
+## Solutions
+
+### 1、Endpoint
+
+The GraphQL API endpoint is `https://api.github.com/graphql`. All requests must be HTTP `POST` requests with `application/json` encoded bodies.
+
+### 2、Authentication
+
+Pass the token in your GraphQL request using the `Authorization` HTTP header with a value `token <token>`.
+
+### 3、Using GitHub GraphQL to replace REST
+
+#### 3.1. Verify the GitHub token
+
+##### 3.1.1 Replaced API and Method local
+
+- Replaced api
+
+```
+GET：https://api.github.com/octocat
+```
+
+- Method local
+
+```
+GitHubFeignClient.verifyToken
+```
+
+##### 3.1.2 API replaced by
+
+```
+query {
+  viewer {
+    login
+  }
+}
+```
+
+- The meaning of response status 
+
+| response status | mean                |
+|-----------------|---------------------|
+| 200             | Verification passed |
+| 401             | Verification failed |
+
+#### 3.2. Verify the GitHub branch
+
+##### 3.1.1 Replaced API and Method local
+
+- Replaced api
+
+```
+GET：https://api.github.com/repos/{repository}/branches/{branchName}
+```
+
+- Method local
+
+```
+GitHubFeignClient.verifyCanReadTargetBranch
+```
+
+##### 3.1.2 API replaced by
+
+```
+query { 
+  repository(owner: string, name: string) { 
+    ref(qualifiedName: "refs/heads/branchName: string") { 
+      name
+    }
+  }
+}
+```
+
+- Required value and demo
+
+| Required value |  explain    | demo         |
+|----------------|-------------|--------------|
+| owner          | owner       | au-heartbeat |
+| name           | repo        | Heartbeat    |
+| branchName     | branch name | main         |
+
+if you want to get `main` branch for `au-heartbeat/Heartbeat`, you can use as following.
+
+```
+query { 
+  repository(owner: "au-heartbeat", name: "Heartbeat") { 
+    ref(qualifiedName: "refs/heads/main") {
+      name
+    }
+  }
+}
+```
+
+- The meaning of response status
+
+| response status | mean                                |
+|-----------------|-------------------------------------|
+| 200             | branch verification passed / failed |
+| 401             | Token verification failed           |
+
+if branch verification success，you will get response with ref have branch name.
+
+```
+status: 200
+
+response:
+{
+	"data": {
+		"repository": {
+			"ref": {
+				"name": "main"
+			}
+		}
+	}
+}
+```
+
+if the token can't get target branch，you will get response with ref is null.
+
+```
+status: 200
+
+response:
+{
+	"data": {
+		"repository": {
+			"ref": null
+		}
+	}
+}
+```
+
+if the token can‘t get repository，you will get response with repository is null.
+
+```
+status: 200
+
+response:
+{
+	"data": {
+		"repository": null
+	}
+}
+```
+
+
+#### 3.3. Get commit info by commit id
+
+##### 3.3.1 Replaced API and Method local
+
+Replaced api
+
+```
+GET：https://api.github.com/repos/{repository}/commits/{commitId}
+```
+
+Method local
+
+```
+GitHubFeignClient.getCommitInfo
+```
+
+##### 3.3.2 API replaced by
+
+To get information about a specific configuration in the `{OWNER}/{REPO}` repository, you can use the following GraphQL query.
+
+```
+query {
+  repository (owner: string, name: string) {
+		commit: object(oid: string) {
+			... on Commit {
+				message
+				author {
+					name
+					email
+					date
+				}
+				committer {
+					name
+					email
+					date
+				}
+			}
+		}
+  }
+}
+```
+
+- Required value and demo
+
+| Required value |  explain  |     demo                                 |
+|----------------|-----------|------------------------------------------|
+| owner          | owner     | au-heartbeat                             |
+| name           | repo      | Heartbeat                                |
+| oid            | commit id | 414e*********************************ae6 |
+
+if you want to get target commit for `au-heartbeat/Heartbeat`, you can use as following.
+
+```
+query {
+  repository (owner: "au-heartbeat", name: "Heartbeat") {
+		commit: object(oid: "414e*********************************ae6") {
+			... on Commit {
+				message
+				author {
+					name
+					email
+					date
+				}
+				committer {
+					name
+					email
+					date
+				}
+			}
+		}
+  }
+}
+```
+
+#### 3.4. Get commit info list by pull request
+
+##### 3.4.1 Replaced API and Method local
+
+Replaced api
+
+```
+GET：https://api.github.com/repos/{repository}/pulls/{mergedPullNumber}/commits
+```
+
+Method local
+
+```
+GitHubFeignClient.getPullRequestCommitInfo
+```
+
+##### 3.4.2 API replaced by
+
+To get information about a specific configuration in the `{OWNER}/{REPO}` repository, you can use the following GraphQL query.
+
+```
+query {
+  repository(owner: string, name: string) {
+    pullRequest(number: int) {
+      commits(first: int, after: string) {
+        edges {
+          node {
+            commit {
+              message
+              author {
+                name
+                email
+                date
+              }
+						  committer {
+                name
+                email
+                date
+              }
+            }
+          }
+        }
+				pageInfo {
+					endCursor
+          hasNextPage
+        }
+      }
+    }
+  }
+}
+```
+
+- Required value and demo
+
+| Required value |  explain        | demo         |
+|----------------|-----------------|--------------|
+| owner          | owner           | au-heartbeat |
+| name           | repo            | Heartbeat    |
+| number         | pull request id | 1000         |
+| first          | per page num    | 100          |
+| after          | endCursor       | MQ           |
+
+You can put `endCursor` in `after` to get next page.
+
+#### 3.5. Get pull request list info
+
+##### 3.5.1 Replaced API and Method local
+
+- Replaced api
+
+```
+GET：https://api.github.com/repos/{repository}/commits/{deployId}/pulls
+```
+
+- Method local
+
+```
+GitHubFeignClient.getPullRequestListInfo
+```
+
+##### 3.5.2 API replaced by
+
+To get information about a specific configuration in the `{OWNER}/{REPO}` repository, you can use the following GraphQL query.
+
+```
+query {
+  repository (owner: string, name: string) {
+		commit: object(oid: string) {
+			... on Commit {
+				associatedPullRequests(first: int, after: string) {
+					nodes {
+						number
+						createdAt
+						mergedAt
+						mergeCommit {
+							oid
+						}
+					}
+				pageInfo {
+					endCursor
+          hasNextPage
+        }
+				}
+				}
+			}
+		}
+  }
+```
+
+- Required value and demo
+
+| Required value |  explain     | demo                                     |
+|----------------|--------------|------------------------------------------|
+| owner          | owner        | au-heartbeat                             |
+| name           | repo         | Heartbeat                                |
+| oid            | commit id    | 414e*********************************ae6 |
+| first          | per page num | 100                                      |
+| after          | endCursor    | MQ                                       |
+
+You can put `endCursor` in `after` to get next page.
+
+### 4、How to call GraphQL in code
+
+- Call api by curl
+
+By the demo, if you want to call graphQL, you need to pass a member variable to the api as a query object.
+
+```
+curl --request POST \
+  --url https://api.github.com/graphql \
+  --header 'Authorization: token ghp_***...***' \
+  --header 'content-type: application/json' \
+  --data '{"query": "query {viewer {login}}"}'
+```
+
+### 5、Api merge
+
+`getPullRequestListInfo` api and `getPullRequestCommitInfo` can merge to one api.
+
+we can use commit id to get all pull request and then get all commit list by pull request.
+
+```
+query {
+  repository(owner: string, name: string) {
+    object(expression: string) {
+      ... on Commit {
+        associatedPullRequests(first: int, after: int) {
+          edges {
+            node {
+							number
+							createdAt
+							mergedAt
+							mergeCommit {
+								oid
+							}
+              commits(first: int, after: int) {
+                edges {
+                  node {
+                    commit {
+                      message
+                      author {
+                        name
+                        email
+                        date
+                      }
+											committer {
+												name
+												email
+												date
+											}
+                    }
+                  }
+                }
+								pageInfo {
+									endCursor
+									hasNextPage
+								}
+              }
+            }
+          }
+					pageInfo {
+						endCursor
+						hasNextPage
+					}
+				}
+      }
+    }
+  }
+}
+```
+
+- Required value and demo
+
+| Required value |  explain     | demo                                     |
+|----------------|--------------|------------------------------------------|
+| owner          | owner        | au-heartbeat                             |
+| name           | repo         | Heartbeat                                |
+| expression     | commit id    | 414e*********************************ae6 |
+| first          | per page num | 100                                      |
+| after          | endCursor    | MQ                                       |
+
+You can put `endCursor` in `after` to get next page.

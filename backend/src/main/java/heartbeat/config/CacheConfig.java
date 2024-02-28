@@ -59,7 +59,13 @@ public class CacheConfig {
 
 	@SuppressWarnings("unchecked")
 	private <K, V> javax.cache.configuration.Configuration<K, V> getCacheConfiguration(Class<V> valueType) {
-		ResourcePoolsBuilder offHeap = ResourcePoolsBuilder.newResourcePoolsBuilder().offheap(2, MemoryUnit.MB);
+		ResourcePoolsBuilder offHeap;
+		if (valueType == String.class) {
+			offHeap = ResourcePoolsBuilder.newResourcePoolsBuilder().offheap(4, MemoryUnit.MB);
+		}
+		else {
+			offHeap = ResourcePoolsBuilder.newResourcePoolsBuilder().offheap(2, MemoryUnit.MB);
+		}
 		Duration timeToLive;
 		if (valueType == HolidaysResponseDTO.class) {
 			timeToLive = Duration.ofSeconds(300);

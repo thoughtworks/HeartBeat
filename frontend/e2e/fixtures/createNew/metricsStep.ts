@@ -87,6 +87,7 @@ export const config = {
     'customfield_10027',
     'customfield_10060',
   ],
+  advancedSettings: null,
   deployment: [
     {
       id: 0,

@@ -64,6 +64,7 @@ const BoardMetrics = ({
     targetFields,
     doneColumn,
     assigneeFilter,
+    importedData: { importedAdvancedSettings },
   } = useAppSelector(selectMetricsContent);
 
   const { metrics, calendarType } = configData.basic;
@@ -93,6 +94,18 @@ const BoardMetrics = ({
         assigneeFilter,
         targetFields: formatDuplicatedNameWithSuffix(targetFields),
         doneColumn: getRealDoneStatus(cycleTimeSettings, cycleTimeSettingsType, doneColumn),
+        overrideFields: [
+          {
+            name: 'Story Points',
+            key: importedAdvancedSettings?.storyPoint ?? '',
+            flag: true,
+          },
+          {
+            name: 'Flagged',
+            key: importedAdvancedSettings?.flag ?? '',
+            flag: true,
+          },
+        ],
       },
       csvTimeStamp: csvTimeStamp,
     };

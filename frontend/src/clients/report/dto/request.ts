@@ -43,6 +43,7 @@ export interface ReportRequestDTO {
     users: string[];
     assigneeFilter: string;
     targetFields: { key: string; name: string; flag: boolean }[];
+    overrideFields: { key: string; name: string; flag: boolean }[];
     doneColumn: string[];
   };
   csvTimeStamp?: number;
@@ -64,6 +65,7 @@ export interface BoardReportRequestDTO {
     users: string[];
     assigneeFilter: string;
     targetFields: { key: string; name: string; flag: boolean }[];
+    overrideFields: { key: string; name: string; flag: boolean }[];
     doneColumn: string[];
   };
   csvTimeStamp?: number;

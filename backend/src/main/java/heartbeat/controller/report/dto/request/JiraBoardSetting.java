@@ -37,4 +37,6 @@ public class JiraBoardSetting {
 
 	private List<TargetField> targetFields;
 
+	private List<TargetField> overrideFields;
+
 }

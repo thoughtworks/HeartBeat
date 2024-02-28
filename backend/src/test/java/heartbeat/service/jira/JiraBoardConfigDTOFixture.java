@@ -348,6 +348,24 @@ public class JiraBoardConfigDTOFixture {
 		return FieldResponseDTO.builder().projects(List.of(new Project(List.of(new Issuetype(issueFieldMap)))));
 	}
 
+	public static FieldResponseDTO.FieldResponseDTOBuilder ALL_FIELD_RESPONSE_BUILDER_HAS_STORY_POINT() {
+		IssueField timetrackingIssueField = new IssueField("timetracking", "Time tracking");
+		IssueField summaryIssueField = new IssueField("summary", "Summary");
+		IssueField descriptionIssueField = new IssueField("description", "Description");
+		IssueField priorityIssueField = new IssueField("priority", "Priority");
+		IssueField flaggedIssueField = new IssueField("customfield_10021", "Flagged");
+		IssueField storyPointIssueField = new IssueField("customfield_10006", "story points");
+		HashMap<String, IssueField> issueFieldMap = new HashMap<>();
+		issueFieldMap.put("timetracking", timetrackingIssueField);
+		issueFieldMap.put("summary", summaryIssueField);
+		issueFieldMap.put("description", descriptionIssueField);
+		issueFieldMap.put("priority", priorityIssueField);
+		issueFieldMap.put("customfield_10021", flaggedIssueField);
+		issueFieldMap.put("customfield_10006", storyPointIssueField);
+
+		return FieldResponseDTO.builder().projects(List.of(new Project(List.of(new Issuetype(issueFieldMap)))));
+	}
+
 	public static FieldResponseDTO.FieldResponseDTOBuilder INCLUDE_UNREASONABLE_FIELD_RESPONSE_BUILDER() {
 		IssueField timetrackingIssueField = new IssueField("timetracking", "Time tracking");
 		IssueField priorityIssueField = new IssueField("priority", "Priority");
@@ -570,7 +588,7 @@ public class JiraBoardConfigDTOFixture {
 				CycleTimeInfo.builder().column("REVIEW").day(4.0).build(),
 				CycleTimeInfo.builder().column("ANALYSIS").day(9.0).build(),
 				CycleTimeInfo.builder().column(UNKNOWN).day(5.0).build(),
-				CycleTimeInfo.builder().column(FLAG).day(6.0).build());
+				CycleTimeInfo.builder().column("BLOCK").day(6.0).build());
 	}
 
 	public static JiraBoardSetting.JiraBoardSettingBuilder JIRA_BOARD_SETTING_WITH_HISTORICAL_ASSIGNEE_FILTER_METHOD() {

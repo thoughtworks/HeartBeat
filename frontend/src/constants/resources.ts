@@ -155,6 +155,8 @@ export const TIPS = {
   SAVE_CONFIG:
     'Note: When you save the settings, some tokens might be saved, please save it safely (e.g. by 1 password, vault), Rotate the tokens regularly. (e.g. every 3 months)',
   CYCLE_TIME: 'The report page will sum all the status in the column for cycletime calculation',
+  ADVANCE:
+    'If the story point and block related values in the board data are 0 due to token permissions or other reasons, please manually enter the corresponding customized field key.Otherwise, please ignore it.',
 };
 
 export enum VELOCITY_METRICS_NAME {

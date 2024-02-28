@@ -205,6 +205,7 @@ const MetricsStepper = () => {
       cycleTimeSettingsType,
       treatFlagCardAsBlock,
       assigneeFilter,
+      importedData,
     } = filterMetricsConfig(metricsConfig);
 
     const metricsData = {
@@ -231,6 +232,7 @@ const MetricsStepper = () => {
       classification: targetFields
         ?.filter((item: { name: string; key: string; flag: boolean }) => item.flag)
         ?.map((item: { name: string; key: string; flag: boolean }) => item.key),
+      advancedSettings: importedData.importedAdvancedSettings,
       deployment: deploymentFrequencySettings,
       leadTime: leadTimeForChanges,
     };

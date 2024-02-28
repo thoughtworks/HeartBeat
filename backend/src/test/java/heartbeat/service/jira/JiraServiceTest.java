@@ -59,6 +59,7 @@ import static heartbeat.service.jira.JiraBoardConfigDTOFixture.ALL_DONE_CARDS_RE
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.ALL_DONE_CARDS_RESPONSE_FOR_STORY_POINT_BUILDER;
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.ALL_DONE_TWO_PAGES_CARDS_RESPONSE_BUILDER;
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.ALL_FIELD_RESPONSE_BUILDER;
+import static heartbeat.service.jira.JiraBoardConfigDTOFixture.ALL_FIELD_RESPONSE_BUILDER_HAS_STORY_POINT;
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.ALL_NON_DONE_CARDS_RESPONSE_FOR_STORY_POINT_BUILDER;
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.ALL_REAL_DONE_CARDS_RESPONSE_FOR_STORY_POINT_BUILDER;
 import static heartbeat.service.jira.JiraBoardConfigDTOFixture.BOARD_ID;
@@ -662,7 +663,8 @@ class JiraServiceTest {
 	}
 
 	@Test
-	void shouldGetCardsWhenCallGetStoryPointsAndCycleTimeGiveStoryPointKey() throws JsonProcessingException {
+	void shouldGetCardsWhenCallGetStoryPointsAndCycleTimeGivenStoryPointKeyFromEnvironmentVariable()
+			throws JsonProcessingException {
 		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
 		String token = "token";
 		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().build();
@@ -685,8 +687,12 @@ class JiraServiceTest {
 		when(jiraFeignClient.getTargetField(baseUrl, "PLL", token)).thenReturn(ALL_FIELD_RESPONSE_BUILDER().build());
 		when(systemUtil.getEnvMap()).thenReturn(envMap);
 
-		StoryPointsAndCycleTimeRequest storyPointsAndCycleTimeRequest = STORY_POINTS_FORM_ALL_DONE_CARD().build();
 		JiraBoardSetting jiraBoardSetting = JIRA_BOARD_SETTING_BUILD().build();
+		jiraBoardSetting
+			.setOverrideFields(List.of(TargetField.builder().key("").name("Story Points").flag(true).build(),
+					TargetField.builder().key("").name("Flagged").flag(true).build()));
+		StoryPointsAndCycleTimeRequest storyPointsAndCycleTimeRequest = STORY_POINTS_FORM_ALL_DONE_CARD().build();
+		storyPointsAndCycleTimeRequest.setOverrideFields(jiraBoardSetting.getOverrideFields());
 		CardCollection cardCollection = jiraService.getStoryPointsAndCycleTimeForDoneCards(
 				storyPointsAndCycleTimeRequest, jiraBoardSetting.getBoardColumns(), List.of("Zhang San"), "");
 
@@ -695,7 +701,8 @@ class JiraServiceTest {
 	}
 
 	@Test
-	void shouldGetCardsWhenCallGetStoryPointsRealDoneAndCycleTimeGiveStoryPointKey() throws JsonProcessingException {
+	void shouldGetCardsWhenCallGetStoryPointsRealDoneAndCycleTimeGivenStoryPointKeyFromEnvironmentVariable()
+			throws JsonProcessingException {
 		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
 		String token = "token";
 		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().build();
@@ -726,6 +733,43 @@ class JiraServiceTest {
 
 		assertThat(cardCollection.getStoryPointSum()).isEqualTo(5);
 		assertThat(cardCollection.getCardsNumber()).isEqualTo(1);
+	}
+
+	@Test
+	void shouldGetCardsWhenCallGetStoryPointsAndCycleTimeGivenNotEmptyStoryPointKeyAndFlaggedFromOverrideFields()
+			throws JsonProcessingException {
+		URI baseUrl = URI.create(SITE_ATLASSIAN_NET);
+		String token = "token";
+		BoardRequestParam boardRequestParam = BOARD_REQUEST_BUILDER().build();
+		String jql = String.format("status in ('%s') AND status changed during (%s, %s)", "DONE",
+				boardRequestParam.getStartTime(), boardRequestParam.getEndTime());
+
+		String allDoneCards = objectMapper.writeValueAsString(ALL_DONE_CARDS_RESPONSE_FOR_STORY_POINT_BUILDER().build())
+			.replaceAll("\"storyPoints\":0", "\"customfield_10016\":null")
+			.replaceAll("storyPoints", "customfield_10016");
+
+		when(urlGenerator.getUri(any())).thenReturn(baseUrl);
+		when(jiraFeignClient.getJiraCards(baseUrl, BOARD_ID, QUERY_COUNT, 0, jql, boardRequestParam.getToken()))
+			.thenReturn(allDoneCards);
+		when(jiraFeignClient.getJiraCardHistoryByCount(baseUrl, "1", 0, 100, token))
+			.thenReturn(CARD_HISTORY_MULTI_RESPONSE_BUILDER().build());
+		when(jiraFeignClient.getJiraCardHistoryByCount(baseUrl, "2", 0, 100, token))
+			.thenReturn(CARD_HISTORY_RESPONSE_BUILDER().build());
+		when(jiraFeignClient.getTargetField(baseUrl, "PLL", token))
+			.thenReturn(ALL_FIELD_RESPONSE_BUILDER_HAS_STORY_POINT().build());
+		when(systemUtil.getEnvMap()).thenReturn(Map.of());
+
+		JiraBoardSetting jiraBoardSetting = JIRA_BOARD_SETTING_BUILD().build();
+		jiraBoardSetting.setOverrideFields(
+				List.of(TargetField.builder().key("customfield_10016").name("Story Points").flag(true).build(),
+						TargetField.builder().key("customfield_10017").name("Flagged").flag(true).build()));
+		StoryPointsAndCycleTimeRequest storyPointsAndCycleTimeRequest = STORY_POINTS_FORM_ALL_DONE_CARD().build();
+		storyPointsAndCycleTimeRequest.setOverrideFields(jiraBoardSetting.getOverrideFields());
+		CardCollection cardCollection = jiraService.getStoryPointsAndCycleTimeForDoneCards(
+				storyPointsAndCycleTimeRequest, jiraBoardSetting.getBoardColumns(), List.of("Zhang San"), "");
+
+		assertThat(cardCollection.getStoryPointSum()).isEqualTo(11);
+		assertThat(cardCollection.getCardsNumber()).isEqualTo(4);
 	}
 
 	@Test

@@ -58,6 +58,7 @@ public class KanbanService {
 			.startTime(startTime)
 			.endTime(endTime)
 			.targetFields(jiraBoardSetting.getTargetFields())
+			.overrideFields(jiraBoardSetting.getOverrideFields())
 			.treatFlagCardAsBlock(jiraBoardSetting.getTreatFlagCardAsBlock())
 			.build();
 	}

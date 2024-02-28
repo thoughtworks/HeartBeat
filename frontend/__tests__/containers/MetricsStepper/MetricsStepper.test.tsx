@@ -334,6 +334,7 @@ describe('MetricsStepper', () => {
   it('should export json file when click save button in metrics page given all content is empty', async () => {
     const expectedFileName = 'config';
     const expectedJson = {
+      advancedSettings: null,
       assigneeFilter: ASSIGNEE_FILTER_TYPES.LAST_ASSIGNEE,
       board: { boardId: '', email: '', site: '', token: '', type: 'Jira' },
       calendarType: 'Regular Calendar(Weekend Considered)',
@@ -364,6 +365,7 @@ describe('MetricsStepper', () => {
   it('should export json file when click save button in report page given all content is empty', async () => {
     const expectedFileName = 'config';
     const expectedJson = {
+      advancedSettings: null,
       assigneeFilter: ASSIGNEE_FILTER_TYPES.LAST_ASSIGNEE,
       board: { boardId: '', email: '', site: '', token: '', type: 'Jira' },
       calendarType: 'Regular Calendar(Weekend Considered)',

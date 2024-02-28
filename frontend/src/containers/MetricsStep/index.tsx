@@ -30,6 +30,7 @@ import { useAppSelector, useAppDispatch } from '@src/hooks';
 import { Crews } from '@src/containers/MetricsStep/Crews';
 import { useCallback, useLayoutEffect } from 'react';
 import { Loading } from '@src/components/Loading';
+import { Advance } from './Advance/Advance';
 import isEmpty from 'lodash/isEmpty';
 import merge from 'lodash/merge';
 import dayjs from 'dayjs';
@@ -108,6 +109,7 @@ const MetricsStep = () => {
                   label={'Distinguished By'}
                 />
               )}
+              <Advance />
             </>
           ) : (
             <EmptyContent

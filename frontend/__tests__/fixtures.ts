@@ -204,6 +204,7 @@ export const MOCK_GENERATE_REPORT_REQUEST_PARAMS: ReportRequestDTO = {
     assigneeFilter: 'lastAssignee',
     targetFields: [{ key: 'parent', name: 'Parent', flag: false }],
     doneColumn: ['Done'],
+    overrideFields: [{ key: '123', name: 'Story Point', flag: true }],
   },
 };
 
@@ -740,3 +741,5 @@ export const MOCK_SOURCE_CONTROL_VERIFY_ERROR_CASE_TEXT = 'Token is incorrect!';
 export const FAKE_TOKEN = 'fake-token';
 
 export const FAKE_PIPELINE_TOKEN = 'bkua_mockTokenMockTokenMockTokenMockToken1234';
+
+export const ADVANCED_SETTINGS_TITLE = 'Advanced settings';

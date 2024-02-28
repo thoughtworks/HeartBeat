@@ -32,6 +32,8 @@ public class StoryPointsAndCycleTimeRequest {
 
 	private List<TargetField> targetFields;
 
+	private List<TargetField> overrideFields;
+
 	private boolean treatFlagCardAsBlock;
 
 }

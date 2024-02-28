@@ -186,7 +186,7 @@ class AsyncMetricsDataHandlerTest {
 	class GetReportReadyStatusByTimeStamp {
 
 		@Test
-		void shouldGetReadyFalseAndAllMetricsReadyTrueGivenPreviousMetricsStatusIsNull() throws IOException {
+		void shouldGetReadyFalseAndAllMetricsReadyFalseGivenPreviousMetricsStatusIsNull() throws IOException {
 			long currentTimeMillis = System.currentTimeMillis();
 			String currentTime = Long.toString(currentTimeMillis);
 
@@ -194,7 +194,7 @@ class AsyncMetricsDataHandlerTest {
 
 			assertEquals(false, result.isBoardReady());
 			assertEquals(false, result.isDoraReady());
-			assertEquals(true, result.isAllMetricsReady());
+			assertEquals(false, result.isAllMetricsReady());
 			Files.deleteIfExists(Path.of(APP_OUTPUT_METRICS + "/" + currentTime));
 			assertNull(asyncMetricsDataHandler.getMetricsDataCompleted(currentTime));
 		}

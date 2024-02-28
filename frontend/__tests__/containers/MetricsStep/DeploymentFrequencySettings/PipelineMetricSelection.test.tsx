@@ -10,9 +10,8 @@ import {
   STEP,
 } from '@test/fixtures';
 import { PipelineMetricSelection } from '@src/containers/MetricsStep/DeploymentFrequencySettings/PipelineMetricSelection';
-import { updatePipelineToolVerifyResponseSteps } from '@src/context/config/configSlice';
+import { IPipelineConfig, updateShouldGetPipelineConfig } from '@src/context/Metrics/metricsSlice';
 import { act, render, screen, waitFor, within } from '@testing-library/react';
-import { IPipelineConfig } from '@src/context/Metrics/metricsSlice';
 import { metricsClient } from '@src/clients/MetricsClient';
 import { setupStore } from '@test/utils/setupStoreUtil';
 import userEvent from '@testing-library/user-event';
@@ -75,6 +74,7 @@ describe('PipelineMetricSelection', () => {
     isDuplicated: boolean,
   ) => {
     const store = setupStore();
+    store.dispatch(updateShouldGetPipelineConfig(true));
     return render(
       <Provider store={store}>
         <PipelineMetricSelection
@@ -218,7 +218,6 @@ describe('PipelineMetricSelection', () => {
     );
 
     await waitFor(() => {
-      expect(updatePipelineToolVerifyResponseSteps).toHaveBeenCalledTimes(1);
       expect(getByText(STEP)).toBeInTheDocument();
     });
 
@@ -245,7 +244,6 @@ describe('PipelineMetricSelection', () => {
     );
 
     await waitFor(() => {
-      expect(updatePipelineToolVerifyResponseSteps).toHaveBeenCalledTimes(1);
       expect(getByText(BRANCH)).toBeInTheDocument();
     });
 

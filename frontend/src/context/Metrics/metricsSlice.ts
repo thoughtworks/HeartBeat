@@ -34,7 +34,8 @@ export interface ICycleTimeSetting {
 }
 
 export interface savedMetricsSettingState {
-  isBoarConfigDirty: boolean;
+  shouldGetBoardConfig: boolean;
+  shouldGetPipeLineConfig: boolean;
   jiraColumns: { key: string; value: { name: string; statuses: string[] } }[];
   targetFields: { name: string; key: string; flag: boolean }[];
   users: string[];
@@ -66,7 +67,8 @@ export interface savedMetricsSettingState {
 }
 
 const initialState: savedMetricsSettingState = {
-  isBoarConfigDirty: false,
+  shouldGetBoardConfig: false,
+  shouldGetPipeLineConfig: false,
   jiraColumns: [],
   targetFields: [],
   users: [],
@@ -243,8 +245,12 @@ export const metricsSlice = createSlice({
       });
     },
 
-    updateMetricsBoardDirtyStatus: (state, action) => {
-      state.isBoarConfigDirty = action.payload;
+    updateShouldGetBoardConfig: (state, action) => {
+      state.shouldGetBoardConfig = action.payload;
+    },
+
+    updateShouldGetPipelineConfig: (state, action) => {
+      state.shouldGetPipeLineConfig = action.payload;
     },
 
     updateMetricsImportedData: (state, action) => {
@@ -364,7 +370,9 @@ export const metricsSlice = createSlice({
       const { pipelineList, isProjectCreated, pipelineCrews } = action.payload;
       const { importedDeployment, importedPipelineCrews } = state.importedData;
 
-      state.pipelineCrews = setPipelineCrews(isProjectCreated, pipelineCrews, importedPipelineCrews);
+      if (pipelineCrews) {
+        state.pipelineCrews = setPipelineCrews(isProjectCreated, pipelineCrews, importedPipelineCrews);
+      }
       const orgNames: Array<string> = _.uniq(pipelineList.map((item: pipeline) => item.orgName));
       const filteredPipelineNames = (organization: string) =>
         pipelineList
@@ -497,10 +505,12 @@ export const {
   setCycleTimeSettingsType,
   resetMetricData,
   updateAdvancedSettings,
-  updateMetricsBoardDirtyStatus,
+  updateShouldGetBoardConfig,
+  updateShouldGetPipelineConfig,
 } = metricsSlice.actions;
 
-export const selectMetricsBoardIsDirty = (state: RootState) => state.metrics.isBoarConfigDirty;
+export const selectShouldGetBoardConfig = (state: RootState) => state.metrics.shouldGetBoardConfig;
+export const selectShouldGetPipelineConfig = (state: RootState) => state.metrics.shouldGetPipeLineConfig;
 
 export const selectDeploymentFrequencySettings = (state: RootState) => state.metrics.deploymentFrequencySettings;
 

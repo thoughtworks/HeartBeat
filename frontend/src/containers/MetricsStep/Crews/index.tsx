@@ -1,9 +1,4 @@
-import {
-  saveUsers,
-  selectMetricsContent,
-  savePipelineCrews,
-  updateMetricsBoardDirtyStatus,
-} from '@src/context/Metrics/metricsSlice';
+import { saveUsers, selectMetricsContent, savePipelineCrews } from '@src/context/Metrics/metricsSlice';
 import { AssigneeFilter } from '@src/containers/MetricsStep/Crews/AssigneeFilter';
 import { MetricsSettingTitle } from '@src/components/Common/MetricsSettingTitle';
 import MultiAutoComplete from '@src/components/Common/MultiAutoComplete';
@@ -41,9 +36,6 @@ export const Crews = ({ options, title, label, type = 'board' }: crewsProps) => 
     if (value[value.length - 1] === 'All') {
       setSelectedCrews(selectedCrews.length === options.length ? [] : options);
       return;
-    }
-    if (isBoardCrews) {
-      dispatch(updateMetricsBoardDirtyStatus(true));
     }
     setSelectedCrews([...value]);
   };

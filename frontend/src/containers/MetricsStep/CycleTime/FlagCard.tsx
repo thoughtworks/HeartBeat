@@ -1,8 +1,4 @@
-import {
-  selectTreatFlagCardAsBlock,
-  updateTreatFlagCardAsBlock,
-  updateMetricsBoardDirtyStatus,
-} from '@src/context/Metrics/metricsSlice';
+import { selectTreatFlagCardAsBlock, updateTreatFlagCardAsBlock } from '@src/context/Metrics/metricsSlice';
 import { FlagCardItem, ItemCheckbox, ItemText } from '@src/containers/MetricsStep/CycleTime/style';
 import { useAppDispatch } from '@src/hooks/useAppDispatch';
 import { useAppSelector } from '@src/hooks';
@@ -14,7 +10,6 @@ const FlagCard = () => {
 
   const handleFlagCardAsBlock = () => {
     dispatch(updateTreatFlagCardAsBlock(!flagCardAsBlock));
-    dispatch(updateMetricsBoardDirtyStatus(true));
   };
 
   return (

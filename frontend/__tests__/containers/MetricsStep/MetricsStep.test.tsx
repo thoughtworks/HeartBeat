@@ -21,7 +21,12 @@ import {
   REQUIRED_DATA_LIST,
   SELECT_CONSIDER_AS_DONE_MESSAGE,
 } from '../../fixtures';
-import { updateCycleTimeSettings, saveDoneColumn, setCycleTimeSettingsType } from '@src/context/Metrics/metricsSlice';
+import {
+  updateCycleTimeSettings,
+  saveDoneColumn,
+  setCycleTimeSettingsType,
+  updateShouldGetBoardConfig,
+} from '@src/context/Metrics/metricsSlice';
 import { updateJiraVerifyResponse, updateMetrics } from '@src/context/config/configSlice';
 import { closeAllNotifications } from '@src/context/notification/NotificationSlice';
 import { backStep, nextStep } from '@src/context/stepper/StepperSlice';
@@ -80,7 +85,6 @@ describe('MetricsStep', () => {
   it('should not show Real done when only one value is done for cycle time', async () => {
     store.dispatch(updateMetrics([REQUIRED_DATA_LIST[1]]));
     store.dispatch(updateCycleTimeSettings([{ column: 'Testing', status: 'testing', value: 'Done' }]));
-
     setup();
 
     expect(screen.getByText(CREWS_SETTING)).toBeInTheDocument();
@@ -191,6 +195,7 @@ describe('MetricsStep', () => {
         { key: 'done', value: { name: 'Done', statuses: ['PRE-DONE,', 'DONE', 'CANCEL'] } },
       ];
 
+      store.dispatch(updateShouldGetBoardConfig(true));
       store.dispatch(updateMetrics(REQUIRED_DATA_LIST));
       store.dispatch(updateCycleTimeSettings(cycleTimeSettingsWithTwoDoneValue));
       store.dispatch(saveDoneColumn(doneColumn));

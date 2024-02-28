@@ -13,6 +13,7 @@ import {
 } from '@src/context/config/configSlice';
 import { CONFIG_TITLE, PIPELINE_TOOL_TYPES, TOKEN_HELPER_TEXT } from '@src/constants/resources';
 import { useVerifyPipelineToolEffect } from '@src/hooks/useVerifyPipelineToolEffect';
+import { updateShouldGetPipelineConfig } from '@src/context/Metrics/metricsSlice';
 import { ResetButton, VerifyButton } from '@src/components/Common/Buttons';
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch';
 import { DEFAULT_HELPER_TEXT, EMPTY_STRING } from '@src/constants/commons';
@@ -108,6 +109,7 @@ export const PipelineTool = () => {
       type: fields[FIELD_KEY.TYPE].value,
       token: fields[FIELD_KEY.TOKEN].value,
     });
+    dispatch(updateShouldGetPipelineConfig(true));
   };
 
   const isDisableVerifyButton = useMemo(

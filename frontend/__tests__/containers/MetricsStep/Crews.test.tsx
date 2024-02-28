@@ -145,7 +145,7 @@ describe('Crew', () => {
     await userEvent.click(screen.getByRole('radio', { name: assigneeFilterLabels[1] }));
 
     await waitFor(() => {
-      expect(mockedUseAppDispatch).toHaveBeenCalledTimes(3);
+      expect(mockedUseAppDispatch).toHaveBeenCalledTimes(2);
       expect(mockedUseAppDispatch).toHaveBeenCalledWith(updateAssigneeFilter(assigneeFilterValues[1]));
     });
   });

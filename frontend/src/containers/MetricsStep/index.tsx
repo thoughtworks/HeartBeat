@@ -9,11 +9,16 @@ import {
   selectJiraColumns,
 } from '@src/context/config/configSlice';
 import {
+  selectMetricsContent,
+  updateMetricsState,
+  selectShouldGetBoardConfig,
+  updateShouldGetBoardConfig,
+} from '@src/context/Metrics/metricsSlice';
+import {
   MetricSelectionHeader,
   MetricSelectionWrapper,
   MetricsSelectionTitle,
 } from '@src/containers/MetricsStep/style';
-import { selectMetricsContent, updateMetricsState, selectMetricsBoardIsDirty } from '@src/context/Metrics/metricsSlice';
 import { DeploymentFrequencySettings } from '@src/containers/MetricsStep/DeploymentFrequencySettings';
 import { StyledRetryButton, StyledErrorMessage } from '@src/containers/MetricsStep/style';
 import { CYCLE_TIME_SETTINGS_TYPES, DONE, REQUIRED_DATA } from '@src/constants/resources';
@@ -54,7 +59,7 @@ const MetricsStep = () => {
     cycleTimeSettings.filter((e) => e.value === DONE).length > 1;
   const { getBoardInfo, isLoading, errorMessage } = useGetBoardInfoEffect();
   const shouldLoad = useAppSelector(shouldMetricsLoad);
-  const isBoarConfigDirty = useAppSelector(selectMetricsBoardIsDirty);
+  const shouldGetBoardConfig = useAppSelector(selectShouldGetBoardConfig);
 
   const getInfo = useCallback(
     () =>
@@ -67,6 +72,7 @@ const MetricsStep = () => {
           dispatch(updateBoardVerifyState(true));
           dispatch(updateJiraVerifyResponse(res.data));
           dispatch(updateMetricsState(merge(res.data, { isProjectCreated: isProjectCreated })));
+          dispatch(updateShouldGetBoardConfig(false));
         }
       }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -76,9 +82,9 @@ const MetricsStep = () => {
   useLayoutEffect(() => {
     if (!shouldLoad) return;
     dispatch(closeAllNotifications());
-    if (!shouldLoad || !isShowCrewsAndRealDone || isBoarConfigDirty) return;
+    if (!isShowCrewsAndRealDone || !shouldGetBoardConfig) return;
     getInfo();
-  }, [shouldLoad, isShowCrewsAndRealDone, isBoarConfigDirty, dispatch, getInfo]);
+  }, [shouldLoad, isShowCrewsAndRealDone, shouldGetBoardConfig, dispatch, getInfo]);
 
   return (
     <>

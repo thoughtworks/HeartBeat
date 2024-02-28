@@ -1,16 +1,19 @@
 import {
+  selectOrganizationWarningMessage,
+  selectPipelineNameWarningMessage,
+  selectStepWarningMessage,
+  updatePipelineStep,
+  updateShouldGetPipelineConfig,
+  selectShouldGetPipelineConfig,
+} from '@src/context/Metrics/metricsSlice';
+import {
   selectPipelineNames,
   selectPipelineOrganizations,
   selectSteps,
   selectStepsParams,
   updatePipelineToolVerifyResponseSteps,
 } from '@src/context/config/configSlice';
-import {
-  selectOrganizationWarningMessage,
-  selectPipelineNameWarningMessage,
-  selectStepWarningMessage,
-  updatePipelineStep,
-} from '@src/context/Metrics/metricsSlice';
+
 import { SingleSelection } from '@src/containers/MetricsStep/DeploymentFrequencySettings/SingleSelection';
 import { BranchSelection } from '@src/containers/MetricsStep/DeploymentFrequencySettings/BranchSelection';
 import { ButtonWrapper, PipelineMetricSelectionWrapper, RemoveButton, WarningMessage } from './style';
@@ -60,15 +63,16 @@ export const PipelineMetricSelection = ({
   const stepWarningMessage = selectStepWarningMessage(store.getState(), id);
   const [isShowNoStepWarning, setIsShowNoStepWarning] = useState(false);
   const shouldLoad = useAppSelector(shouldMetricsLoad);
+  const shouldGetPipelineConfig = useAppSelector(selectShouldGetPipelineConfig);
 
   const handleRemoveClick = () => {
     onRemovePipeline(id);
   };
 
   useEffect(() => {
-    !isInfoLoading && shouldLoad && pipelineName && handleGetPipelineData(pipelineName);
+    !isInfoLoading && shouldLoad && shouldGetPipelineConfig && pipelineName && handleGetPipelineData(pipelineName);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [shouldLoad, pipelineName, isInfoLoading]);
+  }, [shouldLoad, pipelineName, isInfoLoading, shouldGetPipelineConfig]);
 
   const handleGetPipelineData = (_pipelineName: string) => {
     const { params, buildId, organizationId, pipelineType, token } = selectStepsParams(
@@ -93,6 +97,7 @@ export const PipelineMetricSelection = ({
           }),
         );
         res?.haveStep && dispatch(updatePipelineStep({ steps, id, type, branches, pipelineCrews }));
+        dispatch(updateShouldGetPipelineConfig(false));
       }
       res && setIsShowNoStepWarning(!res.haveStep);
     });

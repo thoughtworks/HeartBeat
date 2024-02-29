@@ -1,4 +1,5 @@
 import { expect, Locator, Page } from '@playwright/test';
+import { parse } from 'csv-parse/sync';
 import path from 'path';
 import fs from 'fs';
 
@@ -24,7 +25,22 @@ export const downloadFileAndCheck = async (
 };
 
 export const checkDownloadReport = async (page: Page, downloadButton: Locator, savedFileName: string) => {
-  await downloadFileAndCheck(page, downloadButton, savedFileName, async (fileDataString) =>
-    expect(fileDataString.length).toBeGreaterThan(0),
-  );
+  await downloadFileAndCheck(page, downloadButton, savedFileName, async (fileDataString) => {
+    expect(fileDataString.length).toBeGreaterThan(0);
+    let localCsvFile = fs.readFileSync(path.resolve(__dirname, '../fixtures/importFile/metricData.csv'));
+    switch (savedFileName) {
+      case 'metricReport.csv':
+        localCsvFile = fs.readFileSync(path.resolve(__dirname, '../fixtures/importFile/metricData.csv'));
+        break;
+      case 'boardReport.csv':
+        localCsvFile = fs.readFileSync(path.resolve(__dirname, '../fixtures/importFile/boardData.csv'));
+        break;
+      case 'pipelineReport.csv':
+        localCsvFile = fs.readFileSync(path.resolve(__dirname, '../fixtures/importFile/pipelineData.csv'));
+        break;
+    }
+    const localCsv = parse(localCsvFile);
+    const downloadCsv = parse(fileDataString);
+    expect(localCsv).toStrictEqual(downloadCsv);
+  });
 };

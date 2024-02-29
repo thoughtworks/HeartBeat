@@ -2,6 +2,7 @@ import { config as metricsStepData } from '../../fixtures/createNew/metricsStep'
 import { METRICS_STEP_SAVING_FILENAME } from '../../fixtures';
 import { downloadFileAndCheck } from '../../utils/download';
 import { expect, Locator, Page } from '@playwright/test';
+import { size } from 'lodash';
 
 export class MetricsStep {
   readonly page: Page;
@@ -52,6 +53,7 @@ export class MetricsStep {
   readonly pipelineCrewSettingsLabel: Locator;
   readonly pipelineCrewSettingChipsContainer: Locator;
   readonly pipelineCrewSettingSelectedChips: Locator;
+  readonly homeIcon: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -142,6 +144,7 @@ export class MetricsStep {
     this.pipelineCrewSettingSelectedChips = this.pipelineCrewSettingChipsContainer
       .getByRole('button')
       .filter({ hasText: /.+/ });
+    this.homeIcon = page.getByLabel('Home');
   }
 
   async waitForShown() {
@@ -208,6 +211,15 @@ export class MetricsStep {
     crews.forEach(async (crew) => {
       await expect(this.boardCrewSettingChipsContainer.getByRole('button', { name: crew })).toBeVisible();
     });
+  }
+
+  async checkCrewsAreChanged(crews: string[]) {
+    await this.boardCrewSettingsLabel.click();
+    await expect(this.boardCrewSettingSelectedChips).toHaveCount(crews.length);
+    crews.forEach(async (crew) => {
+      await expect(this.boardCrewSettingChipsContainer.getByRole('button', { name: crew })).toBeVisible();
+    });
+    await this.page.keyboard.press('Escape');
   }
 
   async selectClassifications(classificationKeys: string[]) {
@@ -300,6 +312,38 @@ export class MetricsStep {
 
     await this.boardCycleTimeSelectForDone.click();
     await this.page.getByRole('option', { name: doneOption }).click();
+  }
+
+  async checkHeartbeatStateIsSet([
+    todoOption,
+    doingOption,
+    blockOption,
+    reviewOption,
+    forReadyOption,
+    testingOption,
+    doneOption,
+  ]: string[]) {
+    await expect(this.boardCycleTimeSection.getByLabel('Cycle time select for TODO').getByRole('combobox')).toHaveValue(
+      todoOption,
+    );
+    await expect(
+      this.boardCycleTimeSection.getByLabel('Cycle time select for Doing').getByRole('combobox'),
+    ).toHaveValue(doingOption);
+    await expect(
+      this.boardCycleTimeSection.getByLabel('Cycle time select for Blocked').getByRole('combobox'),
+    ).toHaveValue(blockOption);
+    await expect(
+      this.boardCycleTimeSection.getByLabel('Cycle time select for Review').getByRole('combobox'),
+    ).toHaveValue(reviewOption);
+    await expect(
+      this.boardCycleTimeSection.getByLabel('Cycle time select for READY FOR TESTING').getByRole('combobox'),
+    ).toHaveValue(forReadyOption);
+    await expect(
+      this.boardCycleTimeSection.getByLabel('Cycle time select for Testing').getByRole('combobox'),
+    ).toHaveValue(testingOption);
+    await expect(this.boardCycleTimeSection.getByLabel('Cycle time select for Done').getByRole('combobox')).toHaveValue(
+      doneOption,
+    );
   }
 
   async selectModifiedHeartbeatState([todoOption, doingOption, blockOption, testingOption, doneOption]: string[]) {
@@ -469,5 +513,18 @@ export class MetricsStep {
 
   async goToReportPage() {
     await this.page.getByRole('button', { name: 'Next' }).click();
+  }
+
+  async clickHomeIconThenBackToHomepage() {
+    await this.homeIcon.click();
+    await expect(this.page).toHaveURL(/\//);
+  }
+
+  async checkPipelineConfigurationAreChanged(pipelineSettings: typeof metricsStepData.deployment) {
+    const firstPipelineConfig = pipelineSettings[0];
+
+    await expect(this.pipelineOrganizationSelect).toHaveValue(firstPipelineConfig.organization);
+    await expect(this.pipelineNameSelect).toHaveValue(firstPipelineConfig.pipelineName);
+    await expect(this.pipelineDefaultSelectedBranchChips).toHaveCount(size(firstPipelineConfig.branches));
   }
 }

@@ -58,7 +58,7 @@ const Header = () => {
       </StyledHeaderInfo>
       <IconContainer>
         {shouldShowHomeIcon() && (
-          <HomeIconContainer title='Home' onClick={goHome}>
+          <HomeIconContainer title='Home' onClick={goHome} aria-label={'Home'}>
             <HomeIconElement />
           </HomeIconContainer>
         )}

@@ -5,6 +5,13 @@ export const BOARD_METRICS_RESULT = {
   AverageCycleTime4Card: '9.18',
 };
 
+export const FLAG_AS_BLOCK_PROJECT_BOARD_METRICS_RESULT = {
+  Velocity: '0',
+  Throughput: '0',
+  AverageCycleTime4SP: '0',
+  AverageCycleTime4Card: '0',
+};
+
 export const DORA_METRICS_RESULT = {
   PrLeadTime: '6.12',
   PipelineLeadTime: '0.50',

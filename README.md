@@ -21,7 +21,8 @@
     - [3.2 Config Metrics data](#32-config-metrics-data)
       - [3.2.1 Config Crews/Cycle Time](#321-config-crewscycle-time)
       - [3.2.2 Setting Classification](#322-setting-classification)
-      - [3.2.3 Deployment Frequency/Lead Time for Changes](#323-deployment-frequencylead-time-for-changes)
+      - [3.2.3 Setting advanced settings](#323-setting-advanced-setting)
+      - [3.2.4 Deployment Frequency/Lead Time for Changes](#324-deployment-frequencylead-time-for-changes)
   - [3.3 Export and import config info](#33-export-and-import-config-info)
     - [3.3.1 Export Config Json File](#331-export-config-json-file)
     - [3.3.2 Import Config Json File](#332-import-config-json-file)
@@ -206,10 +207,39 @@ _Image 3-6，Classification Settings_
 
 In classification settings, it will list all Context fields for your jira board. Users can select anyone to get the data for them. And according to your selection, in the export page, you will see the classification report to provide more insight with your board data.
 
-#### 3.2.3 Deployment Frequency/Lead Time for Changes
+#### 3.2.3 Setting advanced Setting
 
-![Image 3-7](https://user-images.githubusercontent.com/995849/89784260-f6a08800-db4a-11ea-8ce2-87983363aa18.png)\
-_Image 3-7，Settings for Pipeline_
+![Image 3-7](https://jsd.cdn.zzko.cn/gh/au-heartbeat/data-hosting@main/advanced-setting-image/advance-settings.png)\
+_Image 3-7，advanced Settings_
+
+In advanced settings, it contains story points Input and Flagged Input. Users can input story points and Flagged custom-field on their own when the jira board has permission restriction . And according to these input, in the export page, user can get correct story points and block days
+
+how to find the story points and Flagged custom-field?
+
+![Image 3-8](https://jsd.cdn.zzko.cn/gh/au-heartbeat/data-hosting@main/advanced-setting-image/devtool-network.png)\
+_Image 3-8，devTool-network-part_
+
+![Image 3-9](https://jsd.cdn.zzko.cn/gh/au-heartbeat/data-hosting@main/advanced-setting-image/card-history.png)\
+_Image 3-9，card-history_
+
+![Image 3-10](https://jsd.cdn.zzko.cn/gh/au-heartbeat/data-hosting@main/advanced-setting-image/find-custom-field-api.png)\
+_Image 3-10，find-custom-field-api_
+
+![Image 3-11](https://jsd.cdn.zzko.cn/gh/au-heartbeat/data-hosting@main/advanced-setting-image/story-point-custom-field.png)\
+_Image 3-11，story-point-custom-field_
+
+![Image 3-12](https://jsd.cdn.zzko.cn/gh/au-heartbeat/data-hosting@main/advanced-setting-image/flagged-custom-field.png)\
+_Image 3-12，flagged-custom-field_
+
+1. user need to go to the jira board and click one card , then open dev tool switch to network part. 
+2. then click card's history part. 
+3. at that time, user can see one api call which headers request URL is https://xxx.atlassian.net/rest/gira/1/ . 
+4. then go to review part, find fieldDisplayName which show Flagged and story point estimate and get the fieldId as the custom-field that user need to input in advanced settings. from image 3-11 and 3-12 we can find that  flagged custom field is customfield_10021, story points custom field is customfield_10016. 
+
+#### 3.2.4 Deployment Frequency/Lead Time for Changes
+
+![Image 3-13](https://user-images.githubusercontent.com/995849/89784260-f6a08800-db4a-11ea-8ce2-87983363aa18.png)\
+_Image 3-13，Settings for Pipeline_
 
 They are sharing the similar settings which you need to specify the pipeline step so that Heartbeat will know in which pipeline and step, team consider it as deploy to PROD. So that we could use it to calculate metrics.
 
@@ -225,15 +255,15 @@ They are sharing the similar settings which you need to specify the pipeline ste
 
 When user first use this tool, need to create a project, and do some config. To avoid the user entering configuration information repeatedly every time, we provide a “Save” button in the config and metrics pages. In config page, click the save button, it will save all items in config page in a Json file. If you click the save button in the metrics page, it will save all items in config and metrics settings in a Json file. Here is the json file (Image 3-8)。Note: Below screenshot just contains a part of data.
 
-![Image 3-8](https://user-images.githubusercontent.com/995849/89784710-b4c41180-db4b-11ea-9bc4-db14ce98ef69.png)\
-_Image 3-8, Config Json file_
+![Image 3-14](https://user-images.githubusercontent.com/995849/89784710-b4c41180-db4b-11ea-9bc4-db14ce98ef69.png)\
+_Image 3-14, Config Json file_
 
 ### 3.3.2 Import Config Json File
 
 When user already saved config file before, then you don’t need to create a new project. In the home page, can click Import Project from File button(Image 3-1) to select the config file. If your config file is too old, and the tool already have some new feature change, then if you import the config file, it will get some warning info(Image 3-9). You need to re-select some info, then go to the next page.
 
-![Image 3-9](https://user-images.githubusercontent.com/995849/89784267-f902e200-db4a-11ea-9d0b-a8ab29a8819e.png)\
-_Image 3-9, Warning message_
+![Image 3-15](https://user-images.githubusercontent.com/995849/89784267-f902e200-db4a-11ea-9d0b-a8ab29a8819e.png)\
+_Image 3-15, Warning message_
 
 ## 3.4 Generate Metrics Data
 
@@ -242,15 +272,15 @@ After config, then it will generate the report for you.
 ### 3.4.1 Velocity
 
 In Velocity Report, it will list the corresponding data by Story Point and the number of story tickets. (image 3-10)
-![Image 3-10](https://user-images.githubusercontent.com/995849/90856819-5ef63180-e3b5-11ea-8e94-e5363d305cf1.png)\
-_Image 3-10，Velocity Report_
+![Image 3-16](https://user-images.githubusercontent.com/995849/90856819-5ef63180-e3b5-11ea-8e94-e5363d305cf1.png)\
+_Image 3-16，Velocity Report_
 
 ### 3.4.2 Cycle Time
 
 The calculation process data and final result of Cycle Time are calculated by rounding method, and two digits are kept after the decimal point. Such as: 3.567... Is 3.56; 3.564... Is 3.56.
 
-![Image 3-11](https://user-images.githubusercontent.com/995849/89784273-fbfdd280-db4a-11ea-9185-da89a862dace.png)\
-_Image 3-11，Cycle Time Report_
+![Image 3-17](https://user-images.githubusercontent.com/995849/89784273-fbfdd280-db4a-11ea-9185-da89a862dace.png)\
+_Image 3-17，Cycle Time Report_
 
 ### 3.4.3 Classification
 
@@ -259,23 +289,23 @@ It will show the classification data of Board based on your selection on `Classi
 The percentage value represent the count of that type tickets vs total count of tickets.
 
 
-![Image 3-12](docs/img/Classification-Export.png)\
-_Image 3-12，Classification Report_
+![Image 3-18](docs/img/Classification-Export.png)\
+_Image 3-18，Classification Report_
 
 ### 3.4.4 Deployment Frequency
 
-![Image 3-13](https://user-images.githubusercontent.com/995849/89784281-fef8c300-db4a-11ea-992b-6e2eca426f53.png)\
-_Image 3-13，Deployment Frequency Report_
+![Image 3-19](https://user-images.githubusercontent.com/995849/89784281-fef8c300-db4a-11ea-992b-6e2eca426f53.png)\
+_Image 3-19，Deployment Frequency Report_
 
 ### 3.4.5 Lead time for changes Data
 
-![Image 3-14](https://user-images.githubusercontent.com/995849/89784283-ff915980-db4a-11ea-83b3-304372e8749a.png)\
-_Image 3-14，Lead time for changes Report_
+![Image 3-20](https://user-images.githubusercontent.com/995849/89784283-ff915980-db4a-11ea-83b3-304372e8749a.png)\
+_Image 3-20，Lead time for changes Report_
 
 ### 3.4.6 Change Failure Rate
 
-![Image 3-15](https://user-images.githubusercontent.com/995849/89784288-00c28680-db4b-11ea-9756-878176148d63.png)\
-_Image 3-15，Change Failure Rate Report_
+![Image 3-21](https://user-images.githubusercontent.com/995849/89784288-00c28680-db4b-11ea-9756-878176148d63.png)\
+_Image 3-21，Change Failure Rate Report_
 
 ## 3.5 Export original data
 
@@ -291,8 +321,8 @@ Export the all done tickets during the time period(Image 1)
 #### 3.5.1.1 Undone card exporting 
 Export the latest updated 50 non-done tickets in your current active board. And it will order by heartbeat state and then last status change date(Image 3-16)
 
-![Image 3-16](https://user-images.githubusercontent.com/995849/89784291-01f3b380-db4b-11ea-8f5a-d475e80014fb.png)\
-_Image 3-16，Exported Board Data_
+![Image 3-22](https://user-images.githubusercontent.com/995849/89784291-01f3b380-db4b-11ea-8f5a-d475e80014fb.png)\
+_Image 3-22，Exported Board Data_
 
 **All columns for Jira board:**
 |Column name |Description|
@@ -324,8 +354,8 @@ _Image 3-16，Exported Board Data_
 
 It will export a csv file for pipeline data (image 3-17).
 
-![Image 3-17](https://user-images.githubusercontent.com/995849/89784293-0324e080-db4b-11ea-975d-6609024aac49.png)\
-_Image 3-17，Exported Pipeline Data_
+![Image 3-23](https://user-images.githubusercontent.com/995849/89784293-0324e080-db4b-11ea-975d-6609024aac49.png)\
+_Image 3-23，Exported Pipeline Data_
 
 **All columns for pipeline data:**
 |Column name |Description|

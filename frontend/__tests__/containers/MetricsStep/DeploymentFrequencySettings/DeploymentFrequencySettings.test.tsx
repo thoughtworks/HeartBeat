@@ -3,10 +3,10 @@ import {
   deleteADeploymentFrequencySetting,
   updateDeploymentFrequencySettings,
 } from '@src/context/Metrics/metricsSlice';
-import { DEPLOYMENT_FREQUENCY_SETTINGS, LIST_OPEN, ORGANIZATION, REMOVE_BUTTON } from '../../../fixtures';
+import { DEPLOYMENT_FREQUENCY_SETTINGS, LIST_OPEN, LOADING, ORGANIZATION, REMOVE_BUTTON } from '@test/fixtures';
 import { DeploymentFrequencySettings } from '@src/containers/MetricsStep/DeploymentFrequencySettings';
 import { IUseVerifyPipeLineToolStateInterface } from '@src/hooks/useGetPipelineToolInfoEffect';
-import { render, within, act, screen } from '@testing-library/react';
+import { act, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import { store } from '@src/store';
@@ -127,7 +127,7 @@ describe('DeploymentFrequencySettings', () => {
   });
 
   it('should display error UI when get pipeline info client returns non-200 code', () => {
-    const mockGetPipelineToolInfoErrorResponse = {
+    mockGetPipelineToolInfoSpy = {
       isLoading: false,
       apiCallFunc: jest.fn(),
       result: {
@@ -136,9 +136,23 @@ describe('DeploymentFrequencySettings', () => {
         errorMessage: 'Forbidden request!',
       },
     };
-    mockGetPipelineToolInfoSpy = mockGetPipelineToolInfoErrorResponse;
     setup();
 
     expect(screen.getByLabelText('Error UI for pipeline settings')).toBeInTheDocument();
+  });
+
+  it('should show loading when get pipeline info client pending', () => {
+    mockGetPipelineToolInfoSpy = {
+      isLoading: true,
+      apiCallFunc: jest.fn(),
+      result: {
+        code: null,
+        errorTitle: '',
+        errorMessage: '',
+      },
+    };
+    setup();
+
+    expect(screen.getByTestId(LOADING)).toBeInTheDocument();
   });
 });

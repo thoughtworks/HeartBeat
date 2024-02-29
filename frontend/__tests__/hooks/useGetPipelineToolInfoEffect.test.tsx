@@ -16,9 +16,12 @@ jest.mock('react-redux', () => ({
     const originalUseSelector = jest.requireActual('react-redux').useSelector;
     if (selector.name === 'isPipelineToolVerified') {
       return true;
-    } else {
-      return originalUseSelector(selector);
     }
+    if (selector.name === 'selectShouldGetPipelineConfig') {
+      return true;
+    }
+
+    return originalUseSelector(selector);
   },
 }));
 

@@ -40,16 +40,15 @@ test('Page jump for import', async ({ homePage, configStep, metricsStep, reportS
   await metricsStep.checkCycleTimeConsiderAsBlockUnchecked();
   await metricsStep.checkClassifications(modifiedMetricsStepData.classification);
 
-  // todo wait for xingmeng to fix
-  // await metricsStep.selectDefaultGivenPipelineSetting(modifiedMetricsStepData.deployment);
-  // await metricsStep.selectGivenPipelineCrews(modifiedMetricsStepData.pipelineCrews);
-  // await metricsStep.goToPreviousStep();
-  // await configStep.goToMetrics();
-  // await metricsStep.waitForShown();
-  // await metricsStep.waitForHiddenLoading();
-  // await metricsStep.checkPipelineSetting(modifiedMetricsStepData.deployment);
-  // await metricsStep.checkBranch(modifiedMetricsStepData.deployment[0].branches);
-  // await metricsStep.checkPipelineCrews(modifiedMetricsStepData.pipelineCrews);
+  await metricsStep.selectDefaultGivenPipelineSetting(modifiedMetricsStepData.deployment);
+  await metricsStep.selectGivenPipelineCrews(modifiedMetricsStepData.pipelineCrews);
+  await metricsStep.goToPreviousStep();
+  await configStep.goToMetrics();
+  await metricsStep.waitForShown();
+  await metricsStep.waitForHiddenLoading();
+  await metricsStep.checkPipelineSetting(modifiedMetricsStepData.deployment);
+  await metricsStep.checkBranch(modifiedMetricsStepData.deployment[0].branches);
+  await metricsStep.checkPipelineCrews(modifiedMetricsStepData.pipelineCrews);
 
   await metricsStep.goToPreviousStep();
   await configStep.goToPreviousStep();
@@ -57,8 +56,7 @@ test('Page jump for import', async ({ homePage, configStep, metricsStep, reportS
   await homePage.waitForShown();
 });
 
-// test('Page jump for create', async ({ homePage, configStep, metricsStep, reportStep }) => {
-test('Page jump for create', async ({ homePage, configStep, metricsStep }) => {
+test('Page jump for create', async ({ homePage, configStep, metricsStep, reportStep }) => {
   const dateRange = {
     startDate: format(configStepData.dateRange.startDate),
     endDate: format(configStepData.dateRange.endDate),
@@ -66,9 +64,9 @@ test('Page jump for create', async ({ homePage, configStep, metricsStep }) => {
   const hbStateData = metricsStepData.cycleTime.jiraColumns.map(
     (jiraToHBSingleMap) => Object.values(jiraToHBSingleMap)[0],
   );
-  // const modifiedHbStateData = modifiedMetricsStepData.cycleTime.jiraColumns.map(
-  //   (jiraToHBSingleMap) => Object.values(jiraToHBSingleMap)[0],
-  // );
+  const modifiedHbStateData = modifiedMetricsStepData.cycleTime.jiraColumns.map(
+    (jiraToHBSingleMap) => Object.values(jiraToHBSingleMap)[0],
+  );
 
   await homePage.goto();
   await homePage.createANewProject();
@@ -94,31 +92,30 @@ test('Page jump for create', async ({ homePage, configStep, metricsStep }) => {
   await metricsStep.goToPreviousStep();
   await configStep.goToMetrics();
   await metricsStep.waitForShown();
-  await metricsStep.waitForHiddenLoading();
 
   await metricsStep.checkCrews(metricsStepData.crews);
   await metricsStep.checkBoardByColumnRadioBoxChecked();
   await metricsStep.checkClassifications(metricsStepData.classification);
 
-  // await metricsStep.selectCrews(modifiedMetricsStepData.crews);
-  // await metricsStep.selectCycleTimeSettingsType(modifiedMetricsStepData.cycleTime.type);
-  // await metricsStep.selectModifiedHeartbeatState(modifiedHbStateData);
-  // await metricsStep.selectClassifications(modifiedMetricsStepData.classification);
-  // await metricsStep.goToReportPage();
-  // await reportStep.goToPreviousStep();
-  // await metricsStep.checkCrews(modifiedMetricsStepData.crews);
-  // await metricsStep.checkBoardByStatusRadioBoxChecked();
-  // await metricsStep.checkClassifications(modifiedMetricsStepData.classification);
+  await metricsStep.selectCrews(modifiedMetricsStepData.crews);
+  await metricsStep.selectCycleTimeSettingsType(modifiedMetricsStepData.cycleTime.type);
+  await metricsStep.selectModifiedHeartbeatState(modifiedHbStateData);
+  await metricsStep.selectClassifications(modifiedMetricsStepData.classification);
+  await metricsStep.goToReportPage();
+  await reportStep.goToPreviousStep();
+  await metricsStep.checkCrews(modifiedMetricsStepData.crews);
+  await metricsStep.checkBoardByStatusRadioBoxChecked();
+  await metricsStep.checkClassifications(modifiedMetricsStepData.classification);
 
-  // await metricsStep.selectDefaultGivenPipelineSetting(modifiedMetricsStepData.deployment);
-  // await metricsStep.selectGivenPipelineCrews(modifiedMetricsStepData.pipelineCrews);
-  // await metricsStep.goToPreviousStep();
-  // await configStep.goToMetrics();
-  // await metricsStep.waitForShown();
-  // await metricsStep.waitForHiddenLoading();
-  // await metricsStep.checkBranch(modifiedMetricsStepData.deployment[0].branches);
-  // await metricsStep.checkPipelineCrews(modifiedMetricsStepData.pipelineCrews);
+  await metricsStep.selectDefaultGivenPipelineSetting(modifiedMetricsStepData.deployment);
+  await metricsStep.selectGivenPipelineCrews(modifiedMetricsStepData.pipelineCrews);
+  await metricsStep.goToPreviousStep();
+  await configStep.goToMetrics();
+  await metricsStep.waitForShown();
+  await metricsStep.waitForHiddenLoading();
+  await metricsStep.checkBranch(modifiedMetricsStepData.deployment[0].branches);
+  await metricsStep.checkPipelineCrews(modifiedMetricsStepData.pipelineCrews);
 
-  // await metricsStep.goToPreviousStep();
-  // await configStep.clickPreviousButtonThenGoHome();
+  await metricsStep.goToPreviousStep();
+  await configStep.clickPreviousButtonThenGoHome();
 });

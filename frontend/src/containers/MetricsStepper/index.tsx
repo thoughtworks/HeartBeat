@@ -1,5 +1,4 @@
 import {
-  updatePipelineList,
   selectConfig,
   selectMetrics,
   selectPipelineList,
@@ -38,7 +37,6 @@ import {
 } from '@src/context/Metrics/metricsSlice';
 import { backStep, nextStep, selectStepNumber, updateTimeStamp } from '@src/context/stepper/StepperSlice';
 import { useMetricsStepValidationCheckContext } from '@src/hooks/useMetricsStepValidationCheckContext';
-import { pipeline } from '@src/context/config/pipelineTool/verifyResponseSlice';
 import { COMMON_BUTTONS, METRICS_STEPS, STEPS } from '@src/constants/commons';
 import { ConfirmDialog } from '@src/containers/MetricsStepper/ConfirmDialog';
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch';
@@ -255,14 +253,6 @@ const MetricsStepper = () => {
   const handleBack = () => {
     setIsDialogShowing(!activeStep);
     dispatch(backStep());
-    if (activeStep === METRICS_STEPS.METRICS) {
-      const initPipelineSteps = pipelineList.map((item: pipeline) => ({
-        ...item,
-        steps: [],
-        branches: [],
-      }));
-      dispatch(updatePipelineList(initPipelineSteps));
-    }
   };
 
   const backToHomePage = () => {

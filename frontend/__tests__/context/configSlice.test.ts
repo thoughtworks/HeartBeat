@@ -4,7 +4,6 @@ import configReducer, {
   updateCalendarType,
   updateDateRange,
   updateMetrics,
-  updatePipelineList,
   updateProjectCreatedState,
   updateProjectName,
 } from '@src/context/config/configSlice';
@@ -59,24 +58,6 @@ describe('config reducer', () => {
     const config = configReducer(initialConfigState, updateMetrics([VELOCITY])).basic;
 
     expect(config.metrics).toEqual([VELOCITY]);
-  });
-
-  it('should set empty when updatePipelineList', () => {
-    const mockPipelineList = [
-      {
-        id: '1',
-        name: 'name',
-        orgId: 'test',
-        orgName: 'test',
-        repository: 'XXX',
-        steps: ['build'],
-        branches: ['main'],
-      },
-    ];
-
-    const config = configReducer(initialConfigState, updatePipelineList(mockPipelineList));
-
-    expect(config.pipelineTool.verifiedResponse.pipelineList).toEqual(mockPipelineList);
   });
 
   it('should set warningMessage when metrics data not include in REQUIRED_DATA', () => {

@@ -30,4 +30,8 @@ export class HomePage {
       buffer: Buffer.from(JSON.stringify(importProjectFromFile)),
     });
   }
+
+  async waitForShown() {
+    await expect(await this.importProjectFromFileButton).toBeVisible();
+  }
 }

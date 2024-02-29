@@ -10,7 +10,7 @@ import { useAppSelector } from '@src/hooks';
 import { useState } from 'react';
 
 export const Advance = () => {
-  const url = 'https://github.com/au-heartbeat/Heartbeat/blob/main/README.md';
+  const url = 'https://github.com/thoughtworks/HeartBeat/blob/main/README.md';
   const dispatch = useAppDispatch();
   const advancedSettings = useAppSelector(selectAdvancedSettings);
   const [open, setOpen] = useState(!!advancedSettings);
@@ -99,7 +99,7 @@ export const Advance = () => {
             ))}
           </AdvancedForm>
           <Link underline='none' href={url} target='_blank' rel='noopener'>
-            how to setup
+            How to setup
           </Link>
         </>
       )}

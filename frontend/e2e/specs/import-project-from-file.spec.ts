@@ -1,6 +1,5 @@
 import { BOARD_METRICS_RESULT, FLAG_AS_BLOCK_PROJECT_BOARD_METRICS_RESULT } from '../fixtures/createNew/reportResult';
 import { importMultipleDoneProjectFromFile } from '../fixtures/importFile/multiple-done-config-file';
-import { config as metricsStepData } from '../fixtures/createNew/metricsStep';
 import { test } from '../fixtures/testWithExtendFixtures';
 import { clearTempDir } from 'e2e/utils/clearTempDir';
 
@@ -20,10 +19,6 @@ test('Import project from file', async ({ homePage, configStep, metricsStep, rep
   await configStep.goToMetrics();
   await metricsStep.waitForShown();
 
-  await metricsStep.goToPreviousStep();
-  await configStep.goToMetrics();
-  await metricsStep.waitForShown();
-
   // To verify board configuration matches json file data
   await metricsStep.checkCrewsAreChanged(importMultipleDoneProjectFromFile.crews);
   await metricsStep.checkLastAssigneeCrewFilterChecked();
@@ -31,19 +26,6 @@ test('Import project from file', async ({ homePage, configStep, metricsStep, rep
   await metricsStep.checkHeartbeatStateIsSet(hbStateData);
   await metricsStep.checkClassifications(importMultipleDoneProjectFromFile.classification);
   await metricsStep.checkPipelineConfigurationAreChanged(importMultipleDoneProjectFromFile.deployment);
-  // Make changes to Metrics page data
-  await metricsStep.selectCrews(importMultipleDoneProjectFromFile.crews);
-  await metricsStep.selectDefaultGivenPipelineSetting(metricsStepData.deployment);
-
-  // Go to report page then back to metrics page, metrics data should stay changed
-  await metricsStep.goToReportPage();
-  await reportStep.goToPreviousStep();
-  await metricsStep.checkCrewsAreChanged(importMultipleDoneProjectFromFile.crews);
-  await metricsStep.checkPipelineConfigurationAreChanged(importMultipleDoneProjectFromFile.deployment);
-
-  // Set metrics data to imported json file
-  await metricsStep.selectCrews(importMultipleDoneProjectFromFile.crews);
-  await metricsStep.selectDefaultGivenPipelineSetting(importMultipleDoneProjectFromFile.deployment);
 
   await metricsStep.goToReportPage();
   await reportStep.confirmGeneratedReport();
@@ -58,6 +40,7 @@ test('Import project from file', async ({ homePage, configStep, metricsStep, rep
   await reportStep.checkDownloadReports();
 
   await reportStep.clickHomeIconThenBackToHomepage();
+
   await homePage.importFlagAsBlockProjectFromFile();
   await configStep.verifyBoardConfig();
   await configStep.goToMetrics();

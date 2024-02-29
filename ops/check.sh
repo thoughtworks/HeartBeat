@@ -58,7 +58,7 @@ backend_check() {
   ./gradlew clean build -x test
 }
 
-frontend_check(){
+frontend_check() {
   cd frontend
   pnpm dlx audit-ci@^6 --config ./audit-ci.jsonc
   pnpm install --no-frozen-lockfile
@@ -97,16 +97,16 @@ rgba_check() {
   cd frontend
   local result
   result=$(grep -rinE \
-   --exclude-dir='node_modules'\
-   --exclude-dir='coverage' \
-   --exclude='*.html' \
-   --exclude='*.svg' \
-   --exclude='*.xml' \
-   --exclude='*.test.tsx' \
-   --exclude='theme.ts' \
-   --exclude='*.webmanifest' \
-   'rgb[a]?\(' \
-  ./ || true)
+    --exclude-dir='node_modules' \
+    --exclude-dir='coverage' \
+    --exclude='*.html' \
+    --exclude='*.svg' \
+    --exclude='*.xml' \
+    --exclude='*.test.tsx' \
+    --exclude='theme.ts' \
+    --exclude='*.webmanifest' \
+    'rgb[a]?\(' \
+    ./ || true)
   if [ -n "$result" ]; then
     echo "Error: Found files with Hex color:"
     echo "$result"
@@ -120,18 +120,18 @@ hex_check() {
   cd frontend
   local result
   result=$(grep -rinE \
-   --exclude-dir='node_modules'\
-   --exclude-dir='coverage' \
-   --exclude='*.html' \
-   --exclude='*.svg' \
-   --exclude='*.xml' \
-   --exclude='*.test.tsx' \
-   --exclude='theme.ts' \
-   --exclude='fixtures.ts' \
-   --exclude='vite.config.ts' \
-   --exclude='*.webmanifest' \
-   '#[0-9a-fA-F]{6}|#[0-9a-fA-F]{8}' \
-  ./ || true)
+    --exclude-dir='node_modules' \
+    --exclude-dir='coverage' \
+    --exclude='*.html' \
+    --exclude='*.svg' \
+    --exclude='*.xml' \
+    --exclude='*.test.tsx' \
+    --exclude='theme.ts' \
+    --exclude='fixtures.ts' \
+    --exclude='vite.config.ts' \
+    --exclude='*.webmanifest' \
+    '#[0-9a-fA-F]{6}|#[0-9a-fA-F]{8}' \
+    ./ || true)
   if [ -n "$result" ]; then
     echo "Error: Found files with Hex color:"
     echo "$result"
@@ -165,6 +165,7 @@ e2e_container_check() {
     -e "E2E_TOKEN_JIRA=${E2E_TOKEN_JIRA:-}" \
     -e "E2E_TOKEN_BUILD_KITE=${E2E_TOKEN_BUILD_KITE:-}" \
     -e "E2E_TOKEN_GITHUB=${E2E_TOKEN_GITHUB:-}" \
+    -e "E2E_TOKEN_FLAG_AS_BLOCK_JIRA=${E2E_TOKEN_FLAG_AS_BLOCK_JIRA:-}" \
     -e "CI=${CI:-}" \
     heartbeat_e2e:latest \
     pnpm run e2e:major-ci
@@ -177,7 +178,7 @@ e2e_container_check() {
   exit $result
 }
 
-e2e_check(){
+e2e_check() {
   echo "start to run e2e"
   export TZ=Asia/Shanghai
   npm install -g pnpm
@@ -195,21 +196,21 @@ fi
 
 while [[ "$#" -gt 0 ]]; do
   case $1 in
-    -h|--help) display_help ;;
-    shell) check_shell ;;
-    security) security_check ;;
-    frontend) frontend_check ;;
-    "frontend-type") frontned_type_check ;;
-    px) px_check ;;
-    backend) backend_check ;;
-    "dot-star") dot_star_check ;;
-    hex) hex_check ;;
-    rgba) rgba_check ;;
-    e2e) e2e_check ;;
-    "e2e-container") e2e_container_check ;;
-    "backend-license") backend_license_check ;;
-    "frontend-license") frontend_license_check ;;
-    *) echo "Unknown parameter passed: $1" ;;
+  -h | --help) display_help ;;
+  shell) check_shell ;;
+  security) security_check ;;
+  frontend) frontend_check ;;
+  "frontend-type") frontned_type_check ;;
+  px) px_check ;;
+  backend) backend_check ;;
+  "dot-star") dot_star_check ;;
+  hex) hex_check ;;
+  rgba) rgba_check ;;
+  e2e) e2e_check ;;
+  "e2e-container") e2e_container_check ;;
+  "backend-license") backend_license_check ;;
+  "frontend-license") frontend_license_check ;;
+  *) echo "Unknown parameter passed: $1" ;;
   esac
   shift
 done

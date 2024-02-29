@@ -33,19 +33,19 @@ export class HomePage {
     });
   }
 
-  async importMultipleDoneProjectFromFile() {
-    await this.importProjectFromFileInput.setInputFiles({
-      name: 'hb-e2e-test',
-      mimeType: 'text/plain',
-      buffer: Buffer.from(JSON.stringify(importMultipleDoneProjectFromFile)),
-    });
-  }
-
   async importFlagAsBlockProjectFromFile() {
     await this.importProjectFromFileInput.setInputFiles({
       name: 'hb-e2e-test',
       mimeType: 'text/plain',
       buffer: Buffer.from(JSON.stringify(importFlagAsBlockFile)),
+    });
+  }
+
+  async importMultipleDoneProjectFromFile() {
+    await this.importProjectFromFileInput.setInputFiles({
+      name: 'hb-e2e-test',
+      mimeType: 'text/plain',
+      buffer: Buffer.from(JSON.stringify(importMultipleDoneProjectFromFile)),
     });
   }
 

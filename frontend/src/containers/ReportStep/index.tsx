@@ -36,6 +36,7 @@ const ReportStep = ({ handleSave }: ReportStepProps) => {
     generalError4Board,
     generalError4Dora,
     generalError4Report,
+    allDataCompleted,
   } = useGenerateReportEffect();
 
   const [exportValidityTimeMin, setExportValidityTimeMin] = useState<number | undefined | null>(undefined);
@@ -289,6 +290,7 @@ const ReportStep = ({ handleSave }: ReportStepProps) => {
         startDate={startDate}
         endDate={endDate}
         csvTimeStamp={csvTimeStamp}
+        allDataCompleted={allDataCompleted}
       />
     </>
   );

@@ -7,12 +7,16 @@ import heartbeat.exception.GenerateReportException;
 import heartbeat.handler.base.AsyncDataBaseHandler;
 import heartbeat.service.report.MetricsDataDTO;
 import heartbeat.util.IdUtil;
+import heartbeat.util.ValueUtil;
+import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import lombok.Synchronized;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 import static heartbeat.handler.base.FIleType.METRICS_DATA_COMPLETED;
 
@@ -56,19 +60,30 @@ public class AsyncMetricsDataHandler extends AsyncDataBaseHandler {
 	}
 
 	public MetricsDataDTO getReportReadyStatusByTimeStamp(String timeStamp) {
-		boolean isBoardReady = getReadyStatus(IdUtil.getBoardReportId(timeStamp), MetricType.BOARD);
-		boolean isDoraReady = getReadyStatus(IdUtil.getDoraReportId(timeStamp), MetricType.DORA);
-		return new MetricsDataDTO(isBoardReady, isDoraReady, isBoardReady && isDoraReady);
+		Boolean boardReadyStatus = getReadyStatus(IdUtil.getBoardReportId(timeStamp), MetricType.BOARD);
+		boolean isBoardReady = ValueUtil.valueOrDefault(false, boardReadyStatus);
+
+		Boolean doraReadyStatus = getReadyStatus(IdUtil.getDoraReportId(timeStamp), MetricType.DORA);
+		boolean isDoraReady = ValueUtil.valueOrDefault(false, doraReadyStatus);
+
+		boolean isReportReady = Stream.of(boardReadyStatus, doraReadyStatus)
+			.filter(Objects::nonNull)
+			.allMatch(Boolean::booleanValue);
+		return new MetricsDataDTO(isBoardReady, isDoraReady, isReportReady);
 	}
 
-	private boolean getReadyStatus(String fileId, MetricType metricType) {
+	@Nullable
+	private Boolean getReadyStatus(String fileId, MetricType metricType) {
 		MetricsDataCompleted metricsDataCompleted = getMetricsDataCompleted(fileId);
 		if (metricsDataCompleted == null) {
-			return false;
+			return null;
 		}
-
-		return metricType == MetricType.BOARD ? metricsDataCompleted.boardMetricsCompleted()
-				: metricsDataCompleted.doraMetricsCompleted();
+		else if (metricType == MetricType.BOARD) {
+			return metricsDataCompleted.boardMetricsCompleted();
+		}
+		else {
+			return metricsDataCompleted.doraMetricsCompleted();
+		}
 	}
 
 }

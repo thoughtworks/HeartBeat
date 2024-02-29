@@ -58,6 +58,7 @@ jest.mock('@src/hooks/useGenerateReportEffect', () => ({
     stopPollingReports: jest.fn(),
     isServerError: false,
     errorMessage: '',
+    allDataCompleted: true,
   }),
 }));
 

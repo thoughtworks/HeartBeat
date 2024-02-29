@@ -52,10 +52,10 @@ describe('use generate report effect', () => {
     });
   });
 
-  it('should call polling report more than one time when allMetricsReady field in response is false', async () => {
+  it('should call polling report more than one time when boardMetricsCompleted field in response is false given call boardData ', async () => {
     reportClient.polling = jest.fn().mockImplementation(async () => ({
       status: HttpStatusCode.NoContent,
-      response: { ...MOCK_REPORT_RESPONSE, allMetricsCompleted: false },
+      response: { ...MOCK_REPORT_RESPONSE, boardMetricsCompleted: false },
     }));
     reportClient.retrieveByUrl = jest
       .fn()
@@ -65,6 +65,29 @@ describe('use generate report effect', () => {
 
     await waitFor(() => {
       result.current.startToRequestBoardData(MOCK_GENERATE_REPORT_REQUEST_PARAMS);
+    });
+    act(() => {
+      jest.advanceTimersByTime(10000);
+    });
+
+    await waitFor(() => {
+      expect(reportClient.polling).toHaveBeenCalledTimes(2);
+    });
+  });
+
+  it('should call polling report more than one time when doraMetricsCompleted field in response is false given call doraData ', async () => {
+    reportClient.polling = jest.fn().mockImplementation(async () => ({
+      status: HttpStatusCode.NoContent,
+      response: { ...MOCK_REPORT_RESPONSE, doraMetricsCompleted: false },
+    }));
+    reportClient.retrieveByUrl = jest
+      .fn()
+      .mockImplementation(async () => ({ response: MOCK_RETRIEVE_REPORT_RESPONSE }));
+
+    const { result } = renderHook(() => useGenerateReportEffect());
+
+    await waitFor(() => {
+      result.current.startToRequestDoraData(MOCK_GENERATE_REPORT_REQUEST_PARAMS);
     });
     act(() => {
       jest.advanceTimersByTime(10000);

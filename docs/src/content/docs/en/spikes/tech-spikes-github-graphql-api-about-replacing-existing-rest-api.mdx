@@ -56,9 +56,19 @@ query {
 | 200             | Verification passed |
 | 401             | Verification failed |
 
+##### 3.1.3 Test GraphQL API curl
+
+```
+curl --request POST \
+  --url https://api.github.com/graphql \
+  --header 'Authorization: token ghp_***...***' \
+  --header 'content-type: application/json' \
+  --data '{"query": "{viewer {login}}"}'
+```
+
 #### 3.2. Verify the GitHub branch
 
-##### 3.1.1 Replaced API and Method local
+##### 3.2.1 Replaced API and Method local
 
 - Replaced api
 
@@ -72,7 +82,7 @@ GET：https://api.github.com/repos/{repository}/branches/{branchName}
 GitHubFeignClient.verifyCanReadTargetBranch
 ```
 
-##### 3.1.2 API replaced by
+##### 3.2.2 API replaced by
 
 ```
 query { 
@@ -156,6 +166,17 @@ response:
 }
 ```
 
+##### 3.2.3 Test GraphQL API curl
+
+```
+curl --request POST \
+  --url https://api.github.com/graphql \
+  --header 'Authorization: token ghp_***...***' \
+  --header 'content-type: application/json' \
+  --data '{
+    "query": "{repository(owner: \"au-heartbeat\", name: \"Heartbeat\") { ref(qualifiedName: \"refs/heads/main\") { name }}}"
+}'
+```
 
 #### 3.3. Get commit info by commit id
 
@@ -207,6 +228,8 @@ query {
 | name           | repo      | Heartbeat                                |
 | oid            | commit id | 414e*********************************ae6 |
 
+The value of `first` must be between 1 and 100.
+
 if you want to get target commit for `au-heartbeat/Heartbeat`, you can use as following.
 
 ```
@@ -229,6 +252,17 @@ query {
 		}
   }
 }
+```
+
+##### 3.3.3 Test GraphQL API curl
+
+```
+curl --request POST \
+  --url https://api.github.com/graphql \
+  --header 'Authorization: token ghp_***...***' \
+  --header 'Content-Type: application/json' \
+  --header 'User-Agent: insomnia/8.6.0' \
+  --data '{"query":"{ repository (owner: \"au-heartbeat\", name: \"Heartbeat\") { commit: object(oid: \"414e*********************************ae6\") { ... on Commit { message author { name email date } committer { name email date }}}}}"}'
 ```
 
 #### 3.4. Get commit info list by pull request
@@ -293,7 +327,20 @@ query {
 | first          | per page num    | 100          |
 | after          | endCursor       | MQ           |
 
+The value of `first` must be between 1 and 100.
+
 You can put `endCursor` in `after` to get next page.
+
+##### 3.4.3 Test GraphQL API curl
+
+```
+curl --request POST \
+  --url https://api.github.com/graphql \
+  --header 'Authorization: token ghp_***...***' \
+  --header 'Content-Type: application/json' \
+  --header 'User-Agent: insomnia/8.6.1' \
+  --data '{"query":"{ repository(owner: \"au-heartbeat\", name: \"Heartbeat\") { pullRequest(number: 1037) { commits(first: 100, after: \"\") { edges { node { commit { oid message author { name email date } committer { name email date }}}} pageInfo { endCursor hasNextPage }}}}}"}'
+```
 
 #### 3.5. Get pull request list info
 
@@ -350,7 +397,20 @@ query {
 | first          | per page num | 100                                      |
 | after          | endCursor    | MQ                                       |
 
+The value of `first` must be between 1 and 100.
+
 You can put `endCursor` in `after` to get next page.
+
+##### 3.5.3 Test GraphQL API curl
+
+```
+curl --request POST \
+  --url https://api.github.com/graphql \
+  --header 'Authorization: token ghp_***...***' \
+  --header 'Content-Type: application/json' \
+  --header 'User-Agent: insomnia/8.6.0' \
+  --data '{"query":"{ repository (owner: \"au-heartbeat\", name: \"Heartbeat\") { commit: object(oid: \"414e*********************************ae6\") { ... on Commit { associatedPullRequests(first: 100, after: \"\") { nodes { number createdAt mergedAt mergeCommit { oid }} pageInfo { endCursor hasNextPage }}}}}}"}'
+```
 
 ### 4、How to call GraphQL in code
 
@@ -363,7 +423,7 @@ curl --request POST \
   --url https://api.github.com/graphql \
   --header 'Authorization: token ghp_***...***' \
   --header 'content-type: application/json' \
-  --data '{"query": "query {viewer {login}}"}'
+  --data '{"query": "{viewer {login}}"}'
 ```
 
 ### 5、Api merge
@@ -432,4 +492,17 @@ query {
 | first          | per page num | 100                                      |
 | after          | endCursor    | MQ                                       |
 
+The value of `first` must be between 1 and 100.
+
 You can put `endCursor` in `after` to get next page.
+
+- Test GraphQL API curl
+
+```
+curl --request POST \
+  --url https://api.github.com/graphql \
+  --header 'Authorization: token ghp_***...***' \
+  --header 'Content-Type: application/json' \
+  --header 'User-Agent: insomnia/8.6.1' \
+  --data '{"query":"{ repository(owner: \"au-heartbeat\", name: \"Heartbeat\") { object(expression: \"414e*********************************ae6\") { ... on Commit { associatedPullRequests(first: 100, after: \"\") { edges { node { number createdAt mergedAt mergeCommit { oid } commits(first: 100, after: \"\") { edges { node { commit { oid message author { name email date } committer { name email date }}}} pageInfo { endCursor hasNextPage }}}} pageInfo { endCursor hasNextPage }}}}}}"}'
+```

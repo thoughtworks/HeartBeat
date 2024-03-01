@@ -104,14 +104,14 @@ Here is the user manaul for Version 1 on 2020/06. For now, we just can support J
 
 Before generator the metrics data, user need to config the project info, in Home page (Image3-1), you can create a new project for your project, or you can import a project config json file (If you already saved one config file, for import file feature will introduce in “Import and Export feature ”).
 
-![Image 3-1](https://private-user-images.githubusercontent.com/14356067/308932852-cafbe08b-98f2-4a8b-a4da-7c0bc3da8543.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MDkyMTM4NjMsIm5iZiI6MTcwOTIxMzU2MywicGF0aCI6Ii8xNDM1NjA2Ny8zMDg5MzI4NTItY2FmYmUwOGItOThmMi00YThiLWE0ZGEtN2MwYmMzZGE4NTQzLnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNDAyMjklMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjQwMjI5VDEzMzI0M1omWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPTRiMmNmNTVjNWU3NzM5OGEyMGE2ZTFhMWY0MzIzMDdhYjI1NzRkY2U1YWNlMjk2ZTgwMTllYWQ1ZmQ5NzRiZDUmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0JmFjdG9yX2lkPTAma2V5X2lkPTAmcmVwb19pZD0wIn0.DteuPpHLIJt3lGW_SULg1Pwwgsre7v6-KBY67Hy1YCE)\
+![Image 3-1](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/readme/1.png)\
 _Image 3-1，home page_
 
 #### 3.1.2 Config search data
 
 If you are first use the product, you need to select “Create A New Project”，it will go to config page (Image 3-2)
 
-![Image 3-2](https://private-user-images.githubusercontent.com/14356067/308933384-6990ebe9-6a57-45e2-913a-ffc722d8b6b1.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MDkyMTQxMDIsIm5iZiI6MTcwOTIxMzgwMiwicGF0aCI6Ii8xNDM1NjA2Ny8zMDg5MzMzODQtNjk5MGViZTktNmE1Ny00NWUyLTkxM2EtZmZjNzIyZDhiNmIxLnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNDAyMjklMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjQwMjI5VDEzMzY0MlomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPWYxNzA3NTI4N2E5ZTg0OTNhYTI1MjdiOWQ3YWVkZWJmNjdkYTg3NDFhMGFiZjNlNzcyMWI1MTgzNTNmMTllOWQmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0JmFjdG9yX2lkPTAma2V5X2lkPTAmcmVwb19pZD0wIn0.vJl5Cx9_T9cq1QCrXotgjPND4AmLa5omOYYUcfcGwGw)\
+![Image 3-2](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/readme/2.png)\
 _Image 3-2，Project config page_
 
 Users need to select a period of time, then all of the data that follows is based on that time period.
@@ -127,7 +127,7 @@ All need to select which data you want to get, for now, we support seven metrics
 - `Classification`: provide different dimensions to view how much efforts team spent within selected time period.
 
 
-![Image 3-3](https://private-user-images.githubusercontent.com/14356067/308933544-b274fab8-e656-4514-a375-f9ac693a57cc.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MDkyMTQxMzMsIm5iZiI6MTcwOTIxMzgzMywicGF0aCI6Ii8xNDM1NjA2Ny8zMDg5MzM1NDQtYjI3NGZhYjgtZTY1Ni00NTE0LWEzNzUtZjlhYzY5M2E1N2NjLnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNDAyMjklMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjQwMjI5VDEzMzcxM1omWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPTQ5MTI2ZjYyYmY0YTEzOGQ3NjU5ZTU2ZWY5YzhmYTIxMGFhMWU0Njc0MmVjOTJkM2ZlNGM5ZDFiMGFjNmY0MTEmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0JmFjdG9yX2lkPTAma2V5X2lkPTAmcmVwb19pZD0wIn0.rCrnS6B_PQcVTit_MH4NpQ5YVAKZoleDqK8X3oizxq4)\
+![Image 3-3](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/readme/3.png)\
 _Image 3-3，Metrics Data_
 
 #### 3.1.3 Config project account
@@ -147,7 +147,7 @@ According to your selected required data, you need to input account settings for
 | Mean time to recovery  |  Pipeline |
 
 
-![Image 3-4](https://private-user-images.githubusercontent.com/14356067/308933941-3c49927d-d1db-416b-b140-8e5232189e8c.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MDkyMTQxNzYsIm5iZiI6MTcwOTIxMzg3NiwicGF0aCI6Ii8xNDM1NjA2Ny8zMDg5MzM5NDEtM2M0OTkyN2QtZDFkYi00MTZiLWIxNDAtOGU1MjMyMTg5ZThjLnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNDAyMjklMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjQwMjI5VDEzMzc1NlomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPTc2YjRkODIzZDhkN2ZhZDgyYjFhZDJmZmZiYjZmMDY2ZDFjM2UxNjM4YjUxOWQ3OWI4ZDgyNThhZmZjMjlhMTUmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0JmFjdG9yX2lkPTAma2V5X2lkPTAmcmVwb19pZD0wIn0.k5mJ44_r_ycmxG4T-9AfT5mHlNbtLQv42fDTymaI68w)\
+![Image 3-4](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/readme/4.png)\
 Image 3-4，Project config
 
 **The details for board:**
@@ -178,7 +178,7 @@ After inputting the details info, users need to click the `Verify` button to ver
 
 #### 3.2.1 Config Crews/Cycle Time
 
-![Image 3-5](https://private-user-images.githubusercontent.com/14356067/308934374-4e7abf81-b5c7-4ce3-a9c1-6c9060fdcb2d.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MDkyMTQyMDksIm5iZiI6MTcwOTIxMzkwOSwicGF0aCI6Ii8xNDM1NjA2Ny8zMDg5MzQzNzQtNGU3YWJmODEtYjVjNy00Y2UzLWE5YzEtNmM5MDYwZmRjYjJkLnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNDAyMjklMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjQwMjI5VDEzMzgyOVomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPTAyYzYzOGU4OTkyZGJmODcyM2JhZmMxMGIxZjQyNGY5NjA0MGRiOTA5NTkwNDYyMzZkZWRmZWY3NmY1ZmFhY2ImWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0JmFjdG9yX2lkPTAma2V5X2lkPTAmcmVwb19pZD0wIn0.hYbg7o_QW7i63P1Ka7DDXIbQhCI63YrYJsc_oYDBfRk)\
+![Image 3-5](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/readme/5.png)\
 _Image 3-5, Crews/Cycle Time config_
 
 
@@ -200,7 +200,7 @@ _Image 3-5, Crews/Cycle Time config_
 
 #### 3.2.2 Setting Classification
 
-![Image 3-6](https://private-user-images.githubusercontent.com/14356067/308934557-b076c032-a636-4895-8af6-bc4447c5867a.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MDkyMTQyNjYsIm5iZiI6MTcwOTIxMzk2NiwicGF0aCI6Ii8xNDM1NjA2Ny8zMDg5MzQ1NTctYjA3NmMwMzItYTYzNi00ODk1LThhZjYtYmM0NDQ3YzU4NjdhLnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNDAyMjklMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjQwMjI5VDEzMzkyNlomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPTE4NDRhZTZjNmRmZTM0ZmUwMjRhZDRiOGFhODk1MzVhN2QyNGE3NWRiYjU1M2YyNjI4MTRmZWY5MDMxNGNmZGQmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0JmFjdG9yX2lkPTAma2V5X2lkPTAmcmVwb19pZD0wIn0.qlq_VMFVn5CiBm5r4KbDUI3R70ttCKBSg0Gjd_l4Htw)\
+![Image 3-6](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/readme/6.png)\
 _Image 3-6，Classification Settings_
 
 In classification settings, it will list all Context fields for your jira board. Users can select anyone to get the data for them. And according to your selection, in the export page, you will see the classification report to provide more insight with your board data.
@@ -236,7 +236,7 @@ _Image 3-12，flagged-custom-field_
 
 #### 3.2.4 Pipeline configuration
 
-![Image 3-13](https://private-user-images.githubusercontent.com/14356067/308934831-cd87bc07-c7cc-4c71-b19c-f73a3df071c2.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MDkyMTQzMTIsIm5iZiI6MTcwOTIxNDAxMiwicGF0aCI6Ii8xNDM1NjA2Ny8zMDg5MzQ4MzEtY2Q4N2JjMDctYzdjYy00YzcxLWIxOWMtZjczYTNkZjA3MWMyLnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNDAyMjklMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjQwMjI5VDEzNDAxMlomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPWRmNjFmYTE2YzAwMzk0MDRkMzE2NDdjZTcyNjllOTg1YmFkOGQyMzFkYTE2YmQ3NjY0OWNlNDQwOTY2ZTFmNDgmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0JmFjdG9yX2lkPTAma2V5X2lkPTAmcmVwb19pZD0wIn0.H32HxH24gUdkncQwxDSRAbbnhRU5W-5kAwWUcD6pIYw)\
+![Image 3-13](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/readme/7.png)\
 _Image 3-13，Settings for Pipeline_
 
 They are sharing the similar settings which you need to specify the pipeline step so that Heartbeat will know in which pipeline and step, team consider it as deploy to PROD. So that we could use it to calculate metrics.
@@ -267,21 +267,21 @@ _Image 3-15, Warning message_
 ## 3.4 Generate Metrics report
 
 After setup and configuration, then it will generate the heartbeat dashboard.
-![Image 3-16](https://private-user-images.githubusercontent.com/14356067/308935360-cde7001c-bc3f-416e-824c-ae3e3a0159ca.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MDkyMTQ1ODEsIm5iZiI6MTcwOTIxNDI4MSwicGF0aCI6Ii8xNDM1NjA2Ny8zMDg5MzUzNjAtY2RlNzAwMWMtYmMzZi00MTZlLTgyNGMtYWUzZTNhMDE1OWNhLnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNDAyMjklMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjQwMjI5VDEzNDQ0MVomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPTEwOTRkMzA3NzVmMjdhZGQ2MWMxMWQ3NmQ1MTlhZDY0NzQ3ZDNmYzY3MjhhYTk5OWQxNmQ3ZGM4NGU4OGU4NTImWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0JmFjdG9yX2lkPTAma2V5X2lkPTAmcmVwb19pZD0wIn0.OtxyeoKfxCnZIudo-69BWWhpdr1Jp0IWzCgl2VwA-2Q)
+![Image 3-16](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/readme/8.png)
 
 You could find the drill down from `show more >` link from dashboard.
 
 ### 3.4.1 Velocity
 
 In Velocity Report, it will list the corresponding data by Story Point and the number of story tickets. (image 3-10)
-![Image 3-16](https://user-images.githubusercontent.com/995849/90856819-5ef63180-e3b5-11ea-8e94-e5363d305cf1.png)\
+![Image 3-16](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/readme/9.png)\
 _Image 3-16，Velocity Report_
 
 ### 3.4.2 Cycle Time
 
 The calculation process data and final result of Cycle Time are calculated by rounding method, and two digits are kept after the decimal point. Such as: 3.567... Is 3.56; 3.564... Is 3.56.
 
-![Image 3-17](https://private-user-images.githubusercontent.com/14356067/308936113-383aa224-e4ae-4be9-8254-ae80c0321fc5.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MDkyMTQ3NjIsIm5iZiI6MTcwOTIxNDQ2MiwicGF0aCI6Ii8xNDM1NjA2Ny8zMDg5MzYxMTMtMzgzYWEyMjQtZTRhZS00YmU5LTgyNTQtYWU4MGMwMzIxZmM1LnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNDAyMjklMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjQwMjI5VDEzNDc0MlomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPWU0OGQxM2ZjNTQ4OWYzMmZjZGVmYmQ3Yjc5MDg5Zjk0YzEzM2UwZDNmM2RkZDMzYTc4Mjc4NzI0YzcyMTFmYjQmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0JmFjdG9yX2lkPTAma2V5X2lkPTAmcmVwb19pZD0wIn0.AwOroHyfiU6xQix4X3XKw-e_-N_lsKOIvlMc8ee-oBc)\
+![Image 3-17](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/readme/10.png)\
 _Image 3-17，Cycle Time Report_
 
 ### 3.4.3 Classification
@@ -291,27 +291,27 @@ It will show the classification data of Board based on your selection on `Classi
 The percentage value represent the count of that type tickets vs total count of tickets.
 
 
-![Image 3-18](https://private-user-images.githubusercontent.com/14356067/308936419-3cd61946-f653-446d-a8ff-95890634dc73.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MDkyMTQ4MzksIm5iZiI6MTcwOTIxNDUzOSwicGF0aCI6Ii8xNDM1NjA2Ny8zMDg5MzY0MTktM2NkNjE5NDYtZjY1My00NDZkLWE4ZmYtOTU4OTA2MzRkYzczLnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNDAyMjklMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjQwMjI5VDEzNDg1OVomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPTk2ODc3NmIzNjlmZDlmOWI0MzdhOGNjNjMwZGQ0ZTI2Njk2NWQwNTAxZGNjZjA2OTY0MWRiM2UzY2VjMzk2MzYmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0JmFjdG9yX2lkPTAma2V5X2lkPTAmcmVwb19pZD0wIn0.MJEBkssN_Y7vCkRm73RoZUORL0DTFUBBsXpzECJ3FgU)\
+![Image 3-18](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/readme/11.png)\
 _Image 3-18，Classification Report_
 
 ### 3.4.4 Deployment Frequency
 
-![Image 3-19](https://private-user-images.githubusercontent.com/14356067/308936732-1f85e08f-081f-438c-9203-aa7020a1c795.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MDkyMTQ4NjcsIm5iZiI6MTcwOTIxNDU2NywicGF0aCI6Ii8xNDM1NjA2Ny8zMDg5MzY3MzItMWY4NWUwOGYtMDgxZi00MzhjLTkyMDMtYWE3MDIwYTFjNzk1LnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNDAyMjklMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjQwMjI5VDEzNDkyN1omWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPWE2YTk0Y2U5ZjFjYzhmMzNiNDc2MDY3YzM1NjEzNzllMDBhZDNmODM4MDY1ZjMzNDE1ZDhkMjZmZWRkYmZmMWEmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0JmFjdG9yX2lkPTAma2V5X2lkPTAmcmVwb19pZD0wIn0.e0HcNHYCAdtpxEDuq2cjDFVg5sEcnj6EYWVeBXhx7s0)\
+![Image 3-19](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/readme/12.png)\
 _Image 3-19，Deployment Frequency Report_
 
 ### 3.4.5 Lead time for changes Data
 
-![Image 3-20](https://private-user-images.githubusercontent.com/14356067/308936861-57952daf-e288-4967-b022-cb7466606333.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MDkyMTQ4OTYsIm5iZiI6MTcwOTIxNDU5NiwicGF0aCI6Ii8xNDM1NjA2Ny8zMDg5MzY4NjEtNTc5NTJkYWYtZTI4OC00OTY3LWIwMjItY2I3NDY2NjA2MzMzLnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNDAyMjklMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjQwMjI5VDEzNDk1NlomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPTdmNTI1YjFlODZmODE2N2VhYjhhYzJhZmQ4MTU5YjlmOTEyYWM4NThiMjZiZjZkNjQ3MGU3Mzg3OWZkOGVjZTgmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0JmFjdG9yX2lkPTAma2V5X2lkPTAmcmVwb19pZD0wIn0.FMSdUZ2JB-sKgtAwBAEugBGlMjzaxDVUiM9vWPo1UUg)\
+![Image 3-20](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/readme/13.png)\
 _Image 3-20，Lead time for changes Report_
 
 ### 3.4.6 Change Failure Rate
 
-![Image 3-21](https://private-user-images.githubusercontent.com/14356067/308937105-84f5ca7d-682b-4b2c-8264-822438320ff7.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MDkyMTQ5MjAsIm5iZiI6MTcwOTIxNDYyMCwicGF0aCI6Ii8xNDM1NjA2Ny8zMDg5MzcxMDUtODRmNWNhN2QtNjgyYi00YjJjLTgyNjQtODIyNDM4MzIwZmY3LnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNDAyMjklMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjQwMjI5VDEzNTAyMFomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPWE2YTk5MGI3YjI4YmY4MzUzNjEwNmM1N2I2Yzg2OTc3MTg1OTVjNjYyZmE2NTQ4ZGM1NDgxZDFmM2I5YzYzYzcmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0JmFjdG9yX2lkPTAma2V5X2lkPTAmcmVwb19pZD0wIn0.teODSmzwd-NE2NjGK6dYlZgmT3LKreGpU_QmqfPpOBQ)\
+![Image 3-21](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/readme/14.png)\
 _Image 3-21，Change Failure Rate Report_
 
 ### 3.4.7 Mean time to recovery
 
-![Image 3-22](https://private-user-images.githubusercontent.com/14356067/308937208-7fb0f37a-3db0-4705-8e72-f4a915b895c7.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MDkyMTQ5NzgsIm5iZiI6MTcwOTIxNDY3OCwicGF0aCI6Ii8xNDM1NjA2Ny8zMDg5MzcyMDgtN2ZiMGYzN2EtM2RiMC00NzA1LThlNzItZjRhOTE1Yjg5NWM3LnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNDAyMjklMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjQwMjI5VDEzNTExOFomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPTBkNTMwNWRhODU4OWQ4NDQxOGY1ZWY5Y2I5YzFkMGExOWIyNjJiMjAzMzBkMzZjZTMzYmQ0MGZhZjEzYzIwMzUmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0JmFjdG9yX2lkPTAma2V5X2lkPTAmcmVwb19pZD0wIn0.dkH6oZbOkThkw-8SYDK7ZOOCLFlRhw2Ki6MWsL4r8bA)\
+![Image 3-22](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/readme/15.png)\
 _Image 3-22，mean time to recovery 
 
 ## 3.5 Export original data

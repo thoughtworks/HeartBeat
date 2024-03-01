@@ -16,6 +16,7 @@ import { Loading } from '@src/components/Loading';
 import { styled } from '@mui/material/styles';
 import { Optional } from '@src/utils/types';
 import React, { Fragment } from 'react';
+import { isEmpty } from 'lodash';
 
 interface ReportForThreeColumnsProps {
   title: string;
@@ -57,19 +58,29 @@ export const ReportForThreeColumns = ({
   };
 
   const renderRows = () =>
-    data?.slice(0, data?.length === 2 && data[1]?.name === AVERAGE_FIELD ? 1 : data?.length).map((row) => (
-      <Fragment key={row.id}>
-        <TableRow data-testid={'tr'}>
-          <ColumnTableCell rowSpan={row.valuesList.length + 1}>{emojiRow(row)}</ColumnTableCell>
-        </TableRow>
-        {row.valuesList.map((valuesList) => (
-          <Row data-testid={'tr'} key={valuesList.name}>
-            <BorderTableCell>{valuesList.name}</BorderTableCell>
-            <BorderTableCell>{valuesList.value}</BorderTableCell>
-          </Row>
-        ))}
-      </Fragment>
-    ));
+    data?.slice(0, data?.length === 2 && data[1]?.name === AVERAGE_FIELD ? 1 : data?.length).map((row) => {
+      if (isEmpty(row.valuesList)) {
+        row.valuesList = [
+          {
+            name: '--',
+            value: '--',
+          },
+        ];
+      }
+      return (
+        <Fragment key={row.id}>
+          <TableRow data-testid={'tr'}>
+            <ColumnTableCell rowSpan={row.valuesList.length + 1}>{emojiRow(row)}</ColumnTableCell>
+          </TableRow>
+          {row.valuesList.map((valuesList) => (
+            <Row data-testid={'tr'} key={valuesList.name}>
+              <BorderTableCell>{valuesList.name}</BorderTableCell>
+              <BorderTableCell>{valuesList.value}</BorderTableCell>
+            </Row>
+          ))}
+        </Fragment>
+      );
+    });
 
   const getTitleUnit = (title: string) => {
     return title === METRICS_TITLE.LEAD_TIME_FOR_CHANGES || title === METRICS_TITLE.MEAN_TIME_TO_RECOVERY

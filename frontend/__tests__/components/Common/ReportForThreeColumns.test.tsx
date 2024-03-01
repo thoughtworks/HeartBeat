@@ -22,4 +22,12 @@ describe('Report for three columns', () => {
 
     expect(screen.getByTestId(VELOCITY)).toBeInTheDocument();
   });
+
+  it('should show default value when valuesList is empty', () => {
+    const mockData = [{ id: 0, name: 'name1', valuesList: [] }];
+
+    render(<ReportForThreeColumns title={VELOCITY} fieldName='fieldName' listName='listName' data={mockData} />);
+
+    expect(screen.getAllByText('--')).toHaveLength(2);
+  });
 });

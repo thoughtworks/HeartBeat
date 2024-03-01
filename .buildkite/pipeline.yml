@@ -81,18 +81,6 @@ steps:
     depends_on: "deploy-infra"
     command: ./ops/build.sh backend
 
-  - label: ":rocket: Build Stub"
-    if: build.branch == "main" && build.message =~ /(?i)\[stub\]/
-    key: "build-stub"
-    depends_on: "deploy-infra"
-    command: ./ops/build.sh stub
-
-  - label: ":rocket: Deploy Stub"
-    if: build.branch == "main" && build.message =~ /(?i)\[stub\]/
-    key: "deploy-stub"
-    depends_on: "build-stub"
-    command: ./ops/deploy.sh stub
-
   - label: ":rocket: Deploy e2e"
     if: build.branch == "main" && (build.message =~ /(?i)\[frontend\]/ || build.message =~ /(?i)\[backend\]/)
     key: "deploy-e2e"
@@ -106,7 +94,6 @@ steps:
     key: "check-e2e"
     depends_on:
       - "deploy-e2e"
-      - "deploy-stub"
       - "check-shell"
       - "check-security"
       - "check-frontend"

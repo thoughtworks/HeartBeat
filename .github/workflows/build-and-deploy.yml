@@ -234,7 +234,6 @@ jobs:
         run: |
           docker build -t frontend:latest ./ -f ./ops/infra/Dockerfile.frontend
           docker build -t backend:latest ./ -f ./ops/infra/Dockerfile.backend
-          docker build -t stub:latest ./ -f ./ops/infra/Dockerfile.stub
 
       - name: Run Trivy vulnerability scanner for frontend
         uses: aquasecurity/trivy-action@master
@@ -249,15 +248,6 @@ jobs:
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: backend:latest
-          format: "table"
-          exit-code: "1"
-          ignore-unfixed: true
-          severity: "CRITICAL,HIGH"
-          trivyignores: ".trivyignore"
-      - name: Run Trivy vulnerability scanner for stub
-        uses: aquasecurity/trivy-action@master
-        with:
-          image-ref: stub:latest
           format: "table"
           exit-code: "1"
           ignore-unfixed: true
@@ -388,48 +378,6 @@ jobs:
       #     docker push $REGISTRY/$REPOSITORY:latest
       #     docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
 
-  build-mock-server:
-    if: ${{ github.ref == 'refs/heads/main' }}
-    needs:
-      - deploy-infra
-    runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      contents: read
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: ${{ secrets.AWS_GITHUB_ACTION_ROLE }}
-          aws-region: ${{ secrets.AWS_REGION}}
-
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v2
-
-      - name: Build, tag for MockServer
-        if: ${{ contains(github.event.head_commit.message, '[stub]') }}
-        env:
-          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          REPOSITORY: heartbeat_stub
-          IMAGE_TAG: "hb${{ github.run_number }}"
-        run: |
-          docker build -t $REGISTRY/$REPOSITORY:latest ./ -f ./ops/infra/Dockerfile.stub
-          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG ./ -f ./ops/infra/Dockerfile.stub
-
-      # - name: Push for MockServer
-      #   if: ${{ contains(github.event.head_commit.message, '[stub]') }}
-      #   env:
-      #     REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-      #     REPOSITORY: heartbeat_stub
-      #     IMAGE_TAG: "hb${{ github.run_number }}"
-      #   run: |
-      #     docker push $REGISTRY/$REPOSITORY:latest
-      #     docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
-
   deploy-e2e:
     runs-on: ubuntu-latest
     needs:
@@ -473,58 +421,13 @@ jobs:
       #       if [[ -n $(docker images -f label=arch=Frontend -q) ]]; then docker rmi -f $(docker images -f label=arch=Frontend -q); fi
       #       docker pull $REGISTRY/heartbeat_backend:$IMAGE_TAG
       #       docker pull $REGISTRY/heartbeat_frontend:$IMAGE_TAG
-      #       export MOCK_SERVER_URL=${{ secrets.AWS_EC2_IP_MOCK_SERVER }}:${{ secrets.AWS_EC2_IP_E2E_PORT }}
       #       export SPRING_PROFILES_ACTIVE="e2e"
       #       docker-compose up -d frontend
 
-  deploy-stub:
-    runs-on: ubuntu-latest
-    needs:
-      - build-mock-server
-    steps:
-      - name: Checkout repo
-        # uses: actions/checkout@v4
-        run: echo "This is an empty step"
-      # - name: Update docker-compose.yaml
-      #   if: ${{ contains(github.event.head_commit.message, '[stub]') }}
-      #   run: |
-      #     sed -i -e 's/heartbeat_stub:latest/${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_HOST }}\/heartbeat_stub:hb${{ github.run_number }}/g' ops/infra/docker-compose.yml
-      #     mv ops/infra/docker-compose.yml ops/infra/docker-compose-stub.yml
-      # - name: Copy docker-compose to ec2
-      #   uses: appleboy/scp-action@master
-      #   if: ${{ contains(github.event.head_commit.message, '[stub]') }}
-      #   with:
-      #     host: ${{ secrets.AWS_EC2_IP_MOCK_SERVER }}
-      #     username: ${{ secrets.AWS_USERNAME }}
-      #     key: ${{ secrets.AWS_PRIVATE_KEY }}
-      #     port: ${{ secrets.AWS_SSH_PORT }}
-      #     source: "./ops/infra/docker-compose-stub.yml"
-      #     target: "./"
-      #     strip_components: 1
-      # - name: Deploy
-      #   if: ${{ contains(github.event.head_commit.message, '[stub]') }}
-      #   uses: appleboy/ssh-action@master
-      #   env:
-      #     REGISTRY: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_HOST }}
-      #     IMAGE_TAG: "hb${{ github.run_number }}"
-      #   with:
-      #     host: ${{ secrets.AWS_EC2_IP_MOCK_SERVER }}
-      #     username: ${{ secrets.AWS_USERNAME }}
-      #     key: ${{ secrets.AWS_PRIVATE_KEY }}
-      #     port: ${{ secrets.AWS_SSH_PORT }}
-      #     script: |
-      #       aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_HOST }}
-      #       cp "./ops/infra/docker-compose-stub.yml" ./
-      #       # docker-compose down stub
-      #       if [[ -n $(docker images -f label=arch=stubs -q) ]]; then docker rmi -f $(docker images -f label=arch=stubs -q); fi
-      #       docker pull ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_HOST }}/heartbeat_stub:latest
-      #       export MOCK_SERVER_PORT=${{ secrets.AWS_EC2_IP_E2E_PORT }}
-      #       docker-compose -f docker-compose-stub.yml up -d stub
   e2e:
     runs-on: ubuntu-latest
     needs:
       - deploy-e2e
-      - deploy-stub
     container:
       image: mcr.microsoft.com/playwright:latest
     steps:

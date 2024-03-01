@@ -1,9 +1,0 @@
-- request:
-    method: GET
-    url: /health
-  response:
-    status: 200
-    body: >
-      {"status": "OK"}
-    headers:
-      content-type: application/json

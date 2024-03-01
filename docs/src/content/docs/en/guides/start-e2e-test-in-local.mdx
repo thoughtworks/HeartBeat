@@ -4,13 +4,9 @@ title: How to start e2e test in local environment
 
 **Solution**
 
-- In the stubs directory, start docker.
-  ```
-  docker-compose up -d
-  ```
 - In the backend directory, start backend.
   ```
-  ./gradlew bootRun --args='--spring.profiles.active=local --MOCK_SERVER_URL=http://localhost:4323'
+  ./gradlew bootRun --args='--spring.profiles.active=local'
   ```
 - In the frontend directory, start frontend.
   ```
@@ -18,5 +14,5 @@ title: How to start e2e test in local environment
   ```
 - In the frontend directory, start cypress.
   ```
-  pnpm cypress open
+  pnpm e2e:local
   ```

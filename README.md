@@ -8,12 +8,12 @@
 
 [![FOSSA Status](https://app.fossa.com/api/projects/custom%2B23211%2Fgithub.com%2Fau-heartbeat%2FHeartbeat.svg?type=large)](https://app.fossa.com/projects/custom%2B23211%2Fgithub.com%2Fau-heartbeat%2FHeartbeat?ref=badge_large)
 
-
 - [Heartbeat Project（2023/07）](#heartbeat-project202307)
 - [News](#news)
 - [1 About Heartbeat](#1-about-heartbeat)
 - [2 Support tools](#2-support-tools)
 - [3 Product Features](#3-product-features)
+
   - [3.1 Config project info](#31-config-project-info)
     - [3.1.1 Config Board/Pipeline/Source data](#311-config-boardpipelinesource-data)
       - [3.1.2 Config search data](#312-config-search-data)
@@ -61,18 +61,17 @@
 
 # News
 
- - [Feb 28 2023 - Released Heartbeat - 0.9.0](release-notes/20230228.md)
- - [July 27 2023 - Release Heartbeat - 1.0.0](release-notes/20230726.md)
- - [Oct 9 2023 - Release Heartbeat - 1.1.0](release-notes/20231009.md)
- - [Nov 6 2023 - Release Heartbeat - 1.1.2](release-notes/20231106.md)
- - [Nov 21 2023 - Release Heartbeat - 1.1.3](release-notes/20231121.md)
- - [Dev 4 2023 - Release Heartbeat - 1.1.4](release-notes/20231204.md)
+- [Feb 28 2023 - Released Heartbeat - 0.9.0](release-notes/20230228.md)
+- [July 27 2023 - Release Heartbeat - 1.0.0](release-notes/20230726.md)
+- [Oct 9 2023 - Release Heartbeat - 1.1.0](release-notes/20231009.md)
+- [Nov 6 2023 - Release Heartbeat - 1.1.2](release-notes/20231106.md)
+- [Nov 21 2023 - Release Heartbeat - 1.1.3](release-notes/20231121.md)
+- [Dev 4 2023 - Release Heartbeat - 1.1.4](release-notes/20231204.md)
  - [Feb 29 2024 - Release Heartbeat - 1.1.5](release-notes/20240229.md)
 
 # 1 About Heartbeat
 
 Heartbeat is a tool for tracking project delivery metrics that can help you get a better understanding of delivery performance. This product allows you easily get all aspects of source data faster and more accurate to analyze team delivery performance which enables delivery teams and team leaders focusing on driving continuous improvement and enhancing team productivity and efficiency.
-
 
 State of DevOps Report is launching in 2019. In this webinar, The 4 key metrics research team and Google Cloud share key metrics to measure DevOps performance, measure the effectiveness of development and delivery practices. They searching about six years, developed four metrics that provide a high-level systems view of software delivery and performance.
 
@@ -122,10 +121,10 @@ Users need to select a period of time, then all of the data that follows is base
 2.  **Calendar with Chinese Holiday:** If you select this item, it means all data will exclude the weekend and Chinese holiday. So if the time period you selected contains Chinese holiday, you need to select this item.
 
 All need to select which data you want to get, for now, we support seven metrics data (Image 3-3). Those seven metrics are `Deployment Frequency (DF)`, `Lead Time for changes (LTC)`, `Mean Time To Recover (MTTR)`, `Change Failure Rate (CFR)`, and `Velocity`, `Cycle time`, `Classification`, where
+
 - `Velocity` : includes how many story points and cards we have completed within selected time period.
 - `Cycle time`: the time it take for each card start to do until move to done.
 - `Classification`: provide different dimensions to view how much efforts team spent within selected time period.
-
 
 ![Image 3-3](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/readme/3.png)\
 _Image 3-3，Metrics Data_
@@ -136,16 +135,15 @@ Because all metrics data from different tools that your projects use. Need to ha
 
 According to your selected required data, you need to input account settings for the respective data source. Below is the mapping between your selected data to data source.
 
-| Required Data  | Datasource  |
-|---|---|
-| Velocity  | Board  |
-| Cycle time  | Board  |
-| Classification  | Board  |
-| Lead time for changes  | Repo，Pipeline  |
-| Deployment frequency  | Pipeline |
-| Change failure rate  | Pipeline  |
-| Mean time to recovery  |  Pipeline |
-
+| Required Data         | Datasource     |
+| --------------------- | -------------- |
+| Velocity              | Board          |
+| Cycle time            | Board          |
+| Classification        | Board          |
+| Lead time for changes | Repo，Pipeline |
+| Deployment frequency  | Pipeline       |
+| Change failure rate   | Pipeline       |
+| Mean time to recovery | Pipeline       |
 
 ![Image 3-4](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/readme/4.png)\
 Image 3-4，Project config
@@ -180,7 +178,6 @@ After inputting the details info, users need to click the `Verify` button to ver
 
 ![Image 3-5](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/readme/5.png)\
 _Image 3-5, Crews/Cycle Time config_
-
 
 **Crew Settings:** You could select your team members from a list get from board source. The list will include the assignees for those tickets that finished in the time period selected in the last step.
 
@@ -242,11 +239,10 @@ _Image 3-13，Settings for Pipeline_
 They are sharing the similar settings which you need to specify the pipeline step so that Heartbeat will know in which pipeline and step, team consider it as deploy to PROD. So that we could use it to calculate metrics.
 
 | Items         | Description                                       |
-|---------------|---------------------------------------------------|
+| ------------- --|----------------------------------------------------------------- |
 | Organization  | The organization for your pipelines               |
 | Pipeline Name | Your pipeline name                                |
-| Steps         | The pipeline step that consider as deploy to PROD |
-| Branches      | Your selected branches                            |
+| Steps         | The pipeline step that consider as deploy to PROD || Branches      | Your selected branches                            |
 
 ## 3.3 Export and import config info
 
@@ -286,10 +282,8 @@ _Image 3-17，Cycle Time Report_
 
 ### 3.4.3 Classification
 
-
 It will show the classification data of Board based on your selection on `Classification Settings` in metrics page.
 The percentage value represent the count of that type tickets vs total count of tickets.
-
 
 ![Image 3-18](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/readme/11.png)\
 _Image 3-18，Classification Report_
@@ -322,10 +316,12 @@ After generating the report, you can export the original data for your board and
 
 It will export a csv file for board data
 
-#### 3.5.1.1 Done card exporting 
+#### 3.5.1.1 Done card exporting
+
 Export the all done tickets during the time period(Image 1)
 
-#### 3.5.1.1 Undone card exporting 
+#### 3.5.1.1 Undone card exporting
+
 Export the latest updated 50 non-done tickets in your current active board. And it will order by heartbeat state and then last status change date(Image 3-16)
 
 ![Image 3-22](https://user-images.githubusercontent.com/995849/89784291-01f3b380-db4b-11ea-8f5a-d475e80014fb.png)\
@@ -380,15 +376,16 @@ _Image 3-23，Exported Pipeline Data_
 |Status|Status for pipeline (Pass or Failed)|
 
 ## 3.6 Caching data
-   In HeartBeat tool design, we have a cache setting for verify jira & pipeLine & gitHub config function and pipleLine loading function and generate report function. 
-   - `For Jira/Buildkite/Github data`: TTL for cache -> 90 seconds 
-   - `For holiday data`:TTL for cache -> 5 minutes
+
+In HeartBeat tool design, we have a cache setting for verify jira & pipeLine & gitHub config function and pipleLine loading function and generate report function.
+
+- `For Jira/Buildkite/Github data`: TTL for cache -> 90 seconds
+- `For holiday data`:TTL for cache -> 5 minutes
 
 # 4 Known issues
 
-## 4.1 Change status name in Jira board setting when there are cards in this status
+## 4.1  Change status name in Jira board setting when there are cards in this status
 As an administrator of the jira board, if you modify the workflow to change the status name, it will affect the calculation of duration for cards in that status. Considering the potential loss of duration, changing the status name can lead to loss of precision in cycle time calculation for related cards.
-
 
 # 5 Instructions
 
@@ -447,42 +444,41 @@ pnpm coverage
 ```
 
 ## 6.1.4 How to run e2e tests locally
-1. Start the mock server
-```
-cd HearBeat/stubs
-docker-compose up -d
-```
+
 2. Start the backend service
+
 ```
 cd HearBeat/backend
-./gradlew bootRun --args='--spring.profiles.active=local --MOCK_SERVER_URL=http://localhost:4323'
+./gradlew bootRun --args='--spring.profiles.active=local'
 ```
+
 3. Start the frontend service
+
 ```
 cd HearBeat/frontend
 pnpm start
 ```
+
 4. Run the e2e tests
+
 ```
 cd HearBeat/frontend
 pnpm e2e
 ```
 
 # 7 How to trigger BuildKite Pipeline
-1. Add `[stub]` tag to the title of a commit message or PR to trigger stub-related deployments.
 
-2. Add `[infra]` tag to the title of the commit message or PR to trigger infra-related deployments.
+1. Add `[infra]` tag to the title of the commit message or PR to trigger infra-related deployments.
 
-3. Add `[backend]` tag to the title of the commit message or PR to trigger backend-related deployments.
+2. Add `[backend]` tag to the title of the commit message or PR to trigger backend-related deployments.
 
-4. Add `[frontend]` tag to the title of the commit message or PR to trigger frontend-related deployments.
+3. Add `[frontend]` tag to the title of the commit message or PR to trigger frontend-related deployments.
 
-5. Add `[docs]` tag to the title of the commit message or PR to trigger docs-related deployments.
-
+4. Add `[docs]` tag to the title of the commit message or PR to trigger docs-related deployments.
 
 ## Release
 
-Release version follows  **[Software release life cycle](https://en.wikipedia.org/wiki/Software_release_life_cycle)**
+Release version follows **[Software release life cycle](https://en.wikipedia.org/wiki/Software_release_life_cycle)**
 
 ### Release command in main branch
 
@@ -528,7 +524,9 @@ docker-compose up -d frontend
 ```
 
 ### 7.1.1 Customize story point field in Jira
+
 Specifically, story point field can be indicated in `docker-compose.yml`. You can do it as below.
+
 ```yaml
 version: "3.4"
 services:
@@ -551,9 +549,11 @@ services:
 ```
 
 ### 7.1.2 Multiple instance deployment
+
 Specifically, if you want to run with multiple instances. You can do it with below docker compose file.
 
 You can change `deploy.replicas` to adjust the number of instances.
+
 ```yaml
 version: "3.4"
 
@@ -652,4 +652,5 @@ kubectl apply -f k8s-heartbeat.yml
 ```
 
 ### 7.2.1 Multiple instance deployment
+
 You also can deploy Heartbeats in multiple instances using K8S through the following [documentation](https://au-heartbeat.github.io/Heartbeat/en/devops/how-to-deploy-heartbeat-in-multiple-instances-by-k8s/).

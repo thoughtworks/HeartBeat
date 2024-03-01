@@ -21,7 +21,7 @@ HeartBeat 是了解项目交付情况的工具，可帮助团队确定绩效指�
 
 HeartBeat 工具除了可以用来统计部署频率、平均变更时间以及变更失败率外，我们还可以统计了其他数据，例如：速率(Velocity)、周期时间(Cycle Time)和工作分类(Classification)。
 
-需要特别说明的是，关于平均恢复时间 (MTTR)指标，如果在选定时间范围内，pipeline还处于失败状态，则计算MTTR的时候不会包括未修复的这部分数据。
+需要特别说明的是，关于平均恢复时间 (MTTR)指标，如果在选定时间范围内，pipeline 还处于失败状态，则计算 MTTR 的时候不会包括未修复的这部分数据。
 
 # 2 支持的工具
 
@@ -196,11 +196,13 @@ _Image 3-15，Change Failure Rate Report_
 
 本功能会导出看板数据到 csv 文件
 
-#### 3.4.1.1 导出已完成card
-在所选择时间段内导出所有已完成的card
+#### 3.4.1.1 导出已完成 card
 
-#### 3.4.1.2 导出未完成card
-在所选时间段内拉取最新修改的50张cards，导出时先根据heartBeat的状态排序，然后再根据最近状态改变时间排序。(Image 3-16)
+在所选择时间段内导出所有已完成的 card
+
+#### 3.4.1.2 导出未完成 card
+
+在所选时间段内拉取最新修改的 50 张 cards，导出时先根据 heartBeat 的状态排序，然后再根据最近状态改变时间排序。(Image 3-16)
 
 ![Image 3-16](https://user-images.githubusercontent.com/995849/89784291-01f3b380-db4b-11ea-8f5a-d475e80014fb.png)\
 _Image 3-16，Exported Board Data_
@@ -274,15 +276,15 @@ For now, we don’t have a good solution to resolve this issue.
 
 1.  打开 https://{site}.atlassian.net/secure/admin/ViewIssueFields.jspa?start=0&searchFilter=
 
--  ![Image 5-1](https://user-images.githubusercontent.com/995849/89785230-a75b5700-db4c-11ea-9ce2-4ff7894bbf25.png)\
+- ![Image 5-1](https://user-images.githubusercontent.com/995849/89785230-a75b5700-db4c-11ea-9ce2-4ff7894bbf25.png)\
   _Image 5-1_
 
 2.  如果您需要启用任何项，可以在上述页面中单击该项目的“Action”列中的“Screens”链接。然后在下一页中，检查要更改的项目，然后进行更新。例如：故事点
 
--  ![Image 5-2](https://user-images.githubusercontent.com/995849/89785239-ab877480-db4c-11ea-9e82-952777936cf8.png)\
+- ![Image 5-2](https://user-images.githubusercontent.com/995849/89785239-ab877480-db4c-11ea-9e82-952777936cf8.png)\
   _Image 5-2_
 
--  ![Image 5-3](https://user-images.githubusercontent.com/995849/89785244-acb8a180-db4c-11ea-958f-663a7efa105c.png)\
+- ![Image 5-3](https://user-images.githubusercontent.com/995849/89785244-acb8a180-db4c-11ea-958f-663a7efa105c.png)\
   _Image 5-3_
 
 对于 next-gen Jira，当添加 Story Point 项时，名称应为“Story Points”或“Story point estimate”。
@@ -327,9 +329,10 @@ pnpm e2e
 ```
 pnpm e2e:report
 ```
+
 # 7 How to trigger BuildKite Pipeline
-1. commit message或者PR的title中添加`[stub]` tag,以触发stub相关的部署。 
-2. commit message或者PR的title中添加`[infra]` tag,以触发infra相关的部署。
-3. commit message或者PR的title中添加`[backend]` tag,以触发backend相关的部署。
-4. commit message或者PR的title中添加`[frontend]` tag,以触发frontend相关的部署。
-5. commit message或者PR的title中添加`[docs]` tag,以触发docs相关的部署。
+
+1. commit message 或者 PR 的 title 中添加`[infra]` tag,以触发 infra 相关的部署。
+2. commit message 或者 PR 的 title 中添加`[backend]` tag,以触发 backend 相关的部署。
+3. commit message 或者 PR 的 title 中添加`[frontend]` tag,以触发 frontend 相关的部署。
+4. commit message 或者 PR 的 title 中添加`[docs]` tag,以触发 docs 相关的部署。

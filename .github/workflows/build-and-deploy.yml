@@ -100,6 +100,11 @@ jobs:
         run: |
           export CODACY_PROJECT_TOKEN=${{secrets.CODACY_PROJECT_TOKEN}}
           bash <(curl -Ls https://coverage.codacy.com/get.sh)
+      - name: Build and analyze
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_BACKEND }}
+        run: ./gradlew build sonar --info
   backend-license-check:
     runs-on: ubuntu-latest
     defaults:
@@ -197,6 +202,16 @@ jobs:
         run: |
           export CODACY_PROJECT_TOKEN=${{secrets.CODACY_PROJECT_TOKEN}}
           bash <(curl -Ls https://coverage.codacy.com/get.sh)
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        with:
+          projectBaseDir: frontend
+          args: >
+            -Dsonar.organization=au-heartbeat
+            -Dsonar.projectKey=au-heartbeat-heartbeat-frontend
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_FRONTEND }}
   frontend-license-check:
     runs-on: ubuntu-latest
     steps:

@@ -210,6 +210,9 @@ jobs:
             -Dsonar.organization=au-heartbeat
             -Dsonar.projectKey=au-heartbeat-heartbeat-frontend
             -Dsonar.javascript.lcov.reportPaths=./coverage/lcov.info
+            -Dsonar.sources=src/
+            -Dsonar.tests=__tests__
+
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_FRONTEND }}

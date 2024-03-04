@@ -26,6 +26,7 @@ import heartbeat.exception.ServiceUnavailableException;
 import heartbeat.handler.AsyncExceptionHandler;
 import heartbeat.handler.AsyncMetricsDataHandler;
 import heartbeat.handler.AsyncReportRequestHandler;
+import heartbeat.handler.base.AsyncExceptionDTO;
 import heartbeat.service.report.calculator.ChangeFailureRateCalculator;
 import heartbeat.service.report.calculator.ClassificationCalculator;
 import heartbeat.service.report.calculator.CycleTimeCalculator;
@@ -34,8 +35,6 @@ import heartbeat.service.report.calculator.LeadTimeForChangesCalculator;
 import heartbeat.service.report.calculator.MeanToRecoveryCalculator;
 import heartbeat.service.report.calculator.VelocityCalculator;
 import heartbeat.service.report.calculator.model.FetchedData;
-import heartbeat.util.ValueUtil;
-import lombok.val;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Nested;
@@ -688,7 +687,7 @@ class GenerateReporterServiceTest {
 			when(asyncReportRequestHandler.getReport(any())).thenReturn(ReportResponse.builder().build());
 			when(asyncMetricsDataHandler.getReportReadyStatusByTimeStamp(reportId))
 				.thenReturn(metricsDataDTO);
-			when(asyncExceptionHandler.get(any())).thenReturn(new NotFoundException("error"));
+			when(asyncExceptionHandler.get(any())).thenReturn(new AsyncExceptionDTO(new NotFoundException("error")));
 
 			ReportResponse res = generateReporterService.getComposedReportResponse(reportId);
 
@@ -702,7 +701,7 @@ class GenerateReporterServiceTest {
 			when(asyncReportRequestHandler.getReport(any())).thenReturn(ReportResponse.builder().build());
 			when(asyncMetricsDataHandler.getReportReadyStatusByTimeStamp(reportId))
 				.thenReturn(metricsDataDTO);
-			when(asyncExceptionHandler.get(any())).thenReturn(new GenerateReportException("errorMessage"));
+			when(asyncExceptionHandler.get(any())).thenReturn(new AsyncExceptionDTO(new GenerateReportException("errorMessage")));
 
 			try {
 				generateReporterService.getComposedReportResponse(reportId);
@@ -719,7 +718,7 @@ class GenerateReporterServiceTest {
 			when(asyncReportRequestHandler.getReport(any())).thenReturn(ReportResponse.builder().build());
 			when(asyncMetricsDataHandler.getReportReadyStatusByTimeStamp(reportId))
 				.thenReturn(metricsDataDTO);
-			when(asyncExceptionHandler.get(any())).thenReturn(new ServiceUnavailableException("errorMessage"));
+			when(asyncExceptionHandler.get(any())).thenReturn(new AsyncExceptionDTO(new ServiceUnavailableException("errorMessage")));
 
 			try {
 				generateReporterService.getComposedReportResponse(reportId);
@@ -736,7 +735,7 @@ class GenerateReporterServiceTest {
 			when(asyncReportRequestHandler.getReport(any())).thenReturn(ReportResponse.builder().build());
 			when(asyncMetricsDataHandler.getReportReadyStatusByTimeStamp(reportId))
 				.thenReturn(metricsDataDTO);
-			when(asyncExceptionHandler.get(any())).thenReturn(new BadRequestException("error"));
+			when(asyncExceptionHandler.get(any())).thenReturn(new AsyncExceptionDTO(new BadRequestException("error")));
 
 			try {
 				generateReporterService.getComposedReportResponse(reportId);

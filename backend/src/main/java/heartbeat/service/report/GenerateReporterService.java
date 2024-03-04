@@ -1,6 +1,5 @@
 package heartbeat.service.report;
 
-import heartbeat.client.dto.codebase.github.PipelineLeadTime;
 import heartbeat.controller.report.dto.request.GenerateReportRequest;
 import heartbeat.controller.report.dto.request.JiraBoardSetting;
 import heartbeat.controller.report.dto.response.ErrorInfo;
@@ -15,6 +14,7 @@ import heartbeat.exception.ServiceUnavailableException;
 import heartbeat.handler.AsyncExceptionHandler;
 import heartbeat.handler.AsyncMetricsDataHandler;
 import heartbeat.handler.AsyncReportRequestHandler;
+import heartbeat.handler.base.AsyncExceptionDTO;
 import heartbeat.service.report.calculator.ChangeFailureRateCalculator;
 import heartbeat.service.report.calculator.ClassificationCalculator;
 import heartbeat.service.report.calculator.CycleTimeCalculator;
@@ -102,12 +102,10 @@ public class GenerateReporterService {
 		FetchedData fetchedData = new FetchedData();
 		if (CollectionUtils.isNotEmpty(request.getPipelineMetrics())) {
 			GenerateReportRequest pipelineRequest = request.toPipelineRequest();
-			fetchOriginalData(pipelineRequest, fetchedData);
 			generatePipelineReport(pipelineRequest, fetchedData);
 		}
 		if (CollectionUtils.isNotEmpty(request.getSourceControlMetrics())) {
 			GenerateReportRequest sourceControlRequest = request.toSourceControlRequest();
-			fetchOriginalData(sourceControlRequest, fetchedData);
 			generateSourceControlReport(sourceControlRequest, fetchedData);
 		}
 		generateCSVForPipeline(request, fetchedData.getBuildKiteData());
@@ -121,6 +119,7 @@ public class GenerateReporterService {
 				request.getPipelineMetrics(), request.getConsiderHoliday(), request.getStartTime(),
 				request.getEndTime(), pipelineReportId);
 		try {
+			fetchOriginalData(request, fetchedData);
 			saveReporterInHandler(generatePipelineReporter(request, fetchedData), pipelineReportId);
 			log.info(
 					"Successfully generate pipeline report, _metrics: {}, _considerHoliday: {}, _startTime: {}, _endTime: {}, _pipelineReportId: {}",
@@ -131,6 +130,9 @@ public class GenerateReporterService {
 			asyncExceptionHandler.put(pipelineReportId, e);
 			if (List.of(401, 403, 404).contains(e.getStatus()))
 				asyncMetricsDataHandler.updateMetricsDataCompletedInHandler(request.getDoraReportId(), DORA);
+			if (Objects.equals(400, e.getStatus())) {
+				throw e;
+			}
 		}
 	}
 
@@ -141,6 +143,7 @@ public class GenerateReporterService {
 				request.getSourceControlMetrics(), request.getConsiderHoliday(), request.getStartTime(),
 				request.getEndTime(), sourceControlReportId);
 		try {
+			fetchOriginalData(request, fetchedData);
 			saveReporterInHandler(generateSourceControlReporter(request, fetchedData), sourceControlReportId);
 			log.info(
 					"Successfully generate source control report, _metrics: {}, _considerHoliday: {}, _startTime: {}, _endTime: {}, _sourceControlReportId: {}",
@@ -151,6 +154,9 @@ public class GenerateReporterService {
 			asyncExceptionHandler.put(sourceControlReportId, e);
 			if (List.of(401, 403, 404).contains(e.getStatus()))
 				asyncMetricsDataHandler.updateMetricsDataCompletedInHandler(request.getDoraReportId(), DORA);
+			if (Objects.equals(400, e.getStatus())) {
+				throw e;
+			}
 		}
 	}
 
@@ -265,7 +271,7 @@ public class GenerateReporterService {
 		asyncReportRequestHandler.putReport(reportId, reportContent);
 	}
 
-	private ErrorInfo handleAsyncExceptionAndGetErrorInfo(BaseException exception) {
+	private ErrorInfo handleAsyncExceptionAndGetErrorInfo(AsyncExceptionDTO exception) {
 		if (Objects.nonNull(exception)) {
 			int status = exception.getStatus();
 			final String errorMessage = exception.getMessage();
@@ -349,9 +355,9 @@ public class GenerateReporterService {
 	}
 
 	private ReportMetricsError getReportErrorAndHandleAsyncException(String reportId) {
-		BaseException boardException = asyncExceptionHandler.get(IdUtil.getBoardReportId(reportId));
-		BaseException pipelineException = asyncExceptionHandler.get(IdUtil.getPipelineReportId(reportId));
-		BaseException sourceControlException = asyncExceptionHandler.get(IdUtil.getSourceControlReportId(reportId));
+		AsyncExceptionDTO boardException = asyncExceptionHandler.get(IdUtil.getBoardReportId(reportId));
+		AsyncExceptionDTO pipelineException = asyncExceptionHandler.get(IdUtil.getPipelineReportId(reportId));
+		AsyncExceptionDTO sourceControlException = asyncExceptionHandler.get(IdUtil.getSourceControlReportId(reportId));
 		return ReportMetricsError.builder()
 			.boardMetricsError(handleAsyncExceptionAndGetErrorInfo(boardException))
 			.pipelineMetricsError(handleAsyncExceptionAndGetErrorInfo(pipelineException))

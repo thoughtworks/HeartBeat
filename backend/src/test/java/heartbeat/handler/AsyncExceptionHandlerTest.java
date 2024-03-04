@@ -1,8 +1,8 @@
 package heartbeat.handler;
 
-import heartbeat.exception.BaseException;
 import heartbeat.exception.GenerateReportException;
 import heartbeat.exception.UnauthorizedException;
+import heartbeat.handler.base.AsyncExceptionDTO;
 import heartbeat.util.IdUtil;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.AfterAll;
@@ -162,7 +162,7 @@ class AsyncExceptionHandlerTest {
 		String boardReportId = IdUtil.getBoardReportId(currentTime);
 		asyncExceptionHandler.put(boardReportId, new UnauthorizedException("test"));
 
-		BaseException baseException = asyncExceptionHandler.remove(boardReportId);
+		AsyncExceptionDTO baseException = asyncExceptionHandler.remove(boardReportId);
 
 		assertEquals(HttpStatus.UNAUTHORIZED.value(), baseException.getStatus());
 		assertEquals("test", baseException.getMessage());

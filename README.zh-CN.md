@@ -1,8 +1,8 @@
 # Heartbeat （2023/07）
 
-[![Build status](https://badge.buildkite.com/94880b707695acea56c07125ec8e0d1220c746457d120ed022.svg)](https://buildkite.com/thoughtworks-Heartbeat/heartbeat)[![Codacy Badge](https://app.codacy.com/project/badge/Grade/2e19839055d3429598b2141884496c49)](https://www.codacy.com/gh/au-heartbeat/HeartBeat/dashboard?utm_source=github.com&utm_medium=referral&utm_content=au-heartbeat/HeartBeat&utm_campaign=Badge_Grade)[![Codacy Badge](https://app.codacy.com/project/badge/Coverage/2e19839055d3429598b2141884496c49)](https://www.codacy.com/gh/au-heartbeat/HeartBeat/dashboard?utm_source=github.com&utm_medium=referral&utm_content=au-heartbeat/HeartBeat&utm_campaign=Badge_Coverage)
+[![Build status](https://badge.buildkite.com/62f2d9def796f9bf8d79dc67e548341b6e3e3ad07631164b07.svg)](https://buildkite.com/heartbeat-backup/heartbeat)[![Codacy Badge](https://app.codacy.com/project/badge/Grade/2e19839055d3429598b2141884496c49)](https://www.codacy.com/gh/au-heartbeat/HeartBeat/dashboard?utm_source=github.com&utm_medium=referral&utm_content=au-heartbeat/HeartBeat&utm_campaign=Badge_Grade)[![Codacy Badge](https://app.codacy.com/project/badge/Coverage/2e19839055d3429598b2141884496c49)](https://www.codacy.com/gh/au-heartbeat/HeartBeat/dashboard?utm_source=github.com&utm_medium=referral&utm_content=au-heartbeat/HeartBeat&utm_campaign=Badge_Coverage)
 
-[![Docs](https://github.com/au-heartbeat/HeartBeat/actions/workflows/Docs.yaml/badge.svg)](https://github.com/au-heartbeat/HeartBeat/actions/workflows/Docs.yaml) [![Frontend](https://github.com/au-heartbeat/HeartBeat/actions/workflows/frontend.yml/badge.svg)](https://github.com/au-heartbeat/HeartBeat/actions/workflows/frontend.yml) [![Backend](https://github.com/au-heartbeat/HeartBeat/actions/workflows/backend.yml/badge.svg)](https://github.com/au-heartbeat/HeartBeat/actions/workflows/backend.yml) [![Security](https://github.com/au-heartbeat/HeartBeat/actions/workflows/Security.yml/badge.svg)](https://github.com/au-heartbeat/HeartBeat/actions/workflows/Security.yml) [![Build and Deploy](https://github.com/au-heartbeat/HeartBeat/actions/workflows/BuildAndDeploy.yml/badge.svg)](https://github.com/au-heartbeat/HeartBeat/actions/workflows/BuildAndDeploy.yml)
+[![Docs](https://github.com/au-heartbeat/HeartBeat/actions/workflows/Docs.yaml/badge.svg)](https://github.com/au-heartbeat/HeartBeat/actions/workflows/Docs.yaml) [![Frontend](https://github.com/au-heartbeat/HeartBeat/actions/workflows/frontend.yml/badge.svg)](https://github.com/au-heartbeat/HeartBeat/actions/workflows/frontend.yml) [![Backend](https://github.com/au-heartbeat/HeartBeat/actions/workflows/backend.yml/badge.svg)](https://github.com/au-heartbeat/HeartBeat/actions/workflows/backend.yml) [![Security](https://github.com/au-heartbeat/HeartBeat/actions/workflows/Security.yml/badge.svg)](https://github.com/au-heartbeat/HeartBeat/actions/workflows/Security.yml) [![Build and Deploy](https://github.com/au-heartbeat/Heartbeat/actions/workflows/build-and-deploy.yml/badge.svg)](https://github.com/au-heartbeat/Heartbeat/actions/workflows/build-and-deploy.yml)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
@@ -20,6 +20,8 @@ HeartBeat 是了解项目交付情况的工具，可帮助团队确定绩效指�
 4.  变更失败率 (CFR)
 
 HeartBeat 工具除了可以用来统计部署频率、平均变更时间以及变更失败率外，我们还可以统计了其他数据，例如：速率(Velocity)、周期时间(Cycle Time)和工作分类(Classification)。
+
+需要特别说明的是，关于平均恢复时间 (MTTR)指标，如果在选定时间范围内，pipeline 还处于失败状态，则计算 MTTR 的时候不会包括未修复的这部分数据。
 
 # 2 支持的工具
 
@@ -192,11 +194,15 @@ _Image 3-15，Change Failure Rate Report_
 
 ### 3.4.1 导出看板数据 / Export board data
 
-本功能会导出看板数据到 csv 文件，该文件包含两个部分：
+本功能会导出看板数据到 csv 文件
 
-**Part 1:** 在所选择时间段内所有的 Jira Ticket
+#### 3.4.1.1 导出已完成 card
 
-**Part 2:** 在所选时间段内所有未完成的 Jira Ticket，并且会根据状态进行排序。(Image 3-16)
+在所选择时间段内导出所有已完成的 card
+
+#### 3.4.1.2 导出未完成 card
+
+在所选时间段内拉取最新修改的 50 张 cards，导出时先根据 heartBeat 的状态排序，然后再根据最近状态改变时间排序。(Image 3-16)
 
 ![Image 3-16](https://user-images.githubusercontent.com/995849/89784291-01f3b380-db4b-11ea-8f5a-d475e80014fb.png)\
 _Image 3-16，Exported Board Data_
@@ -245,8 +251,8 @@ _Image 3-17，Exported Pipeline Data_
 |PR Merged Time|-- |
 |Deployment Completed Time|When it finished deploy |
 |Total Lead Time (mins)|--|
-|Time from PR Created to PR Merged (mins)|--|
-|Time from PR Merged to Deployment Completed (mins)|--|
+|PR lead time (mins)|--|
+|pipeline lead time (mins)|--|
 |Status|部署结果(Pass 或者 Failed)|
 
 # 4 已知的问题
@@ -270,15 +276,15 @@ For now, we don’t have a good solution to resolve this issue.
 
 1.  打开 https://{site}.atlassian.net/secure/admin/ViewIssueFields.jspa?start=0&searchFilter=
 
--  ![Image 5-1](https://user-images.githubusercontent.com/995849/89785230-a75b5700-db4c-11ea-9ce2-4ff7894bbf25.png)\
+- ![Image 5-1](https://user-images.githubusercontent.com/995849/89785230-a75b5700-db4c-11ea-9ce2-4ff7894bbf25.png)\
   _Image 5-1_
 
 2.  如果您需要启用任何项，可以在上述页面中单击该项目的“Action”列中的“Screens”链接。然后在下一页中，检查要更改的项目，然后进行更新。例如：故事点
 
--  ![Image 5-2](https://user-images.githubusercontent.com/995849/89785239-ab877480-db4c-11ea-9e82-952777936cf8.png)\
+- ![Image 5-2](https://user-images.githubusercontent.com/995849/89785239-ab877480-db4c-11ea-9e82-952777936cf8.png)\
   _Image 5-2_
 
--  ![Image 5-3](https://user-images.githubusercontent.com/995849/89785244-acb8a180-db4c-11ea-958f-663a7efa105c.png)\
+- ![Image 5-3](https://user-images.githubusercontent.com/995849/89785244-acb8a180-db4c-11ea-958f-663a7efa105c.png)\
   _Image 5-3_
 
 对于 next-gen Jira，当添加 Story Point 项时，名称应为“Story Points”或“Story point estimate”。
@@ -323,8 +329,10 @@ pnpm e2e
 ```
 pnpm e2e:report
 ```
+
 # 7 How to trigger BuildKite Pipeline
-1. commit message或者PR的title中添加`[stub]` tag,以触发stub相关的部署。 
-2. commit message或者PR的title中添加`[infra]` tag,以触发infra相关的部署。
-3. commit message或者PR的title中添加`[backend]` tag,以触发backend相关的部署。
-4. commit message或者PR的title中添加`[frontend]` tag,以触发frontend相关的部署。
+
+1. commit message 或者 PR 的 title 中添加`[infra]` tag,以触发 infra 相关的部署。
+2. commit message 或者 PR 的 title 中添加`[backend]` tag,以触发 backend 相关的部署。
+3. commit message 或者 PR 的 title 中添加`[frontend]` tag,以触发 frontend 相关的部署。
+4. commit message 或者 PR 的 title 中添加`[docs]` tag,以触发 docs 相关的部署。

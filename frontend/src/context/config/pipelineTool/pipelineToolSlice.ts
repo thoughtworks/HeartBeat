@@ -1,11 +1,11 @@
-import { PIPELINE_TOOL_TYPES } from '@src/constants'
-import { initialPipelineToolVerifiedResponseState, IPipelineToolVerifyResponse } from './verifyResponseSlice'
+import { initialPipelineToolVerifiedResponseState, IPipelineToolVerifyResponse } from './verifyResponseSlice';
+import { PIPELINE_TOOL_TYPES } from '@src/constants/resources';
 
 export interface IPipelineToolState {
-  config: { type: string; token: string }
-  isVerified: boolean
-  isShow: boolean
-  verifiedResponse: IPipelineToolVerifyResponse
+  config: { type: string; token: string };
+  isVerified: boolean;
+  isShow: boolean;
+  verifiedResponse: IPipelineToolVerifyResponse;
 }
 
 export const initialPipelineToolState: IPipelineToolState = {
@@ -16,4 +16,4 @@ export const initialPipelineToolState: IPipelineToolState = {
   isVerified: false,
   isShow: false,
   verifiedResponse: initialPipelineToolVerifiedResponseState,
-}
+};

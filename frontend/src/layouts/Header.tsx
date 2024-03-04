@@ -1,69 +1,69 @@
-import { useLocation, useNavigate } from 'react-router-dom'
-import HomeIcon from '@mui/icons-material/Home'
+import { useLocation, useNavigate } from 'react-router-dom';
+import Logo from '@src/assets/Logo.svg';
 
-import Logo from '@src/assets/Logo.svg'
-import styled from '@emotion/styled'
-import { theme } from '@src/theme'
-import { PROJECT_NAME } from '@src/constants'
+import {
+  HomeIconContainer,
+  HomeIconElement,
+  IconContainer,
+  LogoContainer,
+  LogoImage,
+  LogoTitle,
+  LogoWarp,
+  StyledHeaderInfo,
+  StyledVersion,
+} from '@src/layouts/style';
+import { getVersion, resetFormMeta, saveVersion } from '@src/context/meta/metaSlice';
+import { resetImportedData } from '@src/context/config/configSlice';
+import { headerClient } from '@src/clients/header/HeaderClient';
+import { resetStep } from '@src/context/stepper/StepperSlice';
+import { useAppDispatch } from '@src/hooks/useAppDispatch';
+import { PROJECT_NAME } from '@src/constants/commons';
+import { useAppSelector } from '@src/hooks';
+import { useEffect } from 'react';
+import { isEmpty } from 'lodash';
 
 const Header = () => {
-  const location = useLocation()
-  const navigate = useNavigate()
+  const location = useLocation();
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const version = useAppSelector(getVersion);
 
   const goHome = () => {
-    navigate('/')
-  }
+    dispatch(resetStep());
+    dispatch(resetImportedData());
+    dispatch(resetFormMeta());
+    navigate('/');
+  };
 
   const shouldShowHomeIcon = () => {
-    return !['/', '/index.html'].includes(location.pathname)
-  }
+    return ['/metrics', '/error-page'].includes(location.pathname);
+  };
 
-  const LogoWarp = styled.div({
-    display: 'flex',
-    justifyContent: 'space-between',
-    padding: '0 1rem',
-    alignItems: 'center',
-    backgroundColor: theme.main.backgroundColor,
-  })
-
-  const LogoTitle = styled.span({
-    color: theme.main.color,
-    fontWeight: 'bold',
-    fontSize: '1.5rem',
-  })
-
-  const LogoImage = styled.img({
-    height: '4rem',
-    width: '4rem',
-  })
-
-  const LogoContainer = styled.div({
-    display: 'flex',
-    alignItems: 'center',
-    cursor: 'pointer',
-    color: theme.main.color,
-  })
-
-  const HomeIconContainer = styled.span`
-    cursor: pointer;
-  `
-
-  const HomeIconElement = styled(HomeIcon)`
-    color: ${theme.main.color};
-  `
+  useEffect(() => {
+    if (isEmpty(version)) {
+      headerClient.getVersion().then((res) => {
+        dispatch(saveVersion(res));
+      });
+    }
+  }, [dispatch, version]);
 
   return (
-    <LogoWarp>
-      <LogoContainer onClick={goHome}>
-        <LogoImage src={Logo} alt='logo' />
-        <LogoTitle title={PROJECT_NAME}>{PROJECT_NAME}</LogoTitle>
-      </LogoContainer>
-      {shouldShowHomeIcon() && (
-        <HomeIconContainer title='Home' onClick={goHome}>
-          <HomeIconElement />
-        </HomeIconContainer>
-      )}
+    <LogoWarp data-test-id={'Header'}>
+      <StyledHeaderInfo>
+        <LogoContainer onClick={goHome}>
+          <LogoImage src={Logo} alt='logo' />
+          <LogoTitle title={PROJECT_NAME}>{PROJECT_NAME}</LogoTitle>
+        </LogoContainer>
+        {version && <StyledVersion>v{version}</StyledVersion>}
+      </StyledHeaderInfo>
+      <IconContainer>
+        {shouldShowHomeIcon() && (
+          <HomeIconContainer title='Home' onClick={goHome} aria-label={'Home'}>
+            <HomeIconElement />
+          </HomeIconContainer>
+        )}
+      </IconContainer>
     </LogoWarp>
-  )
-}
-export default Header
+  );
+};
+export default Header;

@@ -15,12 +15,14 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
-    "baseUrl": ".",
+    "baseUrl": "./",
     "paths": {
-      "@src/*": ["./src/*"]
-    }
+      "@src/*": ["./src/*"],
+      "@test/*": ["./__tests__/*"],
+    },
+    "types": ["node", "vite-plugin-pwa/react", "jest"],
   },
-  "include": ["src", "__tests__"],
-  "exclude": ["__tests__/__mocks__/svgTransformer.ts"],
-  "references": [{ "path": "./tsconfig.node.json" }]
+  "include": ["src", "__tests__", "e2e", "*.ts"],
+  "exclude": ["__tests__/__mocks__/svgTransformer.ts", "package.json", "pnpm-lock.yaml"],
+  "references": [{ "path": "./tsconfig.node.json" }, { "path": "./tsconfig.scripts.json" }],
 }

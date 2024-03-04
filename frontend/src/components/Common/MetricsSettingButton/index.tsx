@@ -1,18 +1,20 @@
-import { IconButton } from '@mui/material'
-import { Add } from '@mui/icons-material'
-import { MetricsSettingButtonContainer } from '@src/components/Common/MetricsSettingTitle'
-import React from 'react'
+import {
+  MetricsSettingAddButtonContainer,
+  MetricsSettingAddButtonItem,
+} from '@src/components/Common/MetricsSettingButton/style';
+import { Add } from '@mui/icons-material';
+import React from 'react';
 
 interface metricsSettingAddButtonProps {
-  onAddPipeline: () => void
+  onAddPipeline: () => void;
 }
 
 export const MetricsSettingAddButton = ({ onAddPipeline }: metricsSettingAddButtonProps) => {
   return (
-    <MetricsSettingButtonContainer>
-      <IconButton onClick={onAddPipeline}>
-        <Add />
-      </IconButton>
-    </MetricsSettingButtonContainer>
-  )
-}
+    <MetricsSettingAddButtonContainer>
+      <MetricsSettingAddButtonItem startIcon={<Add />} onClick={onAddPipeline}>
+        New Pipeline
+      </MetricsSettingAddButtonItem>
+    </MetricsSettingAddButtonContainer>
+  );
+};

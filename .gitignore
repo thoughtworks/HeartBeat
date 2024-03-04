@@ -1,9 +1,13 @@
 # See http://help.github.com/ignore-files/ for more about ignoring files.
 
 # compiled output
+/dev-dist
 /dist
 /tmp
 /out-tsc
+/logs
+/app
+frontend/cypress/
 # Only exists if Bazel was run
 /bazel-out
 
@@ -46,6 +50,4 @@ Thumbs.db
 volume
 csv
 
-# Stubby4j
-/stubs/logs
 gitleaks-report.json

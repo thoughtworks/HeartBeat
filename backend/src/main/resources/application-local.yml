@@ -4,14 +4,13 @@ server:
     context-path: /api/v1
 logging:
   level:
-    root: DEBUG
+    root: INFO
 
 github:
-  url: ${MOCK_SERVER_URL:https://api.github.com}
+  url: https://api.github.com
 
 jira:
-  url: ${MOCK_SERVER_URL:https://%s.atlassian.net}
+  url: https://%s.atlassian.net
 
 buildKite:
-  url: ${MOCK_SERVER_URL:https://api.buildkite.com}
-
+  url: https://api.buildkite.com

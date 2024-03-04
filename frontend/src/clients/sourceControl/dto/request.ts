@@ -1,6 +1,13 @@
-export interface SourceControlRequestDTO {
-  type: string
-  token: string
-  startTime: string | number | null
-  endTime: string | number | null
+import { SOURCE_CONTROL_TYPES } from '@src/constants/resources';
+
+export interface SourceControlVerifyRequestDTO {
+  type: SOURCE_CONTROL_TYPES;
+  token: string;
+}
+
+export interface SourceControlInfoRequestDTO {
+  type: SOURCE_CONTROL_TYPES;
+  branch: string;
+  repository: string;
+  token: string;
 }

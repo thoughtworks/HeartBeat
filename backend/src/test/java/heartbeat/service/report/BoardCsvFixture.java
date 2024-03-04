@@ -57,6 +57,12 @@ public class BoardCsvFixture {
 		.originKey(null)
 		.build();
 
+	private static final BoardCSVConfig STATUS_DATE_CONFIG = BoardCSVConfig.builder()
+		.label("Status Date")
+		.value("baseInfo.fields.statuscategorychangedate")
+		.originKey(null)
+		.build();
+
 	private static final BoardCSVConfig STORY_POINTS_CONFIG = BoardCSVConfig.builder()
 		.label("Story Points")
 		.value("baseInfo.fields.storyPoints")
@@ -135,6 +141,18 @@ public class BoardCsvFixture {
 		.originKey("customfield_1011")
 		.build();
 
+	private static final BoardCSVConfig CUSTOM_FIELD_10052_CONFIG = BoardCSVConfig.builder()
+		.label("DevCommit")
+		.value("baseInfo.fields.customFields.customfield_10052")
+		.originKey("customfield_10052")
+		.build();
+
+	private static final BoardCSVConfig CUSTOM_FIELD_10053_CONFIG = BoardCSVConfig.builder()
+		.label("10053")
+		.value("baseInfo.fields.customFields.customfield_10053")
+		.originKey("customfield_10053")
+		.build();
+
 	private static final BoardCSVConfig ORIGIN_CYCLE_BLOCKED_CONFIG = BoardCSVConfig.builder()
 		.label("OriginCycleTime: BLOCKED")
 		.value("cycleTimeFlat.BLOCKED")
@@ -199,11 +217,16 @@ public class BoardCsvFixture {
 		.readJsonFile("./src/test/resources/fields.json");
 
 	public static List<BoardCSVConfig> MOCK_FIXED_FIELDS() {
-		return List.of(ISSUE_KEY_CONFIG, SUMMARY_CONFIG, ISSUE_TYPE_CONFIG, STATUS_CONFIG, STORY_POINTS_CONFIG,
-				ASSIGNEE_CONFIG, REPORTER_CONFIG, PROJECT_KEY_CONFIG, PROJECT_NAME_CONFIG, PRIORITY_CONFIG,
-				PARENT_SUMMARY_CONFIG, SPRINT_CONFIG, LABELS_CONFIG, CYCLE_TIME_CONFIG, CYCLE_TIME_STORY_POINTS_CONFIG,
-				ANALYSIS_DAYS_CONFIG, IN_DEV_DAYS_CONFIG, WAITING_DAYS_CONFIG, TESTING_DAYS_CONFIG, BLOCK_DAYS_CONFIG,
-				REVIEW_DAYS_CONFIG, ORIGIN_CYCLE_TIME_DOING_CONFIG, ORIGIN_CYCLE_BLOCKED_CONFIG);
+		return List.of(ISSUE_KEY_CONFIG, SUMMARY_CONFIG, ISSUE_TYPE_CONFIG, STATUS_CONFIG, STATUS_DATE_CONFIG,
+				STORY_POINTS_CONFIG, ASSIGNEE_CONFIG, REPORTER_CONFIG, PROJECT_KEY_CONFIG, PROJECT_NAME_CONFIG,
+				PRIORITY_CONFIG, PARENT_SUMMARY_CONFIG, SPRINT_CONFIG, LABELS_CONFIG, CYCLE_TIME_CONFIG,
+				CYCLE_TIME_STORY_POINTS_CONFIG, ANALYSIS_DAYS_CONFIG, IN_DEV_DAYS_CONFIG, WAITING_DAYS_CONFIG,
+				TESTING_DAYS_CONFIG, BLOCK_DAYS_CONFIG, REVIEW_DAYS_CONFIG, ORIGIN_CYCLE_TIME_DOING_CONFIG,
+				ORIGIN_CYCLE_BLOCKED_CONFIG);
+	}
+
+	public static List<BoardCSVConfig> MOCK_EXTRA_FIELDS_WITH_CUSTOM() {
+		return List.of(CUSTOM_FIELD_10052_CONFIG, CUSTOM_FIELD_10053_CONFIG);
 	}
 
 	public static List<BoardCSVConfig> MOCK_EXTRA_FIELDS() {
@@ -217,20 +240,7 @@ public class BoardCsvFixture {
 	}
 
 	public static List<JiraCardDTO> MOCK_JIRA_CARD_DTO() {
-		JiraCardField jiraCardField = JiraCardField.builder()
-			.summary("summary")
-			.issuetype(IssueType.builder().name("issue type").build())
-			.status(Status.builder().displayValue("done").build())
-			.storyPoints(2)
-			.assignee(Assignee.builder().displayName("name").build())
-			.reporter(Reporter.builder().displayName("name").build())
-			.project(JiraProject.builder().id("10001").key("ADM").name("Auto Dora Metrics").build())
-			.priority(Priority.builder().name("Medium").build())
-			.parent(CardParent.builder().fields(Fields.builder().summary("parent").build()).build())
-			.sprint(Sprint.builder().name("sprint 1").build())
-			.labels(Collections.emptyList())
-			.customFields(CUSTOM_FIELDS)
-			.build();
+		JiraCardField jiraCardField = MOCK_JIRA_CARD();
 
 		HashMap<String, Double> cycleTimeFlat = new HashMap<>();
 		cycleTimeFlat.put("DOING", 9.8067E-5);
@@ -250,6 +260,24 @@ public class BoardCsvFixture {
 		return List.of(jiraCardDTO);
 	}
 
+	public static JiraCardField MOCK_JIRA_CARD() {
+		return JiraCardField.builder()
+			.summary("summary")
+			.issuetype(IssueType.builder().name("issue type").build())
+			.status(Status.builder().displayValue("done").build())
+			.lastStatusChangeDate(1701151323000L)
+			.storyPoints(2)
+			.assignee(Assignee.builder().displayName("name").build())
+			.reporter(Reporter.builder().displayName("name").build())
+			.project(JiraProject.builder().id("10001").key("ADM").name("Auto Dora Metrics").build())
+			.priority(Priority.builder().name("Medium").build())
+			.parent(CardParent.builder().fields(Fields.builder().summary("parent").build()).build())
+			.sprint(Sprint.builder().name("sprint 1").build())
+			.labels(Collections.emptyList())
+			.customFields(CUSTOM_FIELDS)
+			.build();
+	}
+
 	public static List<JiraCardDTO> MOCK_JIRA_CARD_DTO_WITH_EMPTY_BASE_INFO() {
 		HashMap<String, Double> cycleTimeFlat = new HashMap<>();
 		cycleTimeFlat.put("DONE", 16.0335);
@@ -264,6 +292,39 @@ public class BoardCsvFixture {
 			.cycleTimeFlat(cycleTimeFlat)
 			.totalCycleTimeDivideStoryPoints("0.90")
 			.build();
+		return List.of(jiraCardDTO);
+	}
+
+	public static List<JiraCardDTO> MOCK_JIRA_CARD_DTO_WITH_BASE_INFO_CUSTOM_DATA() {
+		JsonObject jsonObject = new JsonObject();
+		jsonObject.addProperty("value", "dev");
+		jsonObject.addProperty("ref", "red");
+
+		JsonArray jsonArray = new JsonArray();
+		jsonArray.add(jsonObject);
+
+		HashMap<String, JsonElement> fields = new HashMap<String, JsonElement>();
+		fields.put("customfield_10052", jsonObject);
+		fields.put("customfield_10053", jsonArray);
+
+		JiraCardField field = JiraCardField.builder()
+			.summary("summary")
+			.issuetype(IssueType.builder().name("issue type").build())
+			.status(Status.builder().displayValue("done").build())
+			.storyPoints(2)
+			.lastStatusChangeDate(1701151323000L)
+			.assignee(Assignee.builder().displayName("name").build())
+			.reporter(Reporter.builder().displayName("name").build())
+			.project(JiraProject.builder().id("10001").key("ADM").name("Auto Dora Metrics").build())
+			.priority(Priority.builder().name("Medium").build())
+			.parent(CardParent.builder().fields(Fields.builder().summary("parent").build()).build())
+			.sprint(Sprint.builder().name("sprint 1").build())
+			.labels(Collections.emptyList())
+			.customFields(fields)
+			.build();
+
+		JiraCardDTO jiraCardDTO = JiraCardDTO.builder().baseInfo(JiraCard.builder().fields(field).build()).build();
+
 		return List.of(jiraCardDTO);
 	}
 
@@ -292,6 +353,7 @@ public class BoardCsvFixture {
 			.summary("summary")
 			.issuetype(IssueType.builder().name("任务").build())
 			.status(Status.builder().displayValue("已完成").build())
+			.lastStatusChangeDate(1701151323000L)
 			.storyPoints(2)
 			.project(JiraProject.builder().id("10001").key("ADM").name("Auto Dora Metrics").build())
 			.priority(Priority.builder().name("Medium").build())
@@ -411,7 +473,7 @@ public class BoardCsvFixture {
 					.status(Status.builder().displayValue("Doing").build())
 					.issuetype(IssueType.builder().name("Task").build())
 					.reporter(Reporter.builder().displayName("Jack").build())
-					.statusCategoryChangeDate("2023-4-23")
+					.lastStatusChangeDate(1701151323000L)
 					.storyPoints(3)
 					.priority(Priority.builder().name("Top").build())
 					.fixVersions(List.of(FixVersion.builder().name("sprint1").build(),

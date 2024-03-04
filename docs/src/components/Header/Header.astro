@@ -1,149 +1,229 @@
 ---
-import { getLanguageFromURL, KNOWN_LANGUAGE_CODES } from '../../languages';
-import * as CONFIG from '../../config';
-import AstroLogo from './AstroLogo.astro';
 import SkipToContent from './SkipToContent.astro';
 import SidebarToggle from './SidebarToggle';
 import LanguageSelect from './LanguageSelect';
-import Search from './Search';
+import Search from './Search.astro';
+import ThemeToggleButton from './ThemeToggleButton';
+import { getLanguageFromURL } from '../../util';
+import { getDocSearchStrings, useTranslations } from '../../i18n/util';
 
-type Props = {
-  currentPage: string;
-};
-
-const { currentPage } = Astro.props as Props;
-const lang = getLanguageFromURL(currentPage);
+const { currentPage } = Astro.props;
+const lang = currentPage && getLanguageFromURL(currentPage);
+const docsearchStrings = getDocSearchStrings(Astro);
+const t = useTranslations(Astro);
 ---
 
 <header>
-  <SkipToContent />
-  <nav class="nav-wrapper" title="Top Navigation">
-    <div class="menu-toggle">
-      <SidebarToggle client:idle />
-    </div>
-    <div class="logo flex">
-      <a href={import.meta.env.BASE_URL || '/'}>
-        <AstroLogo size={60} />
-        <h1>{CONFIG.SITE.title ?? 'Documentation'}</h1>
-      </a>
-    </div>
-    <div style="flex-grow: 1;"></div>
-    {KNOWN_LANGUAGE_CODES.length > 1 && <LanguageSelect lang={lang} client:idle />}
-    <div class="search-item">
-      <Search client:idle />
-    </div>
-  </nav>
+	<SkipToContent />
+	<nav class="nav-wrapper" aria-label={t('navbar.a11yTitle')}>
+		<div dir="ltr" lang="en" class="logo flex">
+			<ul>
+				<li>
+					<a class="astro" href="https://github.com/au-heartbeat/Heartbeat/">
+						<span class="sr-only">Heartbeat</span>
+						<svg class="logo" viewBox="0 0 537 508" fill="none" xmlns="http://www.w3.org/2000/svg">
+							<style type="text/css">
+								.st0 {
+									fill: #3f51b5;
+								}
+							</style>
+							<title>{'docs'}</title>
+							<g>
+								<g>
+									<path
+										class="st0"
+										d="M206.85,126.6c-7.09-7.09-18.62-7.09-25.71,0l-49.38,49.37c-7.09,7.09-7.09,18.62,0,25.71
+									c3.54,3.55,8.2,5.32,12.86,5.32c4.66,0,9.31-1.77,12.86-5.32l49.38-49.37C213.94,145.22,213.94,133.68,206.85,126.6z"
+									></path>
+									<path
+										class="st0"
+										d="M269.32,151.53c-7.09-7.09-18.63-7.08-25.71,0l-86.93,86.93c-3.44,3.43-5.32,8-5.32,12.86
+									c0,4.86,1.89,9.43,5.33,12.86c3.54,3.54,8.2,5.31,12.85,5.31c4.66,0,9.31-1.77,12.86-5.32l86.93-86.93
+									C276.42,170.16,276.41,158.62,269.32,151.53z M158.59,262.28L158.59,262.28L158.59,262.28L158.59,262.28z"
+									></path>
+									<path
+										class="st0"
+										d="M391.83,96.28l-33.34,4.4c-3.86,0-7.26,2.32-8.66,5.92c-1.4,3.6-0.47,7.61,2.37,10.22l7.35,6.76
+									L201.27,281.86c-3.36,3.36-5.21,7.83-5.21,12.58c0,4.75,1.85,9.22,5.21,12.58c3.47,3.47,8.02,5.2,12.58,5.2
+									c4.55,0,9.11-1.73,12.58-5.2l159.33-159.32l3.87,3.56c2.76,2.53,6.6,3.17,10.03,1.67s5.56-4.77,5.54-8.18l4.43-30.67
+									C409.62,104.26,401.64,96.28,391.83,96.28z"
+									></path>
+								</g>
+								<path
+									class="st0"
+									d="M440.71,215.11l-35.89-35.89c-7.06-7.06-18.55-7.06-25.61,0c-3.42,3.42-5.31,7.97-5.31,12.81
+								c0,4.84,1.89,9.39,5.31,12.81l35.89,35.89c4.05,4.05,6.28,9.43,6.28,15.16c0,5.73-2.23,11.11-6.28,15.16L281.76,404.38
+								c-8.36,8.36-21.97,8.35-30.33,0L118.11,271.04c-4.05-4.04-6.28-9.42-6.28-15.15c0-5.73,2.23-11.11,6.28-15.16l2.55-2.55
+								c3.42-3.42,5.31-7.97,5.31-12.81c0-4.84-1.89-9.39-5.31-12.81c-7.06-7.06-18.55-7.06-25.61,0l-2.55,2.55
+								C81.6,226,75.6,240.48,75.6,255.88s6,29.89,16.89,40.78l133.33,133.33c10.87,10.88,25.35,16.86,40.77,16.86s29.91-5.99,40.78-16.86
+								l133.33-133.33c10.89-10.89,16.89-25.37,16.89-40.78S451.6,226,440.71,215.11z"
+								></path>
+							</g>
+						</svg>
+					</a>
+				</li>
+				<li>
+					<a class="docs" href={`${import.meta.env.BASE_URL}/${lang || 'en'}/getting-started/`}>
+						<span class="sr-only">Docs</span>
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="226"
+							height="102"
+							viewBox="0 0 226 102"
+							fill="none"
+							aria-hidden="true"
+						>
+							<path
+								class="docs-path"
+								fill="currentColor"
+								d="M25.805 68c14.688 0 24.883-8.41 24.883-21.14 0-12.786-9.62-19.756-24.653-19.756H0V68h25.805zm-14.17-33.005H24.25c8.352 0 14.17 4.09 14.17 12.039 0 8.236-5.3 13.075-14.113 13.075H11.635V34.995zM82.673 69.382c16.704 0 27.418-8.582 27.418-21.83 0-13.248-10.771-21.83-27.418-21.83-16.589 0-27.418 8.582-27.418 21.83 0 13.19 10.83 21.83 27.418 21.83zm0-8.64c-9.1 0-15.149-5.299-15.149-13.19 0-7.891 6.048-13.19 15.15-13.19 9.1 0 15.205 5.299 15.205 13.19 0 7.891-6.105 13.19-15.206 13.19zM141.497 69.382c13.306 0 22.637-5.299 25.978-14.572l-11.866-2.535c-1.67 5.415-6.393 8.295-13.709 8.295-9.216 0-15.033-5.127-15.033-13.018 0-8.006 5.702-13.018 14.918-13.018 7.43 0 12.154 3.053 13.709 8.64l12.038-2.13c-2.707-9.562-12.268-15.322-25.574-15.322-16.128 0-27.302 9.043-27.302 22.003 0 13.133 10.425 21.657 26.841 21.657zM194.94 69.382c14.745 0 23.212-5.01 23.212-14.054 0-7.603-4.665-10.944-15.955-12.096l-11.289-1.094c-5.242-.576-6.97-1.556-6.97-4.09 0-2.765 3.456-4.262 9.792-4.262 7.834 0 13.709 2.476 16.762 6.508l7.315-6.163c-5.069-5.702-13.133-8.41-23.501-8.41-13.997 0-21.888 4.781-21.888 12.903 0 7.546 4.781 11.232 14.803 12.326l12.557 1.383c4.896.518 6.624 1.555 6.624 4.09 0 3.225-3.456 4.723-10.886 4.723-8.352 0-14.688-3.226-18.087-8.007l-8.294 5.818c4.205 6.451 13.709 10.425 25.805 10.425z"
+							></path>
+						</svg>
+					</a>
+				</li>
+			</ul>
+		</div>
+		<ThemeToggleButton
+			client:visible
+			labels={{ useLight: t('themeToggle.useLight'), useDark: t('themeToggle.useDark') }}
+			isInsideHeader={true}
+		/>
+		{lang && <LanguageSelect lang={lang} label={t('languageSelect.label')} client:idle />}
+		<Search {lang} labels={docsearchStrings} />
+		<SidebarToggle client:idle />
+	</nav>
 </header>
 
 <style>
-  header {
-    z-index: 11;
-    height: var(--theme-navbar-height);
-    width: 100%;
-    background-color: var(--theme-navbar-bg);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    position: sticky;
-    top: 0;
-  }
+	header {
+		position: fixed;
+		left: 0;
+		top: 0;
+		right: 0;
+		height: var(--theme-navbar-height);
+		z-index: 11;
+		padding: 2rem 0;
+		background-color: var(--theme-navbar-bg);
+		display: flex;
+		align-items: center;
+		justify-content: left;
+		overflow: hidden;
+	}
 
-  .logo {
-    flex: 1;
-    display: flex;
-    overflow: hidden;
-    width: 30px;
-    font-size: 2rem;
-    flex-shrink: 0;
-    font-weight: 600;
-    line-height: 1;
-    color: hsla(var(--color-base-white), 100%, 1);
-    gap: 0.25em;
-    z-index: -1;
-  }
+	ul,
+	li {
+		all: inherit;
+		flex-grow: 0;
+	}
 
-  .logo a {
-    display: flex;
-    padding: 0.5em 0.25em;
-    margin: -0.5em -0.25em;
-    text-decoration: none;
-    font-weight: bold;
-  }
+	.nav-wrapper {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 0.75rem;
+		width: 100%;
+		padding-inline: var(--min-spacing-inline);
+	}
 
-  .logo a {
-    transition: color 100ms ease-out;
-    color: var(--theme-text);
-  }
+	/* If the device is likely to show a scrollbar gutter, reserve space for it */
+	@media (hover: hover) {
+		.nav-wrapper {
+			max-width: calc(100vw - 1.1rem);
+		}
+	}
 
-  .logo a:hover,
-  .logo a:focus {
-    color: var(--theme-text-accent);
-  }
+	.logo {
+		display: flex;
+		justify-content: flex-start;
+		font-size: 1rem;
+		flex-grow: 1;
+		flex-shrink: 0;
+		font-weight: 600;
+		line-height: 1;
+		color: hsla(var(--color-base-white), 100%, 1);
+		text-decoration: none;
+		gap: 0.5em;
+	}
 
-  .logo h1 {
-    display: none;
-    font: inherit;
-    color: inherit;
-    margin: 0;
-  }
+	:global([dir='rtl']) .logo {
+		justify-content: flex-end;
+	}
 
-  .nav-wrapper {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 1em;
-    width: 100%;
-    max-width: 82em;
-    padding: 0 1rem;
-  }
+	.logo a {
+		padding: 0.5em 0.25em;
+		margin: -0.5em -0.25em;
+	}
 
-  @media (min-width: 50em) {
-    header {
-      position: static;
-      padding: 2rem 0rem;
-    }
+	.logo svg {
+		height: 40px;
+		width: auto;
+		display: block;
+		color: var(--theme-accent);
+	}
 
-    .logo {
-      width: auto;
-      margin: 0;
-      z-index: 0;
-    }
+	.logo .hover {
+		opacity: 0;
+	}
+	.logo a {
+		transition: transform 180ms ease-out;
+	}
 
-    .logo h1 {
-      display: initial;
-    }
+	.logo a:hover,
+	.logo a:focus {
+		opacity: 1;
+		transform: translateY(-2px);
+	}
 
-    .menu-toggle {
-      display: none;
-    }
-  }
+	.logo a:focus:not(:focus-visible) {
+		outline: none;
+	}
 
-  /** Style Algolia */
-  :root {
-    --docsearch-primary-color: var(--theme-accent);
-    --docsearch-logo-color: var(--theme-text);
-  }
+	.logo h1 {
+		font: inherit;
+		color: inherit;
+		margin: 0;
+	}
 
-  .search-item {
-    display: none;
-    position: relative;
-    z-index: 10;
-    flex-grow: 1;
-    padding-right: 0.7rem;
-    display: flex;
-    max-width: 200px;
-  }
+	.astro {
+		overflow: hidden;
+		width: 41px;
+	}
 
-  @media (min-width: 50em) {
-    .search-item {
-      max-width: 400px;
-    }
-  }
-</style>
+	.docs {
+		display: none;
+	}
 
-<style is:global>
-  .search-item > * {
-    flex-grow: 1;
-  }
+	@media (min-width: 20em) {
+		.docs {
+			display: inherit;
+			max-width: 80px;
+		}
+	}
+
+	@media (min-width: 23.5em) {
+		.docs {
+			max-width: none;
+		}
+		.nav-wrapper {
+			gap: 1rem;
+		}
+	}
+
+	@media (min-width: 50em) {
+		header {
+			padding: 2.5rem 0 1.5rem 0;
+		}
+		.astro {
+			width: auto;
+		}
+	}
+
+	@media (forced-colors: active) {
+		.text {
+			fill: LinkText;
+		}
+		.docs-path {
+			fill: ActiveText;
+		}
+	}
 </style>

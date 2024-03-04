@@ -1,10 +1,10 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './App'
-import { Provider } from 'react-redux'
-import { store } from './store'
-import { ThemeProvider } from '@mui/material'
-import { theme } from '@src/theme'
+import { ThemeProvider } from '@mui/material';
+import ReactDOM from 'react-dom/client';
+import { Provider } from 'react-redux';
+import { theme } from '@src/theme';
+import { store } from './store';
+import React from 'react';
+import App from './App';
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
@@ -13,5 +13,5 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
         <App />
       </Provider>
     </ThemeProvider>
-  </React.StrictMode>
-)
+  </React.StrictMode>,
+);

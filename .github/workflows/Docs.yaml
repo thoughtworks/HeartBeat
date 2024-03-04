@@ -15,21 +15,23 @@ jobs:
     if: ${{ contains(github.event.head_commit.message, '[docs]') }}
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Use lts Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: 16.18.0
+          node-version: latest
       - name: Install & Lint
         run: |
           npm install -g pnpm
           pnpm install --no-frozen-lockfile
           pnpm lint
       - name: Build docs
-        run: pnpm build
+        run: pnpm run build
       - name: Deploy to github pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./docs/dist
           publish_branch: gh-pages
+      - name: upload index to Algolia
+        run: pnpm run algolia

@@ -1,8 +1,9 @@
-FROM node:19-alpine as builder
+FROM node:alpine as builder
 COPY ./frontend /app
 WORKDIR /app
 RUN npm install -g pnpm
-RUN pnpm install && pnpm build
+RUN pnpm install --frozen-lockfile -p
+RUN pnpm build
 
 FROM nginx:latest
 LABEL app=Heartbeat

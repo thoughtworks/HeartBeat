@@ -17,6 +17,8 @@ public class DeployInfoBuilder {
 		deployInfo.setJobFinishTime("2022-09-09T04:57:09.545Z");
 		deployInfo.setCommitId("xx");
 		deployInfo.setState("passed");
+		deployInfo.setJobName("xx");
+		deployInfo.setPipelineCanceled(false);
 		return new DeployInfoBuilder(deployInfo);
 	}
 
@@ -31,6 +33,11 @@ public class DeployInfoBuilder {
 
 	public DeployInfoBuilder withJobFinishTime(String jobFinishTime) {
 		deployInfo.setJobFinishTime(jobFinishTime);
+		return this;
+	}
+
+	public DeployInfoBuilder withJobName(String jobName) {
+		deployInfo.setJobName(jobName);
 		return this;
 	}
 

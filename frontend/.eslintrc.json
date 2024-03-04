@@ -22,10 +22,14 @@
   },
   "plugins": ["react", "react-hooks", "@typescript-eslint", "prettier"],
   "rules": {
-    "semi": 0,
+    "semi": 2,
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": "error",
     "react/react-in-jsx-scope": "off",
     "import/prefer-default-export": "off",
-    "react-hooks/exhaustive-deps": "off",
+    "react/display-name": "off",
+    "prettier/prettier": ["error"],
+    "react-hooks/exhaustive-deps": ["error"],
     "react/jsx-filename-extension": [1, { "extensions": [".jsx", ".tsx"] }]
   },
   "settings": {
@@ -33,7 +37,17 @@
       "node": {
         "extensions": [".js", ".jsx", ".ts", ".tsx"]
       }
+    },
+    "react": {
+      "version": "detect"
     }
   },
-  "ignorePatterns": ["dist/*", "coverage/*"]
+  "ignorePatterns": [
+    "dist/*",
+    "coverage/*",
+    "dev-dist/*",
+    "cypress/reports/**",
+    "e2e/reports/**",
+    "e2e/test-results/**"
+  ]
 }

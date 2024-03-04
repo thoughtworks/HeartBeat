@@ -8,6 +8,7 @@ pnpm-debug.log*
 lerna-debug.log*
 
 node_modules
+dev-dist
 dist
 dist-ssr
 *.local
@@ -26,4 +27,8 @@ dist-ssr
 coverage
 /test-results/
 /playwright-report/
+/blob-report/
 /playwright/.cache/
+e2e/reports/
+e2e/test-results/
+e2e/temp/

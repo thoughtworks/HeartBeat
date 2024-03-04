@@ -1,0 +1,18 @@
+---
+title: How to start e2e test in local environment
+---
+
+**Solution**
+
+- In the backend directory, start backend.
+  ```
+  ./gradlew bootRun --args='--spring.profiles.active=local'
+  ```
+- In the frontend directory, start frontend.
+  ```
+  pnpm start
+  ```
+- In the frontend directory, start cypress.
+  ```
+  pnpm e2e:local
+  ```

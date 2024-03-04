@@ -1,14 +1,9 @@
-import { lazy } from 'react'
+import { lazy } from 'react';
 
-export const routes = [
+const routes = [
   {
     path: '/',
     exact: true,
-    component: lazy(() => import('../pages/Home')),
-    name: 'Home',
-  },
-  {
-    path: '/home',
     component: lazy(() => import('../pages/Home')),
     name: 'Home',
   },
@@ -27,4 +22,6 @@ export const routes = [
     component: lazy(() => import('../pages/Home')),
     name: 'Home',
   },
-]
+];
+
+export default routes;

@@ -18,4 +18,12 @@ public enum BoardType {
 		};
 	}
 
+	public static BoardType fromStyle(String style) {
+		return switch (style) {
+			case "next-gen" -> JIRA;
+			case "classic" -> CLASSIC_JIRA;
+			default -> throw new IllegalArgumentException("Board type does not find!");
+		};
+	}
+
 }

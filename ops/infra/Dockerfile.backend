@@ -3,11 +3,12 @@ COPY --chown=gradle:gradle ./backend /home/gradle/src
 WORKDIR /home/gradle/src
 RUN gradle build --no-daemon
 
-FROM eclipse-temurin:17.0.6_10-jre-ubi9-minimal
+FROM eclipse-temurin
 LABEL app=Heartbeat
 LABEL arch=Backend
 RUN groupadd -r nonroot && useradd --no-log-init -r -g nonroot nonroot
-RUN mkdir -p ./csv && chown -R nonroot:nonroot ./csv
+RUN mkdir -p ./app/output && chown -R nonroot:nonroot ./app/output
+RUN mkdir -p ./logs && chown -R nonroot:nonroot ./logs
 USER nonroot
 
 EXPOSE 4322

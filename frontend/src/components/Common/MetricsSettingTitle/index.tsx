@@ -1,13 +1,12 @@
-import styled from '@emotion/styled'
-import { Divider } from '@src/components/Common/MetricsSettingTitle/style'
+import styled from '@emotion/styled';
+
+export const MetricsSettingTitleContainer = styled.div({
+  margin: '1.25rem 0',
+  fontSize: '1rem',
+  lineHeight: '1.25rem',
+  fontWeight: '600',
+});
 
 export const MetricsSettingTitle = (props: { title: string }) => (
-  <Divider>
-    <h4>{props.title}</h4>
-  </Divider>
-)
-
-export const MetricsSettingButtonContainer = styled.div({
-  display: 'flex',
-  justifyContent: 'center',
-})
+  <MetricsSettingTitleContainer>{props.title}</MetricsSettingTitleContainer>
+);

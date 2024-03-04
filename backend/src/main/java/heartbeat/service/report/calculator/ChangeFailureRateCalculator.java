@@ -27,8 +27,11 @@ public class ChangeFailureRateCalculator {
 
 		List<ChangeFailureRateOfPipeline> changeFailureRateOfPipelines = deployTimesList.stream().map(item -> {
 			int failedTimesOfPipeline = item.getFailed().size();
-			int passedTimesOfPipeline = item.getPassed().size();
-			int totalTimesOfPipeline = failedTimesOfPipeline + passedTimesOfPipeline;
+			int validPassedTimesOfPipeline = (int) item.getPassed()
+				.stream()
+				.filter(deployInfo -> item.getPipelineStep().equals(deployInfo.getJobName()))
+				.count();
+			int totalTimesOfPipeline = failedTimesOfPipeline + validPassedTimesOfPipeline;
 
 			float failureRateOfPipeline = totalTimesOfPipeline == 0 ? 0
 					: (float) failedTimesOfPipeline / totalTimesOfPipeline;

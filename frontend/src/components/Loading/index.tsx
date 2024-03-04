@@ -1,10 +1,21 @@
-import { CircularProgress } from '@mui/material'
-import { LoadingDrop } from './style'
+import { LoadingDrop, LoadingTypography } from './style';
+import { CircularProgress } from '@mui/material';
+import React from 'react';
 
-export const Loading = () => {
-  return (
-    <LoadingDrop open>
-      <CircularProgress size='8rem' data-testid='loading-page' />
-    </LoadingDrop>
-  )
+export type Placement = 'left' | 'center';
+
+export interface LoadingProps {
+  message?: string;
+  size?: string;
+  backgroundColor?: string;
+  placement?: Placement;
 }
+
+export const Loading = ({ message, size = '8rem', backgroundColor, placement = 'center' }: LoadingProps) => {
+  return (
+    <LoadingDrop data-testid='loading' placement={placement} open style={{ backgroundColor: backgroundColor }}>
+      <CircularProgress size={size} data-testid='loading-page' />
+      {message && <LoadingTypography>{message}</LoadingTypography>}
+    </LoadingDrop>
+  );
+};

@@ -1,0 +1,57 @@
+---
+title: Way of Working
+description: Way of WorkingDiagram
+---
+
+```plantuml
+@startuml Way of Code Working
+skin rose
+start
+
+:Get a new card and kick off;
+:Move card to Doing column;
+:Create a personal code branch based on the latest main branch;
+  repeat
+    repeat :Start coding;
+      repeat :Small step commit;
+      if(E2E test passed？) then (no)
+        :fix e2e test;
+      else(yes)
+      endif
+      :Pull request;
+      :Pr review;
+      if(Pr review passed？) then (yes)
+      else (no)
+      :Modify code according to pr comments;
+      endif
+      :Merge pr to main branch;
+      :Pipeline is triggered;
+      if(Pipeline run passed？) then (yes)
+      break
+      endif
+      ->no;
+      backward: revert;
+      repeat while (Repair pipeline within 30 minutes？) is (no) not (yes)
+    backward: Complete the rest of functional code;
+    repeat while (All functional code completed？) is (no)
+    ->yes;
+    :Organize Desk Check;
+  backward: Fix issues;
+  repeat while (DC passed？) is (no)
+  ->yes;
+  : Move card to Testing column;
+    if(Test passed?) then (yes)
+    else(no)
+    : Fix failed test cases;
+    endif
+  : Move card to Done column;
+
+stop
+@enduml
+```
+
+## Notes
+
+- How to start E2E test please look at docs: start-e2e-test-in-local.
+- When creating PR, the base repository is `au-heartbeat/Heartbeat`, and the base is `main`.
+- When merging pr to main branch, please make sure add tags to trigger buildKite pipeline, you can refer to the `README.md` for details

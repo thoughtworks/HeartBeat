@@ -8,20 +8,20 @@ init_aws() {
 }
 
 build_and_push_image() {
-  local app_name="$1" # like, backend, frontend, stub
+  local app_name="$1" # like, backend, frontend
 
   docker build -t "${AWS_ECR_HOST}/heartbeat_${app_name}:latest" ./ -f ./ops/infra/Dockerfile."${app_name}"
   docker tag "${AWS_ECR_HOST}/heartbeat_${app_name}:latest" "${AWS_ECR_HOST}/heartbeat_${app_name}:hb${BUILDKITE_BUILD_NUMBER}"
 
-#  docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
-#    -v "$(pwd)"/.trivyignore:/.trivyignore \
-#    aquasec/trivy:0.36.1 image \
-#    --severity HIGH,CRITICAL \
-#    --exit-code 1 \
-#    --ignore-unfixed \
-#    --format table \
-#    --ignorefile /.trivyignore \
-#    "${AWS_ECR_HOST}/heartbeat_${app_name}:latest"
+  #  docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
+  #    -v "$(pwd)"/.trivyignore:/.trivyignore \
+  #    aquasec/trivy image \
+  #    --severity HIGH,CRITICAL \
+  #    --exit-code 1 \
+  #    --ignore-unfixed \
+  #    --format table \
+  #    --ignorefile /.trivyignore \
+  #    "${AWS_ECR_HOST}/heartbeat_${app_name}:latest"
 
   docker push "${AWS_ECR_HOST}/heartbeat_${app_name}:latest"
   docker push "${AWS_ECR_HOST}/heartbeat_${app_name}:hb${BUILDKITE_BUILD_NUMBER}"

@@ -15,6 +15,7 @@ import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -28,7 +29,6 @@ class WorkDayTest {
 
 	@Test
 	void shouldReturnDayIsHoliday() {
-		String year = "2023";
 		List<HolidayDTO> holidayDTOList = List.of(
 				HolidayDTO.builder().date("2023-01-01").name("元旦").isOffDay(true).build(),
 				HolidayDTO.builder().date("2023-01-28").name("春节").isOffDay(false).build());
@@ -42,7 +42,8 @@ class WorkDayTest {
 			.atStartOfDay(ZoneOffset.UTC)
 			.toInstant()
 			.toEpochMilli();
-		when(holidayFeignClient.getHolidays(year))
+
+		when(holidayFeignClient.getHolidays(any()))
 			.thenReturn(HolidaysResponseDTO.builder().days(holidayDTOList).build());
 
 		workDay.changeConsiderHolidayMode(true);

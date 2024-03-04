@@ -35,7 +35,9 @@ public class JiraCardField {
 
 	private String statusCategoryChangeDate;
 
-	private int storyPoints;
+	private Long lastStatusChangeDate;
+
+	private double storyPoints;
 
 	private List<FixVersion> fixVersions;
 

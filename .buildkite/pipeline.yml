@@ -10,9 +10,31 @@ steps:
     key: "check-security"
     command: ./ops/check.sh security
 
+  - label: ":lock: Check CSS px"
+    key: "check-px"
+    command: ./ops/check.sh px
+
+  - label: ":lock: Deny CSS hex"
+    key: "deny-css-hex-check"
+    command: ./ops/check.sh hex
+
+  - label: ":lock: Deny CSS rgba"
+    key: "deny-css-rgba-check"
+    command: ./ops/check.sh rgba
+
+  - label: ":lock: Check .* in backend"
+    key: "check-dot-star"
+    command: ./ops/check.sh dot-star
+
   - label: ":white_check_mark: Check Backend"
+    if: build.branch == "main" && build.message =~ /(?i)\[backend\]/
     key: "check-backend"
     command: ./ops/check.sh backend
+
+  - label: ":white_check_mark: Check Frontend"
+    if: build.branch == "main" && build.message =~ /(?i)\[frontend\]/
+    key: "check-frontend"
+    command: ./ops/check.sh frontend
 
   - label: ":mag: Check Frontend License"
     key: "check-frontend-license"
@@ -29,11 +51,15 @@ steps:
           expire_in: "${RETENTION_DAYS} days"
 
   - label: ":cloudformation: Deploy infra"
-    if:  build.branch == "main" && build.message =~ /\[infra\]/
+    if: build.branch == "main" && build.message =~ /(?i)\[infra\]/
     key: "deploy-infra"
     depends_on:
       - "check-shell"
       - "check-security"
+      - "check-frontend"
+      - "check-px"
+      - deny-css-rgba-check
+      - deny-css-hex-check
       - "check-backend"
       - "check-frontend-license"
       - "check-backend-license"
@@ -44,31 +70,19 @@ steps:
     command: ./ops/deploy.sh infra
 
   - label: ":react: Build Frontend"
-    if:  build.branch == "main" && build.message =~ /\[frontend\]/
+    if: build.branch == "main" && build.message =~ /(?i)\[frontend\]/
     key: "build-frontend"
     depends_on: "deploy-infra"
     command: ./ops/build.sh frontend
 
   - label: ":java: Build Backend"
-    if:  build.branch == "main" && build.message =~ /\[backend\]/
+    if: build.branch == "main" && build.message =~ /(?i)\[backend\]/
     key: "build-backend"
     depends_on: "deploy-infra"
     command: ./ops/build.sh backend
 
-  - label: ":rocket: Build Stub"
-    if:  build.branch == "main" && build.message =~ /\[stub\]/
-    key: "build-stub"
-    depends_on: "deploy-infra"
-    command: ./ops/build.sh stub
-
-  - label: ":rocket: Deploy Stub"
-    if:  build.branch == "main" && build.message =~ /\[stub\]/
-    key: "deploy-stub"
-    depends_on: "build-stub"
-    command: ./ops/deploy.sh stub
-
   - label: ":rocket: Deploy e2e"
-    if: build.branch == "main" && (build.message =~ /\[frontend\]/ || build.message =~ /\[backend\]/)
+    if: build.branch == "main" && (build.message =~ /(?i)\[frontend\]/ || build.message =~ /(?i)\[backend\]/)
     key: "deploy-e2e"
     depends_on:
       - "build-frontend"
@@ -80,21 +94,23 @@ steps:
     key: "check-e2e"
     depends_on:
       - "deploy-e2e"
-      - "deploy-stub"
       - "check-shell"
       - "check-security"
+      - "check-frontend"
+      - "check-px"
+      - deny-css-rgba-check
+      - deny-css-hex-check
       - "check-backend"
       - "check-frontend-license"
       - "check-backend-license"
-    command: ./ops/check.sh e2e
+    command: ./ops/check.sh e2e-container
     plugins:
       - artifacts#v1.9.0:
-          upload:
-            - "frontend/cypress/videos/**/*"
-          name: "cypress-videos"
+          upload: "./e2e-reports.tar.gz"
           expire_in: "${RETENTION_DAYS} days"
 
   - label: ":rocket: Deploy prod"
-    if: build.branch == "main" && (build.message =~ /\[frontend\]/ || build.message =~ /\[backend\]/)
-    depends_on: "check-e2e"
+    if: build.branch == "main" && (build.message =~ /(?i)\[frontend\]/ || build.message =~ /(?i)\[backend\]/)
+    depends_on:
+      - "check-e2e"
     command: ./ops/deploy.sh prod

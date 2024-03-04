@@ -166,16 +166,16 @@ class RestResponseEntityExceptionHandlerTest {
 	}
 
 	@Test
-	public void shouldHandleRateLimitExceededException() {
-		RateLimitExceededException ex = new RateLimitExceededException("Rate limit");
+	public void shouldHandleGithubRepoEmptyException() {
+		GithubRepoEmptyException ex = new GithubRepoEmptyException("No GitHub repositories found.");
 
-		ResponseEntity<Object> response = restExceptionHandler.handleRateLimitExceededException(ex);
+		ResponseEntity<Object> response = restExceptionHandler.handleGithubRepoEmptyException(ex);
 
-		assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
+		assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
 		assertNotNull(response.getBody());
 		assertTrue(response.getBody() instanceof RestApiErrorResponse);
 		RestApiErrorResponse errorResponse = (RestApiErrorResponse) response.getBody();
-		assertEquals("Rate limit", errorResponse.getMessage());
+		assertEquals("No GitHub repositories found.", errorResponse.getMessage());
 	}
 
 	@Test

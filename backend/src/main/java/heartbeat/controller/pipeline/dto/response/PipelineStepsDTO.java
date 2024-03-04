@@ -24,4 +24,8 @@ public class PipelineStepsDTO {
 
 	private String orgName;
 
+	private List<String> branches;
+
+	private List<String> pipelineCrews;
+
 }

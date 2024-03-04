@@ -1,4 +1,5 @@
 {
+  "maxConcurrency": 1,
   "transform": {
     "^.+\\.tsx?$": "ts-jest",
     ".+\\.svg": "<rootDir>/__tests__/__mocks__/svgTransformer.ts"
@@ -10,7 +11,9 @@
   "moduleFileExtensions": ["ts", "tsx", "js", "jsx", "json", "node"],
   "moduleNameMapper": {
     "\\.(css|less|scss|sass)$": "identity-obj-proxy",
-    "^@src/(.*)": "<rootDir>/src/$1"
+    "^@src/(.*)": "<rootDir>/src/$1",
+    "^@test/(.*)": "<rootDir>/__tests__/$1",
+    "^@fontsource(.*)": "identity-obj-proxy"
   },
   "testPathIgnorePatterns": [
     "<rootDir>/__tests__/src/fixtures.ts",
@@ -24,5 +27,6 @@
       "lines": 100,
       "statements": 100
     }
-  }
+  },
+  "testTimeout": 30000
 }

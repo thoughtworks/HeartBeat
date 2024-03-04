@@ -17,16 +17,34 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class RestResponseEntityExceptionHandler {
 
+	@ExceptionHandler(value = DecryptDataOrPasswordWrongException.class)
+	protected ResponseEntity<Object> handleDecryptProcessException(DecryptDataOrPasswordWrongException ex) {
+		return ResponseEntity.status(ex.getStatus())
+			.body(new RestApiErrorResponse(ex.getStatus(), ex.getMessage(), "Config file or password error"));
+	}
+
+	@ExceptionHandler(value = EncryptDecryptProcessException.class)
+	protected ResponseEntity<Object> handleEncryptProcessException(EncryptDecryptProcessException ex) {
+		return ResponseEntity.status(ex.getStatus())
+			.body(new RestApiErrorResponse(ex.getStatus(), ex.getMessage(), "Failed to encrypt or decrypt process"));
+	}
+
+	@ExceptionHandler(value = GenerateReportException.class)
+	protected ResponseEntity<Object> handleGenerateReportException(GenerateReportException ex) {
+		return ResponseEntity.status(ex.getStatus())
+			.body(new RestApiErrorResponse(ex.getStatus(), ex.getMessage(), "Failed to generate report"));
+	}
+
 	@ExceptionHandler(value = NotFoundException.class)
 	protected ResponseEntity<Object> handleNotFoundException(NotFoundException ex) {
 		return ResponseEntity.status(ex.getStatus())
-			.body(new RestApiErrorResponse(ex.getStatus(), ex.getMessage(), "404 Not Found"));
+			.body(new RestApiErrorResponse(ex.getStatus(), ex.getMessage(), "Not found"));
 	}
 
 	@ExceptionHandler(value = ServiceUnavailableException.class)
 	protected ResponseEntity<Object> handleTimeoutException(ServiceUnavailableException ex) {
 		return ResponseEntity.status(ex.getStatus())
-			.body(new RestApiErrorResponse(ex.getStatus(), ex.getMessage(), "Service Unavailable"));
+			.body(new RestApiErrorResponse(ex.getStatus(), ex.getMessage(), "Service unavailable"));
 	}
 
 	@ExceptionHandler(value = RequestFailedException.class)
@@ -53,10 +71,11 @@ public class RestResponseEntityExceptionHandler {
 			.body(new RestApiErrorResponse(ex.getStatus(), ex.getMessage(), "Token is incorrect"));
 	}
 
-	@ExceptionHandler(value = RateLimitExceededException.class)
-	protected ResponseEntity<Object> handleRateLimitExceededException(RateLimitExceededException ex) {
+	@ExceptionHandler(value = GithubRepoEmptyException.class)
+	protected ResponseEntity<Object> handleGithubRepoEmptyException(GithubRepoEmptyException ex) {
 		return ResponseEntity.status(ex.getStatus())
-			.body(new RestApiErrorResponse(ex.getStatus(), ex.getMessage(), "GitHub api rate limit"));
+			.body(new RestApiErrorResponse(ex.getStatus(), ex.getMessage(),
+					"The GitHub repo size is 0, please recheck the token!"));
 	}
 
 	@ExceptionHandler(value = PermissionDenyException.class)
@@ -87,7 +106,7 @@ public class RestResponseEntityExceptionHandler {
 	@ExceptionHandler(FileIOException.class)
 	public ResponseEntity<Object> handleFileIOException(FileIOException ex) {
 		return ResponseEntity.status(ex.getStatus())
-			.body(new RestApiErrorResponse(ex.getStatus(), ex.getMessage(), "File read failed"));
+			.body(new RestApiErrorResponse(ex.getStatus(), ex.getMessage(), "Failed to read file"));
 	}
 
 	@ExceptionHandler(InternalServerErrorException.class)

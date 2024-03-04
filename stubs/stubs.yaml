@@ -1,6 +1,0 @@
-includes:
-  - ./stub-service.yaml
-  - ./backend/jira/jira-stubs.yaml
-  - ./backend/github/github-stubs.yaml
-  - ./backend/buildkite/buildkite-stubs.yaml
-  - ./frontend/stubs.yaml

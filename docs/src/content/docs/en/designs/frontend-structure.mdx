@@ -1,0 +1,47 @@
+---
+title: Frontend Structure
+description: Frontend Structure
+---
+
+## Structure Overview
+
+![Frontend Structure](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/design/frontend-structure.png)
+
+#### Structure Design
+
+```sh
+src
+├── components
+│   └── xxx
+│       └── index.tsx
+├── clients
+├── context
+├── constants
+├── containers
+│   └── xxx
+│       ├── view.tsx
+│       ├── hooks/reducer.ts
+│       └── index.ts
+├── config
+├── pages
+│   ├── xxx.tsx
+│   └── Routers
+├── utils
+└── App.tsx
+```
+
+- **Page**: It is the entrance of each router which has separated URL. The external data like the data from browser(cookies, storages, url) should be gotten here and pass to container. The testing for page should include the data preparation and integration testing. The page should also define the global layout.
+
+- **Component**: They are a set of basic UI elements which is combined with some primitive react element to show the content reflected with the UX design. They should not have any business logic and functionalities. They define their own view mode to control status/style changes. Thus, the testing for component should focus on the UX style and status. They never access the backend endpoints. The name should indicate the UI element, not the business idiom.
+
+- **Container**: Container is wrapper of a completed business using a sef of components to present a user flow. All community with backend should be managed by containers. Their name is a symbol of a business unit. Their testing should focus on the validation fo business flow and data, and less the UX display. To reduce the complexity, the component used in a container should be mocked with a simple html element. The container could be large includes number of component or small one only included one component. The only difference with `Component` is they a business logic on it.
+
+- **Client**: They are some agents to access the backends. All request of backend should encapsulate by client. The client name related with a backend service.
+
+- **Context**: Context is wrapper of global status manager, like redux.
+
+- **Constants**: All constant values included the messages / wordings in UI.
+
+- **Config**: Configuration for application.
+
+- **utils**: Some common tools and shared pure methods.

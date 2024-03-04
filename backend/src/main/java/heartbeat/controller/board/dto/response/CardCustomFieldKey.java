@@ -17,4 +17,6 @@ public class CardCustomFieldKey {
 
 	private String flagged;
 
+	private boolean isInTargetField;
+
 }

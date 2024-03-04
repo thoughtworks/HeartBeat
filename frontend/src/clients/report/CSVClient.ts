@@ -1,23 +1,27 @@
-import { HttpClient } from '@src/clients/Httpclient'
-import { CSVReportRequestDTO } from '@src/clients/report/dto/request'
-import dayjs from 'dayjs'
-import { downloadCSV } from '@src/utils/util'
+import { CSVReportRequestDTO } from '@src/clients/report/dto/request';
+import { HttpClient } from '@src/clients/HttpClient';
+import { downloadCSV } from '@src/utils/util';
+import dayjs from 'dayjs';
 
 export class CSVClient extends HttpClient {
-  parseTimeStampToHumanDate = (csvTimeStamp: number | undefined): string =>
-    dayjs(csvTimeStamp).format('YYYY-MM-DD-HH-mm-ss')
+  parseTimeStampToHumanDate = (csvTimeStamp: number | undefined): string => dayjs(csvTimeStamp).format('HHmmSSS');
+  parseCollectionDateToHumanDate = (date: string) => dayjs(date).format('YYYYMMDD');
 
   exportCSVData = async (params: CSVReportRequestDTO) => {
     await this.axiosInstance
       .get(`/reports/${params.dataType}/${params.csvTimeStamp}`, { responseType: 'blob' })
       .then((res) => {
-        const exportedFilename = `${params.dataType}-data-${this.parseTimeStampToHumanDate(params.csvTimeStamp)}.csv`
-        downloadCSV(exportedFilename, res.data)
+        const exportedFilename = `${params.dataType}-${this.parseCollectionDateToHumanDate(
+          params.startDate,
+        )}-${this.parseCollectionDateToHumanDate(params.endDate)}-${this.parseTimeStampToHumanDate(
+          params.csvTimeStamp,
+        )}.csv`;
+        downloadCSV(exportedFilename, res.data);
       })
       .catch((e) => {
-        throw e
-      })
-  }
+        throw e;
+      });
+  };
 }
 
-export const csvClient = new CSVClient()
+export const csvClient = new CSVClient();

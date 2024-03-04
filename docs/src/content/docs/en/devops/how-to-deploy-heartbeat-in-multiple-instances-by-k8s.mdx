@@ -1,0 +1,131 @@
+---
+title: How to deploy heartbeat in multiple instances by K8S
+description: How to deploy heartbeat in multiple instances by K8S
+---
+
+## Solutions
+
+Following the next tutorial, you can use Heartbeat in the K8S environment more conveniently.
+
+## Multiple instances deploy tutorial
+
+First, create a `k8s-heartbeat.yml` file, and copy below code into the file.
+
+```yaml
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv
+spec:
+  capacity:
+    storage: 200Mi
+  accessModes:
+    - ReadWriteMany
+  storageClassName: heartbeat
+  hostPath:
+    path: /data
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 200Mi
+  storageClassName: heartbeat
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  labels:
+    app: backend
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      initContainers:
+        - name: backend-init
+          image: busybox
+          securityContext:
+            runAsUser: 0
+          volumeMounts:
+            - name: volumes
+              mountPath: /app/output
+          command: ["sh", "-c", "chown -R 999:999 /app/output"]
+      containers:
+        - name: backend
+          image: ghcr.io/au-heartbeat/heartbeat_backend:latest
+          volumeMounts:
+            - name: volumes
+              mountPath: /app/output
+      volumes:
+        - name: volumes
+          persistentVolumeClaim:
+            claimName: pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+spec:
+  selector:
+    app: backend
+  ports:
+    - protocol: TCP
+      port: 4322
+      targetPort: 4322
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+spec:
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+        - name: frontend
+          image: ghcr.io/au-heartbeat/heartbeat_frontend:latest
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+spec:
+  selector:
+    app: frontend
+  ports:
+    - protocol: TCP
+      port: 4321
+      targetPort: 80
+  type: LoadBalancer
+```
+
+Then, execute this command
+
+```sh
+kubectl apply -f k8s-heartbeat.yml
+```
+
+## K8S resource recycling
+
+If for some reason you need to restore the system to its pre-deployment state, you can use the following command.
+
+```shell
+kubectl delete -f k8s-heartbeat.yml
+```

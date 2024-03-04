@@ -7,11 +7,10 @@ logging:
     root: INFO
 
 github:
-  url: ${MOCK_SERVER_URL}
+  url: https://api.github.com
 
 jira:
-  url: ${MOCK_SERVER_URL}
+  url: https://%s.atlassian.net
 
 buildKite:
-  url: ${MOCK_SERVER_URL}
-
+  url: https://api.buildkite.com

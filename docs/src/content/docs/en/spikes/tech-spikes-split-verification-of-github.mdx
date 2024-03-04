@@ -1,0 +1,226 @@
+---
+title: Split verification of GitHub
+description: Split verification of GitHub
+---
+
+## Background
+
+Verify the GitHub setting on config page, there is some data redundancy. Besides, users will reset the verify status when modifying the date, resulting in a bad user experience.
+
+## Expect
+
+Reduce the granularity of the step of verification and enables a new API for target resource verification.
+
+## Solutions
+
+Through two-stage verification of GitHub tokens, the first stage verifies the validity of the token, and the second stage verifies that the token can read the target branch.
+
+### 1. Verify the validity of the token
+
+- Request timing
+
+Triggered after clicking GitHub's verify on the config page.
+
+- Api Design
+```
+paths: /api/v1/source-control/{sourceType}/verify
+method: post
+request: {
+  token: "..."
+}
+responses:
+  Status Code: 204
+```
+- GitHub Api for verification
+```
+paths: "https://api.github.com/octocat"
+method: get
+header: "Authorization: Bearer YOUR-TOKEN"
+```
+- Exception Handler
+<table>
+  <tr>
+    <td>status</td>
+    <td>message</td>
+    <td>hintInfo</td>
+  </tr>
+  <tr>
+    <td rowspan="3">400</td>
+    <td>Token cannot be empty.</td>
+    <td rowspan="3"></td>
+  </tr>
+  <tr>
+    <td>Token's pattern is incorrect.</td>
+  </tr>
+  <tr>
+    <td>Source type is incorrect.</td>
+  </tr>
+  <tr>
+    <td>401</td>
+    <td>Failed to get GitHub info_status: 401, reason: Bad credentials</td>
+    <td>Token is incorrect</td>
+  </tr>
+  <tr>
+    <td>500</td>
+    <td></td>
+    <td>Internal Server Error</td>
+  </tr>
+</table>
+
+- Sequence Diagram
+```plantuml
+@startuml
+skin rose
+title Heartbeat - Verify the validity of the token
+
+participant FrontEnd
+participant GitHubController
+participant GitHubService
+participant GitHubFeignClient
+participant RestResponseEntityExceptionHandler
+participant GitHub
+
+' group Verify the validity of the token
+    FrontEnd -> GitHubController: request: token, type
+    activate GitHubController
+    GitHubController -> GitHubService: token
+    activate GitHubService
+    GitHubService -> GitHubFeignClient: token
+    activate GitHubFeignClient
+    GitHubFeignClient -> GitHub: get: /octocat
+alt Verification success
+    GitHub --> GitHubFeignClient: 200
+    GitHubFeignClient --> GitHubService: 200
+    deactivate GitHubFeignClient
+    GitHubService --> GitHubController: true
+    deactivate GitHubService
+    GitHubController --> FrontEnd: response: 204
+    deactivate GitHubController
+else Verification failed
+    GitHub --> GitHubFeignClient: 401
+    GitHubFeignClient -> RestResponseEntityExceptionHandler: throw 401 UnauthorizedException
+    deactivate GitHubFeignClient
+    activate RestResponseEntityExceptionHandler
+    RestResponseEntityExceptionHandler --> FrontEnd: response 401 Unauthorized: "Token is incorrect"
+    deactivate RestResponseEntityExceptionHandler
+    ' deactivate GitHubService
+    ' deactivate GitHubController
+end
+@enduml
+```
+
+### 2. Verify token can read target branch
+- Request timing
+
+Triggered when the user selects a branch in the Pipeline settings module of the Metrics page.
+
+- Api Design
+
+```
+paths: /api/v1/source-control/{sourceType}/repos/branches/verify
+method: post
+request: {
+  repository: "git@github.com:XXXX/XXXX.git",
+  token: "...",
+  branch: "main"
+}
+responses:
+  Status Code: 204
+```
+
+Note：Since the branch name may contain special characters, which will cause the URL to be unsafe, put it in the request body.
+
+- GitHub Api for verification
+
+```
+paths: https://api.github.com/repos/{owner}/{repo}/branches/{branch}
+method: get
+header: "Authorization: Bearer <YOUR-TOKEN>"
+```
+- Exception Handler
+<table>
+  <tr>
+    <td>status</td>
+    <td>message</td>
+    <td>hintInfo</td>
+  </tr>
+  <tr>
+    <td rowspan="5">400</td>
+    <td>Token cannot be empty.</td>
+    <td rowspan="5"></td>
+  </tr>
+  <tr>
+    <td>Token's pattern is incorrect.</td>
+  </tr>
+  <tr>
+    <td>Repository cannot be empty.</td>
+  </tr>
+  <tr>
+    <td>Source type is incorrect.</td>
+  </tr>
+  <tr>
+    <td>Branch cannot be empty.</td>
+  </tr>
+  <tr>
+    <td>401</td>
+    <td>Failed to get GitHub info_status: 401, reason: Bad credentials</td>
+    <td>Token is incorrect</td>
+  </tr>
+  <tr>
+    <td>403</td>
+    <td>Unable to read target branch</td>
+    <td>Unable to read target branch, please check the token or target branch!</td>
+  </tr>
+  <tr>
+    <td>500</td>
+    <td></td>
+    <td>Internal Server Error</td>
+  </tr>
+</table>
+
+- Sequence Diagram
+```plantuml
+@startuml
+skin rose
+title Heartbeat - Verify token can read target branch
+
+participant FrontEnd
+participant GitHubController
+participant GitHubService
+participant GitHubFeignClient
+participant RestResponseEntityExceptionHandler
+participant GitHub
+
+' group Verify token can read target branch
+    -> FrontEnd: User select branch
+    FrontEnd -> GitHubController: request: token, type, repository, branch
+    activate GitHubController
+    GitHubController -> GitHubService: token, repository, branch
+    activate GitHubService
+    GitHubService -> GitHubFeignClient: token, repository, branch
+    activate GitHubFeignClient
+    GitHubFeignClient -> GitHub: get: /repos/{owner}/{repo}/branches/{branch}
+alt Verification success
+    GitHub --> GitHubFeignClient: 200
+    GitHubFeignClient --> GitHubService: 200
+    deactivate GitHubFeignClient
+    GitHubService --> GitHubController: true
+    deactivate GitHubService
+    GitHubController --> FrontEnd: response 204
+    deactivate GitHubController
+else Verification failed
+    GitHub --> GitHubFeignClient: 404
+    GitHubFeignClient --> GitHubService: throw 404 Not Found
+    deactivate GitHubFeignClient
+    activate GitHubService
+    GitHubService -> RestResponseEntityExceptionHandler: throw 403 Permission Deny
+    deactivate GitHubService
+    deactivate GitHubFeignClient
+    activate RestResponseEntityExceptionHandler
+    RestResponseEntityExceptionHandler -> FrontEnd: response 403 Permission Deny: "Unable to read target repo"
+    deactivate RestResponseEntityExceptionHandler
+    ' deactivate GitHubService
+    ' deactivate GitHubController
+end
+@enduml
+```

@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import feign.Response;
 import heartbeat.exception.ServiceUnavailableException;
+import heartbeat.client.decoder.BuildKiteFeignClientDecoder;
 import heartbeat.exception.NotFoundException;
 import heartbeat.exception.RequestFailedException;
 import heartbeat.exception.UnauthorizedException;

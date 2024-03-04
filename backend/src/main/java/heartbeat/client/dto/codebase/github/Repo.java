@@ -1,20 +1,19 @@
 package heartbeat.client.dto.codebase.github;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import heartbeat.client.dto.codebase.github.License;
-import heartbeat.client.dto.codebase.github.Owner;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Repo {
+public class Repo implements Serializable {
 
 	private Integer id;
 

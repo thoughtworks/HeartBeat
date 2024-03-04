@@ -27,4 +27,18 @@ public class ReportResponse {
 
 	private LeadTimeForChanges leadTimeForChanges;
 
+	private ReportMetricsError reportMetricsError;
+
+	private Long exportValidityTime;
+
+	private boolean boardMetricsCompleted;
+
+	private boolean doraMetricsCompleted;
+
+	private boolean allMetricsCompleted;
+
+	public ReportResponse(Long exportValidityTime) {
+		this.exportValidityTime = exportValidityTime;
+	}
+
 }

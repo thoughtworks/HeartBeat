@@ -4,9 +4,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import feign.Response;
+import heartbeat.exception.PermissionDenyException;
 import heartbeat.exception.ServiceUnavailableException;
+import heartbeat.client.decoder.GitHubFeignClientDecoder;
 import heartbeat.exception.NotFoundException;
-import heartbeat.exception.RateLimitExceededException;
 import heartbeat.exception.RequestFailedException;
 import heartbeat.exception.UnauthorizedException;
 import org.junit.jupiter.api.BeforeEach;
@@ -91,7 +92,7 @@ class GitHubFeignClientDecoderTest {
 
 		Exception exception = decoder.decode("methodKey", responseMock.getMockResponse(statusCode));
 
-		assertEquals(RateLimitExceededException.class, exception.getClass());
+		assertEquals(PermissionDenyException.class, exception.getClass());
 	}
 
 }

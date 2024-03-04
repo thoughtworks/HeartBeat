@@ -1,19 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="WARN" monitorInterval="30">
+<Configuration status="INFO" name="Heartbeat">
     <Properties>
         <Property name="LOG_PATTERN">
-            %d{yyyy-MM-dd HH:mm:ss.SSS} [%highlight{%-5level}{FATAL=bg_red, ERROR=red, WARN=yellow, INFO=green}] [%t] %M(%c{1}:%L): %m%n%ex
+            %d{yyyy-MM-dd HH:mm:ss.SSS} [%highlight{%-5level}{FATAL=bg_red, ERROR=red, WARN=yellow, INFO=green}] [%t] %M(%c{1}:%L): %replace{%msg}{(((ghp_)|(bkua_))[a-zA-Z0-9]+)|((Basic )([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2}==))}{xxxxx}%n%ex
         </Property>
     </Properties>
-
     <Appenders>
-        <Console name="ConsoleAppender" target="SYSTEM_OUT" follow="true">
-            <PatternLayout pattern="${LOG_PATTERN}"/>
-        </Console>
+      <Console name="ConsoleAppender" target="SYSTEM_OUT" follow="true">
+        <PatternLayout pattern="${LOG_PATTERN}"/>
+      </Console>
+        <RollingFile name="RollingFile" fileName="logs/Heartbeat.log"
+                     filePattern="logs/Heartbeat-%d{MM-dd-yyyy}-%i.log.gz">
+            <PatternLayout>
+                <Pattern>%d %p %c{1.} [%t] %m%n</Pattern>
+            </PatternLayout>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="10 MB" />
+            </Policies>
+            <DefaultRolloverStrategy max="10"/>
+        </RollingFile>
     </Appenders>
-
     <Loggers>
         <Root level="info">
+            <AppenderRef ref="RollingFile"/>
             <AppenderRef ref="ConsoleAppender"/>
         </Root>
     </Loggers>

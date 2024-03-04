@@ -1,8 +1,14 @@
-import { HttpClient } from '@src/clients/Httpclient'
-import { ReportRequestDTO } from '@src/clients/report/dto/request'
+import { ReportCallbackResponse, ReportResponseDTO } from '@src/clients/report/dto/response';
+import { ReportRequestDTO } from '@src/clients/report/dto/request';
+import { HttpClient } from '@src/clients/HttpClient';
 
 export class ReportClient extends HttpClient {
-  reportResponse = {
+  status = 0;
+  reportCallbackResponse: ReportCallbackResponse = {
+    callbackUrl: '',
+    interval: 0,
+  };
+  reportResponse: ReportResponseDTO = {
     velocity: {
       velocityForSP: 0,
       velocityForCards: 0,
@@ -37,8 +43,8 @@ export class ReportClient extends HttpClient {
       leadTimeForChangesOfPipelines: [],
       avgLeadTimeForChanges: {
         name: '',
-        mergeDelayTime: 1,
-        pipelineDelayTime: 1,
+        prLeadTime: 1,
+        pipelineLeadTime: 1,
         totalDelayTime: 1,
       },
     },
@@ -51,21 +57,47 @@ export class ReportClient extends HttpClient {
       },
       changeFailureRateOfPipelines: [],
     },
-  }
+    reportMetricsError: {
+      boardMetricsError: null,
+      pipelineMetricsError: null,
+      sourceControlMetricsError: null,
+    },
+    meanTimeToRecovery: null,
+    exportValidityTime: null,
+    boardMetricsCompleted: false,
+    doraMetricsCompleted: false,
+    allMetricsCompleted: false,
+  };
 
-  report = async (params: ReportRequestDTO) => {
+  retrieveByUrl = async (params: ReportRequestDTO, url: string) => {
     await this.axiosInstance
-      .post(`/reports`, params, {})
+      .post(url, params, {})
       .then((res) => {
-        this.reportResponse = res.data
+        this.reportCallbackResponse = res.data;
       })
       .catch((e) => {
-        throw e
-      })
+        throw e;
+      });
     return {
+      response: this.reportCallbackResponse,
+    };
+  };
+
+  polling = async (url: string) => {
+    await this.axiosInstance
+      .get(url)
+      .then((res) => {
+        this.status = res.status;
+        this.reportResponse = res.data;
+      })
+      .catch((e) => {
+        throw e;
+      });
+    return {
+      status: this.status,
       response: this.reportResponse,
-    }
-  }
+    };
+  };
 }
 
-export const reportClient = new ReportClient()
+export const reportClient = new ReportClient();

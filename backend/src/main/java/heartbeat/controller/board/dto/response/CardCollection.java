@@ -13,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 public class CardCollection {
 
-	private int storyPointSum;
+	private double storyPointSum;
 
 	private int cardsNumber;
 

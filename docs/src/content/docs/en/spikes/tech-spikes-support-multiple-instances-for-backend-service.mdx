@@ -1,0 +1,239 @@
+---
+title: Split multiple instances support
+description: Split multiple instances support
+---
+
+## Background
+
+Currently, heartbeat backend does not support multiple instance which make it hard to scale up the instance when load increasing.
+
+## Expect
+
+Multi-instance deployment is achieved through two methods: Docker Compose and k8s, and files can be shared between different instances.
+
+## Solutions
+
+File sharing between containers is achieved by introducing Volume in Docker Compose and PVC in k8s.
+
+### 1. Docker Compose deployment
+
+- docker-compose.yaml
+
+```yaml
+version: "3.4"
+
+services:
+  backend:
+    image: ghcr.io/au-heartbeat/heartbeat_backend:latest
+    expose:
+      - "4322"
+    restart: always
+    deploy:
+      replicas: 3
+    volumes:
+      - file_volume:/app/output
+  frontend:
+    image: ghcr.io/au-heartbeat/heartbeat_frontend:latest
+    container_name: frontend
+    ports:
+      - "4321:80"
+    depends_on:
+      - backend
+    restart: always
+
+volumes:
+  file_volume:
+```
+
+Three backend containers are started here and the files are mounted to file_volume
+
+### 2. Kubernetes deployment
+
+#### 2.1 First step
+
+Create a namespace if the user does not have one.
+
+```shell
+kubectl create namespace heartbeat
+```
+
+#### 2.2 Second step
+
+implement k8s yaml
+
+- k8s-persistent-volume.yaml
+
+```yaml
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv
+spec:
+  capacity:
+    storage: 200Mi
+  accessModes:
+    - ReadWriteMany
+  storageClassName: heartbeat
+  hostPath:
+    path: /data
+```
+
+The `spec.capacity.storage` can be adjusted to the appropriate size.
+
+- k8s-persistent-volume-claim.yaml
+
+```yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 200Mi
+  storageClassName: heartbeat
+```
+
+The `spec.resources.requests.storage` can be adjusted to the appropriate size, but not larger than `spec.capacity.storage` in the k8s-persistent-volume.yaml.
+
+- k8s-backend-deployment.yaml
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  labels:
+    app: backend
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      initContainers:
+        - name: backend-init
+          image: busybox
+          securityContext:
+            runAsUser: 0
+          volumeMounts:
+            - name: volumes
+              mountPath: /app/output
+          command: ["sh", "-c", "chown -R 999:999 /app/output"]
+      containers:
+        - name: backend
+          image: ghcr.io/au-heartbeat/heartbeat_backend:latest
+          volumeMounts:
+            - name: volumes
+              mountPath: /app/output
+      volumes:
+        - name: volumes
+          persistentVolumeClaim:
+            claimName: pvc
+```
+
+Three backend pods are started here and the files are mounted to volumes
+
+- k8s-backend-service.yaml
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+spec:
+  selector:
+    app: backend
+  ports:
+    - protocol: TCP
+      port: 4322
+      targetPort: 4322
+```
+
+- k8s-frontend-deployment.yaml
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+spec:
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+        - name: frontend
+          image: ghcr.io/au-heartbeat/heartbeat_frontend:latest
+```
+
+- k8s-frontend-service.yaml
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+spec:
+  selector:
+    app: frontend
+  ports:
+    - protocol: TCP
+      port: 4321
+      targetPort: 80
+  type: LoadBalancer
+```
+
+### 3. Code modification under multiple instances
+
+#### 3.1 In generating report files
+
+When generating files, use `./app/output/csv` instead of `./csv`
+
+- Mainly exists in classes
+
+```
+CSVFileGenerator.java
+CSVFileNameEnum.java
+```
+
+- Check point
+
+In the case of a single instance, check whether the three report files provided for download can be correctly generated and downloaded under the target file.
+
+#### 3.2 Refactor async handler
+
+- AsyncExceptionHandler.java
+
+  - Need to initialize a folder `./app/output/error`.
+  - Modify the put method to generate an intermediate file, the content of the file is the corresponding outlier, and then atomize the file name.
+  - The get method reads the target file and returns null if the file does not exist, otherwise it returns an exception object.
+  - When deleting a file fails, check if the file still exists. If it does not exist, the deletion is successful.
+
+- AsyncReportRequestHandler.java
+
+  - Need to initialize two folder `./app/output/report` and `./app/output/metricsDataReady`.
+  - Modify the put method as AsyncExceptionHandler.
+  - Modify the get method reads the target file and returns null if the file does not exist, otherwise it returns target object.
+  - When deleting a file fails, check if the file still exists. If it does not exist, the deletion is successful.
+
+#### 3.3 Delete expire csv file
+
+- DeleteExpireCSVScheduler.java
+
+  - Change file from `./csv/` to `./app/output/csv`
+  - When deleting a file fails, check if the file still exists. If it does not exist, the deletion is successful.
+
+#### 3.4 Change README
+
+Put docker-compose.yaml in `7.1.1 Customize story point field in Jira` in README

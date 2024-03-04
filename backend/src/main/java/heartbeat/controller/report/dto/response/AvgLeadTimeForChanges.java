@@ -14,9 +14,9 @@ public class AvgLeadTimeForChanges {
 	@Builder.Default
 	private String name = "Average";
 
-	private Double mergeDelayTime;
+	private Double prLeadTime;
 
-	private Double pipelineDelayTime;
+	private Double pipelineLeadTime;
 
 	private Double totalDelayTime;
 

@@ -1,10 +1,13 @@
 package heartbeat.controller.pipeline;
 
-import heartbeat.controller.pipeline.dto.request.PipelineParam;
+import heartbeat.controller.pipeline.dto.request.PipelineType;
+import heartbeat.controller.pipeline.dto.request.TokenParam;
 import heartbeat.controller.pipeline.dto.request.PipelineStepsParam;
 import heartbeat.controller.pipeline.dto.response.BuildKiteResponseDTO;
 import heartbeat.controller.pipeline.dto.response.PipelineStepsDTO;
 import heartbeat.service.pipeline.buildkite.BuildKiteService;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
@@ -14,12 +17,15 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
+@Tag(name = "Pipeline")
 @RequestMapping("/pipelines")
 @Validated
 @Log4j2
@@ -27,17 +33,36 @@ public class PipelineController {
 
 	private final BuildKiteService buildKiteService;
 
-	@GetMapping("/{pipelineType}")
-	public BuildKiteResponseDTO getBuildKiteInfo(@PathVariable String pipelineType,
-			@Valid PipelineParam pipelineParam) {
-		return buildKiteService.fetchPipelineInfo(pipelineParam);
+	@PostMapping("/{pipelineType}/verify")
+	public ResponseEntity<Void> verifyBuildKiteToken(
+			@Schema(type = "string", allowableValues = { "buildkite" },
+					accessMode = Schema.AccessMode.READ_ONLY) @PathVariable PipelineType pipelineType,
+			@Valid @RequestBody TokenParam tokenParam) {
+		buildKiteService.verifyToken(tokenParam.getToken());
+		return ResponseEntity.noContent().build();
+	}
+
+	@PostMapping("/{pipelineType}/info")
+	public ResponseEntity<BuildKiteResponseDTO> fetchBuildKiteInfo(
+			@Schema(type = "string", allowableValues = { "buildkite" },
+					accessMode = Schema.AccessMode.READ_ONLY) @PathVariable PipelineType pipelineType,
+			@Valid @RequestBody TokenParam tokenParam) {
+		BuildKiteResponseDTO buildKiteResponse = buildKiteService.getBuildKiteInfo(tokenParam);
+		if (buildKiteResponse.getPipelineList().isEmpty()) {
+			return ResponseEntity.noContent().build();
+		}
+		else {
+			return ResponseEntity.ok(buildKiteResponse);
+		}
 	}
 
 	@GetMapping("/{pipelineType}/{organizationId}/pipelines/{buildId}/steps")
 	public ResponseEntity<PipelineStepsDTO> getPipelineSteps(
 			@RequestHeader("Authorization") @NotBlank(message = "Token must not be blank") String token,
-			@PathVariable String pipelineType, @PathVariable String organizationId,
-			@PathVariable("buildId") String pipelineId, @Valid @ModelAttribute PipelineStepsParam params) {
+			@Schema(type = "string", allowableValues = { "buildkite" },
+					accessMode = Schema.AccessMode.READ_ONLY) @PathVariable String pipelineType,
+			@PathVariable String organizationId, @PathVariable("buildId") String pipelineId,
+			@Valid @ModelAttribute PipelineStepsParam params) {
 
 		log.info("Start to get pipeline steps, organization id: {}, pipeline id: {}", organizationId, pipelineId);
 		PipelineStepsDTO pipelineSteps = buildKiteService.fetchPipelineSteps(token, organizationId, pipelineId, params);

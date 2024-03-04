@@ -97,12 +97,12 @@ Resources:
             Version: "2012-10-17"
         - PolicyName: root
           PolicyDocument:
-            Version: '2012-10-17'
+            Version: "2012-10-17"
             Statement:
-            - Effect: Allow
-              Action:
-              - logs:*
-              Resource: arn:aws:logs:*:*:*
+              - Effect: Allow
+                Action:
+                  - logs:*
+                Resource: arn:aws:logs:*:*:*
 
   AWSGitHubActionRole:
     Type: AWS::IAM::Role
@@ -224,62 +224,23 @@ Resources:
       RepositoryName: "heartbeat_backend"
       LifecyclePolicy:
         LifecyclePolicyText: |
-            {
-                "rules": [
-                    {
-                        "rulePriority": 1,
-                        "description": "Delete old images",
-                        "selection": {
-                            "tagStatus": "tagged",
-                            "tagPrefixList": ["hb"],
-                            "countType": "imageCountMoreThan",
-                            "countNumber": 2
-                        },
-                        "action": {
-                            "type": "expire"
-                        }
-                    }
-                ]
-            }
-      RepositoryPolicyText:
-        Version: "2012-10-17"
-        Statement:
-          - Sid: AllowPushPull
-            Effect: Allow
-            Principal:
-              AWS:
-                - "*"
-            Action:
-              - ecr:GetDownloadUrlForLayer
-              - ecr:BatchGetImage
-              - ecr:BatchCheckLayerAvailability
-              - ecr:PutImage
-              - ecr:InitiateLayerUpload
-              - ecr:UploadLayerPart
-              - ecr:CompleteLayerUpload
-  EcrStub:
-    Type: AWS::ECR::Repository
-    Properties:
-      RepositoryName: "heartbeat_stub"
-      LifecyclePolicy:
-        LifecyclePolicyText: |
-            {
-                "rules": [
-                    {
-                        "rulePriority": 1,
-                        "description": "Delete old images",
-                        "selection": {
-                            "tagStatus": "tagged",
-                            "tagPrefixList": ["hb"],
-                            "countType": "imageCountMoreThan",
-                            "countNumber": 2
-                        },
-                        "action": {
-                            "type": "expire"
-                        }
-                    }
-                ]
-            }
+          {
+              "rules": [
+                  {
+                      "rulePriority": 1,
+                      "description": "Delete old images",
+                      "selection": {
+                          "tagStatus": "tagged",
+                          "tagPrefixList": ["hb"],
+                          "countType": "imageCountMoreThan",
+                          "countNumber": 2
+                      },
+                      "action": {
+                          "type": "expire"
+                      }
+                  }
+              ]
+          }
       RepositoryPolicyText:
         Version: "2012-10-17"
         Statement:
@@ -302,23 +263,23 @@ Resources:
       RepositoryName: "heartbeat_frontend"
       LifecyclePolicy:
         LifecyclePolicyText: |
-            {
-                "rules": [
-                    {
-                        "rulePriority": 1,
-                        "description": "Delete old images",
-                        "selection": {
-                            "tagStatus": "tagged",
-                            "tagPrefixList": ["hb"],
-                            "countType": "imageCountMoreThan",
-                            "countNumber": 2
-                        },
-                        "action": {
-                            "type": "expire"
-                        }
-                    }
-                ]
-            }
+          {
+              "rules": [
+                  {
+                      "rulePriority": 1,
+                      "description": "Delete old images",
+                      "selection": {
+                          "tagStatus": "tagged",
+                          "tagPrefixList": ["hb"],
+                          "countType": "imageCountMoreThan",
+                          "countNumber": 2
+                      },
+                      "action": {
+                          "type": "expire"
+                      }
+                  }
+              ]
+          }
       RepositoryPolicyText:
         Version: "2012-10-17"
         Statement:
@@ -360,6 +321,7 @@ Resources:
           Value: "SIT"
       SecurityGroups:
         - !Ref EC2SSHSecurityGroup
+        - !Ref EC2SSHSecurityGroupForBuildkite
         - !Ref EC2AppSecurityGroup
         - !Ref EC2OldAppSecurityGroup
       IamInstanceProfile: !Ref EC2InstanceProfile
@@ -392,8 +354,8 @@ Resources:
           Value: "E2E"
       SecurityGroups:
         - !Ref EC2SSHSecurityGroup
+        - !Ref EC2SSHSecurityGroupForBuildkite
         - !Ref EC2AppSecurityGroup
-        - !Ref EC2Stubby4jGroup
       IamInstanceProfile: !Ref EC2InstanceProfile
       KeyName: !Ref EC2KeyPair
       UserData:
@@ -471,38 +433,52 @@ Resources:
   EC2SSHSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupDescription: Enable SSH access via port 20
+      GroupDescription: Enable SSH access via port 22
+      Tags:
+        - Key: "Name"
+          Value: "SSH for dev"
       SecurityGroupIngress:
-      - IpProtocol: tcp
-        FromPort: 20
-        ToPort: 23
-        CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 202.66.38.0/24
+
+  EC2SSHSecurityGroupForBuildkite:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Enable Buildkite to access EC2
+      Tags:
+        - Key: "Name"
+          Value: "SSH for Buildkite"
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 13.214.134.0/24
+
   EC2OldAppSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Enable access application
+      Tags:
+        - Key: "Name"
+          Value: "Old app port"
       SecurityGroupIngress:
-      - IpProtocol: tcp
-        FromPort: 4325
-        ToPort: 4325
-        CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 4325
+          ToPort: 4325
+          CidrIp: 0.0.0.0/0
   EC2AppSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Enable access application
-      SecurityGroupIngress:
-      - IpProtocol: tcp
-        FromPort: 4321
-        ToPort: 4321
-        CidrIp: 0.0.0.0/0
-  EC2Stubby4jGroup:
-    Type: AWS::EC2::SecurityGroup
-    Properties:
-      GroupDescription: Stub mock server
+      Tags:
+        - Key: "Name"
+          Value: "New app port"
       SecurityGroupIngress:
         - IpProtocol: tcp
-          FromPort: 4323
-          ToPort: 4323
+          FromPort: 4321
+          ToPort: 4321
           CidrIp: 0.0.0.0/0
 
   WebPortAddress:
@@ -575,7 +551,7 @@ Resources:
       EventBusName: default
       Name: ec2-start-event-rule
       ScheduleExpression: cron(0 1 ? * * *)
-      State: ENABLED
+      State: DISABLED
       Targets:
         - Id: ec2-start-event-rule-id
           Arn: !GetAtt LambdaForEC2Management.Arn
@@ -589,7 +565,7 @@ Resources:
       EventBusName: default
       Name: ec2-stop-event-rule
       ScheduleExpression: cron(15 14 ? * * *)
-      State: ENABLED
+      State: DISABLED
       Targets:
         - Id: ec2-stop-event-rule-id
           Arn: !GetAtt LambdaForEC2Management.Arn

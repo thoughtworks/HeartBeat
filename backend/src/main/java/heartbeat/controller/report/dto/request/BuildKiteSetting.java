@@ -20,4 +20,6 @@ public class BuildKiteSetting {
 
 	private List<DeploymentEnvironment> deploymentEnvList;
 
+	private List<String> pipelineCrews;
+
 }

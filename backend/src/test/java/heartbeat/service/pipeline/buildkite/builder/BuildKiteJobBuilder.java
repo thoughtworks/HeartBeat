@@ -38,4 +38,9 @@ public class BuildKiteJobBuilder {
 		return this;
 	}
 
+	public BuildKiteJobBuilder withName(String name) {
+		buildKiteJob.setName(name);
+		return this;
+	}
+
 }

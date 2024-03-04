@@ -66,23 +66,23 @@ public class MeanToRecoveryCalculator {
 		List<DeployInfo> sortedJobs = new ArrayList<>(deploy.getFailed());
 		sortedJobs.addAll(deploy.getPassed());
 		sortedJobs.sort(Comparator.comparing(DeployInfo::getPipelineCreateTime));
+		sortedJobs = sortedJobs.stream().filter(deployInfo -> !deployInfo.isPipelineCanceled()).toList();
 
 		long totalTimeToRecovery = 0;
-		long failedJobCreateTime = 0;
+		long failedJobFinishedTime = 0;
 		int recoveryTimes = 0;
 
 		for (DeployInfo job : sortedJobs) {
-			long pipelineCreateTime = Instant.parse(job.getPipelineCreateTime()).toEpochMilli();
-			if ("passed".equals(job.getState()) && failedJobCreateTime != 0) {
-				totalTimeToRecovery += pipelineCreateTime - failedJobCreateTime;
-				failedJobCreateTime = 0;
+			long currentJobFinishTime = Instant.parse(job.getJobFinishTime()).toEpochMilli();
+			if ("passed".equals(job.getState()) && failedJobFinishedTime != 0) {
+				totalTimeToRecovery += currentJobFinishTime - failedJobFinishedTime;
+				failedJobFinishedTime = 0;
 				recoveryTimes++;
 			}
-			if ("failed".equals(job.getState()) && failedJobCreateTime == 0) {
-				failedJobCreateTime = pipelineCreateTime;
+			if ("failed".equals(job.getState()) && failedJobFinishedTime == 0) {
+				failedJobFinishedTime = currentJobFinishTime;
 			}
 		}
-
 		return new TotalTimeAndRecoveryTimes(totalTimeToRecovery, recoveryTimes);
 	}
 

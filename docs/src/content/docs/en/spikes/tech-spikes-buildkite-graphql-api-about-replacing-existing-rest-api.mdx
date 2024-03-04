@@ -1,0 +1,314 @@
+---
+title: BuildKite GraphQL API about replacing existing REST API
+description: BuildKite GraphQL API about replacing existing REST API
+---
+
+## Background
+
+Currently, our BuildKite API are all REST API, and the REST API has the problem of over-fetching or multiple requests.
+
+## Expect
+
+We want to use the GraphQL API to retrieve the key information we need. With the data obtained this way, we can calculate related metrics.
+
+## Solutions
+
+### BuildKite GraphQL Overview
+
+The quickest way to get started with the GraphQL API is to generate an [API Access Token](https://buildkite.com/user/api-access-tokens) with GraphQL scope, and then use the [GraphQL explorer](https://graphql.buildkite.com/explorer) with its built-in documentation.
+For the list of existing disparities between the GraphQL API and the REST API, see [API differences](https://buildkite.com/docs/apis/api-differences).
+
+#### Endpoint
+
+The GraphQL API endpoint is `https://graphql.buildkite.com/v1`. All requests must be HTTP POST requests with `application/json` encoded bodies.
+
+#### Authentication
+
+GraphQL requests must be authenticated using an [API access token](https://buildkite.com/user/api-access-tokens) with the GraphQL scope enabled. Pass the token in your GraphQL request using the `Authorization` HTTP header with a value `Bearer <token>`.
+
+### Using BuildKite GraphQL to replace REST
+
+#### Get the buildKite token info
+
+1.We need to verify the permission scopes.
+*Existing REST API*
+- GET v2/access-token
+Key info we need as follows:
+```
+{
+"scopes": [
+      "string"
+    ]
+}
+```
+
+*Using GraphQL API*
+GraphQL Scheme:
+```
+query getTokenScope {
+  organization(slug: ID!) {
+    apiAccessTokens(first: int) {
+      nodes {
+        scopes
+      }
+    }
+  }
+}
+```
+slug: ID ---- "organization-slug"
+first: Int ---- 10
+
+
+
+- Field correspondence
+
+| REST API   | graphQL API   |
+|------------|---------------|
+| scopes     | nodes.scopes  |
+
+*Test GraphQL API curl*
+```
+curl --request POST \
+  --url https://graphql.buildkite.com/v1 \
+  --header 'Authorization: Bearer bkua_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' \
+  --cookie _buildkite_sess=D0yuaeNvwM3lK%252Fx4hF%252Fxx29yrpvGVGcJ%252FOtWKD%252Bo1Ow5HJm97XeC%252BmcdhAAQPemcPeU7tiTj1gWdAXcxh48pe7YubJiMcnfZ5JhXznVTfOTf60XGz0I8vTXI9zDq9mTgWhR6pmQkhxfJM%252FvTphFYCOmya5Xsxi%252Bi2IZJPWdTbjYK7zJPLfv58%252BYW9txVRXy5iOfQrWupFDFCVwhmrPTeebG4xJEoKJUFxaBXWZq20ioyZI3oSm7iU3061gMd5D%252Fg1AA4ZVyWoUw6uxMZeJ75v9pU23zsloxZjCu%252BdjCEx8qyccdVOmipnIfgt34biDVs3PGKBgTJBTtogEF%252Fk6%252BDwyJRYv27cFOCYTY5qfTQl1xZYsHsl3Z%252Fc3BiP3dmzohf21EeJZTVVESleOmVQKpDx%252FqaMJSF8DOilooaDVLGIhqRFsR%252BxuXZEBFFRVV6Ww8RE85K5LprWUmqgNHK3bSPkiM93lzBrf%252BZ1JOrQPW5VL0bwcMjRGH8p4dBL7ujHBLIUdDNA%252BtcVK7mvXTfnAyfGc7I6SLEN0VUcFGGoSB9990IiwL%252F%252BQxvZa65K5P%252BvM%252F0hCCNDwZZbg6OXironwcmSM9nYwKbPmFS3A%253D%253D--%252BWqyTEL6ragnLU39--aPtuW95uRlR090Ci3F9Ieg%253D%253D \
+  --data '{"query":"query getTokenScope {\n  organization(slug: \"thoughtworks-Heartbeat\") {\n    apiAccessTokens(first: 1) {\n      nodes {\n        scopes\n      }\n    }\n  }\n}","operationName":"getTokenScope"}'
+```
+bkua_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx ---- "buildKite_token"
+
+2.We need to get buildKite organisation info.
+*Existing REST API*
+- GET v2/organizations
+Key info we need as follows:
+```
+{
+"slug": "string",
+"name": "string"
+}
+```
+*Using GraphQL API*
+GraphQL Scheme:
+```
+query getTokenScope {
+  organization(slug:ID!) {
+    slug
+    name
+    }
+}
+```
+Query variables:
+slug: ID ---- "organization-slug"
+
+- Field correspondence
+
+| REST API   | graphQL API |
+|------------|-------------|
+| slug       | slug        |
+| name       | name        |
+
+*Test GraphQL API curl*
+```
+curl --request POST \
+  --url https://graphql.buildkite.com/v1 \
+  --header 'Authorization: Bearer bkua_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' \
+  --cookie _buildkite_sess=SEidEy235RBixLtf562nrUMPH7V8cNsv%252BGSw3YlThtPzzStIAJNZZtiQdP4olTqHSluwEW7%252Fxz0iFG4JBQEsR5Z6i8oFrPUv8uwgJ3HB1Ica5%252BdENKjCkU%252BhlFxiC8Y3aZJ%252BcWFbs7kj19LkdnLOVjui%252Fs5NVJ5CiODclJAm3Pyz8cLuubFGpCKFbIAku28kPLx91dCA9ffK5FM75L4bKg1Z5ZFSvyKnPiZl2Kl4SAq3CCFbrAzTWzBVid2rleZB425W%252BOB6l3p2bXbYwBx33g6aBNYSDnUpDYdVOdCUSAUTH4OTTkzoegSgO0r9y7wlE1evsi3O2rdOsABmCysdDOjwicklwp%252FRlydVgpdKwzcF1Zt%252Be2Yrp7ZWIlpxmebaDv%252BQE1CSMoNe%252BuLgjFp%252Buxo1aSqKzzdpTqRvnw1Ixtj7q%252BiSvcdWm%252B69IvLS%252B%252ByTcP61EZtUO55UlXM4cT9pNJ8p7k%252FJrD24oL4HU5QD1mCqSc%252FDr9gwjDiFmDypkmjS0%252FWniaQ5f9FiY%252FBw38fZcdUeYtRSCOgdpCO2ceIj1t8HHSobUewYDRdbrh%252FHcyNuVl2CCwrY1N%252FvBfQ75tdIlB1AL5PHV7D1Hw%253D%253D--jN3hfZb6pbJTKg%252BV--D0AidyTIdPICbgK9QTDTGQ%253D%253D \
+  --data '{"query":"query getTokenScope {\n  organization(slug:\"thoughtworks-Heartbeat\") {\n    slug\n    name\n    }\n}","operationName":"getTokenScope"}'
+```
+
+3.We need to get our pipeline info.
+*Existing REST API*
+- `GET v2/organizations/{organizationId}/pipelines?page={page}&per_page={perPage}`
+Key info we need as follows:
+```
+{
+"name": "string",
+"slug": "string",,
+"repository": "string",
+"steps": [
+    "name": "string"
+  ]
+}
+```
+
+*Using GraphQL API*
+GraphQL Scheme:
+```
+query getPipelineInfo {
+  organization(slug: ID!) {
+    pipelines(first: Int) {
+      edges {
+        node {
+          slug
+          name
+          repository {
+            url
+          }
+          steps {
+            yaml
+          }
+        }
+      }
+    }
+  }
+}
+```
+Query variables:
+slug: ID ---- "organization-slug"
+first: Int ---- 10
+
+- Field correspondence
+
+| REST API    | graphQL API                |
+|-------------|----------------------------|
+| slug        | edges.node.slug            |
+| name        | edges.node.name            |
+| repository  | edges.node.repository.url  |
+| steps       | edges.node.steps.yaml      |
+
+*Test GraphQL API curl*
+```
+curl --request POST \
+  --url https://graphql.buildkite.com/v1 \
+  --header 'Authorization: Bearer bkua_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' \
+  --cookie _buildkite_sess=%252B5NK%252BSJ%252FJht88i4AeJxBsmNNg8yaAONhZx6LJm%252Fsl%252F8%252B18cHqLjkgxL%252BoLrQHAD%252F4R8Ef1T%252B%252Bm5J7UPsQGoACdOBLLJV7CXmAo0SxVGrpnDwG30aBjn4Geyw9xOqbpcs7EdX3uL%252B98RtCz7dKyPFICnQ5xOzB5NE2HYV5snx%252B322UOoPCehZqbTnsEyduxG1fLtF4Gq1dL7Ngd6IQ97aSjLiGjb5E4hWzoCIiZFo44gVppQOEkH%252FQMa5nbl3tcaLgvRhumt94ryq1w6iOPWfKAIE0XTg29FpIQKtNh9a%252B6KtphrUeLBteqlUm%252FOX7hAdlOAmI9yZvElpGNyyFGHOj%252BcMVcIsr9RXfYifYCQ87akHLHaGTH54diUDEBeCV62x691tDfJ5pe6e0sB%252FdENCuRI5pmyjYkcTs97Nb7Vkhw1cGZEeLX6K84eTXaEzhpCKf2x%252FPyBa6g2c3DgHK1bARvoXJ%252FY58OYJE7PkT%252B7NBcASjth9ndaHW5EAkl848%252BpBa3eLJKqL6u2Oi4nE1V8AmoLL2ST6lsXEI4Hvdqb2Xd2PiMn%252F%252BwbhBwi%252FAmUUZinff%252FNAR8mR6VISLgCd2%252F1uOiOd8xQgMyTj3g%253D%253D--UZ0oC72jNwq2AN3M--jbrgE0zCrqimk0W3vTH9uA%253D%253D \
+  --data '{"query":"query getPipelineInfo {\n  organization(slug: \"thoughtworks-Heartbeat\") {\n    pipelines(first: 1) {\n      edges {\n        node {\n          slug\n          name\n          repository {\n            url\n          }\n          steps {\n            yaml\n          }\n        }\n      }\n    }\n  }\n}","operationName":"getPipelineInfo"}'
+```
+
+4.We need to page get pipeline steps info.
+*Existing REST API*
+- `GET v2/organizations/{organizationId}/pipelines/{pipelineId}/builds?per_page= &page= `
+Key info we need as follows:
+```
+{
+	"state": "string",
+	"commit": "string",
+  "creator": {
+      "name": "string",
+      "email": "string"
+    }
+	"pipelineCreateTime": "string",
+	"branch": "string",
+	"number": 4004,
+	"steps": [
+		"jobs": {
+			"name": "string",
+			"state": "string",
+			"startedAt": "string",
+			"finishedAt": "string"
+		}
+	]
+}
+```
+
+*Using GraphQL API*
+We find to paginate steps info we need can get from this scheme.
+GraphQL Scheme:
+```
+query getPipelineStepsInfo {
+  pipeline(slug: "thoughtworks-Heartbeat/heartbeat") {
+    builds(first: Int, after: String, before: String) {
+      count
+      pageInfo {
+        hasPreviousPage
+        hasNextPage
+        endCursor
+        startCursor
+      }
+      edges {
+        node {
+          state
+          branch
+          commit
+          number
+          createdAt
+          createdBy {
+            ... on User {
+              name
+              email
+            }
+            ... on UnregisteredUser {
+              name
+              email
+            }
+          }
+          jobs(first: Int) {
+            edges {
+              node {
+                ... on JobTypeCommand {
+                  label
+                  state
+                  startedAt
+                  finishedAt
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+```
+Query variables:
+slug: ID ---- "organization-slug/pipeline-slug"
+The slug of the pipeline, prefixed with its organization. i.e. acme-inc/my-pipeline
+
+Builds variable: can refer [pipeline -> builds](https://buildkite.com/docs/apis/graphql/schemas/object/pipeline)
+after: String
+Returns the elements in the list that come after the specified cursor.
+
+before: String
+Returns the elements in the list that come before the specified cursor.
+
+branch: [String!]
+Use %default to search by the Pipelines default branch
+
+commit: [String!]
+
+createdAtFrom: DateTime
+
+createdAtTo: DateTime
+
+first: Int
+Returns the first n elements from the list.
+
+last: Int
+Returns the last n elements from the list.
+
+state: [BuildStates!]
+
+- Paging implementation.
+
+We can implement paging queries by entering the following parameters:
+
+first: page size.
+
+after: entering the end cursor of the current page. Page down
+
+before: entering the start cursor of the current page. Page up
+
+- Field correspondence
+
+| REST API               | graphQL API                            |
+|------------------------|----------------------------------------|
+| state                  | builds.edges.node.state                |
+| commit                 | builds.edges.node.commit               |
+| creator.name           | builds.edges.node.createdBy.name       |
+| creator.email          | builds.edges.node.createdBy.email      |
+| pipelineCreateTime     | builds.edges.node.createdAt            |
+| branch                 | builds.edges.node.branch               |
+| number                 | builds.edges.node.number               |
+| steps.jobs.name        | builds.edges.node.jobs.node.label      |
+| steps.jobs.state       | builds.edges.node.jobs.node.state      |
+| steps.jobs.startedAt   | builds.edges.node.jobs.node.startedAt  |
+| steps.jobs.finishedAt  | builds.edges.node.jobs.node.finishedAt |
+
+*Test GraphQL API curl*
+```
+curl --request POST \
+  --url 'https://graphql.buildkite.com/v1?=' \
+  --header 'Authorization: Bearer bkua_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' \
+  --cookie _buildkite_sess=PNyVyr57yDltibvQf%252BGnZEJubAlR4vvkrghZ93VcUyMZidg7gCeGp0sizJXz4zio%252BnIXvZWkSsQy59MVhlUjjkmcu2XPPXODoYStrON7SLeTDQdikgKDG27oaq%252FqP%252FbrXPHmloAAN7X0I3Obj%252FcnLp2z1O6W%252F2LEJyokAXIfK7hTEUBIplcdunM7sU0PJ%252BoJoqmCvEPbT7dYCcz6zThh897MlLa2QzUs7HZ6KKD1XW9qM1vfHusCKE8%252FD749meabIh%252BdbnKzx3%252BgYfdeJveogyd4lhEK9BfVK3d0z4Yj1Em9CQFGtyGJTmGdi39HKGz3zBIHcjnKs8%252B2LQgVztTmkXisLH5iRckPot9IpYtNMq9zaxM0LOlv%252Bvesm0op%252BcWcGmtkSNaYYiX1gOtdo6VDtWvChZ5mvIwqqOwKABY9DEE2p1%252BblrOAUL2gJGyzz9X%252BkKDuXtURyJHy0KQXLupX8FNDxt7qXwWFcevNrLpaZ7gPuatxySty2RQ7wPAbvUzGqSJnZCRdIPSMKuWZqFT1TvhN%252BNUO8KigInmPc8XkbsdNfLYxVlzQMmGF51ISFTQ76koqO2GU2r5sP%252BGPqn2JH8GRtn7uSDj9ig%253D%253D--kbRI%252BB%252F73oRIqtFx--wXLuR4VNS5ZTQLDFL%252FEDHw%253D%253D \
+  --data '{"query":"query getPipelineStepsInfo {\n  pipeline(slug: \"thoughtworks-Heartbeat/heartbeat\") {\n    builds(first: 2) {\n      count\n      pageInfo {\n        hasPreviousPage\n        hasNextPage\n        endCursor\n        startCursor\n      }\n      edges {\n        node {\n          state\n          branch\n          commit\n          number\n          createdAt\n          createdBy {\n            ... on User {\n              name\n              email\n            }\n            ... on UnregisteredUser {\n              name\n              email\n            }\n          }\n          jobs(first: 100) {\n            edges {\n              node {\n                ... on JobTypeCommand {\n                  label\n                  state\n                  startedAt\n                  finishedAt\n                }\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n}","operationName":"getPipelineStepsInfo"}'
+```
+

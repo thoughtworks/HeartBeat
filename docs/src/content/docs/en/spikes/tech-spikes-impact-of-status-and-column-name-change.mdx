@@ -1,0 +1,51 @@
+---
+title: The impact of column name and status name change on exported board data and precise of metrics
+description: To spike the impact of column name and status name change on exported board data and precise of metrics
+---
+
+# Spike -- Analyse the impact on exported board data and precise of metrics when we change columns and statuses name
+
+## Context
+
+Currently, our practice is using the card's status change history to calculate its duration in each status.This historical data is crucial for accurately measuring the time spent in each status.
+
+## Scenarios
+
+### 1. If we modify the workflow to change the column name, what is the impact on exported board data?
+
+If we only change the board setting: column name, **there are no implications to export board data and calculation of the metrics.**
+
+### 2. If we modify the workflow to change the status name, what is the impact on exported board data?
+
+**If we modify our workflow to change the status name, the export board data and precision of metrics will be influenced.**
+Here is an example that simply illustrate this situation:
+We change the status name in our workflow and there are some cards in this status. As depicted in the picture below, we undergo a name change: `Gong to do` -> `Going to do next`.
+![Image of status change](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/status-name-change/change-status-name.png)
+
+This change is only regarding board setting, so any changes made to the status name will not be reflected in the history of the associated cards.
+![Image of status change](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/status-name-change/related-card-history.png)
+As depicted in the above image, the status name has been changed to `Going to do next`. But the history records of the related cards do not indicate this transition.
+
+#### 2.1 Issues caused by this scenario
+
+1. Status name has been changed but when we calculate time spent in this status, it will put this time to previous status name.
+
+2. The accuracy of status duration will be compromised as a result, consequently impacting the calculation of days for mapping multiple statuses to states.
+_Days in board data affected:_
+- Analysis Days
+
+- In Dev Days
+
+- Waiting Days
+
+- Testing Days
+
+- Block Days
+
+- Review Days
+
+#### 2.2 Solution to solve this issue
+
+1. Try to avoid change status name when there are cards in this status.
+
+2. Refactor code using id of status to calculate the duration in each status.

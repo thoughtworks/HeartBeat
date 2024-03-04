@@ -1,0 +1,17 @@
+{
+  "allowed": [
+    "UNKNOWN",
+    "Unlicense",
+    "MIT",
+    "ISC",
+    "0BSD",
+    "BSD-2-Clause",
+    "BSD-3-Clause",
+    "Apache-2.0",
+    "Python-2.0",
+    "CC-BY-4.0",
+    "CC-BY-3.0",
+    "WTFPL",
+    "CC0-1.0"
+  ]
+}

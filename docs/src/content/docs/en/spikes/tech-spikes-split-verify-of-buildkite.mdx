@@ -1,0 +1,266 @@
+---
+title: Split verification of buildKite
+description: Split verification of buildKite
+---
+## Background
+The BuildKite setting in config page, the original api obtains verify and get info two parts, now it should be split.
+
+## AS-IS Design
+- Api Design
+```
+paths: api/v1/pipelines/{pipelineType}
+method: post
+request: {
+  PipelineParam:{
+  token:"your_token",
+  startTime: "xxx",
+  endTime:"xxx",
+  }
+}
+responses:{
+  "pipelineList":
+  [{
+    "id": "xxx",
+    "name": "xxx",
+    "orgId": "xxx",
+    "orgName": "xxx",
+    "repository": "xxx",
+    "steps": [
+     "xxx",
+      ]
+    }]
+}
+```
+- Sequence Diagram
+```plantuml
+@startuml
+skin rose
+title - Heartbeat - Get BuildKite Info
+
+participant FrontEnd
+participant BuildKiteController
+participant BuildKiteService
+participant BuildKiteFeignClient
+participant RestResponseEntityExceptionHandler
+participant BuildKite
+
+' group Get BuildKite Info
+    FrontEnd -> BuildKiteController: request: PipelineParam{token,startTime,endTime}, type
+    activate BuildKiteController
+    BuildKiteController -> BuildKiteService: PipelineParam{token,startTime,endTime}
+    activate BuildKiteService
+    BuildKiteService -> BuildKiteFeignClient: [1] token
+    activate BuildKiteFeignClient
+    BuildKiteFeignClient -> BuildKite: [1] v2/access-token
+    BuildKite -> BuildKiteFeignClient: [1] 200 scopes[xxx,xxx,...]
+    BuildKiteFeignClient -> BuildKiteService: [1] 200 scopes[xxx,xxx,...]
+    BuildKiteService -> BuildKiteFeignClient: [2] token
+
+    BuildKiteFeignClient -> BuildKite: [2] v2/organizations
+    BuildKite -> BuildKiteFeignClient: [2] BuildKiteOrganizationsInfoList{name,slug}
+    BuildKiteFeignClient -> BuildKiteService: [2] BuildKiteOrganizationsInfoList{name,slug}
+    BuildKiteService -> BuildKiteFeignClient: [3] token,slug,startTime,endTime,page,perPage
+    BuildKiteFeignClient -> BuildKite: [3] v2/organizations/{organizationId}/pipelines?page={page}&per_page={perPage}
+    BuildKite -> BuildKiteFeignClient: [3] BuildKitePipelineDTOList{id,url,name ...}
+alt Verification success
+    BuildKiteFeignClient --> BuildKiteService: BuildKitePipelineDTOList{id,url,name ...}
+    deactivate BuildKiteFeignClient
+    BuildKiteService --> BuildKiteController: BuildKiteResponseDTO{pipelineList}
+    deactivate BuildKiteService
+    BuildKiteController --> FrontEnd: response: BuildKiteResponseDTO{pipelineList}
+    deactivate BuildKiteController
+else Verification failed
+    BuildKiteFeignClient --> RestResponseEntityExceptionHandler: throw 401 UnauthorizedException
+    deactivate BuildKiteFeignClient
+    activate RestResponseEntityExceptionHandler
+    RestResponseEntityExceptionHandler -> FrontEnd: Failed to get BuildKite info_status: 401 UNAUTHORIZED, reason:xxx
+    deactivate RestResponseEntityExceptionHandler
+    ' deactivate BuildKiteService
+    ' deactivate BuildKiteController
+end
+@enduml
+```
+
+## Solutions
+### 1. Verify the BuildKite token
+The new api need to be called when the Verify button is clicked. If return 200, the verification is successful.Otherwise 401 exception will be thrown.
+
+- Api Design
+```
+paths: api/v1/pipelines/{pipelineType}/verify
+method: post
+request: {
+  token: "your_token"
+}
+responses:
+  Status Code: 204
+```
+- Exception Handler
+<table>
+  <tr>
+    <td>status</td>
+    <td>message</td>
+    <td>hintInfo</td>
+  </tr>
+  <tr>
+    <td>400</td>
+    <td>Token cannot be empty.</td>
+  </tr>
+  <tr>
+    <td>401</td>
+    <td>Failed to get BuildKite info_status: 401 UNAUTHORIZED, reason: xxx</td>
+    <td>Token is incorrect</td>
+  </tr>
+  <tr>
+    <td>403</td>
+    <td>Failed to call BuildKite, because of insufficient permission!</td>
+    <td>Permission deny</td>
+  </tr>
+  <tr>
+    <td>500</td>
+      <td></td>
+      <td>Internal Server Error</td>
+  </tr>
+</table>
+
+- Sequence Diagram
+```plantuml
+@startuml
+skin rose
+title - Heartbeat - Verify the BuildKite token
+
+participant FrontEnd
+participant BuildKiteController
+participant BuildKiteService
+participant BuildKiteFeignClient
+participant RestResponseEntityExceptionHandler
+participant BuildKite
+
+' group Verify the validity of the token
+    FrontEnd -> BuildKiteController: request: token, type
+    activate BuildKiteController
+    BuildKiteController -> BuildKiteService: token
+    activate BuildKiteService
+    BuildKiteService -> BuildKiteFeignClient: token
+    activate BuildKiteFeignClient
+    BuildKiteFeignClient -> BuildKite: v2/access-token
+alt Verification success
+		BuildKite --> BuildKiteFeignClient: 200  scopes[xxx]
+    BuildKiteFeignClient --> BuildKiteService: 200
+    deactivate BuildKiteFeignClient
+    BuildKiteService --> BuildKiteController: true
+    deactivate BuildKiteService
+    BuildKiteController --> FrontEnd: response: 200
+    deactivate BuildKiteController
+else Verification failed
+    BuildKiteFeignClient --> RestResponseEntityExceptionHandler: throw 401 UnauthorizedException
+    deactivate BuildKiteFeignClient
+    activate RestResponseEntityExceptionHandler
+    RestResponseEntityExceptionHandler -> FrontEnd: Failed to get BuildKite info_status: 401 UNAUTHORIZED, reason:xxx
+    deactivate RestResponseEntityExceptionHandler
+    ' deactivate BuildKiteService
+    ' deactivate BuildKiteController
+end
+@enduml
+```
+
+### 2. getBuildKiteInfo
+The api should be called when entering the Metrics page. Only after two parts of data(The api and previous getPipelineSteps api) are obtained can the loading disappear.
+- Api Design
+```
+paths: api/v1/pipelines/{pipelineType}/info
+method: post
+request: {
+  token:"your_token",
+}
+responses:{
+  "pipelineList":
+  [{
+    "id": "xxx",
+    "name": "xxx",
+    "orgId": "xxx",
+    "orgName": "xxx",
+    "repository": "xxx",
+    "steps": [
+     "xxx",
+      ]
+    }]
+}
+When pipelineList is empty， responses 204
+```
+- Exception Handler
+<table>
+  <tr>
+    <td>status</td>
+    <td>message</td>
+    <td>hintInfo</td>
+  </tr>
+  <tr>
+    <td>400</td>
+    <td>Token cannot be empty.</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>401</td>
+    <td>Failed to get BuildKite info_status: 401 UNAUTHORIZED, reason: xxx</td>
+    <td>Token is incorrect</td>
+  </tr>
+  <tr>
+    <td>403</td>
+    <td>Failed to call BuildKite, because of insufficient permission!</td>
+    <td>Permission deny</td>
+  </tr>
+  <tr>
+    <td>500</td>
+      <td></td>
+      <td>Internal Server Error</td>
+  </tr>
+</table>
+
+- Sequence Diagram
+```plantuml
+@startuml
+skin rose
+title - Heartbeat - Get BuildKite Info
+
+participant FrontEnd
+participant BuildKiteController
+participant BuildKiteService
+participant BuildKiteFeignClient
+participant RestResponseEntityExceptionHandler
+participant BuildKite
+
+' group Get BuildKite Info
+    FrontEnd -> BuildKiteController: request: TokenParam{token}, type
+    activate BuildKiteController
+    BuildKiteController -> BuildKiteService: token
+    activate BuildKiteService
+    BuildKiteService -> BuildKiteFeignClient: [1] token
+    activate BuildKiteFeignClient
+    BuildKiteFeignClient -> BuildKite: [1] v2/organizations
+    BuildKite -> BuildKiteFeignClient: [1] BuildKiteOrganizationsInfoList{name,slug}
+    BuildKiteFeignClient -> BuildKiteService: [1] BuildKiteOrganizationsInfoList{name,slug}
+    BuildKiteService -> BuildKiteFeignClient: [2] token,slug,page,perPage
+    BuildKiteFeignClient -> BuildKite: [2] v2/organizations/{organizationId}/pipelines?page={page}&per_page={perPage}
+    BuildKite -> BuildKiteFeignClient: [2] BuildKitePipelineDTOList{id,url,name ...}
+alt Verification success
+    BuildKiteFeignClient --> BuildKiteService: BuildKitePipelineDTOList{id,url,name ...}
+    deactivate BuildKiteFeignClient
+    BuildKiteService --> BuildKiteController: BuildKiteResponseDTO{pipelineList}
+    deactivate BuildKiteService
+    BuildKiteController --> FrontEnd: response: BuildKiteResponseDTO{pipelineList}
+    deactivate BuildKiteController
+else Verification failed
+    BuildKiteFeignClient --> RestResponseEntityExceptionHandler: throw 401 UnauthorizedException
+    deactivate BuildKiteFeignClient
+    activate RestResponseEntityExceptionHandler
+    RestResponseEntityExceptionHandler -> FrontEnd: Failed to get BuildKite info_status: 401 UNAUTHORIZED, reason:xxx
+    deactivate RestResponseEntityExceptionHandler
+    ' deactivate BuildKiteService
+    ' deactivate BuildKiteController
+end
+@enduml
+```
+
+
+

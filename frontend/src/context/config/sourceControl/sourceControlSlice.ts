@@ -1,11 +1,11 @@
-import { SOURCE_CONTROL_TYPES } from '@src/constants'
-import { initSourceControlVerifyResponseState, ISourceControlVerifyResponse } from './verifyResponseSlice'
+import { initSourceControlVerifyResponseState, ISourceControlVerifyResponse } from './verifyResponseSlice';
+import { SOURCE_CONTROL_TYPES } from '@src/constants/resources';
 
 export interface ISourceControl {
-  config: { type: string; token: string }
-  isVerified: boolean
-  isShow: boolean
-  verifiedResponse: ISourceControlVerifyResponse
+  config: { type: string; token: string };
+  isVerified: boolean;
+  isShow: boolean;
+  verifiedResponse: ISourceControlVerifyResponse;
 }
 
 export const initialSourceControlState: ISourceControl = {
@@ -16,4 +16,4 @@ export const initialSourceControlState: ISourceControl = {
   isVerified: false,
   isShow: false,
   verifiedResponse: initSourceControlVerifyResponseState,
-}
+};

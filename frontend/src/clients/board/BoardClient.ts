@@ -1,42 +1,41 @@
-import { HttpClient } from '@src/clients/Httpclient'
-import { HttpStatusCode } from 'axios'
-import { BoardRequestDTO } from '@src/clients/board/dto/request'
+import { BoardRequestDTO } from '@src/clients/board/dto/request';
+import { HttpClient } from '@src/clients/HttpClient';
+import { HttpStatusCode } from 'axios';
 
 export class BoardClient extends HttpClient {
-  isBoardVerify = false
-  haveDoneCard = true
-  response = {}
+  isBoardVerify = false;
+  haveDoneCard = true;
+  response = {};
 
   getVerifyBoard = async (params: BoardRequestDTO) => {
-    this.isBoardVerify = false
-    this.haveDoneCard = true
-    this.response = {}
+    this.isBoardVerify = false;
+    this.haveDoneCard = true;
+    this.response = {};
     try {
-      const boardType = params.type === 'Classic Jira' ? 'classic-jira' : params.type.toLowerCase()
-      const result = await this.axiosInstance.get(`/boards/${boardType}`, { params })
+      const result = await this.axiosInstance.post(`/boards/${params.type.toLowerCase()}/verify`, params);
       result.status === HttpStatusCode.NoContent
         ? this.handleBoardNoDoneCard()
-        : this.handleBoardVerifySucceed(result.data)
+        : this.handleBoardVerifySucceed(result.data);
     } catch (e) {
-      this.isBoardVerify = false
-      throw e
+      this.isBoardVerify = false;
+      throw e;
     }
     return {
       response: this.response,
       isBoardVerify: this.isBoardVerify,
       haveDoneCard: this.haveDoneCard,
-    }
-  }
+    };
+  };
 
   handleBoardNoDoneCard = () => {
-    this.isBoardVerify = false
-    this.haveDoneCard = false
-  }
+    this.isBoardVerify = false;
+    this.haveDoneCard = false;
+  };
 
   handleBoardVerifySucceed = (res: object) => {
-    this.isBoardVerify = true
-    this.response = res
-  }
+    this.isBoardVerify = true;
+    this.response = res;
+  };
 }
 
-export const boardClient = new BoardClient()
+export const boardClient = new BoardClient();

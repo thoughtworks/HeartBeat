@@ -13,6 +13,7 @@ import { Autocomplete, Checkbox, TextField } from '@mui/material';
 import React, { useCallback, useEffect, useMemo } from 'react';
 import { useAppDispatch } from '@src/hooks/useAppDispatch';
 import { useAppSelector } from '@src/hooks';
+import { intersection } from 'lodash';
 
 export interface BranchSelectionProps {
   id: number;
@@ -34,6 +35,12 @@ export const BranchSelection = (props: BranchSelectionProps) => {
     [organization, pipelineList, pipelineName],
   );
 
+  const validBranches = useMemo(
+    () => intersection(currentPipeline?.branches || [], branches),
+    [currentPipeline, branches],
+  );
+  const repository = currentPipeline?.repository ?? '';
+
   const branchesOptions: FormFieldWithMeta[] = useMemo(() => {
     const branchesOptions = currentPipeline?.branches ?? [];
     return branchesOptions.map((item) => ({ value: item }));
@@ -45,7 +52,7 @@ export const BranchSelection = (props: BranchSelectionProps) => {
   }, [formMeta.metrics.pipelines, id]);
 
   const selectedBranchesWithMeta = useMemo(() => {
-    return branches.map((item) => {
+    return validBranches.map((item) => {
       const metaInfo = branchesFormData.find((branch) => branch.value === item);
       const shouldVerifyBranches = sourceControlFields.token !== '';
 
@@ -56,7 +63,7 @@ export const BranchSelection = (props: BranchSelectionProps) => {
             needVerify: shouldVerifyBranches,
           };
     });
-  }, [branches, branchesFormData, sourceControlFields.token]);
+  }, [validBranches, branchesFormData, sourceControlFields.token]);
 
   const updateSingleBranchMeta = useCallback(
     (branchWithMeta: FormFieldWithMeta) => {
@@ -135,7 +142,7 @@ export const BranchSelection = (props: BranchSelectionProps) => {
                 {...props}
                 {...option}
                 key={key}
-                repository={currentPipeline?.repository ?? ''}
+                repository={repository}
                 updateBranchMeta={updateSingleBranchMeta}
               />
             );

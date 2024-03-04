@@ -51,6 +51,24 @@ jest.mock('@src/context/config/configSlice', () => ({
   updatePipelineToolVerifyResponseSteps: jest
     .fn()
     .mockReturnValue({ type: 'UPDATE_PIPELINE_TOOL_VERIFY_RESPONSE_STEPS' }),
+  selectPipelineList: jest.fn().mockReturnValue([
+    {
+      id: 'mockPipelineId',
+      name: 'mockName',
+      orgId: 'mockOrgId',
+      orgName: 'mockOrgName',
+      repository: 'git@github.com:au-heartbeat/Heartbeat.git',
+      branches: ['branch1', 'branch2', 'branch3'],
+    },
+    {
+      id: 'mockPipelineId2',
+      name: 'mockName2',
+      orgId: 'mockOrgId2',
+      orgName: 'mockOrgName2',
+      repository: 'git@github.com:au-heartbeat/Heartbeat.git',
+      branches: ['branch1', 'branch2', 'branch3', 'branch4'],
+    },
+  ]),
 }));
 
 describe('PipelineMetricSelection', () => {
@@ -253,6 +271,28 @@ describe('PipelineMetricSelection', () => {
 
     expect(getByRole('button', { name: 'branch1' })).toBeInTheDocument();
     expect(getByRole('button', { name: 'branch2' })).toBeInTheDocument();
+  });
+
+  it('should show not show branches when deployment setting has branches given branches does not match pipeline ', async () => {
+    metricsClient.getSteps = jest
+      .fn()
+      .mockReturnValue({ response: ['steps'], haveStep: true, branches: ['branch1', 'branch2'] });
+    const { getByRole, queryByRole, getByText } = await setup(
+      { id: 0, organization: 'mockOrgName3', pipelineName: 'mockName3', step: '', branches: ['branch6', 'branch7'] },
+      false,
+      false,
+    );
+
+    await waitFor(() => {
+      expect(getByText(BRANCH)).toBeInTheDocument();
+    });
+
+    await act(async () => {
+      await userEvent.click(getByRole('combobox', { name: 'Branches' }));
+    });
+
+    expect(queryByRole('button', { name: 'branch6' })).not.toBeInTheDocument();
+    expect(queryByRole('button', { name: 'branch7' })).not.toBeInTheDocument();
   });
 
   it('should show duplicated message given duplicated id', async () => {

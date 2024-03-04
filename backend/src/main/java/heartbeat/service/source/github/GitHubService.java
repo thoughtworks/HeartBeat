@@ -163,7 +163,8 @@ public class GitHubService {
 		}
 
 		Optional<PullRequestInfo> mergedPull = pullRequestInfos.stream()
-			.filter(gitHubPull -> gitHubPull.getMergedAt() != null)
+			.filter(gitHubPull -> gitHubPull.getMergedAt() != null
+					&& gitHubPull.getUrl().contains(item.getRepository()))
 			.min(Comparator.comparing(PullRequestInfo::getNumber));
 
 		if (mergedPull.isEmpty()) {

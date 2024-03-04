@@ -86,6 +86,7 @@ class GithubServiceTest {
 			.mergedAt("2022-07-23T04:04:00.000+00:00")
 			.createdAt("2022-07-23T04:03:00.000+00:00")
 			.mergeCommitSha("111")
+			.url("https://api.github.com/repos/XXXX-fs/fs-platform-onboarding/pulls/1")
 			.number(1)
 			.build();
 		deployInfo = DeployInfo.builder()
@@ -365,6 +366,38 @@ class GithubServiceTest {
 	}
 
 	@Test
+	void shouldReturnEmptyLeadTimeGithubShaIsDifferent() {
+		String mockToken = "mockToken";
+		List<PipelineLeadTime> expect = List.of(PipelineLeadTime.builder()
+			.pipelineStep(PIPELINE_STEP)
+			.pipelineName("Name")
+			.leadTimes(List.of(LeadTime.builder()
+				.commitId("111")
+				.jobFinishTime(1658549160000L)
+				.pipelineCreateTime(1658549100000L)
+				.prLeadTime(0L)
+				.pipelineLeadTime(180000)
+				.totalTime(180000)
+				.build()))
+			.build());
+		var pullRequestInfoWithDifferentSha = PullRequestInfo.builder()
+			.mergedAt("2022-07-23T04:04:00.000+00:00")
+			.createdAt("2022-07-23T04:03:00.000+00:00")
+			.mergeCommitSha("222")
+			.url("https://api.github.com/repos/XXXX-fs/fs-platform-onboarding/pulls/1")
+			.number(1)
+			.build();
+		when(gitHubFeignClient.getPullRequestListInfo(any(), any(), any()))
+			.thenReturn(List.of(pullRequestInfoWithDifferentSha));
+		when(gitHubFeignClient.getPullRequestCommitInfo(any(), any(), any())).thenReturn(List.of(commitInfo));
+		when(gitHubFeignClient.getCommitInfo(any(), any(), any())).thenReturn(commitInfo);
+
+		List<PipelineLeadTime> result = githubService.fetchPipelinesLeadTime(deployTimes, repositoryMap, mockToken);
+
+		assertEquals(expect, result);
+	}
+
+	@Test
 	void shouldReturnEmptyMergeLeadTimeWhenPullRequestInfoIsEmpty() {
 		String mockToken = "mockToken";
 		List<PipelineLeadTime> expect = List.of(PipelineLeadTime.builder()
@@ -525,6 +558,7 @@ class GithubServiceTest {
 			.mergedAt("2022-07-23T04:04:00.000+00:00")
 			.createdAt("2022-07-23T04:03:00.000+00:00")
 			.mergeCommitSha("222")
+			.url("")
 			.number(1)
 			.build();
 		pipelineLeadTimes = List.of(PipelineLeadTime.builder()

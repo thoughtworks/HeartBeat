@@ -18,6 +18,8 @@ public class PullRequestInfo implements Serializable {
 
 	private Integer number;
 
+	private String url;
+
 	@JsonProperty("created_at")
 	private String createdAt;
 

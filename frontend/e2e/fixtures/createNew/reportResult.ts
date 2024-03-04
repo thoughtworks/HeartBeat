@@ -6,10 +6,10 @@ export const BOARD_METRICS_RESULT = {
 };
 
 export const FLAG_AS_BLOCK_PROJECT_BOARD_METRICS_RESULT = {
-  Velocity: '0',
-  Throughput: '0',
-  AverageCycleTime4SP: '0',
-  AverageCycleTime4Card: '0',
+  Velocity: '7.5',
+  Throughput: '5',
+  AverageCycleTime4SP: '0.19',
+  AverageCycleTime4Card: '0.28',
 };
 
 export const DORA_METRICS_RESULT = {

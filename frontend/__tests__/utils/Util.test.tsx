@@ -8,9 +8,11 @@ import {
   getRealDoneStatus,
   transformToCleanedBuildKiteEmoji,
   formatDuplicatedNameWithSuffix,
+  getDisabledOptions,
 } from '@src/utils/util';
 import { CleanedBuildKiteEmoji, OriginBuildKiteEmoji } from '@src/constants/emojis/emoji';
 import { CYCLE_TIME_SETTINGS_TYPES } from '@src/constants/resources';
+import { IPipelineConfig } from '@src/context/Metrics/metricsSlice';
 import { EMPTY_STRING } from '@src/constants/commons';
 import { PIPELINE_TOOL_TYPES } from '../fixtures';
 
@@ -42,6 +44,34 @@ describe('transformToCleanedBuildKiteEmoji function', () => {
     const [result] = transformToCleanedBuildKiteEmoji([mockOriginEmoji]);
 
     expect(result).toEqual(expectedCleanedEmoji);
+  });
+});
+
+describe('getDisabledOptions function', () => {
+  it('should return true when option is includes', () => {
+    const mockDeploymentFrequencySettings: IPipelineConfig[] = [
+      { id: 0, organization: '', pipelineName: 'mock 1', step: '', branches: [] },
+      { id: 1, organization: '', pipelineName: 'mock 2', step: '', branches: [] },
+    ];
+
+    const mockOption: string = 'mock 1';
+
+    const result = getDisabledOptions(mockDeploymentFrequencySettings, mockOption);
+
+    expect(result).toBeTruthy();
+  });
+
+  it('should return true when option is not includes', () => {
+    const mockDeploymentFrequencySettings: IPipelineConfig[] = [
+      { id: 0, organization: '', pipelineName: 'mock 1', step: '', branches: [] },
+      { id: 1, organization: '', pipelineName: 'mock 2', step: '', branches: [] },
+    ];
+
+    const mockOption: string = 'mock 3';
+
+    const result = getDisabledOptions(mockDeploymentFrequencySettings, mockOption);
+
+    expect(result).toBeFalsy();
   });
 });
 

@@ -1,9 +1,10 @@
 import { CleanedBuildKiteEmoji, OriginBuildKiteEmoji } from '@src/constants/emojis/emoji';
 import { CYCLE_TIME_SETTINGS_TYPES, METRICS_CONSTANTS } from '@src/constants/resources';
+import { ICycleTimeSetting, IPipelineConfig } from '@src/context/Metrics/metricsSlice';
 import { ITargetFieldType } from '@src/components/Common/MultiAutoComplete/styles';
-import { ICycleTimeSetting } from '@src/context/Metrics/metricsSlice';
 import { DATE_FORMAT_TEMPLATE } from '@src/constants/template';
 import duration from 'dayjs/plugin/duration';
+import { includes } from 'lodash';
 import dayjs from 'dayjs';
 
 dayjs.extend(duration);
@@ -70,6 +71,13 @@ export const getRealDoneStatus = (
 export const findCaseInsensitiveType = (option: string[], value: string): string => {
   const newValue = option.find((item) => value.toLowerCase() === item.toLowerCase());
   return newValue ? newValue : value;
+};
+
+export const getDisabledOptions = (deploymentFrequencySettings: IPipelineConfig[], option: string) => {
+  return includes(
+    deploymentFrequencySettings.map((item) => item.pipelineName),
+    option,
+  );
 };
 
 export const formatDate = (date: Date | string) => {

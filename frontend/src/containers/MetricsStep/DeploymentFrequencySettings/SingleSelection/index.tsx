@@ -1,8 +1,11 @@
+import { selectDeploymentFrequencySettings } from '@src/context/Metrics/metricsSlice';
 import { getEmojiUrls, removeExtraEmojiName } from '@src/constants/emojis/emoji';
 import { Autocomplete, Box, ListItemText, TextField } from '@mui/material';
 import { EmojiWrap, StyledAvatar } from '@src/constants/emojis/style';
+import { getDisabledOptions } from '@src/utils/util';
 import { Z_INDEX } from '@src/constants/commons';
 import { FormControlWrapper } from './style';
+import { useAppSelector } from '@src/hooks';
 import React, { useState } from 'react';
 
 interface Props {
@@ -17,6 +20,7 @@ interface Props {
 export const SingleSelection = ({ options, label, value, id, onGetSteps, onUpDatePipeline }: Props) => {
   const labelId = `single-selection-${label.toLowerCase().replace(' ', '-')}`;
   const [inputValue, setInputValue] = useState<string>(value);
+  const deploymentFrequencySettings = useAppSelector(selectDeploymentFrequencySettings);
 
   const handleSelectedOptionsChange = (value: string) => {
     if (onGetSteps) {
@@ -38,6 +42,9 @@ export const SingleSelection = ({ options, label, value, id, onGetSteps, onUpDat
           disableClearable
           data-test-id={labelId}
           options={options}
+          getOptionDisabled={(option: string) =>
+            label === 'Pipeline Name' && getDisabledOptions(deploymentFrequencySettings, option)
+          }
           getOptionLabel={(option: string) => removeExtraEmojiName(option).trim()}
           renderOption={(props, option: string) => (
             <Box component='li' {...props}>

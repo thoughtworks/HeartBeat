@@ -379,7 +379,7 @@ export const metricsSlice = createSlice({
           .filter((pipeline: pipeline) => pipeline.orgName.toLowerCase() === organization.toLowerCase())
           .map((item: pipeline) => item.name);
       const getValidPipelines = (pipelines: IPipelineConfig[]) => {
-        const hasPipeline = pipelines.filter(({ id }) => id).length;
+        const hasPipeline = pipelines.filter(({ id }) => id !== undefined).length;
         return pipelines.length && hasPipeline
           ? pipelines.map(({ id, organization, pipelineName, step, branches }) => ({
               id,
@@ -408,7 +408,7 @@ export const metricsSlice = createSlice({
       };
 
       const getPipelinesWarningMessage = (pipelines: IPipelineConfig[]) => {
-        const hasPipeline = pipelines.filter(({ id }) => id).length;
+        const hasPipeline = pipelines.filter(({ id }) => id !== undefined).length;
         if (!pipelines.length || isProjectCreated || !hasPipeline) {
           return [];
         }

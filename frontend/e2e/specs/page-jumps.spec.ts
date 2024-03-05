@@ -40,7 +40,7 @@ test('Page jump for import', async ({ homePage, configStep, metricsStep, reportS
   await metricsStep.checkCycleTimeConsiderAsBlockUnchecked();
   await metricsStep.checkClassifications(modifiedMetricsStepData.classification);
 
-  await metricsStep.selectDefaultGivenPipelineSetting(modifiedMetricsStepData.deployment);
+  await metricsStep.selectDefaultGivenPipelineSetting(modifiedMetricsStepData.deployment, false);
   await metricsStep.selectGivenPipelineCrews(modifiedMetricsStepData.pipelineCrews);
   await metricsStep.goToPreviousStep();
   await configStep.goToMetrics();
@@ -107,7 +107,7 @@ test('Page jump for create', async ({ homePage, configStep, metricsStep, reportS
   await metricsStep.checkBoardByStatusRadioBoxChecked();
   await metricsStep.checkClassifications(modifiedMetricsStepData.classification);
 
-  await metricsStep.selectDefaultGivenPipelineSetting(modifiedMetricsStepData.deployment);
+  await metricsStep.selectDefaultGivenPipelineSetting(modifiedMetricsStepData.deployment, false);
   await metricsStep.selectGivenPipelineCrews(modifiedMetricsStepData.pipelineCrews);
   await metricsStep.goToPreviousStep();
   await configStep.goToMetrics();

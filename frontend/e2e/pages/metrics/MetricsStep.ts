@@ -416,11 +416,14 @@ export class MetricsStep {
     await expect(this.pipelineDefaultSelectedBranchChips).toHaveCount(branches.length);
   }
 
-  async selectDefaultGivenPipelineSetting(pipelineSettings: typeof metricsStepData.deployment) {
+  async selectDefaultGivenPipelineSetting(
+    pipelineSettings: typeof metricsStepData.deployment,
+    shouldSelectPipelineName = true,
+  ) {
     const firstPipelineConfig = pipelineSettings[0];
 
     await this.selectOrganization(firstPipelineConfig.organization);
-    await this.selectPipelineName(firstPipelineConfig.pipelineName);
+    shouldSelectPipelineName && (await this.selectPipelineName(firstPipelineConfig.pipelineName));
     await this.selectStep(firstPipelineConfig.step);
     await this.selectBranch(firstPipelineConfig.branches);
   }

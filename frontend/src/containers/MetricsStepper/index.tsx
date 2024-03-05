@@ -73,7 +73,10 @@ const MetricsStepper = () => {
   const { isShow: isShowBoard, isVerified: isBoardVerified } = config.board;
   const { isShow: isShowPipeline, isVerified: isPipelineToolVerified } = config.pipelineTool;
   const { isShow: isShowSourceControl, isVerified: isSourceControlVerified } = config.sourceControl;
-  const isShowCycleTimeSettings = requiredData.includes(REQUIRED_DATA.CYCLE_TIME);
+  const isShowCycleTimeSettings =
+    requiredData.includes(REQUIRED_DATA.CYCLE_TIME) ||
+    requiredData.includes(REQUIRED_DATA.CLASSIFICATION) ||
+    requiredData.includes(REQUIRED_DATA.VELOCITY);
   const isCycleTimeSettingsVerified = cycleTimeSettings.some((e) => e.value === DONE);
   const isShowClassificationSetting = requiredData.includes(REQUIRED_DATA.CLASSIFICATION);
   const isClassificationSettingVerified = metricsConfig.targetFields.some((item) => item.flag);

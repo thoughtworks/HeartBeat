@@ -27,7 +27,7 @@ import {
   setCycleTimeSettingsType,
   updateShouldGetBoardConfig,
 } from '@src/context/Metrics/metricsSlice';
-import { updateJiraVerifyResponse, updateMetrics } from '@src/context/config/configSlice';
+import { updateDateRange, updateJiraVerifyResponse, updateMetrics } from '@src/context/config/configSlice';
 import { closeAllNotifications } from '@src/context/notification/NotificationSlice';
 import { backStep, nextStep } from '@src/context/stepper/StepperSlice';
 import { CYCLE_TIME_SETTINGS_TYPES } from '@src/constants/resources';
@@ -302,6 +302,41 @@ describe('MetricsStep', () => {
           'Please go back to the previous page and change your collection date, or check your board info!',
         ),
       ).toBeInTheDocument();
+    });
+
+    it('should render no pipeline container when get pipeline when selected future time ', async () => {
+      const MOCK_FUTURE_DATE_RANGE = {
+        startDate: '2034-04-04T00:00:00+08:00',
+        endDate: '2034-04-18T00:00:00+08:00',
+      };
+
+      store.dispatch(updateDateRange(MOCK_FUTURE_DATE_RANGE));
+
+      setup();
+
+      await waitFor(() => {
+        expect(screen.getByText('No pipeline within selected date range!')).toBeInTheDocument();
+      });
+      expect(
+        screen.getByText(
+          'Please go back to the previous page and change your collection date, or check your pipeline info!',
+        ),
+      ).toBeInTheDocument();
+    });
+
+    it('should render pipeline container when get pipeline when selected past time ', async () => {
+      const MOCK_PAST_DATE_RANGE = {
+        startDate: '2014-04-04T00:00:00+08:00',
+        endDate: '2014-04-18T00:00:00+08:00',
+      };
+
+      store.dispatch(updateDateRange(MOCK_PAST_DATE_RANGE));
+
+      setup();
+
+      await waitFor(() => {
+        expect(screen.getByText('Pipeline settings')).toBeInTheDocument();
+      });
     });
 
     it('should be render form container when got board card success', async () => {

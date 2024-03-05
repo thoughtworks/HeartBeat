@@ -133,7 +133,12 @@ const fillMetricsPageDate = async () => {
     store.dispatch(saveTargetFields([{ name: 'mockClassification', key: 'mockClassification', flag: true }]));
     store.dispatch(saveUsers(['mockUsers']));
     store.dispatch(saveDoneColumn(['Done', 'Canceled'])),
-      store.dispatch(updateCycleTimeSettings([{ name: 'TODO', value: 'To do' }]));
+      store.dispatch(
+        updateCycleTimeSettings([
+          { column: 'Testing', status: 'testing', value: 'Done' },
+          { column: 'Testing', status: 'test', value: 'Done' },
+        ]),
+      );
     store.dispatch(updateTreatFlagCardAsBlock(false)),
       store.dispatch(
         updateDeploymentFrequencySettings({ updateId: 0, label: 'organization', value: 'mock new organization' }),

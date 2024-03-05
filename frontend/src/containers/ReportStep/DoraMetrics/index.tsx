@@ -191,7 +191,7 @@ const DoraMetrics = ({
 
   const getErrorMessage4Github = () =>
     _.get(doraReport, ['reportMetricsError', 'sourceControlMetricsError'])
-      ? `Failed to get Github info, status: ${_.get(doraReport, [
+      ? `Failed to get GitHub info, status: ${_.get(doraReport, [
           'reportMetricsError',
           'sourceControlMetricsError',
           'status',

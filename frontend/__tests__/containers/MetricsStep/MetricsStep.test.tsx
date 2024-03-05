@@ -77,7 +77,7 @@ describe('MetricsStep', () => {
     setup();
 
     expect(screen.getByText(CREWS_SETTING)).toBeInTheDocument();
-    expect(screen.queryByText(CYCLE_TIME_SETTINGS)).not.toBeInTheDocument();
+    expect(screen.queryByText(CYCLE_TIME_SETTINGS)).toBeInTheDocument();
     expect(screen.queryByText(CLASSIFICATION_SETTING)).not.toBeInTheDocument();
     expect(screen.getByText(REAL_DONE)).toBeInTheDocument();
   });
@@ -88,7 +88,7 @@ describe('MetricsStep', () => {
     setup();
 
     expect(screen.getByText(CREWS_SETTING)).toBeInTheDocument();
-    expect(screen.queryByText(CYCLE_TIME_SETTINGS)).not.toBeInTheDocument();
+    expect(screen.queryByText(CYCLE_TIME_SETTINGS)).toBeInTheDocument();
     expect(screen.queryByText(CLASSIFICATION_SETTING)).not.toBeInTheDocument();
     expect(screen.queryByText(REAL_DONE)).not.toBeInTheDocument();
   });

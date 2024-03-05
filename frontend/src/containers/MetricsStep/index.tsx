@@ -109,7 +109,7 @@ const MetricsStep = () => {
             <>
               <Crews options={users} title={'Crew settings'} label={'Included Crews'} />
 
-              {requiredData.includes(REQUIRED_DATA.CYCLE_TIME) && <CycleTime />}
+              <CycleTime />
 
               {isShowRealDone && (
                 <RealDone columns={jiraColumns} title={'Real done setting'} label={'Consider as Done'} />

@@ -509,7 +509,7 @@ describe('Report Step', () => {
       setup(REQUIRED_DATA_LIST);
 
       expect(addNotification).toBeCalledWith({
-        message: MESSAGE.FAILED_TO_GET_DATA('Github'),
+        message: MESSAGE.FAILED_TO_GET_DATA('GitHub'),
         type: 'error',
       });
     });

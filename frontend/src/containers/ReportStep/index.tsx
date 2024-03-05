@@ -152,7 +152,7 @@ const ReportStep = ({ handleSave }: ReportStepProps) => {
       setNotifications4SummaryPage((prevState) => [
         ...prevState,
         {
-          message: MESSAGE.FAILED_TO_GET_DATA('Github'),
+          message: MESSAGE.FAILED_TO_GET_DATA('GitHub'),
           type: 'error',
         },
       ]);

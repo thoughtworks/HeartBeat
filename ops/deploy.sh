@@ -46,7 +46,7 @@ deploy_e2e() {
 deploy_prod() {
   sed -i -e "s/heartbeat_backend:latest/${AWS_ECR_HOST}\/heartbeat_backend:latest/g" ./ops/infra/docker-compose.yml
   sed -i -e "s/heartbeat_frontend:latest/${AWS_ECR_HOST}\/heartbeat_frontend:latest/g" ./ops/infra/docker-compose.yml
-  sed -i -e "s/SWAGGER_HOST_PLACEHOLDER/http:\/\/${AWS_EC2_IP}:4321/g" ./ops/infra/docker-compose.ym
+  sed -i -e "s/SWAGGER_HOST_PLACEHOLDER/http:\/\/${AWS_EC2_IP}:4321/g" ./ops/infra/docker-compose.yml
 
   scp -o StrictHostKeyChecking=no -i /var/lib/buildkite-agent/.ssh/HeartBeatKeyPair.pem -P "${AWS_SSH_PORT}" ./ops/infra/docker-compose.yml "${AWS_USERNAME}@${AWS_EC2_IP}:./"
 

@@ -72,6 +72,7 @@ sonar {
     property "sonar.projectKey", "au-heartbeat-heartbeat-backend"
     property "sonar.organization", "au-heartbeat"
     property "sonar.host.url", "https://sonarcloud.io"
+    property "sonar.exclusions", "src/main/java/heartbeat/HeartbeatApplication.java,src/main/java/heartbeat/config/**,src/main/java/heartbeat/util/SystemUtil.java"
   }
 }
 

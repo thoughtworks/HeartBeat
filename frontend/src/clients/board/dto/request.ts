@@ -3,8 +3,6 @@ export interface BoardRequestDTO {
   type: string;
   site: string;
   email: string;
-  startTime: number | null;
-  endTime: number | null;
   boardId: string;
 }
 

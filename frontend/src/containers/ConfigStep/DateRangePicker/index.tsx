@@ -1,3 +1,4 @@
+import { updateShouldGetBoardConfig, updateShouldGetPipelineConfig } from '@src/context/Metrics/metricsSlice';
 import { selectDateRange, updateDateRange } from '@src/context/config/configSlice';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { StyledDateRangePicker, StyledDateRangePickerContainer } from './style';
@@ -26,6 +27,8 @@ export const DateRangePicker = () => {
             },
       ),
     );
+    dispatch(updateShouldGetBoardConfig(true));
+    dispatch(updateShouldGetPipelineConfig(true));
   };
 
   const changeEndDate = (value: Dayjs) => {
@@ -35,6 +38,8 @@ export const DateRangePicker = () => {
         endDate: !isNull(value) ? value.endOf('date').format('YYYY-MM-DDTHH:mm:ss.SSSZ') : null,
       }),
     );
+    dispatch(updateShouldGetBoardConfig(true));
+    dispatch(updateShouldGetPipelineConfig(true));
   };
 
   return (

@@ -1,4 +1,4 @@
-import { selectBoard, selectDateRange, updateBoard, updateBoardVerifyState } from '@src/context/config/configSlice';
+import { selectBoard, updateBoard, updateBoardVerifyState } from '@src/context/config/configSlice';
 import { BOARD_TYPES, MESSAGE, UNKNOWN_ERROR_TITLE } from '@src/constants/resources';
 import { updateTreatFlagCardAsBlock } from '@src/context/Metrics/metricsSlice';
 import { findCaseInsensitiveType, getJiraBoardToken } from '@src/utils/util';
@@ -11,7 +11,6 @@ import { isHeartBeatException } from '@src/exceptions';
 import { REGEX } from '@src/constants/regex';
 import { HttpStatusCode } from 'axios';
 import { useState } from 'react';
-import dayjs from 'dayjs';
 
 export interface Field {
   key: string;
@@ -62,7 +61,6 @@ const getValidatedError = (key: string, value: string, validateRule?: (value: st
 export const useVerifyBoardEffect = (): useVerifyBoardStateInterface => {
   const [isLoading, setIsLoading] = useState(false);
   const boardFields = useAppSelector(selectBoard);
-  const dateRange = useAppSelector(selectDateRange);
   const dispatch = useAppDispatch();
   const type = findCaseInsensitiveType(Object.values(BOARD_TYPES), boardFields.type);
   const [fields, setFields] = useState<Field[]>([
@@ -184,8 +182,6 @@ export const useVerifyBoardEffect = (): useVerifyBoardStateInterface => {
     try {
       const res: { response: Record<string, string> } = await boardClient.getVerifyBoard({
         ...boardInfo,
-        startTime: dayjs(dateRange.startDate).valueOf(),
-        endTime: dayjs(dateRange.endDate).valueOf(),
         token: getJiraBoardToken(boardInfo.token, boardInfo.email),
       });
       if (res?.response) {

@@ -87,6 +87,11 @@ export default [
 		slug: 'designs/support-multiple-columns',
 		key: 'designs/support-multiple-columns',
 	},
+	{
+		text: 'E2E Testing',
+		slug: 'designs/e2e-testing',
+		key: 'designs/e2e-testing',
+	},
 
 	{ text: 'Issue Solutions', header: true, type: 'tech', key: 'Issue Solutions' },
 	{

@@ -7,6 +7,7 @@ import { Z_INDEX } from '@src/constants/commons';
 import { FormControlWrapper } from './style';
 import { useAppSelector } from '@src/hooks';
 import React, { useState } from 'react';
+import { sortBy } from 'lodash';
 
 interface Props {
   options: string[];
@@ -41,7 +42,7 @@ export const SingleSelection = ({ options, label, value, id, onGetSteps, onUpDat
         <Autocomplete
           disableClearable
           data-test-id={labelId}
-          options={options}
+          options={sortBy(options, (item: string) => getDisabledOptions(deploymentFrequencySettings, item))}
           getOptionDisabled={(option: string) =>
             label === 'Pipeline Name' && getDisabledOptions(deploymentFrequencySettings, option)
           }

@@ -101,6 +101,36 @@ jacocoTestCoverageVerification {
   violationRules {
     rule {
       limit {
+        counter = 'INSTRUCTION'
+        value = 'COVEREDRATIO'
+        minimum = 1.0
+      }
+    }
+    rule {
+      limit {
+        counter = 'LINE'
+        value = 'COVEREDRATIO'
+        minimum = 1.0
+      }
+    }
+    rule {
+      limit {
+        counter = 'METHOD'
+        value = 'COVEREDRATIO'
+        minimum = 1.0
+      }
+    }
+    rule {
+      limit {
+        counter = 'BRANCH'
+        value = 'COVEREDRATIO'
+        minimum = 0.90
+      }
+    }
+    rule {
+      limit {
+        counter = 'CLASS'
+        value = 'COVEREDRATIO'
         minimum = 1.0
       }
     }

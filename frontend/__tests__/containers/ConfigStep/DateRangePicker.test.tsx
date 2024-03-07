@@ -1,3 +1,4 @@
+import { updateShouldGetBoardConfig, updateShouldGetPipelineConfig } from '@src/context/Metrics/metricsSlice';
 import { DateRangePicker } from '@src/containers/ConfigStep/DateRangePicker';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { setupStore } from '../../utils/setupStoreUtil';
@@ -11,6 +12,12 @@ const END_DATE_LABEL = 'To *';
 const TODAY = dayjs();
 const INPUT_DATE_VALUE = TODAY.format('MM/DD/YYYY');
 let store = setupStore();
+
+jest.mock('@src/context/Metrics/metricsSlice', () => ({
+  ...jest.requireActual('@src/context/Metrics/metricsSlice'),
+  updateShouldGetBoardConfig: jest.fn().mockReturnValue({ type: 'SHOULD_UPDATE_BOARD_CONFIG' }),
+  updateShouldGetPipelineConfig: jest.fn().mockReturnValue({ type: 'SHOULD_UPDATE_PIPELINE_CONFIG' }),
+}));
 
 const setup = () => {
   store = setupStore();
@@ -48,7 +55,6 @@ describe('DateRangePicker', () => {
     const endDateInput = screen.getByRole('textbox', { name: END_DATE_LABEL }) as HTMLInputElement;
 
     fireEvent.change(endDateInput, { target: { value: INPUT_DATE_VALUE } });
-
     expectDate(endDateInput);
   });
 
@@ -74,5 +80,21 @@ describe('DateRangePicker', () => {
 
     expect(startDateInput.valueAsDate).toEqual(null);
     expect(endDateInput.valueAsDate).toEqual(null);
+  });
+
+  it('should dispatch update configuration when change startDate', () => {
+    setup();
+    const startDateInput = screen.getByRole('textbox', { name: START_DATE_LABEL }) as HTMLInputElement;
+    fireEvent.change(startDateInput, { target: { value: INPUT_DATE_VALUE } });
+    expect(updateShouldGetBoardConfig).toHaveBeenCalledWith(true);
+    expect(updateShouldGetPipelineConfig).toHaveBeenCalledWith(true);
+  });
+
+  it('should dispatch update configuration when change endDate', () => {
+    setup();
+    const endDateInput = screen.getByRole('textbox', { name: END_DATE_LABEL }) as HTMLInputElement;
+    fireEvent.change(endDateInput, { target: { value: INPUT_DATE_VALUE } });
+    expect(updateShouldGetBoardConfig).toHaveBeenCalledWith(true);
+    expect(updateShouldGetPipelineConfig).toHaveBeenCalledWith(true);
   });
 });

@@ -13,6 +13,10 @@ import isNull from 'lodash/isNull';
 export const DateRangePicker = () => {
   const dispatch = useAppDispatch();
   const { startDate, endDate } = useAppSelector(selectDateRange);
+  const dispatchUpdateConfig = () => {
+    dispatch(updateShouldGetBoardConfig(true));
+    dispatch(updateShouldGetPipelineConfig(true));
+  };
   const changeStartDate = (value: Nullable<Dayjs>) => {
     dispatch(
       updateDateRange(
@@ -27,8 +31,7 @@ export const DateRangePicker = () => {
             },
       ),
     );
-    dispatch(updateShouldGetBoardConfig(true));
-    dispatch(updateShouldGetPipelineConfig(true));
+    dispatchUpdateConfig();
   };
 
   const changeEndDate = (value: Dayjs) => {
@@ -38,8 +41,7 @@ export const DateRangePicker = () => {
         endDate: !isNull(value) ? value.endOf('date').format('YYYY-MM-DDTHH:mm:ss.SSSZ') : null,
       }),
     );
-    dispatch(updateShouldGetBoardConfig(true));
-    dispatch(updateShouldGetPipelineConfig(true));
+    dispatchUpdateConfig();
   };
 
   return (

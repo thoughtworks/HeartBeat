@@ -9,13 +9,6 @@ import {
   selectJiraColumns,
 } from '@src/context/config/configSlice';
 import {
-  CYCLE_TIME_SETTINGS_TYPES,
-  DONE,
-  PipelineConfigInfoTitle,
-  PIPELINE_TOOL_GET_INFO_NO_CONTENT_ERROR_MESSAGE,
-  REQUIRED_DATA,
-} from '@src/constants/resources';
-import {
   selectMetricsContent,
   updateMetricsState,
   selectShouldGetBoardConfig,
@@ -26,13 +19,13 @@ import {
   MetricSelectionWrapper,
   MetricsSelectionTitle,
 } from '@src/containers/MetricsStep/style';
+import { CYCLE_TIME_SETTINGS_TYPES, DONE, REQUIRED_DATA, HEARTBEAT_EXCEPTION_CODE } from '@src/constants/resources';
 import { DeploymentFrequencySettings } from '@src/containers/MetricsStep/DeploymentFrequencySettings';
 import { StyledRetryButton, StyledErrorMessage } from '@src/containers/MetricsStep/style';
 import { closeAllNotifications } from '@src/context/notification/NotificationSlice';
 import { Classification } from '@src/containers/MetricsStep/Classification';
 import { shouldMetricsLoad } from '@src/context/stepper/StepperSlice';
 import DateRangeViewer from '@src/components/Common/DateRangeViewer';
-import { HEARTBEAT_EXCEPTION_CODE } from '@src/constants/resources';
 import { useGetBoardInfoEffect } from '@src/hooks/useGetBoardInfo';
 import { CycleTime } from '@src/containers/MetricsStep/CycleTime';
 import { RealDone } from '@src/containers/MetricsStep/RealDone';
@@ -66,7 +59,6 @@ const MetricsStep = () => {
   const { getBoardInfo, isLoading, errorMessage } = useGetBoardInfoEffect();
   const shouldLoad = useAppSelector(shouldMetricsLoad);
   const shouldGetBoardConfig = useAppSelector(selectShouldGetBoardConfig);
-  const isFutureTime = dayjs().isBefore(startDate);
 
   const getInfo = useCallback(
     () =>
@@ -148,14 +140,7 @@ const MetricsStep = () => {
         requiredData.includes(REQUIRED_DATA.MEAN_TIME_TO_RECOVERY)) && (
         <MetricSelectionWrapper aria-label='Pipeline Configuration Section'>
           <MetricsSelectionTitle>Pipeline configuration</MetricsSelectionTitle>
-          {isFutureTime ? (
-            <EmptyContent
-              title={PipelineConfigInfoTitle.NO_CONTENT}
-              message={PIPELINE_TOOL_GET_INFO_NO_CONTENT_ERROR_MESSAGE}
-            />
-          ) : (
-            <DeploymentFrequencySettings />
-          )}
+          <DeploymentFrequencySettings />
         </MetricSelectionWrapper>
       )}
     </>

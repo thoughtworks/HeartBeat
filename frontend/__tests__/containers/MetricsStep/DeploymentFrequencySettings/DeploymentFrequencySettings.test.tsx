@@ -40,6 +40,7 @@ jest.mock('@src/context/config/configSlice', () => ({
   selectBranches: jest.fn().mockReturnValue(['']),
   selectPipelineCrews: jest.fn().mockReturnValue(['']),
   selectStepsParams: jest.fn().mockReturnValue(['']),
+  selectDateRange: jest.fn().mockReturnValue(['']),
 }));
 
 const mockValidationCheckContext = {

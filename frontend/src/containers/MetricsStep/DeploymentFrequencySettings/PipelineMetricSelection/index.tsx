@@ -7,6 +7,7 @@ import {
   selectShouldGetPipelineConfig,
 } from '@src/context/Metrics/metricsSlice';
 import {
+  selectDateRange,
   selectPipelineNames,
   selectPipelineOrganizations,
   selectSteps,
@@ -19,13 +20,14 @@ import { BranchSelection } from '@src/containers/MetricsStep/DeploymentFrequency
 import { ButtonWrapper, PipelineMetricSelectionWrapper, RemoveButton, WarningMessage } from './style';
 import { WarningNotification } from '@src/components/Common/WarningNotification';
 import { useGetMetricsStepsEffect } from '@src/hooks/useGetMetricsStepsEffect';
+import { MESSAGE, NO_PIPELINE_STEP_ERROR } from '@src/constants/resources';
 import { ErrorNotification } from '@src/components/ErrorNotification';
 import { shouldMetricsLoad } from '@src/context/stepper/StepperSlice';
 import { useAppDispatch, useAppSelector } from '@src/hooks';
 import { useEffect, useMemo, useState } from 'react';
-import { MESSAGE } from '@src/constants/resources';
 import { Loading } from '@src/components/Loading';
 import { store } from '@src/store';
+import dayjs from 'dayjs';
 
 interface pipelineMetricSelectionProps {
   type: string;
@@ -66,6 +68,8 @@ export const PipelineMetricSelection = ({
   const shouldGetPipelineConfig = useAppSelector(selectShouldGetPipelineConfig);
 
   const validStepValue = useMemo<string>(() => (stepsOptions.includes(step) ? step : ''), [step, stepsOptions]);
+  const { startDate } = useAppSelector(selectDateRange);
+  const isFutureTime = dayjs().isBefore(startDate);
 
   const handleRemoveClick = () => {
     onRemovePipeline(id);
@@ -137,6 +141,8 @@ export const PipelineMetricSelection = ({
           options={stepsOptions}
           label={'Step'}
           value={validStepValue}
+          isError={isFutureTime}
+          errorText={NO_PIPELINE_STEP_ERROR}
           onUpDatePipeline={(id, label, value) => onUpdatePipeline(id, label, value)}
         />
       )}

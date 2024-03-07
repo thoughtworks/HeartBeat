@@ -271,6 +271,8 @@ export enum CYCLE_TIME_SETTINGS_TYPES {
 
 export const AXIOS_NETWORK_ERROR_CODES = [AxiosError.ECONNABORTED, AxiosError.ETIMEDOUT, AxiosError.ERR_NETWORK];
 
+export const NO_PIPELINE_STEP_ERROR = 'No steps for this pipeline!';
+
 export enum HEARTBEAT_EXCEPTION_CODE {
   TIMEOUT = 'HB_TIMEOUT',
 }
@@ -281,11 +283,6 @@ export const BOARD_CONFIG_INFO_TITLE = {
   UNAUTHORIZED_REQUEST: 'Unauthorized request!',
   NOT_FOUND: 'Not found!',
   NO_CONTENT: 'No card within selected date range!',
-  EMPTY: '',
-};
-
-export const PipelineConfigInfoTitle = {
-  NO_CONTENT: 'No pipeline within selected date range!',
   EMPTY: '',
 };
 
@@ -313,9 +310,6 @@ export const UNKNOWN_ERROR_TITLE = 'Unknown error';
 
 export const PIPELINE_TOOL_GET_INFO_ERROR_MESSAGE =
   'Please go back to the previous page and change your pipeline token with correct access permission.';
-
-export const PIPELINE_TOOL_GET_INFO_NO_CONTENT_ERROR_MESSAGE =
-  'Please go back to the previous page and change your collection date, or check your pipeline info!';
 
 export const PIPELINE_TOOL_RETRY_MESSAGE = 'Data loading failed, please';
 export const PIPELINE_TOOL_RETRY_TRIGGER_MESSAGE = ' try again';

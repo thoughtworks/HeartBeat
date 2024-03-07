@@ -12,6 +12,8 @@ import {
 import { PipelineMetricSelection } from '@src/containers/MetricsStep/DeploymentFrequencySettings/PipelineMetricSelection';
 import { IPipelineConfig, updateShouldGetPipelineConfig } from '@src/context/Metrics/metricsSlice';
 import { act, render, screen, waitFor, within } from '@testing-library/react';
+import { updateDateRange } from '@src/context/config/configSlice';
+import { NO_PIPELINE_STEP_ERROR } from '@src/constants/resources';
 import { metricsClient } from '@src/clients/MetricsClient';
 import { setupStore } from '@test/utils/setupStoreUtil';
 import userEvent from '@testing-library/user-event';
@@ -71,6 +73,8 @@ jest.mock('@src/context/config/configSlice', () => ({
   ]),
 }));
 
+const store = setupStore();
+
 describe('PipelineMetricSelection', () => {
   beforeAll(() => server.listen());
   afterAll(() => server.close());
@@ -91,7 +95,6 @@ describe('PipelineMetricSelection', () => {
     isShowRemoveButton: boolean,
     isDuplicated: boolean,
   ) => {
-    const store = setupStore();
     store.dispatch(updateShouldGetPipelineConfig(true));
     return render(
       <Provider store={store}>
@@ -135,6 +138,46 @@ describe('PipelineMetricSelection', () => {
 
     expect(mockHandleClickRemoveButton).toHaveBeenCalledTimes(1);
     expect(mockHandleClickRemoveButton).toHaveBeenCalledWith(mockId);
+  });
+
+  it('should render pipeline no step error given now is 2024-01-01 when get pipeline when selected future time', async () => {
+    const MOCK_FUTURE_DATE_RANGE = {
+      startDate: '2024-02-04T00:00:00+08:00',
+      endDate: '2024-02-18T00:00:00+08:00',
+    };
+
+    jest.useFakeTimers().setSystemTime(new Date('2024-01-01'));
+
+    store.dispatch(updateDateRange(MOCK_FUTURE_DATE_RANGE));
+    const { getByText } = await setup(
+      { ...deploymentFrequencySetting, organization: 'mockOrgName', pipelineName: 'mockName' },
+      false,
+      false,
+    );
+
+    expect(getByText(NO_PIPELINE_STEP_ERROR)).toBeInTheDocument();
+
+    jest.useRealTimers();
+  });
+
+  it('should render pipeline given now is 2024-01-01 when get pipeline when selected past time', async () => {
+    const MOCK_PAST_DATE_RANGE = {
+      startDate: '2023-02-04T00:00:00+08:00',
+      endDate: '2023-02-18T00:00:00+08:00',
+    };
+
+    jest.useFakeTimers().setSystemTime(new Date('2024-01-01'));
+
+    store.dispatch(updateDateRange(MOCK_PAST_DATE_RANGE));
+    const { queryByText } = await setup(
+      { ...deploymentFrequencySetting, organization: 'mockOrgName', pipelineName: 'mockName' },
+      false,
+      false,
+    );
+
+    expect(queryByText(NO_PIPELINE_STEP_ERROR)).not.toBeInTheDocument();
+
+    jest.useRealTimers();
   });
 
   it('should show pipelineName selection when select organization', async () => {

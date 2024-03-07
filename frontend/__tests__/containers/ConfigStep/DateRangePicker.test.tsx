@@ -1,4 +1,8 @@
-import { updateShouldGetBoardConfig, updateShouldGetPipelineConfig } from '@src/context/Metrics/metricsSlice';
+import {
+  initDeploymentFrequencySettings,
+  updateShouldGetBoardConfig,
+  updateShouldGetPipelineConfig,
+} from '@src/context/Metrics/metricsSlice';
 import { DateRangePicker } from '@src/containers/ConfigStep/DateRangePicker';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { setupStore } from '../../utils/setupStoreUtil';
@@ -17,6 +21,7 @@ jest.mock('@src/context/Metrics/metricsSlice', () => ({
   ...jest.requireActual('@src/context/Metrics/metricsSlice'),
   updateShouldGetBoardConfig: jest.fn().mockReturnValue({ type: 'SHOULD_UPDATE_BOARD_CONFIG' }),
   updateShouldGetPipelineConfig: jest.fn().mockReturnValue({ type: 'SHOULD_UPDATE_PIPELINE_CONFIG' }),
+  initDeploymentFrequencySettings: jest.fn().mockReturnValue({ type: 'INIT_DEPLOYMENT_SETTINGS' }),
 }));
 
 const setup = () => {
@@ -88,6 +93,7 @@ describe('DateRangePicker', () => {
     fireEvent.change(startDateInput, { target: { value: INPUT_DATE_VALUE } });
     expect(updateShouldGetBoardConfig).toHaveBeenCalledWith(true);
     expect(updateShouldGetPipelineConfig).toHaveBeenCalledWith(true);
+    expect(initDeploymentFrequencySettings).toHaveBeenCalled();
   });
 
   it('should dispatch update configuration when change endDate', () => {
@@ -96,5 +102,6 @@ describe('DateRangePicker', () => {
     fireEvent.change(endDateInput, { target: { value: INPUT_DATE_VALUE } });
     expect(updateShouldGetBoardConfig).toHaveBeenCalledWith(true);
     expect(updateShouldGetPipelineConfig).toHaveBeenCalledWith(true);
+    expect(initDeploymentFrequencySettings).toHaveBeenCalled();
   });
 });

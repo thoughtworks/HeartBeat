@@ -1,4 +1,8 @@
-import { updateShouldGetBoardConfig, updateShouldGetPipelineConfig } from '@src/context/Metrics/metricsSlice';
+import {
+  initDeploymentFrequencySettings,
+  updateShouldGetBoardConfig,
+  updateShouldGetPipelineConfig,
+} from '@src/context/Metrics/metricsSlice';
 import { selectDateRange, updateDateRange } from '@src/context/config/configSlice';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { StyledDateRangePicker, StyledDateRangePickerContainer } from './style';
@@ -16,6 +20,7 @@ export const DateRangePicker = () => {
   const dispatchUpdateConfig = () => {
     dispatch(updateShouldGetBoardConfig(true));
     dispatch(updateShouldGetPipelineConfig(true));
+    dispatch(initDeploymentFrequencySettings());
   };
   const changeStartDate = (value: Nullable<Dayjs>) => {
     dispatch(

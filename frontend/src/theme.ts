@@ -12,6 +12,7 @@ declare module '@mui/material/styles' {
       backgroundColor: string;
       color: string;
       secondColor: string;
+      boardColor: string;
       fontSize: string;
       boxShadow: string;
       cardShadow: string;
@@ -93,6 +94,7 @@ export const theme = createTheme({
     backgroundColor: indigo[FIVE_HUNDRED],
     color: '#fff',
     secondColor: 'black',
+    boardColor: '#efefef',
     fontSize: '1rem',
     boxShadow:
       '0 0.2rem 0.1rem -0.1rem rgb(0 0 0 / 20%), 0 0.1rem 0.1rem 0 rgb(0 0 0 / 14%), 0 0.1rem 0.3rem 0 rgb(0 0 0 / 12%)',

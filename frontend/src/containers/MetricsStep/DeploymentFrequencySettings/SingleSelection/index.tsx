@@ -1,13 +1,12 @@
 import { selectDeploymentFrequencySettings } from '@src/context/Metrics/metricsSlice';
 import { getEmojiUrls, removeExtraEmojiName } from '@src/constants/emojis/emoji';
 import { Autocomplete, Box, ListItemText, TextField } from '@mui/material';
+import { getDisabledOptions, sortDisabledOptions } from '@src/utils/util';
 import { EmojiWrap, StyledAvatar } from '@src/constants/emojis/style';
-import { getDisabledOptions } from '@src/utils/util';
 import { Z_INDEX } from '@src/constants/commons';
 import { FormControlWrapper } from './style';
 import { useAppSelector } from '@src/hooks';
 import React, { useState } from 'react';
-import { sortBy } from 'lodash';
 
 interface Props {
   options: string[];
@@ -42,7 +41,7 @@ export const SingleSelection = ({ options, label, value, id, onGetSteps, onUpDat
         <Autocomplete
           disableClearable
           data-test-id={labelId}
-          options={sortBy(options, (item: string) => getDisabledOptions(deploymentFrequencySettings, item))}
+          options={sortDisabledOptions(deploymentFrequencySettings, options)}
           getOptionDisabled={(option: string) =>
             label === 'Pipeline Name' && getDisabledOptions(deploymentFrequencySettings, option)
           }

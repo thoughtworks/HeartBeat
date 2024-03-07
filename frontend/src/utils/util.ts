@@ -4,7 +4,7 @@ import { ICycleTimeSetting, IPipelineConfig } from '@src/context/Metrics/metrics
 import { ITargetFieldType } from '@src/components/Common/MultiAutoComplete/styles';
 import { DATE_FORMAT_TEMPLATE } from '@src/constants/template';
 import duration from 'dayjs/plugin/duration';
-import { includes } from 'lodash';
+import { includes, sortBy } from 'lodash';
 import dayjs from 'dayjs';
 
 dayjs.extend(duration);
@@ -78,6 +78,10 @@ export const getDisabledOptions = (deploymentFrequencySettings: IPipelineConfig[
     deploymentFrequencySettings.map((item) => item.pipelineName),
     option,
   );
+};
+
+export const sortDisabledOptions = (deploymentFrequencySettings: IPipelineConfig[], options: string[]) => {
+  return sortBy(options, (item: string) => getDisabledOptions(deploymentFrequencySettings, item));
 };
 
 export const formatDate = (date: Date | string) => {

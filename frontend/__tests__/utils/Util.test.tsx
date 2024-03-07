@@ -9,6 +9,7 @@ import {
   transformToCleanedBuildKiteEmoji,
   formatDuplicatedNameWithSuffix,
   getDisabledOptions,
+  sortDisabledOptions,
 } from '@src/utils/util';
 import { CleanedBuildKiteEmoji, OriginBuildKiteEmoji } from '@src/constants/emojis/emoji';
 import { CYCLE_TIME_SETTINGS_TYPES } from '@src/constants/resources';
@@ -72,6 +73,43 @@ describe('getDisabledOptions function', () => {
     const result = getDisabledOptions(mockDeploymentFrequencySettings, mockOption);
 
     expect(result).toBeFalsy();
+  });
+});
+
+describe('sortDisabledOptions function', () => {
+  it('should sort the mock3 is first when mock1 & mock2 is selected', () => {
+    const mockDeploymentFrequencySettings: IPipelineConfig[] = [
+      { id: 0, organization: '', pipelineName: 'mock1', step: '', branches: [] },
+      { id: 1, organization: '', pipelineName: 'mock2', step: '', branches: [] },
+    ];
+
+    const mockOptions = ['mock1', 'mock2', 'mock3'];
+
+    const result = sortDisabledOptions(mockDeploymentFrequencySettings, mockOptions);
+
+    expect(result).toEqual(['mock3', 'mock1', 'mock2']);
+  });
+
+  it('should not sort when deploymentFrequencySettings is empty', () => {
+    const mockDeploymentFrequencySettings: IPipelineConfig[] = [];
+
+    const mockOptions = ['mock1', 'mock2', 'mock3'];
+
+    const result = sortDisabledOptions(mockDeploymentFrequencySettings, mockOptions);
+
+    expect(result).toEqual(['mock1', 'mock2', 'mock3']);
+  });
+
+  it('should as is when selected option is last', () => {
+    const mockDeploymentFrequencySettings: IPipelineConfig[] = [
+      { id: 0, organization: '', pipelineName: 'mock3', step: '', branches: [] },
+    ];
+
+    const mockOptions = ['mock1', 'mock2', 'mock3'];
+
+    const result = sortDisabledOptions(mockDeploymentFrequencySettings, mockOptions);
+
+    expect(result).toEqual(['mock1', 'mock2', 'mock3']);
   });
 });
 

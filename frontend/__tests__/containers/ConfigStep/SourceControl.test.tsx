@@ -9,6 +9,7 @@ import {
   VERIFIED,
   VERIFY,
 } from '../../fixtures';
+import { initDeploymentFrequencySettings, updateShouldGetPipelineConfig } from '@src/context/Metrics/metricsSlice';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { SourceControl } from '@src/containers/ConfigStep/SourceControl';
 import { SOURCE_CONTROL_TYPES } from '@src/constants/resources';
@@ -34,6 +35,12 @@ export const fillSourceControlFieldsInformation = () => {
 let store = null;
 
 const server = setupServer(rest.post(MOCK_SOURCE_CONTROL_VERIFY_TOKEN_URL, (req, res, ctx) => res(ctx.status(204))));
+
+jest.mock('@src/context/Metrics/metricsSlice', () => ({
+  ...jest.requireActual('@src/context/Metrics/metricsSlice'),
+  updateShouldGetPipelineConfig: jest.fn().mockReturnValue({ type: 'SHOULD_UPDATE_PIPELINE_CONFIG' }),
+  initDeploymentFrequencySettings: jest.fn().mockReturnValue({ type: 'INIT_DEPLOYMENT_SETTINGS' }),
+}));
 
 describe('SourceControl', () => {
   beforeAll(() => server.listen());
@@ -110,6 +117,20 @@ describe('SourceControl', () => {
     await waitFor(() => {
       expect(screen.getByText(VERIFIED)).toBeTruthy();
     });
+  });
+
+  it('should reload pipeline config when reset fields', async () => {
+    setup();
+    fillSourceControlFieldsInformation();
+
+    await userEvent.click(screen.getByText(VERIFY));
+
+    await userEvent.click(screen.getByRole('button', { name: RESET }));
+
+    fillSourceControlFieldsInformation();
+
+    expect(updateShouldGetPipelineConfig).toHaveBeenCalledWith(true);
+    expect(initDeploymentFrequencySettings).toHaveBeenCalled();
   });
 
   it('should show error message and error style when token is empty', () => {

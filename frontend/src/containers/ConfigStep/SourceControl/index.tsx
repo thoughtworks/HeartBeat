@@ -11,6 +11,7 @@ import {
   updateSourceControl,
   updateSourceControlVerifyState,
 } from '@src/context/config/configSlice';
+import { initDeploymentFrequencySettings, updateShouldGetPipelineConfig } from '@src/context/Metrics/metricsSlice';
 import { useVerifySourceControlTokenEffect } from '@src/hooks/useVerifySourceControlTokenEffect';
 import { CONFIG_TITLE, SOURCE_CONTROL_TYPES, TOKEN_HELPER_TEXT } from '@src/constants/resources';
 import { ResetButton, VerifyButton } from '@src/components/Common/Buttons';
@@ -67,6 +68,8 @@ export const SourceControl = () => {
         token: fields[FIELD_KEY.TOKEN].value,
       }),
     );
+    dispatch(updateShouldGetPipelineConfig(true));
+    dispatch(initDeploymentFrequencySettings());
   };
 
   const getNewFields = (value: string) =>

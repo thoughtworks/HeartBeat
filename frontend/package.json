@@ -24,6 +24,7 @@
     "e2e:with-server": "ts-node --project tsconfig.scripts.json ./scripts/runE2eWithServer.ts 'pnpm run e2e:local'",
     "e2e:debug": "pnpm run e2e:local --debug",
     "e2e:ui": "dotenvx run --env-file=./e2e/.env.local -- pnpm exec playwright test --ui",
+    "e2e:headed": "dotenvx run --env-file=./e2e/.env.local -- pnpm exec playwright test --ui --headed",
     "e2e:report": "pnpm exec playwright show-report",
     "e2e:codegen": "pnpm exec playwright codegen 13.215.41.120:4321",
     "e2e:build-docker-image": "docker build -t 'heartbeat_e2e:latest' ../ -f ../ops/infra/Dockerfile.e2e",

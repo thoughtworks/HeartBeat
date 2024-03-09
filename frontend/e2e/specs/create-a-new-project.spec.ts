@@ -1,6 +1,7 @@
 import { BOARD_METRICS_RESULT, DORA_METRICS_RESULT } from '../fixtures/createNew/reportResult';
 import { config as metricsStepData } from '../fixtures/createNew/metricsStep';
 import { config as configStepData } from '../fixtures/createNew/configStep';
+import { ProjectCreationType } from 'e2e/pages/metrics/ReportStep';
 import { test } from '../fixtures/testWithExtendFixtures';
 import { clearTempDir } from 'e2e/utils/clearTempDir';
 import { format } from 'e2e/utils/dateTime';
@@ -64,7 +65,7 @@ test('Create a new project', async ({ homePage, configStep, metricsStep, reportS
     BOARD_METRICS_RESULT.AverageCycleTime4SP,
     BOARD_METRICS_RESULT.AverageCycleTime4Card,
   );
-  await reportStep.checkBoardMetricsDetails('create-a-new-project-Board-Metrics.png', 9);
+  await reportStep.checkBoardMetricsDetails(ProjectCreationType.CREATE_A_NEW_PROJECT, 9);
   await reportStep.checkDoraMetrics(
     DORA_METRICS_RESULT.PrLeadTime,
     DORA_METRICS_RESULT.PipelineLeadTime,
@@ -73,6 +74,6 @@ test('Create a new project', async ({ homePage, configStep, metricsStep, reportS
     DORA_METRICS_RESULT.FailureRate,
     DORA_METRICS_RESULT.MeanTimeToRecovery,
   );
-  await reportStep.checkDoraMetricsDetails('create-a-new-project-DORA-Metrics.png');
+  await reportStep.checkDoraMetricsDetails(ProjectCreationType.CREATE_A_NEW_PROJECT);
   await reportStep.checkMetricDownloadData();
 });

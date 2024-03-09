@@ -1,5 +1,6 @@
 import { BOARD_METRICS_RESULT, FLAG_AS_BLOCK_PROJECT_BOARD_METRICS_RESULT } from '../fixtures/createNew/reportResult';
 import { importMultipleDoneProjectFromFile } from '../fixtures/importFile/multiple-done-config-file';
+import { ProjectCreationType } from 'e2e/pages/metrics/ReportStep';
 import { test } from '../fixtures/testWithExtendFixtures';
 import { clearTempDir } from 'e2e/utils/clearTempDir';
 
@@ -36,8 +37,8 @@ test('Import project from file', async ({ homePage, configStep, metricsStep, rep
     BOARD_METRICS_RESULT.AverageCycleTime4SP,
     BOARD_METRICS_RESULT.AverageCycleTime4Card,
   );
-  await reportStep.checkBoardMetricsDetails('import-project-from-file-Board-Metrics.png', 9);
-  await reportStep.checkDoraMetricsDetails('import-project-from-file-DORA-Metrics.png');
+  await reportStep.checkBoardMetricsDetails(ProjectCreationType.IMPORT_PROJECT_FROM_FILE, 9);
+  await reportStep.checkDoraMetricsDetails(ProjectCreationType.IMPORT_PROJECT_FROM_FILE);
   await reportStep.checkDownloadReports();
 });
 

@@ -6,6 +6,8 @@ body:
   - type: markdown
     attributes:
       value: |
+        ## Request Detail
+
         The issue list is reserved exclusively for bug reports and feature requests.
 
         For usage questions, please use the following resources:
@@ -63,6 +65,8 @@ body:
   - type: markdown
     attributes:
       value: |
+        ## Account Detail
+
         Let's know more about you and your account. We will horizontally evaluate all received requests to adjust the priority.
 
         **Below information are important in terms of prioritization.**
@@ -72,6 +76,7 @@ body:
     attributes:
       label: Account name
       description: What's your account name?
+      placeholder: Make sure it could be found in jigsaw
     validations:
       required: true
 
@@ -95,6 +100,7 @@ body:
     id: expected_date
     attributes:
       label: Expected launch date
-      description: What is the latest possible launch date you can accept??
+      description: What is the latest possible launch date you can accept?
+      placeholder: 2024-12
     validations:
       required: false

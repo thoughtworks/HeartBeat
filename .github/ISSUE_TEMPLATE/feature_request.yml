@@ -54,8 +54,47 @@ body:
       description: What tools will support your request feature?
       multiple: true
       options:
-        - Board
-        - Pipeline Tool
-        - Source Control
+        - Board (like Jira)
+        - Pipeline Tool (like buildkite)
+        - Source Control (like github)
     validations:
       required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        Let's know more about you and your account. We will horizontally evaluate all received requests to adjust the priority.
+
+        **Below information are important in terms of prioritization.**
+
+  - type: input
+    id: account_info
+    attributes:
+      label: Account name
+      description: What's your account name?
+    validations:
+      required: true
+
+  - type: input
+    id: account_location
+    attributes:
+      label: Account location
+      description: Which country you account locate at?
+    validations:
+      required: true
+
+  - type: input
+    id: account_size
+    attributes:
+      label: Teams in Account
+      description: How many teams will adopt heartbeat after feature release?
+    validations:
+      required: true
+
+  - type: input
+    id: expected_date
+    attributes:
+      label: Expected launch date
+      description: What is the latest possible launch date you can accept??
+    validations:
+      required: false

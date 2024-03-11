@@ -1,5 +1,6 @@
 import {
   initDeploymentFrequencySettings,
+  saveUsers,
   updateShouldGetBoardConfig,
   updateShouldGetPipelineConfig,
 } from '@src/context/Metrics/metricsSlice';
@@ -21,6 +22,7 @@ export const DateRangePicker = () => {
     dispatch(updateShouldGetBoardConfig(true));
     dispatch(updateShouldGetPipelineConfig(true));
     dispatch(initDeploymentFrequencySettings());
+    dispatch(saveUsers([]));
   };
   const changeStartDate = (value: Nullable<Dayjs>) => {
     dispatch(

@@ -1,5 +1,6 @@
 import {
   initDeploymentFrequencySettings,
+  saveUsers,
   updateShouldGetBoardConfig,
   updateShouldGetPipelineConfig,
 } from '@src/context/Metrics/metricsSlice';
@@ -22,6 +23,7 @@ jest.mock('@src/context/Metrics/metricsSlice', () => ({
   updateShouldGetBoardConfig: jest.fn().mockReturnValue({ type: 'SHOULD_UPDATE_BOARD_CONFIG' }),
   updateShouldGetPipelineConfig: jest.fn().mockReturnValue({ type: 'SHOULD_UPDATE_PIPELINE_CONFIG' }),
   initDeploymentFrequencySettings: jest.fn().mockReturnValue({ type: 'INIT_DEPLOYMENT_SETTINGS' }),
+  saveUsers: jest.fn().mockReturnValue({ type: 'SAVE_USERS' }),
 }));
 
 const setup = () => {
@@ -94,6 +96,7 @@ describe('DateRangePicker', () => {
     expect(updateShouldGetBoardConfig).toHaveBeenCalledWith(true);
     expect(updateShouldGetPipelineConfig).toHaveBeenCalledWith(true);
     expect(initDeploymentFrequencySettings).toHaveBeenCalled();
+    expect(saveUsers).toHaveBeenCalledWith([]);
   });
 
   it('should dispatch update configuration when change endDate', () => {
@@ -103,5 +106,6 @@ describe('DateRangePicker', () => {
     expect(updateShouldGetBoardConfig).toHaveBeenCalledWith(true);
     expect(updateShouldGetPipelineConfig).toHaveBeenCalledWith(true);
     expect(initDeploymentFrequencySettings).toHaveBeenCalled();
+    expect(saveUsers).toHaveBeenCalledWith([]);
   });
 });

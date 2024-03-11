@@ -517,3 +517,19 @@ jobs:
       #       docker pull ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_HOST }}/heartbeat_backend:$IMAGE_TAG
       #       docker pull ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_HOST }}/heartbeat_frontend:$IMAGE_TAG
       #       docker-compose up -d frontend
+
+  slack-notification:
+    name: Slack Notification
+    if: github.ref == 'refs/heads/main' && always()
+    needs:
+      - e2e
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Slack Notification
+      uses: rtCamp/action-slack-notify@v2
+      env:
+        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+        SLACK_ICON_EMOJI: ":heart-beat:"
+        SLACK_COLOR: ${{ job.status }}
+        SLACK_USERNAME: "Heartbeat E2E Status"

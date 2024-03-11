@@ -1,4 +1,4 @@
-import { E2E_EXPECT_TIMEOUT, VIEWPORT_DEFAULT } from 'e2e/fixtures';
+import { E2E_EXPECT_LOCAL_TIMEOUT, E2E_EXPECT_CI_TIMEOUT, VIEWPORT_DEFAULT } from 'e2e/fixtures';
 import { defineConfig, devices } from '@playwright/test';
 
 /**
@@ -17,7 +17,7 @@ export default defineConfig({
   timeout: 3 * 60 * 1000,
   testDir: './e2e',
   expect: {
-    timeout: E2E_EXPECT_TIMEOUT,
+    timeout: process.env.CI ? E2E_EXPECT_CI_TIMEOUT : E2E_EXPECT_LOCAL_TIMEOUT,
   },
   /* Run tests in files in parallel */
   fullyParallel: true,

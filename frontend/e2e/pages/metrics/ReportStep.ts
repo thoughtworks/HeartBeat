@@ -1,7 +1,7 @@
 import { checkDownloadReport, downloadFileAndCheck } from 'e2e/utils/download';
 import { expect, Locator, Page } from '@playwright/test';
 
-import { E2E_EXPECT_TIMEOUT } from '../../fixtures';
+import { E2E_EXPECT_CI_TIMEOUT } from '../../fixtures';
 import { parse } from 'csv-parse/sync';
 import path from 'path';
 import fs from 'fs';
@@ -116,7 +116,7 @@ export class ReportStep {
   }
 
   async confirmGeneratedReport() {
-    await expect(this.page.getByRole('alert')).toContainText('Help Information', { timeout: E2E_EXPECT_TIMEOUT * 3 });
+    await expect(this.page.getByRole('alert')).toContainText('Help Information', { timeout: E2E_EXPECT_CI_TIMEOUT });
     await expect(this.page.getByRole('alert')).toContainText(
       'The file will expire in 30 minutes, please download it in time.',
     );

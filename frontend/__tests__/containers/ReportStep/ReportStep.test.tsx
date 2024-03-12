@@ -182,7 +182,7 @@ describe('Report Step', () => {
     });
 
     it('should render the Lead Time For Change component with correct props', () => {
-      setup([REQUIRED_DATA_LIST[4]]);
+      setup([REQUIRED_DATA_LIST[5]]);
 
       expect(screen.getByText('60.79')).toBeInTheDocument();
       expect(screen.getByText('39.03')).toBeInTheDocument();
@@ -190,20 +190,20 @@ describe('Report Step', () => {
     });
 
     it('should render the Deployment frequency component with correct props', () => {
-      setup([REQUIRED_DATA_LIST[5]]);
+      setup([REQUIRED_DATA_LIST[6]]);
 
       expect(screen.getByText('0.40')).toBeInTheDocument();
     });
 
     it('should render the Change failure rate component with correct props', () => {
-      setup([REQUIRED_DATA_LIST[6]]);
+      setup([REQUIRED_DATA_LIST[7]]);
 
       expect(screen.getByText('0.00')).toBeInTheDocument();
       expect(screen.getByText('% (0/6)')).toBeInTheDocument();
     });
 
     it('should render the Mean time to recovery component with correct props', () => {
-      setup([REQUIRED_DATA_LIST[7]]);
+      setup([REQUIRED_DATA_LIST[8]]);
 
       expect(screen.getByText('4.00')).toBeInTheDocument();
     });
@@ -252,7 +252,7 @@ describe('Report Step', () => {
       jest.useRealTimers();
     });
 
-    it.each([[REQUIRED_DATA_LIST[1]], [REQUIRED_DATA_LIST[4]]])(
+    it.each([[REQUIRED_DATA_LIST[2]], [REQUIRED_DATA_LIST[5]]])(
       'should render detail page when clicking show more button given metric %s',
       async (requiredData) => {
         setup([requiredData], MOCK_DATE_RANGE);
@@ -266,7 +266,7 @@ describe('Report Step', () => {
       },
     );
 
-    it.each([[REQUIRED_DATA_LIST[1]], [REQUIRED_DATA_LIST[4]]])(
+    it.each([[REQUIRED_DATA_LIST[2]], [REQUIRED_DATA_LIST[5]]])(
       'should return report page when clicking back button in Breadcrumb in detail page given metric %s',
       async (requiredData) => {
         setup([requiredData]);
@@ -286,7 +286,7 @@ describe('Report Step', () => {
       },
     );
 
-    it.each([[REQUIRED_DATA_LIST[1]], [REQUIRED_DATA_LIST[4]]])(
+    it.each([[REQUIRED_DATA_LIST[2]], [REQUIRED_DATA_LIST[5]]])(
       'should return report page when clicking previous button in detail page given metric %s',
       async (requiredData) => {
         setup([requiredData]);
@@ -318,7 +318,7 @@ describe('Report Step', () => {
       expect(exportPipelineButton).not.toBeInTheDocument();
     });
 
-    it.each([[REQUIRED_DATA_LIST[4]], [REQUIRED_DATA_LIST[5]], [REQUIRED_DATA_LIST[6]], [REQUIRED_DATA_LIST[7]]])(
+    it.each([[REQUIRED_DATA_LIST[5]], [REQUIRED_DATA_LIST[6]], [REQUIRED_DATA_LIST[7]], [REQUIRED_DATA_LIST[8]]])(
       'should show export pipeline button when selecting %s',
       (requiredData) => {
         setup([requiredData]);

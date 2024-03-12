@@ -1,3 +1,4 @@
+import { IReworkConfig } from '@src/context/Metrics/metricsSlice';
 import { CALENDAR } from '@src/constants/resources';
 
 export interface OldFileConfig {
@@ -35,6 +36,7 @@ export interface OldFileConfig {
   deployment?: OldConfigSetting[];
   leadTime?: OldConfigSetting[];
   pipelineCrews?: string[];
+  reworkTimesSettings: IReworkConfig;
 }
 
 interface OldConfigSetting {
@@ -87,7 +89,9 @@ export interface NewFileConfig {
   deployment?: NewConfigSetting[];
   leadTime?: NewConfigSetting[];
   pipelineCrews?: string[];
+  reworkTimesSettings: IReworkConfig;
 }
+
 export const convertToNewFileConfig = (fileConfig: OldFileConfig | NewFileConfig): NewFileConfig => {
   if ('considerHoliday' in fileConfig) {
     const {
@@ -106,6 +110,7 @@ export const convertToNewFileConfig = (fileConfig: OldFileConfig | NewFileConfig
       classifications,
       deployment,
       pipelineCrews,
+      reworkTimesSettings,
     } = fileConfig;
     return {
       projectName,
@@ -133,6 +138,7 @@ export const convertToNewFileConfig = (fileConfig: OldFileConfig | NewFileConfig
       pipelineCrews,
       cycleTime,
       doneStatus,
+      reworkTimesSettings,
       classification: classifications,
       deployment: deployment?.map((item, index) => ({
         id: index,

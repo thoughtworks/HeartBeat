@@ -236,6 +236,7 @@ const MetricsStepper = () => {
       advancedSettings: importedData.importedAdvancedSettings,
       deployment: deploymentFrequencySettings,
       leadTime: leadTimeForChanges,
+      reworkTimesSettings: importedData.reworkTimesSettings,
     };
     const jsonData = activeStep === METRICS_STEPS.CONFIG ? configData : { ...configData, ...metricsData };
     exportToJsonFile('config', jsonData);

@@ -9,6 +9,7 @@ import {
   MEAN_TIME_TO_RECOVERY,
   REQUIRED_DATA,
   REQUIRED_DATA_LIST,
+  REWORK_TIMES,
   VELOCITY,
 } from '../../fixtures';
 import { act, fireEvent, render, waitFor, within, screen } from '@testing-library/react';
@@ -70,7 +71,7 @@ describe('MetricsTypeCheckbox', () => {
 
   it('should show all selections when all option are select', async () => {
     const { getByRole, getByText } = setup();
-    const displayedDataList = REQUIRED_DATA_LIST.slice(1, 8);
+    const displayedDataList = REQUIRED_DATA_LIST.slice(1);
     await act(async () => {
       await userEvent.click(getByRole('button', { name: REQUIRED_DATA }));
     });
@@ -85,7 +86,7 @@ describe('MetricsTypeCheckbox', () => {
 
   it('should show all selections when click velocity selection and then click all selection', async () => {
     const { getByRole, getByText } = setup();
-    const displayedDataList = REQUIRED_DATA_LIST.slice(1, 8);
+    const displayedDataList = REQUIRED_DATA_LIST.slice(1);
 
     await act(async () => {
       await userEvent.click(getByRole('button', { name: REQUIRED_DATA }));
@@ -113,6 +114,7 @@ describe('MetricsTypeCheckbox', () => {
       listBox.getByRole('option', { name: VELOCITY }),
       listBox.getByRole('option', { name: CYCLE_TIME }),
       listBox.getByRole('option', { name: CLASSIFICATION }),
+      listBox.getByRole('option', { name: REWORK_TIMES }),
       listBox.getByRole('option', { name: LEAD_TIME_FOR_CHANGES }),
       listBox.getByRole('option', { name: DEPLOYMENT_FREQUENCY }),
       listBox.getByRole('option', { name: CHANGE_FAILURE_RATE }),
@@ -125,7 +127,7 @@ describe('MetricsTypeCheckbox', () => {
 
   it('should show some selections when click all option and then click velocity selection', async () => {
     const { getByRole, getByText } = setup();
-    const displayedDataList = REQUIRED_DATA_LIST.slice(1, 7);
+    const displayedDataList = REQUIRED_DATA_LIST.slice(1, REQUIRED_DATA_LIST.length - 1);
 
     await act(async () => {
       await userEvent.click(getByRole('button', { name: REQUIRED_DATA }));

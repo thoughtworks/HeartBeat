@@ -34,6 +34,7 @@ import { useAppSelector, useAppDispatch } from '@src/hooks';
 import { Crews } from '@src/containers/MetricsStep/Crews';
 import { useCallback, useLayoutEffect } from 'react';
 import { Loading } from '@src/components/Loading';
+import ReworkSettings from './ReworkSettings';
 import { Advance } from './Advance/Advance';
 import isEmpty from 'lodash/isEmpty';
 import merge from 'lodash/merge';
@@ -52,7 +53,8 @@ const MetricsStep = () => {
   const isShowCrewsAndRealDone =
     requiredData.includes(REQUIRED_DATA.VELOCITY) ||
     requiredData.includes(REQUIRED_DATA.CYCLE_TIME) ||
-    requiredData.includes(REQUIRED_DATA.CLASSIFICATION);
+    requiredData.includes(REQUIRED_DATA.CLASSIFICATION) ||
+    requiredData.includes(REQUIRED_DATA.REWORK_TIMES);
   const isShowRealDone =
     cycleTimeSettingsType === CYCLE_TIME_SETTINGS_TYPES.BY_COLUMN &&
     cycleTimeSettings.filter((e) => e.value === DONE).length > 1;
@@ -115,6 +117,7 @@ const MetricsStep = () => {
                 />
               )}
               <Advance />
+              {requiredData.includes(REQUIRED_DATA.REWORK_TIMES) && <ReworkSettings />}
             </>
           ) : (
             <EmptyContent

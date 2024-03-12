@@ -40,6 +40,7 @@ export enum REQUIRED_DATA {
   VELOCITY = 'Velocity',
   CYCLE_TIME = 'Cycle time',
   CLASSIFICATION = 'Classification',
+  REWORK_TIMES = 'Rework times',
   LEAD_TIME_FOR_CHANGES = 'Lead time for changes',
   DEPLOYMENT_FREQUENCY = 'Deployment frequency',
   CHANGE_FAILURE_RATE = 'Change failure rate',

@@ -49,6 +49,7 @@ export const REQUIRED_DATA_LIST = [
   'Velocity',
   'Cycle time',
   'Classification',
+  'Rework times',
   'Lead time for changes',
   'Deployment frequency',
   'Change failure rate',
@@ -58,6 +59,7 @@ export const ALL = 'All';
 export const VELOCITY = 'Velocity';
 export const CYCLE_TIME = 'Cycle time';
 export const CLASSIFICATION = 'Classification';
+export const REWORK_TIMES = 'Rework times';
 export const LEAD_TIME_FOR_CHANGES = 'Lead time for changes';
 export const DEPLOYMENT_FREQUENCY = 'Deployment frequency';
 export const CHANGE_FAILURE_RATE = 'Change failure rate';
@@ -246,6 +248,10 @@ export const IMPORTED_NEW_CONFIG_FIXTURE = {
         'Ready For Dev': 'Analysis',
       },
     ],
+  },
+  reworkTimesSettings: {
+    rework2State: null,
+    excludeStates: [],
   },
 };
 
@@ -701,6 +707,10 @@ export const BASIC_IMPORTED_OLD_CONFIG_FIXTURE = {
       orgId: 'Thoughtworks-Heartbeat',
     },
   ],
+  reworkTimesSettings: {
+    rework2State: null,
+    excludeStates: [],
+  },
 };
 
 export const ERROR_MESSAGE_TIME_DURATION = 4000;
@@ -743,3 +753,12 @@ export const FAKE_TOKEN = 'fake-token';
 export const FAKE_PIPELINE_TOKEN = 'bkua_mockTokenMockTokenMockTokenMockToken1234';
 
 export const ADVANCED_SETTINGS_TITLE = 'Advanced settings';
+
+export const REWORK_SETTINGS_TITLE = 'Rework times settings';
+export const REWORK_TO_WHICH_STATE = 'Rework to which state';
+export const REWORK_EXCLUDE_WHICH_STATE = 'Exclude which states (optional)';
+
+export const DEFAULT_REWORK_SETTINGS = {
+  rework2State: null,
+  excludeStates: [],
+};

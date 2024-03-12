@@ -17,8 +17,13 @@ import saveMetricsSettingReducer, {
   updatePipelineStep,
   updateTreatFlagCardAsBlock,
 } from '@src/context/Metrics/metricsSlice';
+import {
+  CLASSIFICATION_WARNING_MESSAGE,
+  DEFAULT_REWORK_SETTINGS,
+  NO_RESULT_DASH,
+  PIPELINE_SETTING_TYPES,
+} from '../fixtures';
 import { ASSIGNEE_FILTER_TYPES, CYCLE_TIME_SETTINGS_TYPES, MESSAGE } from '@src/constants/resources';
-import { CLASSIFICATION_WARNING_MESSAGE, NO_RESULT_DASH, PIPELINE_SETTING_TYPES } from '../fixtures';
 import { setupStore } from '../utils/setupStoreUtil';
 import { store } from '@src/store';
 
@@ -50,6 +55,7 @@ const initState = {
     importedDeployment: [],
     importedLeadTime: [],
     importedAdvancedSettings: null,
+    reworkTimesSettings: DEFAULT_REWORK_SETTINGS,
   },
   cycleTimeWarningMessage: null,
   classificationWarningMessage: null,
@@ -111,6 +117,7 @@ describe('saveMetricsSetting reducer', () => {
       importedDeployment: [],
       importedPipelineCrews: [],
       importedAdvancedSettings: null,
+      reworkTimesSettings: DEFAULT_REWORK_SETTINGS,
     });
   });
 
@@ -193,6 +200,7 @@ describe('saveMetricsSetting reducer', () => {
         storyPoint: '1',
         flag: '2',
       },
+      reworkTimesSettings: DEFAULT_REWORK_SETTINGS,
     };
     const savedMetricsSetting = saveMetricsSettingReducer(
       initState,
@@ -212,6 +220,7 @@ describe('saveMetricsSetting reducer', () => {
       importedDeployment: mockMetricsImportedData.deployment,
       importedLeadTime: mockMetricsImportedData.leadTime,
       importedAdvancedSettings: mockMetricsImportedData.advancedSettings,
+      reworkTimesSettings: mockMetricsImportedData.reworkTimesSettings,
     });
   });
 

@@ -9,6 +9,7 @@ export const config = {
     'Velocity',
     'Cycle time',
     'Classification',
+    'Rework times',
     'Lead time for changes',
     'Deployment frequency',
     'Change failure rate',
@@ -24,6 +25,10 @@ export const config = {
   pipelineTool: {
     type: 'BuildKite',
     token: process.env.E2E_TOKEN_BUILD_KITE as string,
+  },
+  reworkTimesSettings: {
+    excludeStates: [],
+    rework2State: null,
   },
   sourceControl: {
     type: 'GitHub',
@@ -125,6 +130,10 @@ export const modifiedConfig = {
   pipelineTool: {
     type: 'BuildKite',
     token: process.env.E2E_TOKEN_BUILD_KITE as string,
+  },
+  reworkTimesSettings: {
+    excludeStates: [],
+    rework2State: null,
   },
   sourceControl: {
     type: 'GitHub',

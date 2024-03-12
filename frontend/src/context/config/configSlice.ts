@@ -51,10 +51,11 @@ const getMetricsInfo = (metrics: string[]) => {
     DEPLOYMENT_FREQUENCY,
     CHANGE_FAILURE_RATE,
     MEAN_TIME_TO_RECOVERY,
+    REWORK_TIMES,
   } = REQUIRED_DATA;
   return {
     metrics: metrics.filter((metric) => (Object.values(REQUIRED_DATA) as string[]).includes(metric)),
-    shouldBoardShow: [VELOCITY, CYCLE_TIME, CLASSIFICATION].some((metric) => metrics.includes(metric)),
+    shouldBoardShow: [VELOCITY, CYCLE_TIME, CLASSIFICATION, REWORK_TIMES].some((metric) => metrics.includes(metric)),
     shouldPipelineToolShow: [
       LEAD_TIME_FOR_CHANGES,
       DEPLOYMENT_FREQUENCY,

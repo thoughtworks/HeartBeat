@@ -10,6 +10,7 @@ export const importProjectFromFile = {
     'Velocity',
     'Cycle time',
     'Classification',
+    'Rework times',
     'Lead time for changes',
     'Deployment frequency',
     'Change failure rate',

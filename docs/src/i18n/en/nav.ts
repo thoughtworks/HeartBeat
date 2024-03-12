@@ -78,6 +78,11 @@ export default [
 		key: 'designs/refinement-on-generate-report',
 	},
 	{
+		text: 'Optimize generate report',
+		slug: 'designs/optimize-generate-report',
+		key: 'designs/optimize-generate-report',
+	},
+	{
 		text: 'Sequence diagrams',
 		slug: 'designs/sequence-diagrams',
 		key: 'designs/sequence-diagrams',
@@ -160,6 +165,11 @@ export default [
 		text: 'Spike the logic of calculating card rework',
 		slug: 'spikes/tech-spikes-calculate-rework-of-board-card',
 		key: 'spikes/tech-spikes-calculate-rework-of-board-card',
+	},
+	{
+		text: 'Solution to optimize generate report',
+		slug: 'spikes/tech-spikes-export-all-metrics-button-polling-api-backend-change',
+		key: 'spikes/tech-spikes-export-all-metrics-button-polling-api-backend-change',
 	},
 
 	{ text: 'Biz', header: true, type: 'biz', key: 'Biz' },

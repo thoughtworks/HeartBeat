@@ -1,0 +1,203 @@
+---
+title: Optimize generate report
+description: solve issue about when one of the export button can not click but export metric button can click
+---
+
+# Context
+Considering to fix the issue about when one of the export button can not click but export metric button can click, and change logic about polling api in backend. we have to optimize generate report flow.
+
+# Design
+## C2 - Generate report - AS-IS
+
+### Sequence Diagram
+
+```plantuml
+@startuml report
+skin rose
+title C2 - Heartbeat - Generate Report - Transition
+participant Frontend
+participant Backend
+participant Jira
+participant Buildkite
+participant Github
+
+Frontend -> Backend: generate metrics for board related
+activate Backend
+Backend --> Frontend: response 202 with callback
+deactivate Backend
+
+group async process board related metrics
+    Backend -> Jira: get Jira raw data
+    activate Backend
+    activate Jira
+    Jira --> Backend: Jira raw 
+    deactivate Jira
+    Backend -> Backend: calculate metrics for velocity, cycle time and classification
+    Backend -> Backend: generate board report csv
+    deactivate Backend
+    note left
+        response.boardMetricsCompleted is true
+        board metrics are ready for display
+        board csv is ready for download
+    end note
+end
+
+Frontend -> Backend: generate metrics for pipeline,Source control(if required) related
+activate Backend
+Backend --> Frontend: response 202 with callback
+deactivate Backend
+
+group async process pipeline and sourcecontrol related metrics
+    Backend -> Buildkite: get Buildkite raw data
+    activate Backend
+    activate Buildkite
+    Buildkite --> Backend: Buildkite raw data
+    deactivate Buildkite
+    Backend -> Backend: calculate metrics for deployment frequency, \nchange failure rate and mean time to recovery
+    note left
+        pipeline metrics are ready for display
+    end note
+    opt if lead time for change required
+        Backend -> Github: get Github raw data
+        activate  Github
+        Github --> Backend: Github raw data
+        deactivate Github
+        Backend -> Backend: calculate metrics for lead time for change
+        note left
+            LTFC is ready for display
+        end note
+    end
+    Backend -> Backend: generate pipeline report csv with github data if required
+    note left
+        response.doraMetricsCompleted is true
+        pipeline report is ready for download
+    end note
+    deactivate Backend
+end
+
+loop until (response code is 201 and body.allMetricsReady==true) or (response code is 5xx) 
+    Frontend -> Backend: Polling the report
+    activate Backend
+    alt report is not ready
+        Backend --> Frontend: response 200
+    else report is ready
+        Backend --> Frontend: response 201 with report
+    else fail to process 
+        Backend --> Frontend: response 5xx
+    end
+    deactivate Backend
+end 
+@enduml
+```
+
+## C2 - Generate report - TO-BE
+### Sequence Diagram
+
+
+```plantuml
+@startuml report
+skin rose
+title C2 - Heartbeat - Generate Report - Transition
+participant Frontend
+participant Backend
+participant Jira
+participant Buildkite
+participant Github
+
+Frontend -> Backend: generate metrics for board or dora or both of them
+activate Backend
+Backend --> Frontend: response 202 with callback
+deactivate Backend
+
+
+Backend --> Backend: initialize reportStatus according to metricTypes list element
+activate Backend
+
+group async check if metricCsv can be generated 
+loop until (metricTypes list final element)
+    
+    alt metricsType is Board
+        group async process board related metrics
+            Backend -> Jira: get Jira raw data，put this thread into thread list
+            activate Backend
+            activate Jira
+            Jira --> Backend: Jira raw 
+            deactivate Jira
+            Backend -> Backend: calculate metrics for velocity, cycle time and classification
+            Backend -> Backend: generate board report csv
+            deactivate Backend
+            note left
+                update response.boardMetricsCompleted as true
+                board metrics are ready for display
+                board csv is ready for download
+            end note
+        end
+        
+        
+    else metricsType is Dora
+        group async process pipeline and sourcecontrol related metrics
+            Backend -> Buildkite: get Buildkite raw data, put this thread into thread list
+            activate Backend
+            activate Buildkite
+            Buildkite --> Backend: Buildkite raw data
+            deactivate Buildkite
+            Backend -> Backend: calculate metrics for deployment frequency, change failure rate and mean time to recovery
+            note left
+                pipeline metrics are ready for display
+            end note
+            opt if lead time for change required
+                Backend -> Github: get Github raw data
+                activate  Github
+                Github --> Backend: Github raw data
+                deactivate Github
+                Backend -> Backend: calculate metrics for lead time for change
+                note left
+                    LTFC is ready for display
+                end note
+            end
+            Backend -> Backend: generate pipeline report csv with github data if required
+            note left
+                update response.doraMetricsCompleted as true
+                pipeline report is ready for download
+            end note
+            deactivate Backend
+        end
+    end
+     
+     Backend --> Backend: wait for threadList element all execute completed
+     Backend --> Backend: generate metricCsv
+     note left
+     update allMetricsCompleted as true and write it on the file
+     end note
+end 
+    deactivate Backend
+end 
+
+loop until (response code is 201 and body.allMetricsCompleted==true) or (response code is 5xx) 
+    Frontend -> Backend: Polling the report
+    activate Backend
+    alt report is not ready
+        Backend --> Frontend: response 200
+    else report is ready
+        Backend --> Frontend: response 201 with report
+    else fail to process 
+        Backend --> Frontend: response 5xx
+    end
+    deactivate Backend
+end 
+@enduml
+```
+
+### API Design
+the request body of generate report api is the same as as-is, but will add one parameter in the request body.
+```
+URI: POST /reports
+Request payload:
+{
+   ...
+   "metricTypes": [
+        "string"
+      ]
+}
+```
+

@@ -11,32 +11,16 @@ public class JiraFeignClientDecoder implements ErrorDecoder {
 
 	@Override
 	public Exception decode(String methodKey, Response response) {
-		String errorMessage = "";
-		switch (methodKey) {
-			case "getJiraBoardConfiguration":
-				errorMessage = "Failed to get jira board configuration";
-				break;
-			case "getColumnStatusCategory":
-				errorMessage = "Failed to get column status category";
-				break;
-			case "getJiraCards":
-				errorMessage = "Failed to get jira cards";
-				break;
-			case "getJiraCardHistoryByCount":
-				errorMessage = "Failed to get jira card history by count";
-				break;
-			case "getTargetField":
-				errorMessage = "Failed to get target field";
-				break;
-			case "getBoard":
-				errorMessage = "Failed to get board";
-				break;
-			case "getProject":
-				errorMessage = "Failed to get project";
-				break;
-			default:
-				break;
-		}
+		String errorMessage = switch (methodKey) {
+			case "getJiraBoardConfiguration" -> "Failed to get jira board configuration";
+			case "getColumnStatusCategory" -> "Failed to get column status category";
+			case "getJiraCards" -> "Failed to get jira cards";
+			case "getJiraCardHistoryByCount" -> "Failed to get jira card history by count";
+			case "getTargetField" -> "Failed to get target field";
+			case "getBoard" -> "Failed to get board";
+			case "getProject" -> "Failed to get project";
+			default -> "Failed to get jira info";
+		};
 
 		log.error("Failed to get Jira info_response status: {}, method key: {}", response.status(), methodKey);
 		HttpStatus statusCode = HttpStatus.valueOf(response.status());

@@ -11,26 +11,14 @@ public class BuildKiteFeignClientDecoder implements ErrorDecoder {
 
 	@Override
 	public Exception decode(String methodKey, Response response) {
-		String errorMessage = "";
-		switch (methodKey) {
-			case "getTokenInfo":
-				errorMessage = "Failed to get token info";
-				break;
-			case "getBuildKiteOrganizationsInfo":
-				errorMessage = "Failed to get BuildKite OrganizationsInfo info";
-				break;
-			case "getPipelineInfo":
-				errorMessage = "Failed to get pipeline info";
-				break;
-			case "getPipelineSteps":
-				errorMessage = "Failed to get pipeline steps";
-				break;
-			case "getPipelineStepsInfo":
-				errorMessage = "Failed to get pipeline steps info";
-				break;
-			default:
-				break;
-		}
+		String errorMessage = switch (methodKey) {
+			case "getTokenInfo" -> "Failed to get token info";
+			case "getBuildKiteOrganizationsInfo" -> "Failed to get BuildKite OrganizationsInfo info";
+			case "getPipelineInfo" -> "Failed to get pipeline info";
+			case "getPipelineSteps" -> "Failed to get pipeline steps";
+			case "getPipelineStepsInfo" -> "Failed to get pipeline steps info";
+			default -> "Failed to get buildkite info";
+		};
 
 		log.error("Failed to get BuildKite info_response status: {}, method key: {}", response.status(), methodKey);
 		HttpStatus statusCode = HttpStatus.valueOf(response.status());

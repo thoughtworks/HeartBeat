@@ -156,6 +156,11 @@ export default [
 		slug: 'spikes/tech-spikes-github-graphql-api-about-replacing-existing-rest-api',
 		key: 'spikes/tech-spikes-github-graphql-api-about-replacing-existing-rest-api',
 	},
+	{
+		text: 'Spike the logic of calculating card rework',
+		slug: 'spikes/tech-spikes-calculate-rework-of-board-card',
+		key: 'spikes/tech-spikes-calculate-rework-of-board-card',
+	},
 
 	{ text: 'Biz', header: true, type: 'biz', key: 'Biz' },
 	{ text: 'Biz context', slug: 'biz/business-context', key: 'biz/business-context' },

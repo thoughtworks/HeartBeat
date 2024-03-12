@@ -1,6 +1,5 @@
 package heartbeat.client.decoder;
 
-import feign.FeignException;
 import feign.Response;
 import feign.codec.ErrorDecoder;
 import heartbeat.util.ExceptionUtil;
@@ -12,13 +11,30 @@ public class GitHubFeignClientDecoder implements ErrorDecoder {
 
 	@Override
 	public Exception decode(String methodKey, Response response) {
+		String errorMessage = "";
+		switch (methodKey) {
+			case "verifyToken":
+				errorMessage = "Failed to verify token";
+				break;
+			case "verifyCanReadTargetBranch":
+				errorMessage = "Failed to verify canRead target branch";
+				break;
+			case "getCommitInfo":
+				errorMessage = "Failed to get commit info";
+				break;
+			case "getPullRequestCommitInfo":
+				errorMessage = "Failed to get pull request commit info";
+				break;
+			case "getPullRequestListInfo":
+				errorMessage = "Failed to get pull request list info";
+				break;
+			default:
+				break;
+		}
+
 		log.error("Failed to get GitHub info_response status: {}, method key: {}", response.status(), methodKey);
 		HttpStatus statusCode = HttpStatus.valueOf(response.status());
-		FeignException exception = FeignException.errorStatus(methodKey, response);
-		String errorMessage = String.format("Failed to get GitHub info_status: %s, reason: %s", statusCode,
-				exception.getMessage());
 		return ExceptionUtil.handleCommonFeignClientException(statusCode, errorMessage);
-
 	}
 
 }

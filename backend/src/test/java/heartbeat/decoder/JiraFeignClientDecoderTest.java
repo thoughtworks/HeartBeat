@@ -85,4 +85,67 @@ class JiraFeignClientDecoderTest {
 		assertEquals(ServiceUnavailableException.class, exception.getClass());
 	}
 
+	@Test
+	void shouldDecodeExceptionErrorMessageWhenGetJiraBoardConfiguration() {
+		int statusCode = HttpStatus.NOT_FOUND.value();
+
+		Exception exception = decoder.decode("getJiraBoardConfiguration", responseMock.getMockResponse(statusCode));
+
+		assertEquals("Failed to get jira board configuration", exception.getMessage());
+	}
+
+	@Test
+	void shouldDecodeExceptionErrorMessageWhenGetColumnStatusCategory() {
+		int statusCode = HttpStatus.NOT_FOUND.value();
+
+		Exception exception = decoder.decode("getColumnStatusCategory", responseMock.getMockResponse(statusCode));
+
+		assertEquals("Failed to get column status category", exception.getMessage());
+	}
+
+	@Test
+	void shouldDecodeExceptionErrorMessageWhenCallGetJiraCards() {
+		int statusCode = HttpStatus.NOT_FOUND.value();
+
+		Exception exception = decoder.decode("getJiraCards", responseMock.getMockResponse(statusCode));
+
+		assertEquals("Failed to get jira cards", exception.getMessage());
+	}
+
+	@Test
+	void shouldDecodeExceptionErrorMessageWhenCallGetJiraCardHistoryByCount() {
+		int statusCode = HttpStatus.NOT_FOUND.value();
+
+		Exception exception = decoder.decode("getJiraCardHistoryByCount", responseMock.getMockResponse(statusCode));
+
+		assertEquals("Failed to get jira card history by count", exception.getMessage());
+	}
+
+	@Test
+	void shouldDecodeExceptionErrorMessageWhenCallGetGetTargetField() {
+		int statusCode = HttpStatus.NOT_FOUND.value();
+
+		Exception exception = decoder.decode("getTargetField", responseMock.getMockResponse(statusCode));
+
+		assertEquals("Failed to get target field", exception.getMessage());
+	}
+
+	@Test
+	void shouldDecodeExceptionErrorMessageWhenCallGetBoard() {
+		int statusCode = HttpStatus.NOT_FOUND.value();
+
+		Exception exception = decoder.decode("getBoard", responseMock.getMockResponse(statusCode));
+
+		assertEquals("Failed to get board", exception.getMessage());
+	}
+
+	@Test
+	void shouldDecodeExceptionErrorMessageWhenCallGetProject() {
+		int statusCode = HttpStatus.NOT_FOUND.value();
+
+		Exception exception = decoder.decode("getProject", responseMock.getMockResponse(statusCode));
+
+		assertEquals("Failed to get project", exception.getMessage());
+	}
+
 }

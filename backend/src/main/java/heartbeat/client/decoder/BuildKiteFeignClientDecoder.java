@@ -1,6 +1,5 @@
 package heartbeat.client.decoder;
 
-import feign.FeignException;
 import feign.Response;
 import feign.codec.ErrorDecoder;
 import heartbeat.util.ExceptionUtil;
@@ -12,12 +11,29 @@ public class BuildKiteFeignClientDecoder implements ErrorDecoder {
 
 	@Override
 	public Exception decode(String methodKey, Response response) {
+		String errorMessage = "";
+		switch (methodKey) {
+			case "getTokenInfo":
+				errorMessage = "Failed to get token info";
+				break;
+			case "getBuildKiteOrganizationsInfo":
+				errorMessage = "Failed to get BuildKite OrganizationsInfo info";
+				break;
+			case "getPipelineInfo":
+				errorMessage = "Failed to get pipeline info";
+				break;
+			case "getPipelineSteps":
+				errorMessage = "Failed to get pipeline steps";
+				break;
+			case "getPipelineStepsInfo":
+				errorMessage = "Failed to get pipeline steps info";
+				break;
+			default:
+				break;
+		}
+
 		log.error("Failed to get BuildKite info_response status: {}, method key: {}", response.status(), methodKey);
 		HttpStatus statusCode = HttpStatus.valueOf(response.status());
-		FeignException exception = FeignException.errorStatus(methodKey, response);
-		String errorMessage = String.format("Failed to get BuildKite info_status: %s, reason: %s", statusCode,
-				exception.getMessage());
-
 		return ExceptionUtil.handleCommonFeignClientException(statusCode, errorMessage);
 	}
 

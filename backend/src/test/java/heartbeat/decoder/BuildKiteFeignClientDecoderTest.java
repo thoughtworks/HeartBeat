@@ -85,4 +85,49 @@ class BuildKiteFeignClientDecoderTest {
 		assertTrue(exception.getMessage().contains("UnKnown Error"));
 	}
 
+	@Test
+	void shouldDecodeExceptionErrorMessageWhenCallGetTokenInfo() {
+		int statusCode = HttpStatus.NOT_FOUND.value();
+
+		Exception exception = decoder.decode("getTokenInfo", responseMock.getMockResponse(statusCode));
+
+		assertEquals("Failed to get token info", exception.getMessage());
+	}
+
+	@Test
+	void shouldDecodeExceptionErrorMessageWhenCallGetBuildKiteOrganizationsInfo() {
+		int statusCode = HttpStatus.NOT_FOUND.value();
+
+		Exception exception = decoder.decode("getBuildKiteOrganizationsInfo", responseMock.getMockResponse(statusCode));
+
+		assertEquals("Failed to get BuildKite OrganizationsInfo info", exception.getMessage());
+	}
+
+	@Test
+	void shouldDecodeExceptionErrorMessageWhenCallGetPipelineInfo() {
+		int statusCode = HttpStatus.NOT_FOUND.value();
+
+		Exception exception = decoder.decode("getPipelineInfo", responseMock.getMockResponse(statusCode));
+
+		assertEquals("Failed to get pipeline info", exception.getMessage());
+	}
+
+	@Test
+	void shouldDecodeExceptionErrorMessageWhenCallGetPipelineSteps() {
+		int statusCode = HttpStatus.NOT_FOUND.value();
+
+		Exception exception = decoder.decode("getPipelineSteps", responseMock.getMockResponse(statusCode));
+
+		assertEquals("Failed to get pipeline steps", exception.getMessage());
+	}
+
+	@Test
+	void shouldDecodeExceptionErrorMessageWhenCallGetPipelineStepsInfo() {
+		int statusCode = HttpStatus.NOT_FOUND.value();
+
+		Exception exception = decoder.decode("getPipelineStepsInfo", responseMock.getMockResponse(statusCode));
+
+		assertEquals("Failed to get pipeline steps info", exception.getMessage());
+	}
+
 }

@@ -95,4 +95,49 @@ class GitHubFeignClientDecoderTest {
 		assertEquals(PermissionDenyException.class, exception.getClass());
 	}
 
+	@Test
+	void shouldDecodeExceptionErrorMessageWhenCallVerifyToken() {
+		int statusCode = HttpStatus.NOT_FOUND.value();
+
+		Exception exception = decoder.decode("verifyToken", responseMock.getMockResponse(statusCode));
+
+		assertEquals("Failed to verify token", exception.getMessage());
+	}
+
+	@Test
+	void shouldDecodeExceptionErrorMessageWhenCallVerifyCanReadTargetBranch() {
+		int statusCode = HttpStatus.NOT_FOUND.value();
+
+		Exception exception = decoder.decode("verifyCanReadTargetBranch", responseMock.getMockResponse(statusCode));
+
+		assertEquals("Failed to verify canRead target branch", exception.getMessage());
+	}
+
+	@Test
+	void shouldDecodeExceptionErrorMessageWhenCallGetCommitInfo() {
+		int statusCode = HttpStatus.NOT_FOUND.value();
+
+		Exception exception = decoder.decode("getCommitInfo", responseMock.getMockResponse(statusCode));
+
+		assertEquals("Failed to get commit info", exception.getMessage());
+	}
+
+	@Test
+	void shouldDecodeExceptionErrorMessageWhenCallGetPullRequestCommitInfo() {
+		int statusCode = HttpStatus.NOT_FOUND.value();
+
+		Exception exception = decoder.decode("getPullRequestCommitInfo", responseMock.getMockResponse(statusCode));
+
+		assertEquals("Failed to get pull request commit info", exception.getMessage());
+	}
+
+	@Test
+	void shouldDecodeExceptionErrorMessageWhenCallGetPullRequestListInfo() {
+		int statusCode = HttpStatus.NOT_FOUND.value();
+
+		Exception exception = decoder.decode("getPullRequestListInfo", responseMock.getMockResponse(statusCode));
+
+		assertEquals("Failed to get pull request list info", exception.getMessage());
+	}
+
 }

@@ -1,4 +1,3 @@
-/* istanbul ignore file */
 import {
   ASSIGNEE_FILTER_TYPES,
   CYCLE_TIME_LIST,

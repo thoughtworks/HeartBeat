@@ -16,6 +16,25 @@ import saveMetricsSettingReducer, {
   updatePipelineSettings,
   updatePipelineStep,
   updateTreatFlagCardAsBlock,
+  updateAssigneeFilter,
+  resetMetricData,
+  savePipelineCrews,
+  setCycleTimeSettingsType,
+  updateShouldGetPipelineConfig,
+  updateShouldGetBoardConfig,
+  updateAdvancedSettings,
+  updateReworkTimesSettings,
+  selectShouldGetBoardConfig,
+  selectShouldGetPipelineConfig,
+  selectAdvancedSettings,
+  selectAssigneeFilter,
+  selectClassificationWarningMessage,
+  selectCycleTimeSettings,
+  selectCycleTimeWarningMessage,
+  selectMetricsContent,
+  selectRealDoneWarningMessage,
+  selectReworkTimesSettings,
+  selectTreatFlagCardAsBlock,
 } from '@src/context/Metrics/metricsSlice';
 import {
   CLASSIFICATION_WARNING_MESSAGE,
@@ -284,6 +303,74 @@ describe('saveMetricsSetting reducer', () => {
     expect(savedMetricsSetting.doneColumn).toEqual(['DONE']);
   });
 
+  it('should update metricsState given cycleTimeSettingsType is by status', () => {
+    const mockUpdateMetricsStateArguments = {
+      ...mockJiraResponse,
+      isProjectCreated: false,
+    };
+    const savedMetricsSetting = saveMetricsSettingReducer(
+      {
+        ...initState,
+        cycleTimeSettingsType: CYCLE_TIME_SETTINGS_TYPES.BY_STATUS,
+        importedData: {
+          ...initState.importedData,
+          importedCrews: ['User B', 'User C'],
+          importedClassification: ['issuetype'],
+          importedCycleTime: {
+            importedCycleTimeSettings: [{ DOING: 'Doing' }, { TESTING: 'Testing' }, { DONE: 'Done' }],
+            importedTreatFlagCardAsBlock: true,
+          },
+          importedDoneStatus: ['DONE'],
+        },
+      },
+      updateMetricsState(mockUpdateMetricsStateArguments),
+    );
+
+    expect(savedMetricsSetting.targetFields).toEqual([{ key: 'issuetype', name: 'Issue Type', flag: true }]);
+    expect(savedMetricsSetting.users).toEqual(['User B']);
+    expect(savedMetricsSetting.cycleTimeSettings).toEqual([
+      { column: 'Done', status: 'DONE', value: 'Done' },
+      { column: 'Done', status: 'CLOSED', value: NO_RESULT_DASH },
+      { column: 'Doing', status: 'ANALYSIS', value: NO_RESULT_DASH },
+      { column: 'Testing', status: 'TESTING', value: 'Testing' },
+    ]);
+    expect(savedMetricsSetting.doneColumn).toEqual(['DONE']);
+  });
+
+  it('should update metricsState given its value changed given isProjectCreated is false and selectedDoneColumns and cycleTimeSettingsType is byStatus', () => {
+    const mockUpdateMetricsStateArguments = {
+      ...mockJiraResponse,
+      isProjectCreated: false,
+    };
+    const savedMetricsSetting = saveMetricsSettingReducer(
+      {
+        ...initState,
+        cycleTimeSettingsType: CYCLE_TIME_SETTINGS_TYPES.BY_STATUS,
+        importedData: {
+          ...initState.importedData,
+          importedCrews: ['User B', 'User C'],
+          importedClassification: ['issuetype'],
+          importedCycleTime: {
+            importedCycleTimeSettings: [{ Done: 'Done' }, { Testing: 'mockOption' }],
+            importedTreatFlagCardAsBlock: true,
+          },
+          importedDoneStatus: ['DONE'],
+        },
+      },
+      updateMetricsState(mockUpdateMetricsStateArguments),
+    );
+
+    expect(savedMetricsSetting.targetFields).toEqual([{ key: 'issuetype', name: 'Issue Type', flag: true }]);
+    expect(savedMetricsSetting.users).toEqual(['User B']);
+    expect(savedMetricsSetting.cycleTimeSettings).toEqual([
+      { column: 'Done', status: 'DONE', value: NO_RESULT_DASH },
+      { column: 'Done', status: 'CLOSED', value: NO_RESULT_DASH },
+      { column: 'Doing', status: 'ANALYSIS', value: NO_RESULT_DASH },
+      { column: 'Testing', status: 'TESTING', value: NO_RESULT_DASH },
+    ]);
+    expect(savedMetricsSetting.doneColumn).toEqual([]);
+  });
+
   it('should update metricsState when its value changed given isProjectCreated is false and no selectedDoneColumns', () => {
     const mockUpdateMetricsStateArguments = {
       ...mockJiraResponse,
@@ -306,6 +393,31 @@ describe('saveMetricsSetting reducer', () => {
     );
 
     expect(savedMetricsSetting.doneColumn).toEqual([]);
+  });
+
+  it('should update metricsState given importedCycleTime.importedTreatFlagCardAsBlock is string true', () => {
+    const mockUpdateMetricsStateArguments = {
+      ...mockJiraResponse,
+      isProjectCreated: false,
+    };
+
+    const savedMetricsSetting = saveMetricsSettingReducer(
+      {
+        ...initState,
+        importedData: {
+          ...initState.importedData,
+          importedCycleTime: {
+            importedCycleTimeSettings: [{ Done: 'Review' }, { Testing: 'mockOption' }],
+            importedTreatFlagCardAsBlock: 'true' as unknown as boolean,
+          },
+          importedDoneStatus: ['DONE'],
+          importedAssigneeFilter: '',
+        },
+      },
+      updateMetricsState(mockUpdateMetricsStateArguments),
+    );
+
+    expect(savedMetricsSetting.importedData.importedCycleTime.importedTreatFlagCardAsBlock).toBeTruthy();
   });
 
   it('should update metricsState when its value changed given isProjectCreated is true', () => {
@@ -366,6 +478,21 @@ describe('saveMetricsSetting reducer', () => {
     expect(savedMetricsSetting.deploymentFrequencySettings).toEqual(addedDeploymentFrequencySettings);
   });
 
+  it('should delete deploymentFrequencySetting when delete deploymentFrequencySettings given id', () => {
+    const deploymentFrequencySettings = [{ id: 1, organization: '', pipelineName: '', step: '', branches: [] }];
+    const mockState = {
+      ...initState,
+      deploymentFrequencySettings,
+    };
+
+    const deleteADeploymentFrequencySettingResult = saveMetricsSettingReducer(
+      mockState,
+      deleteADeploymentFrequencySetting(1),
+    );
+
+    expect(deleteADeploymentFrequencySettingResult.deploymentFrequencySettings.length).toEqual(0);
+  });
+
   it('should add a deploymentFrequencySetting when handle addADeploymentFrequencySettings but initState dont have DeploymentFrequencySettings', () => {
     const addedDeploymentFrequencySettings = [{ id: 1, organization: '', pipelineName: '', step: '', branches: [] }];
 
@@ -413,6 +540,83 @@ describe('saveMetricsSetting reducer', () => {
     const savedMetricsSetting = saveMetricsSettingReducer(initState, updateTreatFlagCardAsBlock(false));
 
     expect(savedMetricsSetting.treatFlagCardAsBlock).toBe(false);
+  });
+
+  it('should update assignee filter given assignee filter string', () => {
+    const savedMetricsSetting = saveMetricsSettingReducer(initState, updateAssigneeFilter('filter'));
+
+    expect(savedMetricsSetting.assigneeFilter).toBe('filter');
+  });
+
+  it('should reset metric data given initial state', () => {
+    const resetMetricDataResult = saveMetricsSettingReducer(initState, resetMetricData());
+
+    expect(resetMetricDataResult.assigneeFilter).toBe('lastAssignee');
+  });
+
+  it('should pipeline crew given crews', () => {
+    const crews = ['crew1', 'crew2'];
+    const savedPipelineCrews = saveMetricsSettingReducer(initState, savePipelineCrews(crews));
+
+    expect(savedPipelineCrews.pipelineCrews).toBe(crews);
+  });
+
+  it('should set cycle time setting type', () => {
+    const setCycleTimeSettingsTypeResult = saveMetricsSettingReducer(
+      initState,
+      setCycleTimeSettingsType(CYCLE_TIME_SETTINGS_TYPES.BY_COLUMN),
+    );
+
+    expect(setCycleTimeSettingsTypeResult.cycleTimeSettingsType).toBe(CYCLE_TIME_SETTINGS_TYPES.BY_COLUMN);
+  });
+
+  it('should update get board config info', () => {
+    const updateShouldGetBoardConfigResult = saveMetricsSettingReducer(initState, updateShouldGetBoardConfig(true));
+
+    expect(updateShouldGetBoardConfigResult.shouldGetBoardConfig).toBe(true);
+  });
+
+  it('should update get pipeline config info', () => {
+    const updateShouldGetPipelineConfigResult = saveMetricsSettingReducer(
+      initState,
+      updateShouldGetPipelineConfig(true),
+    );
+
+    expect(updateShouldGetPipelineConfigResult.shouldGetPipeLineConfig).toBe(true);
+  });
+
+  it('should update advanced setting', () => {
+    const updateAdvancedSettingsResult = saveMetricsSettingReducer(
+      initState,
+      updateAdvancedSettings({ storyPoint: 'storyPoint', flag: 'flag' }),
+    );
+
+    expect(updateAdvancedSettingsResult.importedData.importedAdvancedSettings?.storyPoint).toBe('storyPoint');
+    expect(updateAdvancedSettingsResult.importedData.importedAdvancedSettings?.flag).toBe('flag');
+  });
+
+  it('should update rework time setting', () => {
+    const updateReworkTimesSettingsResult = saveMetricsSettingReducer(
+      initState,
+      updateReworkTimesSettings({ rework2State: 'rework2State', excludeStates: ['excludeStates'] }),
+    );
+
+    const rework = updateReworkTimesSettingsResult.importedData.reworkTimesSettings;
+    expect(rework.rework2State).toBe('rework2State');
+    expect(rework.excludeStates.length).toEqual(1);
+    expect(rework.excludeStates).toContain('excludeStates');
+  });
+
+  it('should update deployment frequency settings', () => {
+    const updateDeploymentFrequencySettingsResult = saveMetricsSettingReducer(
+      {
+        ...initState,
+        deploymentFrequencySettings: [{ id: 1, organization: '', pipelineName: '', step: '', branches: [] }],
+      },
+      updateDeploymentFrequencySettings({ updateId: 1, label: 'Steps', value: 'value' }),
+    );
+
+    expect(updateDeploymentFrequencySettingsResult.deploymentFrequencySettings[0].step).toEqual('value');
   });
 
   describe('updatePipelineSettings', () => {
@@ -468,6 +672,7 @@ describe('saveMetricsSetting reducer', () => {
             ],
           },
         },
+        pipelineCrews: ['crew1', 'crew2'],
         expectSetting: {
           deploymentFrequencySettings: [
             {
@@ -497,12 +702,92 @@ describe('saveMetricsSetting reducer', () => {
           ...initState,
           importedData: {
             ...initState.importedData,
+            importedDeployment: [
+              {
+                id: 0,
+                organization: 'mockOrganization1',
+                pipelineName: 'mockPipelineName1',
+                step: 'mockStep1',
+                branches: [],
+              },
+              {
+                id: 1,
+                organization: 'mockOrganization1',
+                pipelineName: 'mockPipelineName2',
+                step: 'mockStep2',
+                branches: [],
+              },
+              {
+                id: 2,
+                organization: 'mockOrganization2',
+                pipelineName: 'mockPipelineName3',
+                step: 'mockStep3',
+                branches: [],
+              },
+            ],
+            importedLeadTime: [
+              {
+                id: 0,
+                organization: 'mockOrganization1',
+                pipelineName: 'mockPipelineName1',
+                step: 'mockStep1',
+                branches: [],
+              },
+            ],
+          },
+        },
+        pipelineCrews: ['crew1', 'crew2'],
+        expectSetting: {
+          deploymentFrequencySettings: [
+            {
+              id: 0,
+              organization: 'mockOrganization1',
+              pipelineName: 'mockPipelineName1',
+              step: 'mockStep1',
+              branches: [],
+            },
+            { id: 1, organization: 'mockOrganization1', pipelineName: '', step: 'mockStep2', branches: [] },
+            { id: 2, organization: '', pipelineName: '', step: 'mockStep3', branches: [] },
+          ],
+          leadTimeForChanges: [
+            { id: 0, organization: 'mockOrganization1', pipelineName: 'mockPipelineName1', step: '', branches: [] },
+          ],
+          deploymentWarningMessage: [],
+          leadTimeWarningMessage: [{ id: 0, organization: null, pipelineName: null, step: null }],
+        },
+      },
+      {
+        isProjectCreated: true,
+        initialState: {
+          ...initState,
+          importedData: {
+            ...initState.importedData,
             importedDeployment: [],
             importedLeadTime: [],
           },
         },
+        pipelineCrews: [],
         expectSetting: {
           deploymentFrequencySettings: [{ id: 0, organization: '', pipelineName: '', step: '', branches: [] }],
+          leadTimeForChanges: [{ id: 0, organization: '', pipelineName: '', step: '', branches: [] }],
+          deploymentWarningMessage: [],
+          leadTimeWarningMessage: [],
+        },
+      },
+      {
+        isProjectCreated: true,
+        initialState: {
+          ...initState,
+          deploymentFrequencySettings: [{ id: 1, organization: '', pipelineName: '', step: '', branches: [] }],
+          importedData: {
+            ...initState.importedData,
+            importedDeployment: [],
+            importedLeadTime: [],
+          },
+        },
+        pipelineCrews: [],
+        expectSetting: {
+          deploymentFrequencySettings: [{ id: 1, organization: '', pipelineName: '', step: '', branches: [] }],
           leadTimeForChanges: [{ id: 0, organization: '', pipelineName: '', step: '', branches: [] }],
           deploymentWarningMessage: [],
           leadTimeWarningMessage: [],
@@ -512,11 +797,11 @@ describe('saveMetricsSetting reducer', () => {
 
     beforeEach(jest.clearAllMocks);
 
-    testCases.forEach(({ isProjectCreated, expectSetting, initialState }) => {
+    testCases.forEach(({ isProjectCreated, initialState, pipelineCrews, expectSetting }) => {
       it(`should update pipeline settings When call updatePipelineSettings given isProjectCreated ${isProjectCreated}`, () => {
         const savedMetricsSetting = saveMetricsSettingReducer(
           initialState,
-          updatePipelineSettings({ pipelineList: mockPipelineList, isProjectCreated }),
+          updatePipelineSettings({ pipelineList: mockPipelineList, isProjectCreated, pipelineCrews }),
         );
 
         expect(savedMetricsSetting.deploymentFrequencySettings).toEqual(expectSetting.deploymentFrequencySettings);
@@ -527,17 +812,47 @@ describe('saveMetricsSetting reducer', () => {
 
   describe('updatePipelineSteps', () => {
     const mockImportedDeployment = [
-      { id: 0, organization: 'mockOrganization1', pipelineName: 'mockPipelineName1', step: 'mockStep1', branches: [] },
-      { id: 1, organization: 'mockOrganization1', pipelineName: 'mockPipelineName2', step: 'mockStep2', branches: [] },
-      { id: 2, organization: 'mockOrganization2', pipelineName: 'mockPipelineName3', step: 'mockStep3', branches: [] },
+      {
+        id: 0,
+        organization: 'mockOrganization1',
+        pipelineName: 'mockPipelineName1',
+        step: 'mockStep1',
+        branches: ['branch1'],
+      },
+      {
+        id: 1,
+        organization: 'mockOrganization1',
+        pipelineName: 'mockPipelineName2',
+        step: 'mockStep2',
+        branches: ['branch1'],
+      },
+      {
+        id: 2,
+        organization: 'mockOrganization2',
+        pipelineName: 'mockPipelineName3',
+        step: 'mockStep3',
+        branches: ['branch1'],
+      },
     ];
     const mockImportedLeadTime = [
-      { id: 0, organization: 'mockOrganization1', pipelineName: 'mockPipelineName1', step: 'mockStep1', branches: [] },
+      {
+        id: 0,
+        organization: 'mockOrganization1',
+        pipelineName: 'mockPipelineName1',
+        step: 'mockStep1',
+        branches: ['branch1'],
+      },
     ];
     const mockInitState = {
       ...initState,
       deploymentFrequencySettings: [
-        { id: 0, organization: 'mockOrganization1', pipelineName: 'mockPipelineName1', step: '', branches: [] },
+        {
+          id: 0,
+          organization: 'mockOrganization1',
+          pipelineName: 'mockPipelineName1',
+          step: '',
+          branches: ['branch1'],
+        },
         { id: 1, organization: 'mockOrganization1', pipelineName: 'mockPipelineName2', step: '', branches: [] },
       ],
       leadTimeForChanges: [
@@ -551,6 +866,7 @@ describe('saveMetricsSetting reducer', () => {
       ],
       importedData: {
         ...initState.importedData,
+        importedPipelineCrews: ['crew1'],
         importedDeployment: mockImportedDeployment,
         importedLeadTime: mockImportedLeadTime,
       },
@@ -565,6 +881,8 @@ describe('saveMetricsSetting reducer', () => {
       {
         id: 0,
         steps: mockSteps,
+        pipelineCrews: ['crew1'],
+        branches: [],
         type: PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE,
         expectedSettings: [
           {
@@ -584,10 +902,24 @@ describe('saveMetricsSetting reducer', () => {
       {
         id: 1,
         steps: mockSteps,
+        pipelineCrews: ['crew1'],
+        branches: ['branch1'],
         type: PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE,
         expectedSettings: [
-          { id: 0, organization: 'mockOrganization1', pipelineName: 'mockPipelineName1', step: '', branches: [] },
-          { id: 1, organization: 'mockOrganization1', pipelineName: 'mockPipelineName2', step: '', branches: [] },
+          {
+            id: 0,
+            organization: 'mockOrganization1',
+            pipelineName: 'mockPipelineName1',
+            step: '',
+            branches: ['branch1'],
+          },
+          {
+            id: 1,
+            organization: 'mockOrganization1',
+            pipelineName: 'mockPipelineName2',
+            step: '',
+            branches: ['branch1'],
+          },
         ],
         expectedWarning: [
           { id: 0, organization: null, pipelineName: null, step: null },
@@ -599,9 +931,61 @@ describe('saveMetricsSetting reducer', () => {
           },
         ],
       },
+      {
+        id: 10,
+        steps: mockSteps,
+        pipelineCrews: ['crew1'],
+        branches: ['branch1'],
+        type: PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE,
+        expectedSettings: [
+          {
+            id: 0,
+            organization: 'mockOrganization1',
+            pipelineName: 'mockPipelineName1',
+            step: '',
+            branches: ['branch1'],
+          },
+          { id: 1, organization: 'mockOrganization1', pipelineName: 'mockPipelineName2', step: '', branches: [] },
+        ],
+        expectedWarning: [
+          { id: 0, organization: null, pipelineName: null, step: null },
+          {
+            id: 1,
+            organization: null,
+            pipelineName: null,
+            step: null,
+          },
+        ],
+      },
+      {
+        id: 11,
+        steps: mockSteps,
+        pipelineCrews: ['crew1'],
+        branches: ['branch1'],
+        type: PIPELINE_SETTING_TYPES.DEPLOYMENT_FREQUENCY_SETTINGS_TYPE,
+        expectedSettings: [
+          {
+            id: 0,
+            organization: 'mockOrganization1',
+            pipelineName: 'mockPipelineName1',
+            step: '',
+            branches: ['branch1'],
+          },
+          { id: 1, organization: 'mockOrganization1', pipelineName: 'mockPipelineName2', step: '', branches: [] },
+        ],
+        expectedWarning: [
+          { id: 0, organization: null, pipelineName: null, step: null },
+          {
+            id: 1,
+            organization: null,
+            pipelineName: null,
+            step: null,
+          },
+        ],
+      },
     ];
 
-    testSettingsCases.forEach(({ id, type, steps, expectedSettings, expectedWarning }) => {
+    testSettingsCases.forEach(({ id, type, steps, pipelineCrews, branches, expectedSettings, expectedWarning }) => {
       const settingsKey = 'deploymentFrequencySettings';
       const warningKey = 'deploymentWarningMessage';
 
@@ -612,6 +996,8 @@ describe('saveMetricsSetting reducer', () => {
             steps: steps,
             id: id,
             type: type,
+            pipelineCrews: pipelineCrews,
+            branches: branches,
           }),
         );
 
@@ -954,6 +1340,22 @@ describe('saveMetricsSetting reducer', () => {
     it('should return organization warning message given its id and type', () => {
       expect(selectOrganizationWarningMessage(store.getState(), 0)).toEqual(ORGANIZATION_WARNING_MESSAGE);
       expect(selectOrganizationWarningMessage(store.getState(), 1)).toBeNull();
+    });
+
+    it('should return status of initial state', () => {
+      expect(selectShouldGetBoardConfig(store.getState())).toBeFalsy();
+      expect(selectShouldGetPipelineConfig(store.getState())).toBeFalsy();
+      expect(selectDeploymentFrequencySettings(store.getState()).length).toBeGreaterThan(1);
+      expect(selectReworkTimesSettings(store.getState())).toStrictEqual({ excludeStates: [], rework2State: null });
+      expect(selectCycleTimeSettings(store.getState())).toEqual([]);
+      expect(selectMetricsContent(store.getState()).assigneeFilter).toEqual('lastAssignee');
+      expect(selectAdvancedSettings(store.getState())).toEqual(null);
+      expect(selectTreatFlagCardAsBlock(store.getState())).toBeTruthy();
+      expect(selectAssigneeFilter(store.getState())).toEqual('lastAssignee');
+      expect(selectCycleTimeWarningMessage(store.getState())).toEqual(null);
+      expect(selectClassificationWarningMessage(store.getState())).toEqual(null);
+      expect(selectRealDoneWarningMessage(store.getState())).toEqual(null);
+      expect(selectTreatFlagCardAsBlock(store.getState())).toBeTruthy();
     });
 
     it('should return pipelineName warning message given its id and type', () => {

@@ -9,7 +9,7 @@ export const AdvancedTitleContainer = styled.div({
 
 export const AdvancedContainer = styled('div')({
   display: 'flex',
-  margin: '1.75rem 0 0.375rem',
+  margin: '1rem 0 0.375rem',
 });
 
 export const AdvancedForm = styled('form')({

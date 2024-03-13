@@ -116,8 +116,8 @@ const MetricsStep = () => {
                   label={'Distinguished By'}
                 />
               )}
-              <Advance />
               {requiredData.includes(REQUIRED_DATA.REWORK_TIMES) && <ReworkSettings />}
+              <Advance />
             </>
           ) : (
             <EmptyContent

@@ -147,6 +147,16 @@ export const CYCLE_TIME_LIST = [
   METRICS_CONSTANTS.doneValue,
 ];
 
+export const REWORK_TIME_LIST = [
+  METRICS_CONSTANTS.todoValue,
+  METRICS_CONSTANTS.analysisValue,
+  METRICS_CONSTANTS.inDevValue,
+  METRICS_CONSTANTS.blockValue,
+  METRICS_CONSTANTS.waitingValue,
+  METRICS_CONSTANTS.testingValue,
+  METRICS_CONSTANTS.reviewValue,
+];
+
 export const TOKEN_HELPER_TEXT = {
   RequiredTokenText: 'Token is required!',
   InvalidTokenText: 'Token is invalid!',

@@ -8,7 +8,7 @@ import { rest } from 'msw';
 import {
   CLASSIFICATION_SETTING,
   CREWS_SETTING,
-  CYCLE_TIME_SETTINGS,
+  BOARD_MAPPING,
   CYCLE_TIME_SETTINGS_SECTION,
   DEPLOYMENT_FREQUENCY_SETTINGS,
   LIST_OPEN,
@@ -77,7 +77,7 @@ describe('MetricsStep', () => {
     setup();
 
     expect(screen.getByText(CREWS_SETTING)).toBeInTheDocument();
-    expect(screen.queryByText(CYCLE_TIME_SETTINGS)).toBeInTheDocument();
+    expect(screen.queryByText(BOARD_MAPPING)).toBeInTheDocument();
     expect(screen.queryByText(CLASSIFICATION_SETTING)).not.toBeInTheDocument();
     expect(screen.getByText(REAL_DONE)).toBeInTheDocument();
   });
@@ -88,7 +88,7 @@ describe('MetricsStep', () => {
     setup();
 
     expect(screen.getByText(CREWS_SETTING)).toBeInTheDocument();
-    expect(screen.queryByText(CYCLE_TIME_SETTINGS)).toBeInTheDocument();
+    expect(screen.queryByText(BOARD_MAPPING)).toBeInTheDocument();
     expect(screen.queryByText(CLASSIFICATION_SETTING)).not.toBeInTheDocument();
     expect(screen.queryByText(REAL_DONE)).not.toBeInTheDocument();
   });
@@ -97,7 +97,7 @@ describe('MetricsStep', () => {
     await store.dispatch(updateMetrics([REQUIRED_DATA_LIST[2]]));
     setup();
 
-    expect(screen.getByText(CYCLE_TIME_SETTINGS)).toBeInTheDocument();
+    expect(screen.getByText(BOARD_MAPPING)).toBeInTheDocument();
   });
 
   it('should hide Real Done when no done column in cycleTime settings', async () => {
@@ -324,7 +324,7 @@ describe('MetricsStep', () => {
       await waitFor(() => {
         expect(screen.getByText(/crew settings/i)).toBeInTheDocument();
       });
-      expect(screen.getByText(/cycle time settings/i)).toBeInTheDocument();
+      expect(screen.getByText(/board mapping/i)).toBeInTheDocument();
     });
 
     it('should show retry button when call get info timeout', async () => {

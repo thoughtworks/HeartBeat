@@ -13,6 +13,7 @@ type Props = {
   testId?: string;
   isBoardCrews?: boolean;
   ariaLabel?: string;
+  disabled?: boolean;
 };
 const MultiAutoComplete = ({
   optionList,
@@ -24,6 +25,7 @@ const MultiAutoComplete = ({
   testId,
   isBoardCrews = true,
   ariaLabel = '',
+  disabled = false,
 }: Props) => {
   const filter = createFilterOptions();
 
@@ -31,6 +33,7 @@ const MultiAutoComplete = ({
     <StyledAutocompleted
       aria-label={ariaLabel}
       multiple
+      disabled={disabled}
       data-testid={testId}
       options={optionList}
       disableCloseOnSelect

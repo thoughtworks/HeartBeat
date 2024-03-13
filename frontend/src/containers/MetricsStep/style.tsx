@@ -48,3 +48,9 @@ export const StyledRetryButton = styled(Link)({
   textDecoration: 'none',
   cursor: 'pointer',
 });
+
+export const StyledLink = styled(Link)({
+  alignItems: 'center',
+  display: 'flex',
+  gap: '0.25rem',
+});

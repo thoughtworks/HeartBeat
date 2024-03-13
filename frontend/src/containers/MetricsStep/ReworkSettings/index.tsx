@@ -1,10 +1,11 @@
 import { selectReworkTimesSettings, updateReworkTimesSettings } from '@src/context/Metrics/metricsSlice';
+import { CYCLE_TIME_LIST, METRICS_CONSTANTS, REWORK_TIME_LIST } from '@src/constants/resources';
 import { MetricsSettingTitle } from '@src/components/Common/MetricsSettingTitle';
-import { ReworkHeaderWrapper, ReworkSettingsWrapper, StyledLink } from './style';
 import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined';
 import MultiAutoComplete from '@src/components/Common/MultiAutoComplete';
+import { ReworkHeaderWrapper, ReworkSettingsWrapper } from './style';
+import { StyledLink } from '@src/containers/MetricsStep/style';
 import { useAppDispatch, useAppSelector } from '@src/hooks';
-import { CYCLE_TIME_LIST } from '@src/constants/resources';
 import { SingleSelection } from './SingleSelection';
 import React from 'react';
 
@@ -16,6 +17,13 @@ function ReworkSettings() {
 
   const isAllSelected =
     CYCLE_TIME_LIST.length > 0 && reworkTimesSettings.excludeStates.length === CYCLE_TIME_LIST.length;
+
+  const MultiOptions = reworkTimesSettings.rework2State
+    ? [
+        ...REWORK_TIME_LIST.slice(REWORK_TIME_LIST.indexOf(reworkTimesSettings.rework2State as string) + 1),
+        METRICS_CONSTANTS.doneValue,
+      ]
+    : [];
 
   const handleReworkSettingsChange = (_: React.SyntheticEvent, value: string[]) => {
     let selectValue = value;
@@ -36,17 +44,18 @@ function ReworkSettings() {
       </ReworkHeaderWrapper>
       <ReworkSettingsWrapper>
         <SingleSelection
-          options={CYCLE_TIME_LIST}
+          options={REWORK_TIME_LIST}
           label={'Rework to which state'}
           value={reworkTimesSettings.rework2State}
           onValueChange={(newValue: string) =>
-            dispatch(updateReworkTimesSettings({ ...reworkTimesSettings, rework2State: newValue }))
+            dispatch(updateReworkTimesSettings({ excludeStates: [], rework2State: newValue }))
           }
         />
         <MultiAutoComplete
           testId='rework-settings-exclude-selection'
           ariaLabel='Exclude which states (optional)'
-          optionList={CYCLE_TIME_LIST}
+          disabled={!reworkTimesSettings.rework2State}
+          optionList={MultiOptions}
           isError={false}
           isSelectAll={isAllSelected}
           onChangeHandler={handleReworkSettingsChange}

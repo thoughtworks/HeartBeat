@@ -22,7 +22,7 @@ import {
   getJiraBoardToken,
   getRealDoneStatus,
 } from '@src/utils/util';
-import { BoardReportRequestDTO, ReportRequestDTO } from '@src/clients/report/dto/request';
+import { IBasicReportRequestDTO, ReportRequestDTO } from '@src/clients/report/dto/request';
 import { ReportTitle } from '@src/components/Common/ReportGrid/ReportTitle';
 import { selectMetricsContent } from '@src/context/Metrics/metricsSlice';
 import { ReportResponseDTO } from '@src/clients/report/dto/response';
@@ -76,7 +76,7 @@ const BoardMetrics = ({
     .map((metric) => BOARD_METRICS_MAPPING[metric])
     .every((metric) => boardReport?.[metric] ?? false);
 
-  const getBoardReportRequestBody = (): BoardReportRequestDTO => {
+  const getBoardReportRequestBody = (): IBasicReportRequestDTO => {
     return {
       metrics: boardMetrics,
       startTime: dayjs(startDate).valueOf().toString(),

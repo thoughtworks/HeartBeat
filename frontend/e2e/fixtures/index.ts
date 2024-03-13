@@ -6,3 +6,4 @@ export const CONFIG_STEP_SAVING_FILENAME = 'config-step.json';
 export const METRICS_STEP_SAVING_FILENAME = 'metrics-step.json';
 export const E2E_EXPECT_LOCAL_TIMEOUT = 30 * 3 * 1000;
 export const E2E_EXPECT_CI_TIMEOUT = 30 * 1000;
+export const E2E_OVERALL_TIMEOUT = 60 * 1000;

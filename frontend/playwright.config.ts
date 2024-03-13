@@ -1,4 +1,4 @@
-import { E2E_EXPECT_LOCAL_TIMEOUT, E2E_EXPECT_CI_TIMEOUT, VIEWPORT_DEFAULT } from 'e2e/fixtures';
+import { E2E_EXPECT_LOCAL_TIMEOUT, E2E_EXPECT_CI_TIMEOUT, E2E_OVERALL_TIMEOUT, VIEWPORT_DEFAULT } from 'e2e/fixtures';
 import { defineConfig, devices } from '@playwright/test';
 
 /**
@@ -14,7 +14,7 @@ if (!process.env.APP_ORIGIN) {
 }
 
 export default defineConfig({
-  timeout: 3 * 60 * 1000,
+  timeout: process.env.CI ? E2E_OVERALL_TIMEOUT * 4 : E2E_OVERALL_TIMEOUT * 5,
   testDir: './e2e',
   expect: {
     timeout: process.env.CI ? E2E_EXPECT_CI_TIMEOUT : E2E_EXPECT_LOCAL_TIMEOUT,

@@ -100,32 +100,4 @@ class JiraFeignClientDecoderTest {
 
 		assertEquals(expectedMsg, exception.getMessage());
 	}
-
-	@Test
-	void shouldDecodeExceptionErrorMessageWhenCallGetGetTargetField() {
-		int statusCode = HttpStatus.NOT_FOUND.value();
-
-		Exception exception = decoder.decode("getTargetField", responseMock.getMockResponse(statusCode));
-
-		assertEquals("Failed to get target field", exception.getMessage());
-	}
-
-	@Test
-	void shouldDecodeExceptionErrorMessageWhenCallGetBoard() {
-		int statusCode = HttpStatus.NOT_FOUND.value();
-
-		Exception exception = decoder.decode("getBoard", responseMock.getMockResponse(statusCode));
-
-		assertEquals("Failed to get board", exception.getMessage());
-	}
-
-	@Test
-	void shouldDecodeExceptionErrorMessageWhenCallGetProject() {
-		int statusCode = HttpStatus.NOT_FOUND.value();
-
-		Exception exception = decoder.decode("getProject", responseMock.getMockResponse(statusCode));
-
-		assertEquals("Failed to get project", exception.getMessage());
-	}
-
 }

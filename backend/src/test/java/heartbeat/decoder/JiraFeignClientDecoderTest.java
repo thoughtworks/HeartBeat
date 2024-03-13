@@ -12,6 +12,8 @@ import heartbeat.exception.UnauthorizedException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 
@@ -28,7 +30,7 @@ class JiraFeignClientDecoderTest {
 	}
 
 	@Test
-	void testDecode_UnauthorizedException() {
+	void testDecodeUnauthorizedException() {
 		int statusCode = HttpStatus.UNAUTHORIZED.value();
 		Response response = responseMock.getMockResponse(statusCode);
 
@@ -38,7 +40,7 @@ class JiraFeignClientDecoderTest {
 	}
 
 	@Test
-	void testDecode_NotFoundException() {
+	void testDecodeNotFoundException() {
 		int statusCode = HttpStatus.NOT_FOUND.value();
 
 		Exception exception = decoder.decode("methodKey", responseMock.getMockResponse(statusCode));
@@ -47,7 +49,7 @@ class JiraFeignClientDecoderTest {
 	}
 
 	@Test
-	void testDecode_4xxRequestFailedException() {
+	void testDecode4xxRequestFailedException() {
 		int statusCode = HttpStatus.METHOD_NOT_ALLOWED.value();
 
 		Exception exception = decoder.decode("methodKey", responseMock.getMockResponse(statusCode));
@@ -57,7 +59,7 @@ class JiraFeignClientDecoderTest {
 	}
 
 	@Test
-	void testDecode_5xxRequestFailedException() {
+	void testDecode5xxRequestFailedException() {
 		int statusCode = HttpStatus.BAD_GATEWAY.value();
 
 		Exception exception = decoder.decode("methodKey", responseMock.getMockResponse(statusCode));
@@ -67,7 +69,7 @@ class JiraFeignClientDecoderTest {
 	}
 
 	@Test
-	void testDecode_UnKnownException() {
+	void testDecodeUnKnownException() {
 		int statusCode = HttpStatus.SEE_OTHER.value();
 
 		Exception exception = decoder.decode("methodKey", responseMock.getMockResponse(statusCode));
@@ -77,7 +79,7 @@ class JiraFeignClientDecoderTest {
 	}
 
 	@Test
-	void testDecode_HBTimeoutException() {
+	void testDecodeTimeoutException() {
 		int statusCode = HttpStatus.SERVICE_UNAVAILABLE.value();
 
 		Exception exception = decoder.decode("methodKey", responseMock.getMockResponse(statusCode));
@@ -85,40 +87,18 @@ class JiraFeignClientDecoderTest {
 		assertEquals(ServiceUnavailableException.class, exception.getClass());
 	}
 
-	@Test
-	void shouldDecodeExceptionErrorMessageWhenGetJiraBoardConfiguration() {
+	@ParameterizedTest
+	@CsvSource({ "getJiraBoardConfiguration,Failed to get jira board configuration",
+			"getColumnStatusCategory,Failed to get column status category", "getJiraCards,Failed to get jira cards",
+			"getJiraCardHistoryByCount,Failed to get jira card history by count",
+			"getTargetField,Failed to get target field", "getBoard,Failed to get board",
+			"getProject,Failed to get project" })
+	void shouldDecodeExceptionErrorMessage(String methodKey, String expectedMsg) {
 		int statusCode = HttpStatus.NOT_FOUND.value();
 
-		Exception exception = decoder.decode("getJiraBoardConfiguration", responseMock.getMockResponse(statusCode));
+		Exception exception = decoder.decode(methodKey, responseMock.getMockResponse(statusCode));
 
-		assertEquals("Failed to get jira board configuration", exception.getMessage());
-	}
-
-	@Test
-	void shouldDecodeExceptionErrorMessageWhenGetColumnStatusCategory() {
-		int statusCode = HttpStatus.NOT_FOUND.value();
-
-		Exception exception = decoder.decode("getColumnStatusCategory", responseMock.getMockResponse(statusCode));
-
-		assertEquals("Failed to get column status category", exception.getMessage());
-	}
-
-	@Test
-	void shouldDecodeExceptionErrorMessageWhenCallGetJiraCards() {
-		int statusCode = HttpStatus.NOT_FOUND.value();
-
-		Exception exception = decoder.decode("getJiraCards", responseMock.getMockResponse(statusCode));
-
-		assertEquals("Failed to get jira cards", exception.getMessage());
-	}
-
-	@Test
-	void shouldDecodeExceptionErrorMessageWhenCallGetJiraCardHistoryByCount() {
-		int statusCode = HttpStatus.NOT_FOUND.value();
-
-		Exception exception = decoder.decode("getJiraCardHistoryByCount", responseMock.getMockResponse(statusCode));
-
-		assertEquals("Failed to get jira card history by count", exception.getMessage());
+		assertEquals(expectedMsg, exception.getMessage());
 	}
 
 	@Test

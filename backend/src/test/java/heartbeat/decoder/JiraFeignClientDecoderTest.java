@@ -100,4 +100,5 @@ class JiraFeignClientDecoderTest {
 
 		assertEquals(expectedMsg, exception.getMessage());
 	}
+
 }

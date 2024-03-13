@@ -20,7 +20,7 @@ function ReworkSettings() {
 
   const MultiOptions = reworkTimesSettings.rework2State
     ? [
-        ...REWORK_TIME_LIST.slice(REWORK_TIME_LIST.indexOf(reworkTimesSettings.rework2State as string) + 1),
+        ...REWORK_TIME_LIST.slice(REWORK_TIME_LIST.indexOf(reworkTimesSettings.rework2State) + 1),
         METRICS_CONSTANTS.doneValue,
       ]
     : [];

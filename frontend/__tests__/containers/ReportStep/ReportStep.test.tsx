@@ -348,7 +348,7 @@ describe('Report Step', () => {
 
   describe('export board data', () => {
     it('should not show export board button when not selecting board metrics', () => {
-      const { queryByText } = setup([REQUIRED_DATA_LIST[4]]);
+      const { queryByText } = setup([REQUIRED_DATA_LIST[5]]);
 
       const exportPipelineButton = queryByText(EXPORT_BOARD_DATA);
 

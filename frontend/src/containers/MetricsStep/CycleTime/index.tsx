@@ -15,7 +15,7 @@ export const CycleTime = () => {
   return (
     <div aria-label='Cycle time settings section'>
       <TitleAndTooltipContainer>
-        <MetricsSettingTitle title={'Board mappings'} />
+        <MetricsSettingTitle title={'Board mapping'} />
         <TooltipContainer aria-label='tooltip' data-test-id={'tooltip'}>
           <StyledTooltip arrow title={TIPS.CYCLE_TIME}>
             <IconButton aria-label='info'>

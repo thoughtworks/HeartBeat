@@ -1,10 +1,10 @@
 import { ContextProvider } from '@src/hooks/useMetricsStepValidationCheckContext';
-import { InternalServerException } from '@src/exceptions/InternalServerException';
 import { addNotification } from '@src/context/notification/NotificationSlice';
-import { NotFoundException } from '@src/exceptions/NotFoundException';
+import { InternalServerError } from '@src/errors/InternalServerError';
 import { useExportCsvEffect } from '@src/hooks/useExportCsvEffect';
 import { MOCK_EXPORT_CSV_REQUEST_PARAMS } from '../fixtures';
 import { csvClient } from '@src/clients/report/CSVClient';
+import { NotFoundError } from '@src/errors/NotFoundError';
 import { act, renderHook } from '@testing-library/react';
 import { setupStore } from '@test/utils/setupStoreUtil';
 import { Provider } from 'react-redux';
@@ -32,7 +32,7 @@ describe('use export csv effect', () => {
 
   it('should call addNotification when export csv response status 500', async () => {
     csvClient.exportCSVData = jest.fn().mockImplementation(() => {
-      throw new InternalServerException('error message', HttpStatusCode.InternalServerError, 'fake description');
+      throw new InternalServerError('error message', HttpStatusCode.InternalServerError, 'fake description');
     });
     const { result } = setup();
 
@@ -48,7 +48,7 @@ describe('use export csv effect', () => {
 
   it('should set isExpired true when export csv response status 404', async () => {
     csvClient.exportCSVData = jest.fn().mockImplementation(() => {
-      throw new NotFoundException('error message', HttpStatusCode.NotFound, 'fake description');
+      throw new NotFoundError('error message', HttpStatusCode.NotFound, 'fake description');
     });
     const { result } = setup();
 

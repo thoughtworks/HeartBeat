@@ -1,8 +1,8 @@
 import { SourceControlInfoRequestDTO, SourceControlVerifyRequestDTO } from '@src/clients/sourceControl/dto/request';
 import { SOURCE_CONTROL_VERIFY_ERROR_CASE_TEXT_MAPPING, UNKNOWN_ERROR_TITLE } from '@src/constants/resources';
-import { IHeartBeatException } from '@src/exceptions/ExceptionType';
-import { isHeartBeatException } from '@src/exceptions';
+import { IHeartBeatError } from '@src/errors/ErrorType';
 import { HttpClient } from '@src/clients/HttpClient';
+import { isHeartBeatException } from '@src/errors';
 
 export interface SourceControlResult {
   code?: number | string;
@@ -26,7 +26,7 @@ export class SourceControlClient extends HttpClient {
       setIsVerifyTimeOut(false);
     } catch (e) {
       if (isHeartBeatException(e)) {
-        const exception = e as IHeartBeatException;
+        const exception = e as IHeartBeatError;
         result.code = exception.code;
         result.errorTitle = SOURCE_CONTROL_VERIFY_ERROR_CASE_TEXT_MAPPING[`${exception.code}`] || UNKNOWN_ERROR_TITLE;
       }
@@ -49,7 +49,7 @@ export class SourceControlClient extends HttpClient {
       result.code = response.status;
     } catch (e) {
       if (isHeartBeatException(e)) {
-        const exception = e as IHeartBeatException;
+        const exception = e as IHeartBeatError;
         result.code = exception.code;
         result.errorTitle = SOURCE_CONTROL_VERIFY_ERROR_CASE_TEXT_MAPPING[`${exception.code}`] || UNKNOWN_ERROR_TITLE;
       }

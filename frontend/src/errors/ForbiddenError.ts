@@ -1,6 +1,6 @@
-import { IHeartBeatException } from '@src/exceptions/ExceptionType';
+import { IHeartBeatError } from '@src/errors/ErrorType';
 
-export class InternalServerException extends Error implements IHeartBeatException {
+export class ForbiddenError extends Error implements IHeartBeatError {
   code: number;
   description?: string;
   constructor(message: string, status: number, description: string) {

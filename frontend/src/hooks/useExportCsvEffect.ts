@@ -1,8 +1,8 @@
 import { addNotification } from '@src/context/notification/NotificationSlice';
-import { NotFoundException } from '@src/exceptions/NotFoundException';
 import { CSVReportRequestDTO } from '@src/clients/report/dto/request';
 import { useAppDispatch } from '@src/hooks/useAppDispatch';
 import { csvClient } from '@src/clients/report/CSVClient';
+import { NotFoundError } from '@src/errors/NotFoundError';
 import { MESSAGE } from '@src/constants/resources';
 import { useState } from 'react';
 
@@ -21,7 +21,7 @@ export const useExportCsvEffect = (): useExportCsvEffectInterface => {
       return await csvClient.exportCSVData(params);
     } catch (e) {
       const err = e as Error;
-      if (err instanceof NotFoundException) {
+      if (err instanceof NotFoundError) {
         setIsExpired(true);
       } else {
         dispatch(

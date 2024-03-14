@@ -4,10 +4,10 @@ import { updateTreatFlagCardAsBlock } from '@src/context/Metrics/metricsSlice';
 import { findCaseInsensitiveType, getJiraBoardToken } from '@src/utils/util';
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch';
 import { DEFAULT_HELPER_TEXT, EMPTY_STRING } from '@src/constants/commons';
-import { IHeartBeatException } from '@src/exceptions/ExceptionType';
 import { BoardRequestDTO } from '@src/clients/board/dto/request';
 import { boardClient } from '@src/clients/board/BoardClient';
-import { isHeartBeatException } from '@src/exceptions';
+import { IHeartBeatError } from '@src/errors/ErrorType';
+import { isHeartBeatException } from '@src/errors';
 import { REGEX } from '@src/constants/regex';
 import { HttpStatusCode } from 'axios';
 import { useState } from 'react';
@@ -197,7 +197,7 @@ export const useVerifyBoardEffect = (): useVerifyBoardStateInterface => {
       }
     } catch (e) {
       if (isHeartBeatException(e)) {
-        const { description, code } = e as IHeartBeatException;
+        const { description, code } = e as IHeartBeatError;
         if (code === HttpStatusCode.Unauthorized) {
           setVerifiedError(
             [KEYS.EMAIL, KEYS.TOKEN],

@@ -3,12 +3,12 @@ import { act, renderHook, waitFor } from '@testing-library/react';
 import { FAKE_TOKEN } from '@test/fixtures';
 import { HttpStatusCode } from 'axios';
 
-import { InternalServerException } from '@src/exceptions/InternalServerException';
-import { UnauthorizedException } from '@src/exceptions/UnauthorizedException';
-import { NotFoundException } from '@src/exceptions/NotFoundException';
-import { TimeoutException } from '@src/exceptions/TimeoutException';
+import { InternalServerError } from '@src/errors/InternalServerError';
 import { AXIOS_REQUEST_ERROR_CODE } from '@src/constants/resources';
+import { UnauthorizedError } from '@src/errors/UnauthorizedError';
 import { boardClient } from '@src/clients/board/BoardClient';
+import { NotFoundError } from '@src/errors/NotFoundError';
+import { TimeoutError } from '@src/errors/TimeoutError';
 import { BOARD_TYPES } from '@test/fixtures';
 
 const mockDispatch = jest.fn();
@@ -41,7 +41,7 @@ describe('use verify board state', () => {
   });
 
   it('should got email and token fields error message when call verify function given a invalid token', async () => {
-    const mockedError = new UnauthorizedException('', HttpStatusCode.Unauthorized, '');
+    const mockedError = new UnauthorizedError('', HttpStatusCode.Unauthorized, '');
     boardClient.getVerifyBoard = jest.fn().mockImplementation(() => Promise.reject(mockedError));
 
     const { result } = renderHook(() => useVerifyBoardEffect());
@@ -59,7 +59,7 @@ describe('use verify board state', () => {
   });
 
   it('should clear email validatedError when updateField by Email given fetch error ', async () => {
-    const mockedError = new UnauthorizedException('', HttpStatusCode.Unauthorized, '');
+    const mockedError = new UnauthorizedError('', HttpStatusCode.Unauthorized, '');
     boardClient.getVerifyBoard = jest.fn().mockImplementation(() => Promise.reject(mockedError));
 
     const { result } = renderHook(() => useVerifyBoardEffect());
@@ -79,7 +79,7 @@ describe('use verify board state', () => {
   });
 
   it('should got site field error message when call verify function given a invalid site', async () => {
-    const mockedError = new NotFoundException('site is incorrect', HttpStatusCode.NotFound, 'site is incorrect');
+    const mockedError = new NotFoundError('site is incorrect', HttpStatusCode.NotFound, 'site is incorrect');
     boardClient.getVerifyBoard = jest.fn().mockImplementation(() => Promise.reject(mockedError));
 
     const { result } = renderHook(() => useVerifyBoardEffect());
@@ -96,7 +96,7 @@ describe('use verify board state', () => {
   });
 
   it('should got board id field error message when call verify function given a invalid board id', async () => {
-    const mockedError = new NotFoundException('boardId is incorrect', HttpStatusCode.NotFound, 'boardId is incorrect');
+    const mockedError = new NotFoundError('boardId is incorrect', HttpStatusCode.NotFound, 'boardId is incorrect');
     boardClient.getVerifyBoard = jest.fn().mockImplementation(() => Promise.reject(mockedError));
 
     const { result } = renderHook(() => useVerifyBoardEffect());
@@ -112,7 +112,7 @@ describe('use verify board state', () => {
   });
 
   it('should got token fields error message when call verify function given a unknown error', async () => {
-    const mockedError = new InternalServerException('', HttpStatusCode.ServiceUnavailable, '');
+    const mockedError = new InternalServerError('', HttpStatusCode.ServiceUnavailable, '');
     boardClient.getVerifyBoard = jest.fn().mockImplementation(() => Promise.reject(mockedError));
 
     const { result } = renderHook(() => useVerifyBoardEffect());
@@ -126,7 +126,7 @@ describe('use verify board state', () => {
   });
 
   it('should clear all verified error messages when update a verified error field', async () => {
-    const mockedError = new UnauthorizedException('', HttpStatusCode.Unauthorized, '');
+    const mockedError = new UnauthorizedError('', HttpStatusCode.Unauthorized, '');
     boardClient.getVerifyBoard = jest.fn().mockImplementation(() => Promise.reject(mockedError));
 
     const { result } = renderHook(() => useVerifyBoardEffect());
@@ -145,7 +145,7 @@ describe('use verify board state', () => {
   });
 
   it('should set timeout is true given getVerifyBoard api is timeout', async () => {
-    const mockedError = new TimeoutException('', AXIOS_REQUEST_ERROR_CODE.TIMEOUT);
+    const mockedError = new TimeoutError('', AXIOS_REQUEST_ERROR_CODE.TIMEOUT);
     boardClient.getVerifyBoard = jest.fn().mockImplementation(() => Promise.reject(mockedError));
 
     const { result } = renderHook(() => useVerifyBoardEffect());

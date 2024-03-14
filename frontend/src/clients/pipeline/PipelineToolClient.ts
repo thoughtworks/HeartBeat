@@ -6,9 +6,9 @@ import {
 } from '@src/constants/resources';
 import { IPipelineVerifyRequestDTO, PipelineInfoRequestDTO } from '@src/clients/pipeline/dto/request';
 import { IPipelineInfoResponseDTO } from '@src/clients/pipeline/dto/response';
-import { IHeartBeatException } from '@src/exceptions/ExceptionType';
-import { isHeartBeatException } from '@src/exceptions';
+import { IHeartBeatError } from '@src/errors/ErrorType';
 import { HttpClient } from '@src/clients/HttpClient';
+import { isHeartBeatException } from '@src/errors';
 import { HttpStatusCode } from 'axios';
 
 export interface IVerifyPipelineToolResult {
@@ -40,7 +40,7 @@ export class PipelineToolClient extends HttpClient {
       setIsVerifyTimeOut(false);
     } catch (e) {
       if (isHeartBeatException(e)) {
-        const exception = e as IHeartBeatException;
+        const exception = e as IHeartBeatError;
         result.code = exception.code;
         result.errorTitle = PIPELINE_TOOL_VERIFY_ERROR_CASE_TEXT_MAPPING[`${exception.code}`] || UNKNOWN_ERROR_TITLE;
       }
@@ -68,7 +68,7 @@ export class PipelineToolClient extends HttpClient {
       result.code = response.status;
     } catch (e) {
       if (isHeartBeatException(e)) {
-        const exception = e as IHeartBeatException;
+        const exception = e as IHeartBeatError;
         result.code = exception.code;
         result.errorTitle = PIPELINE_TOOL_GET_INFO_ERROR_CASE_TEXT_MAPPING[`${exception.code}`] || UNKNOWN_ERROR_TITLE;
       }

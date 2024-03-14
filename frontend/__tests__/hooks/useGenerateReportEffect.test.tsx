@@ -1,9 +1,9 @@
 import { MOCK_GENERATE_REPORT_REQUEST_PARAMS, MOCK_REPORT_RESPONSE, MOCK_RETRIEVE_REPORT_RESPONSE } from '../fixtures';
 import { useGenerateReportEffect } from '@src/hooks/useGenerateReportEffect';
-import { TimeoutException } from '@src/exceptions/TimeoutException';
-import { UnknownException } from '@src/exceptions/UnknownException';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { reportClient } from '@src/clients/report/ReportClient';
+import { TimeoutError } from '@src/errors/TimeoutError';
+import { UnknownError } from '@src/errors/UnknownError';
 import { HttpStatusCode } from 'axios';
 import clearAllMocks = jest.clearAllMocks;
 import resetAllMocks = jest.resetAllMocks;
@@ -21,7 +21,7 @@ describe('use generate report effect', () => {
   });
 
   it('should set timeout4Board is "Data loading failed" when timeout', async () => {
-    reportClient.retrieveByUrl = jest.fn().mockRejectedValue(new TimeoutException('5xx error', 503));
+    reportClient.retrieveByUrl = jest.fn().mockRejectedValue(new TimeoutError('5xx error', 503));
 
     const { result } = renderHook(() => useGenerateReportEffect());
 
@@ -121,7 +121,7 @@ describe('use generate report effect', () => {
   });
 
   it('should set timeout4Dora is "Data loading failed" when startToRequestDoraData timeout', async () => {
-    reportClient.retrieveByUrl = jest.fn().mockRejectedValue(new TimeoutException('5xx error', 503));
+    reportClient.retrieveByUrl = jest.fn().mockRejectedValue(new TimeoutError('5xx error', 503));
 
     const { result } = renderHook(() => useGenerateReportEffect());
 
@@ -133,7 +133,7 @@ describe('use generate report effect', () => {
 
   it('should set timeout4Report is "Data loading failed" when polling timeout', async () => {
     reportClient.polling = jest.fn().mockImplementation(async () => {
-      throw new TimeoutException('5xx error', 503);
+      throw new TimeoutError('5xx error', 503);
     });
 
     reportClient.retrieveByUrl = jest
@@ -194,7 +194,7 @@ describe('use generate report effect', () => {
   });
 
   it('should set generalError4Board is "Data loading failed" when startToRequestBoardData given UnknownException', async () => {
-    reportClient.retrieveByUrl = jest.fn().mockRejectedValue(new UnknownException());
+    reportClient.retrieveByUrl = jest.fn().mockRejectedValue(new UnknownError());
 
     const { result } = renderHook(() => useGenerateReportEffect());
 
@@ -205,7 +205,7 @@ describe('use generate report effect', () => {
   });
 
   it('should set generalError4Dora is "Data loading failed" when startToRequestDoraData given UnknownException', async () => {
-    reportClient.retrieveByUrl = jest.fn().mockRejectedValue(new UnknownException());
+    reportClient.retrieveByUrl = jest.fn().mockRejectedValue(new UnknownError());
 
     const { result } = renderHook(() => useGenerateReportEffect());
 
@@ -216,7 +216,7 @@ describe('use generate report effect', () => {
   });
 
   it('should set generalError4Report is "Data loading failed" when polling given UnknownException', async () => {
-    reportClient.polling = jest.fn().mockRejectedValue(new UnknownException());
+    reportClient.polling = jest.fn().mockRejectedValue(new UnknownError());
     reportClient.retrieveByUrl = jest
       .fn()
       .mockImplementation(async () => ({ response: MOCK_RETRIEVE_REPORT_RESPONSE }));

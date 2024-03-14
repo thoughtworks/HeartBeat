@@ -1,9 +1,9 @@
 import { IBasicReportRequestDTO, ReportRequestDTO } from '@src/clients/report/dto/request';
 import { exportValidityTimeMapper } from '@src/hooks/reportMapper/exportValidityTime';
 import { ReportResponseDTO } from '@src/clients/report/dto/response';
-import { TimeoutException } from '@src/exceptions/TimeoutException';
 import { reportClient } from '@src/clients/report/ReportClient';
 import { DATA_LOADING_FAILED } from '@src/constants/resources';
+import { TimeoutError } from '@src/errors/TimeoutError';
 import { METRIC_TYPES } from '@src/constants/commons';
 import { useRef, useState } from 'react';
 
@@ -52,7 +52,7 @@ export const useGenerateReportEffect = (): useGenerateReportEffectInterface => {
   };
 
   const handleError = (error: Error, source: string) => {
-    if (error instanceof TimeoutException) {
+    if (error instanceof TimeoutError) {
       if (source === 'Board') {
         setTimeout4Board(DATA_LOADING_FAILED);
       } else if (source === 'Dora') {

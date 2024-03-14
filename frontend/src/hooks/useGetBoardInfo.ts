@@ -1,7 +1,7 @@
 import { BOARD_CONFIG_INFO_ERROR, BOARD_CONFIG_INFO_TITLE } from '@src/constants/resources';
 import { boardInfoClient } from '@src/clients/board/BoardInfoClient';
 import { BoardInfoRequestDTO } from '@src/clients/board/dto/request';
-import { HEARTBEAT_EXCEPTION_CODE } from '@src/constants/resources';
+import { AXIOS_REQUEST_ERROR_CODE } from '@src/constants/resources';
 import { AxiosResponse, HttpStatusCode } from 'axios';
 import { ReactNode, useState } from 'react';
 import get from 'lodash/get';
@@ -42,10 +42,10 @@ const codeMapping = (code: string | number) => {
       message: BOARD_CONFIG_INFO_ERROR.NOT_FOUND,
       code: HttpStatusCode.NotFound,
     },
-    [HEARTBEAT_EXCEPTION_CODE.TIMEOUT]: {
+    [AXIOS_REQUEST_ERROR_CODE.TIMEOUT]: {
       title: BOARD_CONFIG_INFO_TITLE.EMPTY,
       message: BOARD_CONFIG_INFO_ERROR.RETRY,
-      code: HEARTBEAT_EXCEPTION_CODE.TIMEOUT,
+      code: AXIOS_REQUEST_ERROR_CODE.TIMEOUT,
     },
   };
   return get(codes, code);

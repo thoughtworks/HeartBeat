@@ -10,7 +10,9 @@ export const BasicButton = styled(Button)({
 });
 
 export const VerifyButton = styled(BasicButton)({});
-export const ResetButton = styled(BasicButton)({
+export const ReverifyButton = styled(BasicButton)({
   color: theme.components?.errorMessage.color,
+});
+export const ResetButton = styled(BasicButton)({
   marginLeft: '0.5rem',
 });

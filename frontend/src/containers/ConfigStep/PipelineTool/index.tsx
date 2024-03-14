@@ -1,24 +1,25 @@
 import {
-  ConfigSectionContainer,
-  StyledButtonGroup,
-  StyledForm,
-  StyledTextField,
-  StyledTypeSelections,
-} from '@src/components/Common/ConfigForms';
-import {
   isPipelineToolVerified,
   selectPipelineTool,
   updatePipelineTool,
   updatePipelineToolVerifyState,
 } from '@src/context/config/configSlice';
+import {
+  ConfigSectionContainer,
+  StyledForm,
+  StyledTextField,
+  StyledTypeSelections,
+} from '@src/components/Common/ConfigForms';
 import { CONFIG_TITLE, PIPELINE_TOOL_TYPES, TOKEN_HELPER_TEXT } from '@src/constants/resources';
 import { useVerifyPipelineToolEffect } from '@src/hooks/useVerifyPipelineToolEffect';
 import { updateShouldGetPipelineConfig } from '@src/context/Metrics/metricsSlice';
-import { ResetButton, VerifyButton } from '@src/components/Common/Buttons';
+import { ConfigButtonGrop } from '@src/containers/ConfigStep/ConfigButton';
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch';
 import { DEFAULT_HELPER_TEXT, EMPTY_STRING } from '@src/constants/commons';
 import { InputLabel, ListItemText, MenuItem, Select } from '@mui/material';
 import { ConfigSelectionTitle } from '@src/containers/MetricsStep/style';
+import { TimeoutAlert } from '@src/containers/ConfigStep/TimeoutAlert';
+import { StyledAlterWrapper } from '@src/containers/ConfigStep/style';
 import { findCaseInsensitiveType } from '@src/utils/util';
 import { FormEvent, useMemo, useState } from 'react';
 import { Loading } from '@src/components/Loading';
@@ -43,7 +44,15 @@ export const PipelineTool = () => {
   const dispatch = useAppDispatch();
   const pipelineToolFields = useAppSelector(selectPipelineTool);
   const isVerified = useAppSelector(isPipelineToolVerified);
-  const { verifyPipelineTool, isLoading, verifiedError, clearVerifiedError } = useVerifyPipelineToolEffect();
+  const {
+    verifyPipelineTool,
+    isLoading,
+    verifiedError,
+    clearVerifiedError,
+    isVerifyTimeOut,
+    isShowAlert,
+    setIsShowAlert,
+  } = useVerifyPipelineToolEffect();
   const type = findCaseInsensitiveType(Object.values(PIPELINE_TOOL_TYPES), pipelineToolFields.type);
   const [fields, setFields] = useState([
     {
@@ -121,6 +130,14 @@ export const PipelineTool = () => {
     <ConfigSectionContainer aria-label='Pipeline Tool Config'>
       {isLoading && <Loading />}
       <ConfigSelectionTitle>{CONFIG_TITLE.PIPELINE_TOOL}</ConfigSelectionTitle>
+      <StyledAlterWrapper>
+        <TimeoutAlert
+          isShowAlert={isShowAlert}
+          isVerifyTimeOut={isVerifyTimeOut}
+          setIsShowAlert={setIsShowAlert}
+          moduleType={'Pipeline Tool'}
+        />
+      </StyledAlterWrapper>
       <StyledForm onSubmit={onSubmit} onReset={onReset}>
         <StyledTypeSelections variant='standard' required>
           <InputLabel id='pipelineTool-type-checkbox-label'>Pipeline Tool</InputLabel>
@@ -151,16 +168,12 @@ export const PipelineTool = () => {
           error={!!fields[FIELD_KEY.TOKEN].validatedError || !!verifiedError}
           helperText={fields[FIELD_KEY.TOKEN].validatedError || verifiedError}
         />
-        <StyledButtonGroup>
-          {isVerified && !isLoading ? (
-            <VerifyButton disabled>Verified</VerifyButton>
-          ) : (
-            <VerifyButton type='submit' disabled={isDisableVerifyButton}>
-              Verify
-            </VerifyButton>
-          )}
-          {isVerified && !isLoading && <ResetButton type='reset'>Reset</ResetButton>}
-        </StyledButtonGroup>
+        <ConfigButtonGrop
+          isVerifyTimeOut={isVerifyTimeOut}
+          isVerified={isVerified}
+          isDisableVerifyButton={isDisableVerifyButton}
+          isLoading={isLoading}
+        />
       </StyledForm>
     </ConfigSectionContainer>
   );

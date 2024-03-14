@@ -41,7 +41,7 @@ describe('<PresentationForErrorCases />', () => {
   it('should display "try again" when error code is axios predefined error: $code', async () => {
     const retrySpy = jest.fn();
     const mockTimeoutError = {
-      code: 'HB_TIMEOUT',
+      code: 'NETWORK_TIMEOUT',
       errorTitle: 'Service Unavailable!',
       errorMessage: 'Data loading failed, please try again',
       isLoading: false,
@@ -63,7 +63,7 @@ describe('<PresentationForErrorCases />', () => {
   it('should not fire duplicated retry behavior when retry func is loading', async () => {
     const retrySpy = jest.fn();
     const mockTimeoutErrorProps = {
-      code: 'HB_TIMEOUT',
+      code: 'NETWORK_TIMEOUT',
       errorTitle: 'Service Unavailable!',
       errorMessage: 'Data loading failed, please try again',
       isLoading: true,

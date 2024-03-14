@@ -1,4 +1,4 @@
-import { BoardReportRequestDTO, ReportRequestDTO } from '@src/clients/report/dto/request';
+import { IBasicReportRequestDTO, ReportRequestDTO } from '@src/clients/report/dto/request';
 import { exportValidityTimeMapper } from '@src/hooks/reportMapper/exportValidityTime';
 import { ReportResponseDTO } from '@src/clients/report/dto/response';
 import { TimeoutException } from '@src/exceptions/TimeoutException';
@@ -8,7 +8,7 @@ import { METRIC_TYPES } from '@src/constants/commons';
 import { useRef, useState } from 'react';
 
 export interface useGenerateReportEffectInterface {
-  startToRequestBoardData: (boardParams: BoardReportRequestDTO) => void;
+  startToRequestBoardData: (boardParams: IBasicReportRequestDTO) => void;
   startToRequestDoraData: (doraParams: ReportRequestDTO) => void;
   stopPollingReports: () => void;
   timeout4Board: string;

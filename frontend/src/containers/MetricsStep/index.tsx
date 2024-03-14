@@ -19,7 +19,7 @@ import {
   MetricSelectionWrapper,
   MetricsSelectionTitle,
 } from '@src/containers/MetricsStep/style';
-import { CYCLE_TIME_SETTINGS_TYPES, DONE, REQUIRED_DATA, HEARTBEAT_EXCEPTION_CODE } from '@src/constants/resources';
+import { CYCLE_TIME_SETTINGS_TYPES, DONE, REQUIRED_DATA, AXIOS_REQUEST_ERROR_CODE } from '@src/constants/resources';
 import { DeploymentFrequencySettings } from '@src/containers/MetricsStep/DeploymentFrequencySettings';
 import { StyledRetryButton, StyledErrorMessage } from '@src/containers/MetricsStep/style';
 import { closeAllNotifications } from '@src/context/notification/NotificationSlice';
@@ -123,7 +123,7 @@ const MetricsStep = () => {
             <EmptyContent
               title={errorMessage.title}
               message={
-                errorMessage.code !== HEARTBEAT_EXCEPTION_CODE.TIMEOUT ? (
+                errorMessage.code !== AXIOS_REQUEST_ERROR_CODE.TIMEOUT ? (
                   errorMessage.message
                 ) : (
                   <>

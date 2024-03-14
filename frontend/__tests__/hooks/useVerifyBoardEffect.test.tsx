@@ -1,11 +1,15 @@
 import { useVerifyBoardEffect, useVerifyBoardStateInterface } from '@src/hooks/useVerifyBoardEffect';
-import { MOCK_BOARD_URL_FOR_JIRA, FAKE_TOKEN } from '@test/fixtures';
 import { act, renderHook, waitFor } from '@testing-library/react';
-import { setupServer } from 'msw/node';
+import { FAKE_TOKEN } from '@test/fixtures';
 import { HttpStatusCode } from 'axios';
 
+import { InternalServerException } from '@src/exceptions/InternalServerException';
+import { UnauthorizedException } from '@src/exceptions/UnauthorizedException';
+import { NotFoundException } from '@src/exceptions/NotFoundException';
+import { TimeoutException } from '@src/exceptions/TimeoutException';
+import { AXIOS_REQUEST_ERROR_CODE } from '@src/constants/resources';
+import { boardClient } from '@src/clients/board/BoardClient';
 import { BOARD_TYPES } from '@test/fixtures';
-import { rest } from 'msw';
 
 const mockDispatch = jest.fn();
 jest.mock('react-redux', () => ({
@@ -18,8 +22,6 @@ jest.mock('@src/hooks/useAppDispatch', () => ({
   useAppDispatch: jest.fn(() => jest.fn()),
 }));
 
-const server = setupServer();
-
 const updateFields = (result: { current: useVerifyBoardStateInterface }) => {
   result.current.updateField('Board Id', '1');
   result.current.updateField('Email', 'fake@qq.com');
@@ -28,10 +30,8 @@ const updateFields = (result: { current: useVerifyBoardStateInterface }) => {
 };
 
 describe('use verify board state', () => {
-  beforeAll(() => server.listen());
   afterAll(() => {
     jest.clearAllMocks();
-    server.close();
   });
   it('should got initial data state when hook render given none input', async () => {
     const { result } = renderHook(() => useVerifyBoardEffect());
@@ -41,16 +41,13 @@ describe('use verify board state', () => {
   });
 
   it('should got email and token fields error message when call verify function given a invalid token', async () => {
-    server.use(
-      rest.post(MOCK_BOARD_URL_FOR_JIRA, (_, res, ctx) => {
-        return res(ctx.status(HttpStatusCode.Unauthorized));
-      }),
-    );
+    const mockedError = new UnauthorizedException('', HttpStatusCode.Unauthorized, '');
+    boardClient.getVerifyBoard = jest.fn().mockImplementation(() => Promise.reject(mockedError));
 
     const { result } = renderHook(() => useVerifyBoardEffect());
-    await act(() => {
-      updateFields(result);
-      result.current.verifyJira();
+    await act(async () => {
+      await updateFields(result);
+      await result.current.verifyJira();
     });
 
     const emailFiled = result.current.fields.find((field) => field.key === 'Email');
@@ -61,22 +58,34 @@ describe('use verify board state', () => {
     );
   });
 
-  it('when call verify function given a invalid site then should got site field error message', async () => {
-    server.use(
-      rest.post(MOCK_BOARD_URL_FOR_JIRA, (_, res, ctx) => {
-        return res(
-          ctx.status(HttpStatusCode.NotFound),
-          ctx.json({
-            message: 'site is incorrect',
-          }),
-        );
-      }),
-    );
+  it('should clear email validatedError when updateField by Email given fetch error ', async () => {
+    const mockedError = new UnauthorizedException('', HttpStatusCode.Unauthorized, '');
+    boardClient.getVerifyBoard = jest.fn().mockImplementation(() => Promise.reject(mockedError));
 
     const { result } = renderHook(() => useVerifyBoardEffect());
-    await act(() => {
-      updateFields(result);
-      result.current.verifyJira();
+    await act(async () => {
+      await updateFields(result);
+      await result.current.verifyJira();
+    });
+
+    const emailFiled = result.current.fields.find((field) => field.key === 'Email');
+    expect(emailFiled?.verifiedError).toBe('Email is incorrect!');
+
+    await act(async () => {
+      await result.current.updateField('Email', 'fake@qq.com');
+    });
+    const emailText = result.current.fields.find((field) => field.key === 'Email');
+    expect(emailText?.verifiedError).toBe('');
+  });
+
+  it('should got site field error message when call verify function given a invalid site', async () => {
+    const mockedError = new NotFoundException('site is incorrect', HttpStatusCode.NotFound, 'site is incorrect');
+    boardClient.getVerifyBoard = jest.fn().mockImplementation(() => Promise.reject(mockedError));
+
+    const { result } = renderHook(() => useVerifyBoardEffect());
+    await act(async () => {
+      await updateFields(result);
+      await result.current.verifyJira();
     });
 
     await waitFor(() => {
@@ -87,16 +96,8 @@ describe('use verify board state', () => {
   });
 
   it('should got board id field error message when call verify function given a invalid board id', async () => {
-    server.use(
-      rest.post(MOCK_BOARD_URL_FOR_JIRA, (_, res, ctx) => {
-        return res(
-          ctx.status(HttpStatusCode.NotFound),
-          ctx.json({
-            message: 'boardId is incorrect',
-          }),
-        );
-      }),
-    );
+    const mockedError = new NotFoundException('boardId is incorrect', HttpStatusCode.NotFound, 'boardId is incorrect');
+    boardClient.getVerifyBoard = jest.fn().mockImplementation(() => Promise.reject(mockedError));
 
     const { result } = renderHook(() => useVerifyBoardEffect());
     await act(() => {
@@ -111,16 +112,13 @@ describe('use verify board state', () => {
   });
 
   it('should got token fields error message when call verify function given a unknown error', async () => {
-    server.use(
-      rest.post(MOCK_BOARD_URL_FOR_JIRA, (_, res, ctx) => {
-        return res(ctx.status(HttpStatusCode.ServiceUnavailable));
-      }),
-    );
+    const mockedError = new InternalServerException('', HttpStatusCode.ServiceUnavailable, '');
+    boardClient.getVerifyBoard = jest.fn().mockImplementation(() => Promise.reject(mockedError));
 
     const { result } = renderHook(() => useVerifyBoardEffect());
-    await act(() => {
-      updateFields(result);
-      result.current.verifyJira();
+    await act(async () => {
+      await updateFields(result);
+      await result.current.verifyJira();
     });
 
     const tokenField = result.current.fields.find((field) => field.key === 'Token');
@@ -128,11 +126,8 @@ describe('use verify board state', () => {
   });
 
   it('should clear all verified error messages when update a verified error field', async () => {
-    server.use(
-      rest.post(MOCK_BOARD_URL_FOR_JIRA, (_, res, ctx) => {
-        return res(ctx.status(HttpStatusCode.Unauthorized));
-      }),
-    );
+    const mockedError = new UnauthorizedException('', HttpStatusCode.Unauthorized, '');
+    boardClient.getVerifyBoard = jest.fn().mockImplementation(() => Promise.reject(mockedError));
 
     const { result } = renderHook(() => useVerifyBoardEffect());
     await act(() => {
@@ -147,5 +142,20 @@ describe('use verify board state', () => {
     const tokenField = result.current.fields.find((field) => field.key === 'Token');
     expect(emailFiled?.verifiedError).toBe('');
     expect(tokenField?.verifiedError).toBe('');
+  });
+
+  it('should set timeout is true given getVerifyBoard api is timeout', async () => {
+    const mockedError = new TimeoutException('', AXIOS_REQUEST_ERROR_CODE.TIMEOUT);
+    boardClient.getVerifyBoard = jest.fn().mockImplementation(() => Promise.reject(mockedError));
+
+    const { result } = renderHook(() => useVerifyBoardEffect());
+    await act(() => {
+      result.current.verifyJira();
+    });
+
+    await waitFor(() => {
+      const isVerifyTimeOut = result.current.isVerifyTimeOut;
+      expect(isVerifyTimeOut).toBe(true);
+    });
   });
 });

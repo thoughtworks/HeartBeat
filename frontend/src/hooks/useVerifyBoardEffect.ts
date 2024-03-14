@@ -1,5 +1,5 @@
+import { BOARD_TYPES, AXIOS_REQUEST_ERROR_CODE, MESSAGE, UNKNOWN_ERROR_TITLE } from '@src/constants/resources';
 import { selectBoard, updateBoard, updateBoardVerifyState } from '@src/context/config/configSlice';
-import { BOARD_TYPES, MESSAGE, UNKNOWN_ERROR_TITLE } from '@src/constants/resources';
 import { updateTreatFlagCardAsBlock } from '@src/context/Metrics/metricsSlice';
 import { findCaseInsensitiveType, getJiraBoardToken } from '@src/utils/util';
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch';
@@ -22,12 +22,15 @@ export interface Field {
 }
 
 export interface useVerifyBoardStateInterface {
+  isVerifyTimeOut: boolean;
   verifyJira: () => Promise<void>;
   isLoading: boolean;
   fields: Field[];
   updateField: (key: string, value: string) => void;
   validateField: (key: string) => void;
   resetFields: () => void;
+  setIsShowAlert: (value: boolean) => void;
+  isShowAlert: boolean;
 }
 
 const ERROR_INFO = {
@@ -60,6 +63,8 @@ const getValidatedError = (key: string, value: string, validateRule?: (value: st
 
 export const useVerifyBoardEffect = (): useVerifyBoardStateInterface => {
   const [isLoading, setIsLoading] = useState(false);
+  const [isVerifyTimeOut, setIsVerifyTimeOut] = useState(false);
+  const [isShowAlert, setIsShowAlert] = useState(false);
   const boardFields = useAppSelector(selectBoard);
   const dispatch = useAppDispatch();
   const type = findCaseInsensitiveType(Object.values(BOARD_TYPES), boardFields.type);
@@ -185,6 +190,8 @@ export const useVerifyBoardEffect = (): useVerifyBoardStateInterface => {
         token: getJiraBoardToken(boardInfo.token, boardInfo.email),
       });
       if (res?.response) {
+        setIsShowAlert(false);
+        setIsVerifyTimeOut(false);
         dispatch(updateBoardVerifyState(true));
         dispatch(updateBoard({ ...boardInfo, projectKey: res.response.projectKey }));
       }
@@ -200,6 +207,9 @@ export const useVerifyBoardEffect = (): useVerifyBoardStateInterface => {
           setVerifiedError([KEYS.SITE], [MESSAGE.VERIFY_SITE_FAILED_ERROR]);
         } else if (code === HttpStatusCode.NotFound && description === ERROR_INFO.BOARD_NOT_FOUND) {
           setVerifiedError([KEYS.BOARD_ID], [MESSAGE.VERIFY_BOARD_FAILED_ERROR]);
+        } else if (code === AXIOS_REQUEST_ERROR_CODE.TIMEOUT) {
+          setIsVerifyTimeOut(true);
+          setIsShowAlert(true);
         } else {
           setVerifiedError([KEYS.TOKEN], [UNKNOWN_ERROR_TITLE]);
         }
@@ -215,5 +225,8 @@ export const useVerifyBoardEffect = (): useVerifyBoardStateInterface => {
     updateField,
     validateField,
     resetFields,
+    isVerifyTimeOut,
+    isShowAlert,
+    setIsShowAlert,
   };
 };

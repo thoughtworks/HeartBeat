@@ -1,4 +1,4 @@
-import { HEARTBEAT_EXCEPTION_CODE, SOURCE_CONTROL_TYPES } from '@src/constants/resources';
+import { AXIOS_REQUEST_ERROR_CODE, SOURCE_CONTROL_TYPES } from '@src/constants/resources';
 import { sourceControlClient } from '@src/clients/sourceControl/SourceControlClient';
 import { SourceControlInfoRequestDTO } from '@src/clients/sourceControl/dto/request';
 import { selectSourceControl } from '@src/context/config/configSlice';
@@ -55,7 +55,7 @@ const BranchChip = ({ value, needVerify, error, updateBranchMeta, repository, er
       label={value}
       loading={needVerify}
       error={error}
-      showRetry={errorDetail === HEARTBEAT_EXCEPTION_CODE.TIMEOUT}
+      showRetry={errorDetail === AXIOS_REQUEST_ERROR_CODE.TIMEOUT}
       onRetry={handleRetry}
     />
   );

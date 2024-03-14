@@ -1,4 +1,4 @@
-import { AXIOS_NETWORK_ERROR_CODES, HEARTBEAT_EXCEPTION_CODE } from '@src/constants/resources';
+import { AXIOS_NETWORK_ERROR_CODES, AXIOS_REQUEST_ERROR_CODE } from '@src/constants/resources';
 import { InternalServerException } from '@src/exceptions/InternalServerException';
 import { UnauthorizedException } from '@src/exceptions/UnauthorizedException';
 import { BadRequestException } from '@src/exceptions/BadRequestException';
@@ -23,7 +23,7 @@ export class HttpClient {
       (error) => {
         const { code, response } = error;
         if (AXIOS_NETWORK_ERROR_CODES.some((predefinedCode) => predefinedCode === code)) {
-          throw new TimeoutException(error?.message, HEARTBEAT_EXCEPTION_CODE.TIMEOUT);
+          throw new TimeoutException(error?.message, AXIOS_REQUEST_ERROR_CODE.TIMEOUT);
         } else if (response && response.status && response.status > 0) {
           const { status, data, statusText } = response;
           const errorMessage = data?.hintInfo ?? statusText;

@@ -1,23 +1,24 @@
 import {
-  ConfigSectionContainer,
-  StyledButtonGroup,
-  StyledForm,
-  StyledTextField,
-  StyledTypeSelections,
-} from '@src/components/Common/ConfigForms';
-import {
   isSourceControlVerified,
   selectSourceControl,
   updateSourceControl,
   updateSourceControlVerifyState,
 } from '@src/context/config/configSlice';
+import {
+  ConfigSectionContainer,
+  StyledForm,
+  StyledTextField,
+  StyledTypeSelections,
+} from '@src/components/Common/ConfigForms';
 import { initDeploymentFrequencySettings, updateShouldGetPipelineConfig } from '@src/context/Metrics/metricsSlice';
 import { useVerifySourceControlTokenEffect } from '@src/hooks/useVerifySourceControlTokenEffect';
 import { CONFIG_TITLE, SOURCE_CONTROL_TYPES, TOKEN_HELPER_TEXT } from '@src/constants/resources';
-import { ResetButton, VerifyButton } from '@src/components/Common/Buttons';
+import { ConfigButtonGrop } from '@src/containers/ConfigStep/ConfigButton';
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch';
 import { InputLabel, ListItemText, MenuItem, Select } from '@mui/material';
 import { ConfigSelectionTitle } from '@src/containers/MetricsStep/style';
+import { TimeoutAlert } from '@src/containers/ConfigStep/TimeoutAlert';
+import { StyledAlterWrapper } from '@src/containers/ConfigStep/style';
 import { DEFAULT_HELPER_TEXT } from '@src/constants/commons';
 import { findCaseInsensitiveType } from '@src/utils/util';
 import { FormEvent, useMemo, useState } from 'react';
@@ -43,7 +44,8 @@ export const SourceControl = () => {
   const dispatch = useAppDispatch();
   const sourceControlFields = useAppSelector(selectSourceControl);
   const isVerified = useAppSelector(isSourceControlVerified);
-  const { verifyToken, isLoading, verifiedError, clearVerifiedError } = useVerifySourceControlTokenEffect();
+  const { verifyToken, isLoading, verifiedError, clearVerifiedError, isVerifyTimeOut, isShowAlert, setIsShowAlert } =
+    useVerifySourceControlTokenEffect();
   const type = findCaseInsensitiveType(Object.values(SOURCE_CONTROL_TYPES), sourceControlFields.type);
   const [fields, setFields] = useState([
     {
@@ -113,6 +115,14 @@ export const SourceControl = () => {
     <ConfigSectionContainer aria-label='Source Control Config'>
       {isLoading && <Loading />}
       <ConfigSelectionTitle>{CONFIG_TITLE.SOURCE_CONTROL}</ConfigSelectionTitle>
+      <StyledAlterWrapper>
+        <TimeoutAlert
+          isShowAlert={isShowAlert}
+          isVerifyTimeOut={isVerifyTimeOut}
+          setIsShowAlert={setIsShowAlert}
+          moduleType={'Source Control'}
+        />
+      </StyledAlterWrapper>
       <StyledForm onSubmit={onSubmit} onReset={onReset}>
         <StyledTypeSelections variant='standard' required>
           <InputLabel id='sourceControl-type-checkbox-label'>Source Control</InputLabel>
@@ -138,18 +148,12 @@ export const SourceControl = () => {
           error={!!fields[FIELD_KEY.TOKEN].validatedError || !!verifiedError}
           helperText={fields[FIELD_KEY.TOKEN].validatedError || verifiedError}
         />
-        <StyledButtonGroup>
-          {isVerified && !isLoading ? (
-            <>
-              <VerifyButton disabled>Verified</VerifyButton>
-              <ResetButton type='reset'>Reset</ResetButton>
-            </>
-          ) : (
-            <VerifyButton type='submit' disabled={isDisableVerifyButton}>
-              Verify
-            </VerifyButton>
-          )}
-        </StyledButtonGroup>
+        <ConfigButtonGrop
+          isVerifyTimeOut={isVerifyTimeOut}
+          isVerified={isVerified}
+          isDisableVerifyButton={isDisableVerifyButton}
+          isLoading={isLoading}
+        />
       </StyledForm>
     </ConfigSectionContainer>
   );

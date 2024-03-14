@@ -87,8 +87,8 @@ describe('use verify sourceControl token', () => {
     await act(() => result.current.verifyToken(MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS));
 
     await waitFor(() => {
-      expect(result.current.isVerifyTimeOut).toEqual(true);
-      expect(result.current.isShowAlert).toEqual(true);
+      expect(result.current.isVerifyTimeOut).toBeTruthy();
+      expect(result.current.isShowAlert).toBeTruthy();
     });
   });
 });

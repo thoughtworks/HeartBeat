@@ -1,8 +1,4 @@
-import {
-  MOCK_SOURCE_CONTROL_VERIFY_TOKEN_URL,
-  MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS,
-  VERIFY_ERROR_MESSAGE,
-} from '../fixtures';
+import { MOCK_SOURCE_CONTROL_VERIFY_TOKEN_URL, MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS } from '../fixtures';
 import { sourceControlClient } from '@src/clients/sourceControl/SourceControlClient';
 import { setupServer } from 'msw/node';
 import { HttpStatusCode } from 'axios';
@@ -24,47 +20,33 @@ describe('verify sourceControl request', () => {
     expect(result.code).toEqual(204);
   });
 
-  it('should throw error when sourceControl verify response status is 400', () => {
+  it('should set error title when sourceControl verify response status is 401', async () => {
     server.use(
-      rest.post(MOCK_SOURCE_CONTROL_VERIFY_TOKEN_URL, (req, res, ctx) =>
-        res(ctx.status(HttpStatusCode.BadRequest), ctx.json({ hintInfo: VERIFY_ERROR_MESSAGE.BAD_REQUEST })),
-      ),
+      rest.post(MOCK_SOURCE_CONTROL_VERIFY_TOKEN_URL, (req, res, ctx) => res(ctx.status(HttpStatusCode.Unauthorized))),
     );
 
-    sourceControlClient.verifyToken(MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS, jest.fn(), jest.fn()).catch((e) => {
-      expect(e).toBeInstanceOf(Error);
-      expect((e as Error).message).toMatch(VERIFY_ERROR_MESSAGE.BAD_REQUEST);
-    });
+    const result = await sourceControlClient.verifyToken(
+      MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS,
+      jest.fn(),
+      jest.fn(),
+    );
+    expect(result.code).toEqual(HttpStatusCode.Unauthorized);
+    expect(result.errorTitle).toEqual('Token is incorrect!');
   });
 
-  it('should throw error when sourceControl verify response status is 404', async () => {
+  it('should set default error title when sourceControl verify response status 500', async () => {
     server.use(
       rest.post(MOCK_SOURCE_CONTROL_VERIFY_TOKEN_URL, (req, res, ctx) =>
-        res(ctx.status(HttpStatusCode.NotFound), ctx.json({ hintInfo: VERIFY_ERROR_MESSAGE.NOT_FOUND })),
+        res(ctx.status(HttpStatusCode.InternalServerError)),
       ),
     );
 
-    sourceControlClient.verifyToken(MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS, jest.fn(), jest.fn()).catch((e) => {
-      expect(e).toBeInstanceOf(Error);
-      expect((e as Error).message).toMatch(VERIFY_ERROR_MESSAGE.NOT_FOUND);
-    });
-  });
-
-  it('should throw error when sourceControl verify response status 500', async () => {
-    server.use(
-      rest.post(MOCK_SOURCE_CONTROL_VERIFY_TOKEN_URL, (req, res, ctx) =>
-        res(
-          ctx.status(HttpStatusCode.InternalServerError),
-          ctx.json({
-            hintInfo: VERIFY_ERROR_MESSAGE.INTERNAL_SERVER_ERROR,
-          }),
-        ),
-      ),
+    const result = await sourceControlClient.verifyToken(
+      MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS,
+      jest.fn(),
+      jest.fn(),
     );
-
-    sourceControlClient.verifyToken(MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS, jest.fn(), jest.fn()).catch((e) => {
-      expect(e).toBeInstanceOf(Error);
-      expect((e as Error).message).toMatch(VERIFY_ERROR_MESSAGE.INTERNAL_SERVER_ERROR);
-    });
+    expect(result.code).toEqual(HttpStatusCode.InternalServerError);
+    expect(result.errorTitle).toEqual('Unknown error');
   });
 });

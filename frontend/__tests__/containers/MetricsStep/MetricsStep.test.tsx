@@ -324,7 +324,7 @@ describe('MetricsStep', () => {
       await waitFor(() => {
         expect(screen.getByText(/crew settings/i)).toBeInTheDocument();
       });
-      expect(screen.getByText(/board mappings/i)).toBeInTheDocument();
+      expect(screen.getByText(/board mapping/i)).toBeInTheDocument();
     });
 
     it('should show retry button when call get info timeout', async () => {

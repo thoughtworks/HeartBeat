@@ -44,7 +44,7 @@ steps:
     key: "check-backend-license"
     commands: ./ops/check.sh backend-license
     plugins:
-      - artifacts#v1.9.0:
+      - artifacts#v1.9.3:
           upload:
             - "backend/build/reports/dependency-license/**/*"
           name: "backend-license-report"
@@ -105,7 +105,7 @@ steps:
       - "check-backend-license"
     command: ./ops/check.sh e2e-container
     plugins:
-      - artifacts#v1.9.0:
+      - artifacts#v1.9.3:
           upload: "./e2e-reports.tar.gz"
           expire_in: "${RETENTION_DAYS} days"
 

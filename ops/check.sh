@@ -121,12 +121,12 @@ rgba_check() {
 buildkite_e2e_deployed_check() {
   local MAX_ATTEMPTS=20
   local attempt_count=0
-  echo "The git commit id is $COMMIT_SHA"
+  echo "Current git commit id is $COMMIT_SHA"
   while [ $attempt_count -lt $MAX_ATTEMPTS ]; do
-    echo "Start to get deployment status, attempt count is $attempt_count"
-    ((attempt_count++))
+    ((attempt_count += 1))
+    echo "Start to get deployment status: attempt count is $attempt_count"
     value=$(curl -H "Authorization: Bearer $BUILDKITE_TOKEN" -X GET "https://api.buildkite.com/v2/organizations/heartbeat-backup/pipelines/heartbeat/builds?branch=main&commit=$COMMIT_SHA&state=passed" | jq '.[0].jobs[] | select(.name == ":rocket: Deploy e2e" and .state == "passed") | any')
-    echo "Current e2e has been deploy? $value"
+    echo "Successfully get the e2e deployment staut: $value"
     if [ "$value" == "true" ]; then
       echo "Successfully deploy to E2E"
       break

@@ -27,7 +27,7 @@ public class AsyncDataBaseHandler {
 
 	public static final String SUFFIX_LOCK = ".lock";
 
-	public static final String FILENAME_SPLIT_PATTERN = "\\s*\\-|\\.\\s*";
+	public static final String FILENAME_SPLIT_PATTERN = "[-.]";
 
 	protected synchronized void createFileByType(FIleType fIleType, String fileId, String json) {
 		createDirToConvertData(fIleType);

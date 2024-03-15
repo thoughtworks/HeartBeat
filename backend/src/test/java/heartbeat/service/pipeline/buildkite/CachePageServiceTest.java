@@ -64,7 +64,7 @@ class CachePageServiceTest {
 	}
 
 	@Test
-	public void shouldReturnPageStepsInfoDtoWhenFetchPageStepsInfoSuccessGivenNullLinkHeader() {
+	void shouldReturnPageStepsInfoDtoWhenFetchPageStepsInfoSuccessGivenNullLinkHeader() {
 		BuildKiteJob testJob = BuildKiteJob.builder().name(TEST_JOB_NAME).build();
 		List<BuildKiteBuildInfo> buildKiteBuildInfoList = new ArrayList<>();
 		buildKiteBuildInfoList.add(BuildKiteBuildInfo.builder()
@@ -86,7 +86,7 @@ class CachePageServiceTest {
 	}
 
 	@Test
-	public void shouldReturnPageStepsInfoDtoWhenFetchPageStepsInfoSuccessGivenValidLinkHeader() {
+	void shouldReturnPageStepsInfoDtoWhenFetchPageStepsInfoSuccessGivenValidLinkHeader() {
 		List<String> linkHeader = new ArrayList<>();
 		linkHeader.add(TOTAL_PAGE_HEADER);
 		HttpHeaders httpHeaders = new HttpHeaders();
@@ -109,7 +109,7 @@ class CachePageServiceTest {
 	}
 
 	@Test
-	public void shouldReturnPageStepsInfoDtoWhenFetchPageStepsInfoSuccessGivenExistButNotMatchedLinkHeader() {
+	void shouldReturnPageStepsInfoDtoWhenFetchPageStepsInfoSuccessGivenExistButNotMatchedLinkHeader() {
 		List<String> linkHeader = new ArrayList<>();
 		linkHeader.add(NONE_TOTAL_PAGE_HEADER);
 		HttpHeaders httpHeaders = new HttpHeaders();

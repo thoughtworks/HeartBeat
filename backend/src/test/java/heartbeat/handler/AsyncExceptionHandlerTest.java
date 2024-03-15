@@ -70,6 +70,24 @@ class AsyncExceptionHandlerTest {
 	}
 
 	@Test
+	void shouldDeleteAsyncExceptionTmpFile() {
+		long fileId = System.currentTimeMillis();
+		String currentTime = Long.toString(fileId);
+		String expireTime = Long.toString(fileId - 1900000L);
+		String unExpireFile = IdUtil.getBoardReportId(currentTime) + ".tmp";
+		String expireFile = IdUtil.getBoardReportId(expireTime) + ".tmp";
+		asyncExceptionHandler.put(unExpireFile, new UnauthorizedException(""));
+		asyncExceptionHandler.put(expireFile, new UnauthorizedException(""));
+
+		asyncExceptionHandler.deleteExpireExceptionFile(fileId, new File(APP_OUTPUT_ERROR));
+
+		assertNull(asyncExceptionHandler.get(expireFile));
+		assertNotNull(asyncExceptionHandler.get(unExpireFile));
+		deleteTestFile(unExpireFile);
+		assertNull(asyncExceptionHandler.get(unExpireFile));
+	}
+
+	@Test
 	void shouldSafeDeleteAsyncExceptionWhenHaveManyThordToDeleteFile() throws InterruptedException {
 		long fileId = System.currentTimeMillis();
 		String currentTime = Long.toString(fileId);

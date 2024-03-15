@@ -58,7 +58,6 @@ import static heartbeat.service.report.scheduler.DeleteExpireCSVScheduler.EXPORT
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
@@ -801,6 +800,21 @@ class GenerateReporterServiceTest {
 			when(mockFile.getName()).thenReturn("board-1683734399999");
 			when(mockFile.delete()).thenReturn(false);
 			when(mockFile.exists()).thenReturn(true);
+			File[] mockFiles = new File[] { mockFile };
+			File directory = mock(File.class);
+			when(directory.listFiles()).thenReturn(mockFiles);
+
+			Boolean deleteStatus = generateReporterService.deleteExpireCSV(System.currentTimeMillis(), directory);
+
+			assertTrue(deleteStatus);
+		}
+
+		@Test
+		void shouldDeleteTempFailWhenDeleteFile() {
+			File mockFile = mock(File.class);
+			when(mockFile.getName()).thenReturn("board-1683734399999.tmp");
+			when(mockFile.delete()).thenReturn(true);
+			when(mockFile.exists()).thenReturn(false);
 			File[] mockFiles = new File[] { mockFile };
 			File directory = mock(File.class);
 			when(directory.listFiles()).thenReturn(mockFiles);

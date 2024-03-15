@@ -95,16 +95,19 @@ class AsyncMetricsDataHandlerTest {
 			String prefix = "prefix-";
 			String currentTimeFileId = prefix + currentTimeMillis;
 			String expireTimeFileId = prefix + (currentTimeMillis - 1900000L);
+			String expireTimeLockFileId = prefix + (currentTimeMillis - 1900000L) + ".lock";
 			MetricsDataCompleted metricsDataCompleted = MetricsDataCompleted.builder()
 				.boardMetricsCompleted(false)
 				.build();
 			asyncMetricsDataHandler.putMetricsDataCompleted(currentTimeFileId, metricsDataCompleted);
 			asyncMetricsDataHandler.putMetricsDataCompleted(expireTimeFileId, metricsDataCompleted);
+			asyncMetricsDataHandler.putMetricsDataCompleted(expireTimeLockFileId, metricsDataCompleted);
 
 			asyncMetricsDataHandler.deleteExpireMetricsDataCompletedFile(currentTimeMillis,
 					new File(APP_OUTPUT_METRICS));
 
 			assertNull(asyncMetricsDataHandler.getMetricsDataCompleted(expireTimeFileId));
+			assertNull(asyncMetricsDataHandler.getMetricsDataCompleted(expireTimeLockFileId));
 			assertNotNull(asyncMetricsDataHandler.getMetricsDataCompleted(currentTimeFileId));
 			Files.deleteIfExists(Path.of(APP_OUTPUT_METRICS + "/" + currentTimeFileId));
 			assertNull(asyncMetricsDataHandler.getMetricsDataCompleted(currentTimeFileId));

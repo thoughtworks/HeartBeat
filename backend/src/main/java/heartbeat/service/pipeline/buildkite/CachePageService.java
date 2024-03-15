@@ -46,7 +46,7 @@ public class CachePageService {
 			return 1;
 		}
 		String lastLink = linkHeader.stream().map(link -> link.replaceAll("per_page=\\d+", "")).findFirst().orElse("");
-		Matcher matcher = Pattern.compile("page=(\\d+)[^>]*>;\\s*rel=\"last\"").matcher(lastLink);
+		Matcher matcher = Pattern.compile("page=(\\d+)[^>]*>.*?rel=\"last\"").matcher(lastLink);
 		if (matcher.find()) {
 			return Integer.parseInt(matcher.group(1));
 		}

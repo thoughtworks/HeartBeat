@@ -292,7 +292,7 @@ public class GenerateReporterService {
 		if (!ObjectUtils.isEmpty(files)) {
 			for (File file : files) {
 				String fileName = file.getName();
-				String[] splitResult = fileName.split("\\s*\\-|\\.\\s*");
+				String[] splitResult = fileName.split("[-.]");
 				String timeStamp = splitResult[1];
 				if (validateExpire(currentTimeStamp, Long.parseLong(timeStamp)) && !file.delete() && file.exists()) {
 					log.error("Failed to deleted expired CSV file, file name: {}", fileName);

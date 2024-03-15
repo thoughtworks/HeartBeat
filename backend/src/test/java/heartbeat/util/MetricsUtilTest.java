@@ -6,13 +6,13 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-public class MetricsUtilTest {
+class MetricsUtilTest {
 
 	@Test
 	void shouldGetRelatedPartMetrics() {
-		List<String> kanbanMetrics = MetricsUtil.kanbanMetrics;
-		List<String> buildKiteMetrics = MetricsUtil.buildKiteMetrics;
-		List<String> codebaseMetrics = MetricsUtil.codebaseMetrics;
+		List<String> kanbanMetrics = MetricsUtil.KANBAN_METRICS.getValue();
+		List<String> buildKiteMetrics = MetricsUtil.BUILDKITE_METRICS.getValue();
+		List<String> codebaseMetrics = MetricsUtil.CODEBASE_METRICS.getValue();
 
 		List<String> expectedKanbanMetrics = List.of(MetricEnum.VELOCITY.getValue(), MetricEnum.CYCLE_TIME.getValue(),
 				MetricEnum.CLASSIFICATION.getValue());

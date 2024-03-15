@@ -144,7 +144,7 @@ public class ClassificationCalculator {
 	}
 
 	private static String removeQuotes(String value) {
-		return value.replaceAll("\"", "");
+		return value.replace("\"", "");
 	}
 
 	public Map<String, Object> extractFields(JiraCardField jiraCardFields) {

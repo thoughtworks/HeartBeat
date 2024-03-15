@@ -40,7 +40,10 @@ public class GenerateReportRequest {
 
 	@JsonIgnore
 	public List<String> getPipelineMetrics() {
-		return this.metrics.stream().map(String::toLowerCase).filter(MetricsUtil.buildKiteMetrics::contains).toList();
+		return this.metrics.stream()
+			.map(String::toLowerCase)
+			.filter(MetricsUtil.BUILDKITE_METRICS.getValue()::contains)
+			.toList();
 	}
 
 	public List<String> getMetrics() {
@@ -49,12 +52,18 @@ public class GenerateReportRequest {
 
 	@JsonIgnore
 	public List<String> getSourceControlMetrics() {
-		return this.metrics.stream().map(String::toLowerCase).filter(MetricsUtil.codebaseMetrics::contains).toList();
+		return this.metrics.stream()
+			.map(String::toLowerCase)
+			.filter(MetricsUtil.CODEBASE_METRICS.getValue()::contains)
+			.toList();
 	}
 
 	@JsonIgnore
 	public List<String> getBoardMetrics() {
-		return this.metrics.stream().map(String::toLowerCase).filter(MetricsUtil.kanbanMetrics::contains).toList();
+		return this.metrics.stream()
+			.map(String::toLowerCase)
+			.filter(MetricsUtil.KANBAN_METRICS.getValue()::contains)
+			.toList();
 	}
 
 	@JsonIgnore

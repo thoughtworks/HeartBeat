@@ -6,16 +6,17 @@ import heartbeat.controller.report.dto.response.AvgMeanTimeToRecovery;
 import heartbeat.controller.report.dto.response.MeanTimeToRecovery;
 import heartbeat.controller.report.dto.response.MeanTimeToRecoveryOfPipeline;
 import heartbeat.service.report.calculator.MeanToRecoveryCalculator;
-import java.math.BigDecimal;
-import java.time.Instant;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.math.BigDecimal;
+import java.time.Instant;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
 class MeanToRecoveryCalculatorTest {
@@ -24,7 +25,7 @@ class MeanToRecoveryCalculatorTest {
 	private MeanToRecoveryCalculator calculator;
 
 	@Test
-	public void shouldReturnZeroAvgMeanTimeToRecoveryWhenDeployTimesIsEmpty() {
+	void shouldReturnZeroAvgMeanTimeToRecoveryWhenDeployTimesIsEmpty() {
 		List<DeployTimes> deployTimes = new ArrayList<>();
 
 		MeanTimeToRecovery result = calculator.calculate(deployTimes);
@@ -55,18 +56,18 @@ class MeanToRecoveryCalculatorTest {
 		Assertions.assertEquals(3, meanTimeRecoveryPipelines.size());
 
 		MeanTimeToRecoveryOfPipeline deploy1Result = meanTimeRecoveryPipelines.get(0);
-		Assertions.assertEquals("Pipeline 1", deploy1Result.getPipelineName());
-		Assertions.assertEquals("Step 1", deploy1Result.getPipelineStep());
+		Assertions.assertEquals("Pipeline 1", deploy1Result.getName());
+		Assertions.assertEquals("Step 1", deploy1Result.getStep());
 		Assertions.assertEquals(0, deploy1Result.getTimeToRecovery().compareTo(BigDecimal.valueOf(180000)));
 
 		MeanTimeToRecoveryOfPipeline deploy2Result = meanTimeRecoveryPipelines.get(1);
-		Assertions.assertEquals("Pipeline 2", deploy2Result.getPipelineName());
-		Assertions.assertEquals("Step 2", deploy2Result.getPipelineStep());
+		Assertions.assertEquals("Pipeline 2", deploy2Result.getName());
+		Assertions.assertEquals("Step 2", deploy2Result.getStep());
 		Assertions.assertEquals(0, deploy2Result.getTimeToRecovery().compareTo(BigDecimal.valueOf(120000)));
 
 		MeanTimeToRecoveryOfPipeline deploy3Result = meanTimeRecoveryPipelines.get(2);
-		Assertions.assertEquals("Pipeline 3", deploy3Result.getPipelineName());
-		Assertions.assertEquals("Step 3", deploy3Result.getPipelineStep());
+		Assertions.assertEquals("Pipeline 3", deploy3Result.getName());
+		Assertions.assertEquals("Step 3", deploy3Result.getStep());
 		Assertions.assertEquals(BigDecimal.ZERO, deploy3Result.getTimeToRecovery());
 	}
 
@@ -94,18 +95,18 @@ class MeanToRecoveryCalculatorTest {
 		Assertions.assertEquals(3, meanTimeRecoveryPipelines.size());
 
 		MeanTimeToRecoveryOfPipeline deploy1Result = meanTimeRecoveryPipelines.get(0);
-		Assertions.assertEquals("Pipeline 1", deploy1Result.getPipelineName());
-		Assertions.assertEquals("Step 1", deploy1Result.getPipelineStep());
+		Assertions.assertEquals("Pipeline 1", deploy1Result.getName());
+		Assertions.assertEquals("Step 1", deploy1Result.getStep());
 		Assertions.assertEquals(0, deploy1Result.getTimeToRecovery().compareTo(BigDecimal.valueOf(240000)));
 
 		MeanTimeToRecoveryOfPipeline deploy2Result = meanTimeRecoveryPipelines.get(1);
-		Assertions.assertEquals("Pipeline 2", deploy2Result.getPipelineName());
-		Assertions.assertEquals("Step 2", deploy2Result.getPipelineStep());
+		Assertions.assertEquals("Pipeline 2", deploy2Result.getName());
+		Assertions.assertEquals("Step 2", deploy2Result.getStep());
 		Assertions.assertEquals(BigDecimal.ZERO, deploy2Result.getTimeToRecovery());
 
 		MeanTimeToRecoveryOfPipeline deploy3Result = meanTimeRecoveryPipelines.get(2);
-		Assertions.assertEquals("Pipeline 3", deploy3Result.getPipelineName());
-		Assertions.assertEquals("Step 3", deploy3Result.getPipelineStep());
+		Assertions.assertEquals("Pipeline 3", deploy3Result.getName());
+		Assertions.assertEquals("Step 3", deploy3Result.getStep());
 		Assertions.assertEquals(BigDecimal.ZERO, deploy3Result.getTimeToRecovery());
 	}
 

@@ -117,9 +117,7 @@ public class JiraService {
 
 	public String verify(BoardType boardType, BoardVerifyRequestParam boardVerifyRequestParam) {
 		URI baseUrl = urlGenerator.getUri(boardVerifyRequestParam.getSite());
-		if (!BoardType.JIRA.equals(boardType)) {
-			throw new BadRequestException("boardType param is not correct");
-		}
+		verifyBoardTypeIsJira(boardType);
 
 		try {
 			JiraBoardVerifyDTO jiraBoardVerifyDTO = jiraFeignClient.getBoard(baseUrl,
@@ -145,9 +143,7 @@ public class JiraService {
 	public BoardConfigDTO getInfo(BoardType boardType, BoardRequestParam boardRequestParam) {
 		URI baseUrl = urlGenerator.getUri(boardRequestParam.getSite());
 		try {
-			if (!BoardType.JIRA.equals(boardType)) {
-				throw new BadRequestException("boardType param is not correct");
-			}
+			verifyBoardTypeIsJira(boardType);
 			String jiraBoardStyle = jiraFeignClient
 				.getProject(baseUrl, boardRequestParam.getProjectKey(), boardRequestParam.getToken())
 				.getStyle();
@@ -213,6 +209,12 @@ public class JiraService {
 			}
 			throw new InternalServerErrorException(
 					String.format("Failed to call Jira to get board config, cause is %s", cause.getMessage()));
+		}
+	}
+
+	private static void verifyBoardTypeIsJira(BoardType boardType) {
+		if (!BoardType.JIRA.equals(boardType)) {
+			throw new BadRequestException("boardType param is not correct");
 		}
 	}
 

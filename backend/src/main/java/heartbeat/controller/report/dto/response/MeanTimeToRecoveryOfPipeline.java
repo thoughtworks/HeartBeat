@@ -1,11 +1,11 @@
 package heartbeat.controller.report.dto.response;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import java.math.BigDecimal;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.math.BigDecimal;
 
 @Data
 @NoArgsConstructor
@@ -13,11 +13,9 @@ import lombok.NoArgsConstructor;
 @Builder
 public class MeanTimeToRecoveryOfPipeline {
 
-	@JsonProperty("name")
-	private String pipelineName;
+	private String name;
 
-	@JsonProperty("step")
-	private String pipelineStep;
+	private String step;
 
 	private BigDecimal timeToRecovery;
 

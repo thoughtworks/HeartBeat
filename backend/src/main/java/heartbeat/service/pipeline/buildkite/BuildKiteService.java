@@ -45,6 +45,8 @@ public class BuildKiteService {
 
 	private static final String CANCELED_STATE = "canceled";
 
+	public static final String BEARER_TITLE = "Bearer ";
+
 	private final CachePageService cachePageService;
 
 	private final ThreadPoolTaskExecutor customTaskExecutor;
@@ -148,7 +150,7 @@ public class BuildKiteService {
 		log.info(
 				"Start to paginated pipeline steps pagination info, orgId: {}, pipelineId: {}, stepsParam: {}, page:{}",
 				orgId, pipelineId, stepsParam, page);
-		String realToken = "Bearer " + token;
+		String realToken = BEARER_TITLE + token;
 		stepsParam.setStartTime(TimeUtil.convertToISOFormat(stepsParam.getStartTime()));
 		stepsParam.setEndTime(TimeUtil.convertToISOFormat(stepsParam.getEndTime()));
 
@@ -244,7 +246,7 @@ public class BuildKiteService {
 
 	public void verifyToken(String token) {
 		try {
-			String buildKiteToken = "Bearer " + token;
+			String buildKiteToken = BEARER_TITLE + token;
 			log.info("Start to query token permissions by token");
 			BuildKiteTokenInfo buildKiteTokenInfo = buildKiteFeignClient.getTokenInfo(buildKiteToken);
 			log.info("Successfully query token permissions by token, token info scopes: {}",
@@ -264,7 +266,7 @@ public class BuildKiteService {
 
 	public BuildKiteResponseDTO getBuildKiteInfo(TokenParam tokenParam) {
 		try {
-			String buildKiteToken = "Bearer " + tokenParam.getToken();
+			String buildKiteToken = BEARER_TITLE + tokenParam.getToken();
 			log.info("Start to query BuildKite organizations by token");
 			List<BuildKiteOrganizationsInfo> buildKiteOrganizationsInfo = buildKiteFeignClient
 				.getBuildKiteOrganizationsInfo(buildKiteToken);

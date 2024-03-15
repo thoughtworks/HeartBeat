@@ -40,6 +40,7 @@ export class MetricsStep {
   readonly boardClassificationLabel: Locator;
   readonly boardClassificationChipsContainer: Locator;
   readonly boardClassificationSelectedChips: Locator;
+  readonly boardReworkTimeSettingSingleInput: Locator;
 
   readonly pipelineSettingSection: Locator;
   readonly pipelineOrganizationSelect: Locator;
@@ -73,6 +74,7 @@ export class MetricsStep {
     this.boardLastAssigneeRadioBox = page.getByLabel('Last assignee');
     this.boardHistoricalAssigneeRadioBox = page.getByLabel('Historical assignee');
     this.boardCycleTimeSection = page.getByLabel('Cycle time settings section');
+    this.boardReworkTimeSettingSingleInput = page.getByTestId('rework-single-selection-rework-to-which-state');
     this.boardByColumnRadioBox = this.boardCycleTimeSection.getByLabel('By Column');
     this.boardByStatusRadioBox = this.boardCycleTimeSection.getByLabel('By Status');
     this.boardCycleTimeSelectForTODO = this.boardCycleTimeSection
@@ -447,6 +449,14 @@ export class MetricsStep {
 
     await this.checkPipelineCrews(crews);
     await this.page.keyboard.press('Escape');
+  }
+
+  async selectReworkSettings(reworkSetting: typeof metricsStepData.reworkTimesSettings) {
+    await this.boardReworkTimeSettingSingleInput.click();
+    await this.page
+      .getByRole('listbox')
+      .getByText(reworkSetting.rework2State as string)
+      .click();
   }
 
   async checkPipelineSetting(pipelineSettings: typeof metricsStepData.deployment) {

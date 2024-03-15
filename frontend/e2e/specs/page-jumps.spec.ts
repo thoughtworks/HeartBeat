@@ -30,6 +30,7 @@ test('Page jump for import', async ({ homePage, configStep, metricsStep, reportS
   await metricsStep.selectModifiedHeartbeatState(modifiedHbStateData);
   await metricsStep.selectCycleTimeConsiderAsBlockCheckbox();
   await metricsStep.selectClassifications(modifiedMetricsStepData.classification);
+  await metricsStep.selectReworkSettings(metricsStepData.reworkTimesSettings);
   await metricsStep.goToReportPage();
   await reportStep.goToPreviousStep();
   await metricsStep.waitForShown();
@@ -101,6 +102,7 @@ test('Page jump for create', async ({ homePage, configStep, metricsStep, reportS
   await metricsStep.selectCycleTimeSettingsType(modifiedMetricsStepData.cycleTime.type);
   await metricsStep.selectModifiedHeartbeatState(modifiedHbStateData);
   await metricsStep.selectClassifications(modifiedMetricsStepData.classification);
+  await metricsStep.selectReworkSettings(metricsStepData.reworkTimesSettings);
   await metricsStep.goToReportPage();
   await reportStep.goToPreviousStep();
   await metricsStep.checkCrews(modifiedMetricsStepData.crews);

@@ -77,7 +77,19 @@ public class JiraBoardConfigDTOFixture {
 
 	public static final long TIMESTAMP_3 = 1673556350001L;
 
+	public static final long TIMESTAMP_4 = 1675556350001L;
+
+	public static final long TIMESTAMP_5 = 1676556350001L;
+
+	public static final long TIMESTAMP_6 = 1676856350001L;
+
 	public static final String JIRA_CARD_WITH_TWO_SPRINT = "{\"startAt\":0,\"total\":5,\"issues\":[{\"key\":\"TS-1\",\"fields\":{\"assignee\":{\"displayName\":\"Zhang San\"},\"customfield_10020\":[{\"name\":\"TS Sprint 1\",\"completeDate\":\"2024-02-08T03:52:22.395Z\"},{\"name\":\"TS Sprint 2\",\"completeDate\":\"2024-02-07T04:21:14.512Z\"}]}}]}";
+
+	public static final long TIMESTAMP_7 = 1676656350001L;
+
+	public static final long TIMESTAMP_8 = 1676708799000L;
+
+	public static final long TIMESTAMP_9 = 1676808799000L;
 
 	public static JiraBoardConfigDTO.JiraBoardConfigDTOBuilder JIRA_BOARD_CONFIG_RESPONSE_BUILDER() {
 
@@ -225,107 +237,112 @@ public class JiraBoardConfigDTOFixture {
 	public static CardHistoryResponseDTO.CardHistoryResponseDTOBuilder CARD_HISTORY_RESPONSE_BUILDER() {
 		return CardHistoryResponseDTO.builder()
 			.isLast(true)
-			.items(List.of(new HistoryDetail(2, "status", new Status("In Dev"), new Status("To do"), null),
-					new HistoryDetail(3, "status", new Status(REVIEW), new Status("In Dev"), null),
-					new HistoryDetail(4, "status", new Status(WAITING_FOR_TESTING), new Status(REVIEW), null),
-					new HistoryDetail(5, "status", new Status(TESTING), new Status(WAITING_FOR_TESTING), null),
-					new HistoryDetail(1662642750003L, "status", new Status("Done"), new Status(TESTING), null)));
+			.items(List.of(new HistoryDetail(2, "status", new Status("In Dev"), new Status("To do"), null, null),
+					new HistoryDetail(3, "status", new Status(REVIEW), new Status("In Dev"), null, null),
+					new HistoryDetail(4, "status", new Status(WAITING_FOR_TESTING), new Status(REVIEW), null, null),
+					new HistoryDetail(5, "status", new Status(TESTING), new Status(WAITING_FOR_TESTING), null, null),
+					new HistoryDetail(1662642750003L, "status", new Status("Done"), new Status(TESTING), null, null)));
 	}
 
 	public static CardHistoryResponseDTO.CardHistoryResponseDTOBuilder CARD_HISTORY_REAL_DONE_RESPONSE_BUILDER() {
 		return CardHistoryResponseDTO.builder()
 			.isLast(true)
-			.items(List.of(new HistoryDetail(1672556350002L, "status", new Status("In Dev"), new Status("To do"), null),
-					new HistoryDetail(1672556350003L, "status", new Status(REVIEW), new Status("In Dev"), null),
+			.items(List.of(
+					new HistoryDetail(1672556350002L, "status", new Status("In Dev"), new Status("To do"), null, null),
+					new HistoryDetail(1672556350003L, "status", new Status(REVIEW), new Status("In Dev"), null, null),
 					new HistoryDetail(1672556350004L, "status", new Status(WAITING_FOR_TESTING), new Status(REVIEW),
-							null),
+							null, null),
 					new HistoryDetail(1672556350005L, "status", new Status(TESTING), new Status(WAITING_FOR_TESTING),
-							null),
-					new HistoryDetail(1672556350006L, "status", new Status(BLOCK), new Status(TESTING), null),
+							null, null),
+					new HistoryDetail(1672556350006L, "status", new Status(BLOCK), new Status(TESTING), null, null),
 					new HistoryDetail(1672556350007L, "status", new Status(WAITING_FOR_TESTING), new Status(BLOCK),
-							null),
+							null, null),
 					new HistoryDetail(1672556350008L, "status", new Status(TESTING), new Status(WAITING_FOR_TESTING),
-							null),
-					new HistoryDetail(1672556350010L, "status", new Status("Done"), new Status(TESTING), null)));
+							null, null),
+					new HistoryDetail(1672556350010L, "status", new Status("Done"), new Status(TESTING), null, null)));
 	}
 
 	public static CardHistoryResponseDTO.CardHistoryResponseDTOBuilder CARD_HISTORY_RESPONSE_BUILDER_TO_DONE() {
 		return CardHistoryResponseDTO.builder()
 			.isLast(true)
-			.items(List.of(new HistoryDetail(2, "status", new Status("In Dev"), new Status("To do"), null),
-					new HistoryDetail(3, "status", new Status(REVIEW), new Status("In Dev"), null),
-					new HistoryDetail(4, "status", new Status(WAITING_FOR_TESTING), new Status(REVIEW), null),
-					new HistoryDetail(5, "status", new Status("DONE"), new Status(WAITING_FOR_TESTING), null)));
+			.items(List.of(new HistoryDetail(2, "status", new Status("In Dev"), new Status("To do"), null, null),
+					new HistoryDetail(3, "status", new Status(REVIEW), new Status("In Dev"), null, null),
+					new HistoryDetail(4, "status", new Status(WAITING_FOR_TESTING), new Status(REVIEW), null, null),
+					new HistoryDetail(5, "status", new Status("DONE"), new Status(WAITING_FOR_TESTING), null, null)));
 	}
 
 	public static CardHistoryResponseDTO.CardHistoryResponseDTOBuilder CARD_HISTORY_MULTI_RESPONSE_BUILDER() {
 		return CardHistoryResponseDTO.builder()
 			.isLast(true)
-			.items(List.of(new HistoryDetail(1, "status", new Status("To do"), new Status(BLOCK), null),
-					new HistoryDetail(2, "assignee", new Status("In Dev"), new Status("To do"), null),
-					new HistoryDetail(3, "status", new Status(REVIEW), new Status("In Dev"), null),
-					new HistoryDetail(4, "status", new Status(WAITING_FOR_TESTING), new Status(REVIEW), null),
+			.items(List.of(new HistoryDetail(1, "status", new Status("To do"), new Status(BLOCK), null, null),
+					new HistoryDetail(2, "assignee", new Status("In Dev"), new Status("To do"), null, null),
+					new HistoryDetail(3, "status", new Status(REVIEW), new Status("In Dev"), null, null),
+					new HistoryDetail(4, "status", new Status(WAITING_FOR_TESTING), new Status(REVIEW), null, null),
 					new HistoryDetail(1672642740000L, "status", new Status(TESTING), new Status(WAITING_FOR_TESTING),
-							null),
-					new HistoryDetail(1672642740001L, "status", new Status(BLOCK), new Status(TESTING), null),
-					new HistoryDetail(1672642740002L, "status", new Status(FLAG), new Status(BLOCK), null),
+							null, null),
+					new HistoryDetail(1672642740001L, "status", new Status(BLOCK), new Status(TESTING), null, null),
+					new HistoryDetail(1672642740002L, "status", new Status(FLAG), new Status(BLOCK), null, null),
 					new HistoryDetail(1672642750001L, "customfield_10021", new Status("Impediment"), new Status(FLAG),
-							null),
+							null, null),
 					new HistoryDetail(1672642750002L, "flagged", new Status("Impediment"), new Status("removeFlag"),
-							null),
-					new HistoryDetail(1672642750003L, "status", new Status("Done"), new Status(TESTING), null),
-					new HistoryDetail(1672642750004L, "status", new Status("Done"), new Status(TESTING), null),
+							null, null),
+					new HistoryDetail(1672642750003L, "status", new Status("Done"), new Status(TESTING), null, null),
+					new HistoryDetail(1672642750004L, "status", new Status("Done"), new Status(TESTING), null, null),
 					new HistoryDetail(1672642750005L, "customfield_10021", new Status(UNKNOWN),
-							new Status("removeFlag"), null)));
+							new Status("removeFlag"), null, null)));
 	}
 
 	public static CardHistoryResponseDTO.CardHistoryResponseDTOBuilder CARD_HISTORY_MULTI_REAL_DONE_RESPONSE_BUILDER() {
 		return CardHistoryResponseDTO.builder()
 			.isLast(true)
-			.items(List.of(new HistoryDetail(1672642730000L, "status", new Status("To do"), new Status(BLOCK), null),
-					new HistoryDetail(1672642730000L, "assignee", new Status("In Dev"), new Status("To do"), null),
-					new HistoryDetail(1672642730000L, "status", new Status(REVIEW), new Status("In Dev"), null),
+			.items(List.of(
+					new HistoryDetail(1672642730000L, "status", new Status("To do"), new Status(BLOCK), null, null),
+					new HistoryDetail(1672642730000L, "assignee", new Status("In Dev"), new Status("To do"), null,
+							null),
+					new HistoryDetail(1672642730000L, "status", new Status(REVIEW), new Status("In Dev"), null, null),
 					new HistoryDetail(1672642730000L, "status", new Status(WAITING_FOR_TESTING), new Status(REVIEW),
-							null),
+							null, null),
 					new HistoryDetail(1672642740000L, "status", new Status(TESTING), new Status(WAITING_FOR_TESTING),
-							null),
-					new HistoryDetail(1672642740001L, "status", new Status(BLOCK), new Status(TESTING), null),
-					new HistoryDetail(1672642740002L, "status", new Status(FLAG), new Status(BLOCK), null),
+							null, null),
+					new HistoryDetail(1672642740001L, "status", new Status(BLOCK), new Status(TESTING), null, null),
+					new HistoryDetail(1672642740002L, "status", new Status(FLAG), new Status(BLOCK), null, null),
 					new HistoryDetail(1672642750001L, "customfield_10021", new Status("Impediment"), new Status(FLAG),
-							null),
+							null, null),
 					new HistoryDetail(1672642750002L, "flagged", new Status("Impediment"), new Status("removeFlag"),
-							null),
-					new HistoryDetail(1672642750003L, "status", new Status("Done"), new Status(TESTING), null),
-					new HistoryDetail(1672642750004L, "status", new Status("Done"), new Status(TESTING), null),
+							null, null),
+					new HistoryDetail(1672642750003L, "status", new Status("Done"), new Status(TESTING), null, null),
+					new HistoryDetail(1672642750004L, "status", new Status("Done"), new Status(TESTING), null, null),
 					new HistoryDetail(1672642750005L, "customfield_10021", new Status(UNKNOWN),
-							new Status("removeFlag"), null)));
+							new Status("removeFlag"), null, null)));
 	}
 
 	public static CardHistoryResponseDTO.CardHistoryResponseDTOBuilder CARD_HISTORY_DONE_TIME_GREATER_THAN_END_TIME_BUILDER() {
 		return CardHistoryResponseDTO.builder()
-			.items(List.of(new HistoryDetail(1, "status", new Status("To do"), new Status(BLOCK), null),
-					new HistoryDetail(2, "assignee", new Status("In Dev"), new Status("To do"), null),
-					new HistoryDetail(3, "status", new Status(REVIEW), new Status("In Dev"), null),
-					new HistoryDetail(4, "status", new Status(WAITING_FOR_TESTING), new Status(REVIEW), null),
+			.items(List.of(new HistoryDetail(1, "status", new Status("To do"), new Status(BLOCK), null, null),
+					new HistoryDetail(2, "assignee", new Status("In Dev"), new Status("To do"), null, null),
+					new HistoryDetail(3, "status", new Status(REVIEW), new Status("In Dev"), null, null),
+					new HistoryDetail(4, "status", new Status(WAITING_FOR_TESTING), new Status(REVIEW), null, null),
 					new HistoryDetail(1682642740000L, "status", new Status(TESTING), new Status(WAITING_FOR_TESTING),
-							null),
-					new HistoryDetail(1682642740001L, "status", new Status(BLOCK), new Status(TESTING), null),
-					new HistoryDetail(1682642740002L, "status", new Status(FLAG), new Status(BLOCK), null),
+							null, null),
+					new HistoryDetail(1682642740001L, "status", new Status(BLOCK), new Status(TESTING), null, null),
+					new HistoryDetail(1682642740002L, "status", new Status(FLAG), new Status(BLOCK), null, null),
 					new HistoryDetail(1682642750001L, "customfield_10021", new Status("Impediment"), new Status(FLAG),
-							null),
+							null, null),
 					new HistoryDetail(1682642750002L, "flagged", new Status("Impediment"), new Status("removeFlag"),
-							null),
-					new HistoryDetail(1686908799000L, "status", new Status("Done"), new Status(TESTING), null)));
+							null, null),
+					new HistoryDetail(1686908799000L, "status", new Status("Done"), new Status(TESTING), null, null)));
 	}
 
 	public static FieldResponseDTO.FieldResponseDTOBuilder FIELD_RESPONSE_BUILDER() {
 		IssueField storyPointIssueField = new IssueField("customfield_10016", "Story point estimate");
 		IssueField sprintIssueField = new IssueField("customfield_10020", "Sprint");
 		IssueField flaggedIssueField = new IssueField("customfield_10021", "Flagged");
+		IssueField summaryIssueField = new IssueField("summary", "customfield_10029");
 		HashMap<String, IssueField> issueFieldMap = new HashMap<>();
 		issueFieldMap.put("customfield_10016", storyPointIssueField);
 		issueFieldMap.put("customfield_10020", sprintIssueField);
 		issueFieldMap.put("customfield_10021", flaggedIssueField);
+		issueFieldMap.put("customfield_10029", summaryIssueField);
 
 		return FieldResponseDTO.builder().projects(List.of(new Project(List.of(new Issuetype(issueFieldMap)))));
 	}
@@ -518,6 +535,7 @@ public class JiraBoardConfigDTOFixture {
 			.startTime(START_TIME)
 			.endTime(END_TIME)
 			.targetFields(jiraBoardSetting.getTargetFields())
+			.boardMetrics(List.of("cycle time", "rework times"))
 			.treatFlagCardAsBlock(jiraBoardSetting.getTreatFlagCardAsBlock());
 	}
 
@@ -533,6 +551,7 @@ public class JiraBoardConfigDTOFixture {
 			.startTime(START_TIME)
 			.endTime(END_TIME)
 			.targetFields(jiraBoardSetting.getTargetFields())
+			.boardMetrics(List.of("cycle time", "rework times"))
 			.treatFlagCardAsBlock(jiraBoardSetting.getTreatFlagCardAsBlock());
 	}
 
@@ -548,6 +567,7 @@ public class JiraBoardConfigDTOFixture {
 			.startTime(START_TIME)
 			.endTime(END_TIME)
 			.targetFields(jiraBoardSetting.getTargetFields())
+			.boardMetrics(List.of("cycle time", "rework times"))
 			.treatFlagCardAsBlock(jiraBoardSetting.getTreatFlagCardAsBlock());
 	}
 
@@ -594,7 +614,8 @@ public class JiraBoardConfigDTOFixture {
 	public static JiraBoardSetting.JiraBoardSettingBuilder JIRA_BOARD_SETTING_WITH_HISTORICAL_ASSIGNEE_FILTER_METHOD() {
 		return JiraBoardSetting.builder()
 			.boardId(BOARD_ID)
-			.boardColumns(List.of(RequestJiraBoardColumnSetting.builder().name(IN_DEV).value(IN_DEV).build(),
+			.boardColumns(List.of(RequestJiraBoardColumnSetting.builder().name(ANALYSE).value(ANALYSE).build(),
+					RequestJiraBoardColumnSetting.builder().name(IN_DEV).value(IN_DEV).build(),
 					RequestJiraBoardColumnSetting.builder()
 						.name(WAITING_FOR_TESTING)
 						.value(WAITING_FOR_TESTING)
@@ -629,6 +650,7 @@ public class JiraBoardConfigDTOFixture {
 			.startTime(START_TIME)
 			.endTime(END_TIME)
 			.targetFields(jiraBoardSetting.getTargetFields())
+			.boardMetrics(List.of("cycle time", "rework times"))
 			.treatFlagCardAsBlock(jiraBoardSetting.getTreatFlagCardAsBlock());
 	}
 
@@ -644,6 +666,7 @@ public class JiraBoardConfigDTOFixture {
 			.startTime(START_TIME)
 			.endTime(END_TIME)
 			.targetFields(jiraBoardSetting.getTargetFields())
+			.boardMetrics(List.of("cycle time", "rework times"))
 			.treatFlagCardAsBlock(jiraBoardSetting.getTreatFlagCardAsBlock());
 	}
 
@@ -672,39 +695,39 @@ public class JiraBoardConfigDTOFixture {
 		return CardHistoryResponseDTO.builder()
 			.items(List.of(
 					new HistoryDetail(TIMESTAMP_1, "status", new Status(TESTING), new Status(REVIEW),
-							new HistoryDetail.Actor(DISPLAY_NAME_ONE)),
+							new HistoryDetail.Actor(DISPLAY_NAME_ONE), null),
 					new HistoryDetail(TIMESTAMP_2, "status", new Status(DONE), new Status(TESTING),
-							new HistoryDetail.Actor(DISPLAY_NAME_ONE)),
+							new HistoryDetail.Actor(DISPLAY_NAME_ONE), null),
 					new HistoryDetail(TIMESTAMP_1, "assignee", new Status("yun"), new Status(null),
-							new HistoryDetail.Actor(DISPLAY_NAME_ONE)),
+							new HistoryDetail.Actor(DISPLAY_NAME_ONE), null),
 					new HistoryDetail(TIMESTAMP_3, "assignee", new Status("song"), new Status("yun"),
-							new HistoryDetail.Actor(DISPLAY_NAME_ONE))));
+							new HistoryDetail.Actor(DISPLAY_NAME_ONE), null)));
 	}
 
 	public static CardHistoryResponseDTO.CardHistoryResponseDTOBuilder CARD2_HISTORY_FOR_HISTORICAL_ASSIGNEE_FILTER() {
 		return CardHistoryResponseDTO.builder()
 			.items(List.of(
 					new HistoryDetail(TIMESTAMP_1, "status", new Status(TESTING), new Status(REVIEW),
-							new HistoryDetail.Actor(DISPLAY_NAME_ONE)),
+							new HistoryDetail.Actor(DISPLAY_NAME_ONE), null),
 					new HistoryDetail(TIMESTAMP_2, "status", new Status(DONE), new Status(TESTING),
-							new HistoryDetail.Actor(DISPLAY_NAME_ONE)),
+							new HistoryDetail.Actor(DISPLAY_NAME_ONE), null),
 					new HistoryDetail(TIMESTAMP_1, "assignee", new Status("yun"), new Status(null),
-							new HistoryDetail.Actor(DISPLAY_NAME_ONE)),
+							new HistoryDetail.Actor(DISPLAY_NAME_ONE), null),
 					new HistoryDetail(TIMESTAMP_3, "assignee", new Status("kun"), new Status("yun"),
-							new HistoryDetail.Actor(DISPLAY_NAME_ONE))));
+							new HistoryDetail.Actor(DISPLAY_NAME_ONE), null)));
 	}
 
 	public static CardHistoryResponseDTO.CardHistoryResponseDTOBuilder CARD3_HISTORY_FOR_HISTORICAL_ASSIGNEE_FILTER() {
 		return CardHistoryResponseDTO.builder()
 			.items(List.of(
 					new HistoryDetail(TIMESTAMP_1, "status", new Status(TESTING), new Status(REVIEW),
-							new HistoryDetail.Actor(DISPLAY_NAME_ONE)),
+							new HistoryDetail.Actor(DISPLAY_NAME_ONE), null),
 					new HistoryDetail(TIMESTAMP_2, "status", new Status(DONE), new Status(TESTING),
-							new HistoryDetail.Actor(DISPLAY_NAME_ONE)),
+							new HistoryDetail.Actor(DISPLAY_NAME_ONE), null),
 					new HistoryDetail(TIMESTAMP_1, "assignee", new Status("yun"), new Status(null),
-							new HistoryDetail.Actor(DISPLAY_NAME_ONE)),
+							new HistoryDetail.Actor(DISPLAY_NAME_ONE), null),
 					new HistoryDetail(TIMESTAMP_3, "assignee", new Status(null), new Status("yun"),
-							new HistoryDetail.Actor(DISPLAY_NAME_ONE))));
+							new HistoryDetail.Actor(DISPLAY_NAME_ONE), null)));
 	}
 
 	public static AllCardsResponseDTO.AllCardsResponseDTOBuilder ALL_DONE_CARDS_RESPONSE_FOR_MULTIPLE_STATUS() {
@@ -725,22 +748,63 @@ public class JiraBoardConfigDTOFixture {
 
 	public static CardHistoryResponseDTO.CardHistoryResponseDTOBuilder CARD1_HISTORY_FOR_MULTIPLE_STATUSES() {
 		return CardHistoryResponseDTO.builder()
-			.items(List.of(new HistoryDetail(TIMESTAMP_1, "status", new Status(IN_DEV), new Status(ANALYSE),
-					new HistoryDetail.Actor(DISPLAY_NAME_ONE))));
+			.isLast(true)
+			.items(List.of(
+					new HistoryDetail(TIMESTAMP_1, "status", new Status(IN_DEV), new Status(ANALYSE),
+							new HistoryDetail.Actor(DISPLAY_NAME_ONE), null),
+					new HistoryDetail(TIMESTAMP_2, "status", new Status(TESTING), new Status(IN_DEV),
+							new HistoryDetail.Actor(DISPLAY_NAME_ONE), null),
+					new HistoryDetail(TIMESTAMP_4, "status", new Status(IN_DEV), new Status(TESTING),
+							new HistoryDetail.Actor(DISPLAY_NAME_ONE), null),
+					new HistoryDetail(TIMESTAMP_5, "status", new Status(REVIEW), new Status(IN_DEV),
+							new HistoryDetail.Actor(DISPLAY_NAME_ONE), null),
+					new HistoryDetail(TIMESTAMP_6, "status", new Status(IN_DEV), new Status(REVIEW),
+							new HistoryDetail.Actor(DISPLAY_NAME_ONE), null),
+					new HistoryDetail(TIMESTAMP_7, "status", new Status(IN_DEV), new Status(BLOCK),
+							new HistoryDetail.Actor(DISPLAY_NAME_ONE), null)));
+	}
+
+	public static CardHistoryResponseDTO.CardHistoryResponseDTOBuilder CARD1_HISTORY_FOR_MULTIPLE_STATUSES_WITH_FLAG() {
+		return CardHistoryResponseDTO.builder()
+			.isLast(true)
+			.items(List.of(
+					new HistoryDetail(TIMESTAMP_1, "status", new Status(IN_DEV), new Status(ANALYSE),
+							new HistoryDetail.Actor(DISPLAY_NAME_ONE), null),
+					new HistoryDetail(TIMESTAMP_2, "status", new Status(TESTING), new Status(IN_DEV),
+							new HistoryDetail.Actor(DISPLAY_NAME_ONE), null),
+					new HistoryDetail(TIMESTAMP_4, "customfield_10021", new Status("Impediment"), new Status(null),
+							new HistoryDetail.Actor(DISPLAY_NAME_ONE), "Flagged"),
+					new HistoryDetail(TIMESTAMP_5, "status", new Status(IN_DEV), new Status(TESTING),
+							new HistoryDetail.Actor(DISPLAY_NAME_ONE), null),
+					new HistoryDetail(TIMESTAMP_7, "customfield_10021", new Status(null), new Status("Impediment"),
+							new HistoryDetail.Actor(DISPLAY_NAME_ONE), "Flagged"),
+					new HistoryDetail(TIMESTAMP_8, "customfield_10021", new Status("Impediment"), new Status(null),
+							new HistoryDetail.Actor(DISPLAY_NAME_ONE), "Flagged"),
+					new HistoryDetail(TIMESTAMP_8, "customfield_10020", new Status("Impediment"), new Status(null),
+							new HistoryDetail.Actor(DISPLAY_NAME_ONE), "story"),
+					new HistoryDetail(TIMESTAMP_9, "customfield_10021", new Status(null), new Status("Impediment"),
+							new HistoryDetail.Actor(DISPLAY_NAME_ONE), "Flagged")));
+
 	}
 
 	public static CardHistoryResponseDTO.CardHistoryResponseDTOBuilder CARD2_HISTORY_FOR_MULTIPLE_STATUSES() {
 		return CardHistoryResponseDTO.builder()
 			.items(List.of(new HistoryDetail(TIMESTAMP_1, "status", new Status(TESTING), new Status(ANALYSE),
-					new HistoryDetail.Actor(DISPLAY_NAME_ONE))));
+					new HistoryDetail.Actor(DISPLAY_NAME_ONE), null)));
+	}
+
+	public static CardHistoryResponseDTO.CardHistoryResponseDTOBuilder CARD3_HISTORY_FOR_MULTIPLE_STATUSES() {
+		return CardHistoryResponseDTO.builder()
+			.items(List.of(new HistoryDetail(TIMESTAMP_1, "status", new Status(IN_DEV), new Status(ANALYSE),
+					new HistoryDetail.Actor(DISPLAY_NAME_ONE), null)));
 	}
 
 	public static CardHistoryResponseDTO.CardHistoryResponseDTOBuilder CARD_HISTORY_WITH_NO_STATUS_FIELD() {
 		return CardHistoryResponseDTO.builder()
-			.items(List.of(new HistoryDetail(2, "assignee", new Status("In Dev"), new Status("To do"), null),
+			.items(List.of(new HistoryDetail(2, "assignee", new Status("In Dev"), new Status("To do"), null, null),
 					new HistoryDetail(TIMESTAMP_1, "customfield_10021", new Status("Impediment"), new Status(FLAG),
-							null),
-					new HistoryDetail(TIMESTAMP_2, "flagged", new Status("Impediment"), new Status("removeFlag"),
+							null, null),
+					new HistoryDetail(TIMESTAMP_2, "flagged", new Status("Impediment"), new Status("removeFlag"), null,
 							null)));
 	}
 

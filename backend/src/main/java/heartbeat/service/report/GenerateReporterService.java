@@ -21,6 +21,7 @@ import heartbeat.service.report.calculator.CycleTimeCalculator;
 import heartbeat.service.report.calculator.DeploymentFrequencyCalculator;
 import heartbeat.service.report.calculator.LeadTimeForChangesCalculator;
 import heartbeat.service.report.calculator.MeanToRecoveryCalculator;
+import heartbeat.service.report.calculator.ReworkCalculator;
 import heartbeat.service.report.calculator.VelocityCalculator;
 import heartbeat.service.report.calculator.model.FetchedData;
 import heartbeat.service.report.calculator.model.FetchedData.BuildKiteData;
@@ -67,6 +68,8 @@ public class GenerateReporterService {
 	private final CSVFileGenerator csvFileGenerator;
 
 	private final LeadTimeForChangesCalculator leadTimeForChangesCalculator;
+
+	private final ReworkCalculator reworkCalculator;
 
 	private final AsyncReportRequestHandler asyncReportRequestHandler;
 
@@ -205,6 +208,9 @@ public class GenerateReporterService {
 				case "classification" -> reportResponse
 					.setClassificationList(classificationCalculator.calculate(jiraBoardSetting.getTargetFields(),
 							fetchedData.getCardCollectionInfo().getRealDoneCardCollection()));
+				case "rework times" -> reportResponse.setRework(reworkCalculator.calculateRework(
+						fetchedData.getCardCollectionInfo().getRealDoneCardCollection(),
+						request.getJiraBoardSetting().getReworkTimesSetting().getEnumReworkState()));
 				default -> {
 					// TODO
 				}
@@ -342,6 +348,7 @@ public class GenerateReporterService {
 			.velocity(getValueOrNull(boardReportResponse, ReportResponse::getVelocity))
 			.classificationList(getValueOrNull(boardReportResponse, ReportResponse::getClassificationList))
 			.cycleTime(getValueOrNull(boardReportResponse, ReportResponse::getCycleTime))
+			.rework(getValueOrNull(boardReportResponse, ReportResponse::getRework))
 			.exportValidityTime(EXPORT_CSV_VALIDITY_TIME)
 			.deploymentFrequency(getValueOrNull(pipleineReportResponse, ReportResponse::getDeploymentFrequency))
 			.changeFailureRate(getValueOrNull(pipleineReportResponse, ReportResponse::getChangeFailureRate))

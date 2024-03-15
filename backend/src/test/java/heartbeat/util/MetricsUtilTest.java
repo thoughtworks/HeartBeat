@@ -15,7 +15,7 @@ class MetricsUtilTest {
 		List<String> codebaseMetrics = MetricsUtil.CODEBASE_METRICS.getValue();
 
 		List<String> expectedKanbanMetrics = List.of(MetricEnum.VELOCITY.getValue(), MetricEnum.CYCLE_TIME.getValue(),
-				MetricEnum.CLASSIFICATION.getValue());
+				MetricEnum.CLASSIFICATION.getValue(), MetricEnum.REWORK_TIMES.getValue());
 		List<String> expectedBuildKiteMetrics = List.of(MetricEnum.CHANGE_FAILURE_RATE.getValue(),
 				MetricEnum.DEPLOYMENT_FREQUENCY.getValue(), MetricEnum.MEAN_TIME_TO_RECOVERY.getValue());
 		List<String> expectedCodebaseMetrics = List.of(MetricEnum.LEAD_TIME_FOR_CHANGES.getValue());

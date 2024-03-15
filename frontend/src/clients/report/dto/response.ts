@@ -4,6 +4,7 @@ import { Nullable } from '@src/utils/types';
 export interface ReportResponseDTO {
   velocity: Nullable<VelocityResponse>;
   cycleTime: Nullable<CycleTimeResponse>;
+  rework: Nullable<ReworkTimeResponse>;
   classificationList: Nullable<ClassificationResponse[]>;
   deploymentFrequency: Nullable<DeploymentFrequencyResponse>;
   meanTimeToRecovery: Nullable<MeanTimeToRecoveryResponse>;
@@ -38,6 +39,20 @@ export interface CycleTimeResponse {
   averageCycleTimePerCard: number;
   averageCycleTimePerSP: number;
   swimlaneList: Array<Swimlane>;
+}
+
+export interface ReworkTimeResponse {
+  totalReworkTimes: number;
+  reworkState: string;
+  fromToDo: number;
+  fromInDev: number;
+  fromBlock: number;
+  fromWaitingForTesting: number;
+  fromTesting: number;
+  fromReview: number;
+  fromDone: number;
+  totalReworkCards: number;
+  reworkCardsRatio: number;
 }
 
 export interface ClassificationResponse {

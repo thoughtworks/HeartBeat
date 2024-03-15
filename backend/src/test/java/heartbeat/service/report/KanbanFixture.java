@@ -35,6 +35,7 @@ public class KanbanFixture {
 			.treatFlagCardAsBlock(true)
 			.startTime("startTime")
 			.endTime("endTime")
+			.boardMetrics(List.of("cycle time", "rework times"))
 			.build();
 	}
 

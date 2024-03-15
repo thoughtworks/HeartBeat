@@ -28,6 +28,7 @@ import heartbeat.controller.board.dto.request.BoardType;
 import heartbeat.controller.board.dto.request.BoardVerifyRequestParam;
 import heartbeat.controller.board.dto.request.CardStepsEnum;
 import heartbeat.controller.board.dto.request.RequestJiraBoardColumnSetting;
+import heartbeat.controller.board.dto.request.ReworkTimesSetting;
 import heartbeat.controller.board.dto.request.StoryPointsAndCycleTimeRequest;
 import heartbeat.controller.board.dto.response.BoardConfigDTO;
 import heartbeat.controller.board.dto.response.CardCollection;
@@ -38,9 +39,11 @@ import heartbeat.controller.board.dto.response.CycleTimeInfo;
 import heartbeat.controller.board.dto.response.CycleTimeInfoDTO;
 import heartbeat.controller.board.dto.response.JiraCardDTO;
 import heartbeat.controller.board.dto.response.JiraColumnDTO;
+import heartbeat.controller.board.dto.response.ReworkTimesInfo;
 import heartbeat.controller.board.dto.response.StatusChangedItem;
 import heartbeat.controller.board.dto.response.StepsDay;
 import heartbeat.controller.board.dto.response.TargetField;
+import heartbeat.controller.report.dto.request.MetricEnum;
 import heartbeat.exception.BadRequestException;
 import heartbeat.exception.BaseException;
 import heartbeat.exception.InternalServerErrorException;
@@ -58,24 +61,32 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.lang.reflect.Type;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.URI;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import static heartbeat.controller.board.dto.request.CardStepsEnum.reworkJudgmentMap;
 import static java.lang.Long.parseLong;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -97,6 +108,10 @@ public class JiraService {
 	private static final String DONE_CARD_TAG = "done";
 
 	private static final String NONE_DONE_CARD_TAG = "nonDone";
+
+	public static final String FLAGGED = "flagged";
+
+	public static final String IMPEDIMENT = "impediment";
 
 	private final ThreadPoolTaskExecutor customTaskExecutor;
 
@@ -222,7 +237,7 @@ public class JiraService {
 		return (FIELDS_IGNORE.contains(targetField.getKey())) || FIELDS_IGNORE.contains(targetField.getName());
 	}
 
-	public CardCollection getStoryPointsAndCycleTimeForDoneCards(StoryPointsAndCycleTimeRequest request,
+	public CardCollection getStoryPointsAndCycleTimeAndReworkInfoForDoneCards(StoryPointsAndCycleTimeRequest request,
 			List<RequestJiraBoardColumnSetting> boardColumns, List<String> users, String assigneeFilter) {
 		BoardType boardType = BoardType.fromValue(request.getType());
 		URI baseUrl = urlGenerator.getUri(request.getSite());
@@ -248,11 +263,26 @@ public class JiraService {
 			.mapToDouble(card -> card.getBaseInfo().getFields().getStoryPoints())
 			.sum();
 
-		return CardCollection.builder()
+		CardCollection cardCollection = CardCollection.builder()
 			.storyPointSum(storyPointSum)
 			.cardsNumber(realDoneCards.size())
 			.jiraCardDTOList(realDoneCards)
 			.build();
+
+		if (request.getBoardMetrics().contains(MetricEnum.REWORK_TIMES.getValue())) {
+			int reworkCardNumber = realDoneCards.stream()
+				.filter(realDoneCard -> !realDoneCard.getReworkTimesInfos().isEmpty())
+				.toList()
+				.size();
+			double reworkRatio = realDoneCards.isEmpty() ? 0
+					: BigDecimal.valueOf(reworkCardNumber)
+						.divide(BigDecimal.valueOf(realDoneCards.size()), 2, RoundingMode.HALF_UP)
+						.doubleValue();
+			cardCollection.setReworkCardNumber(reworkCardNumber);
+			cardCollection.setReworkRatio(reworkRatio);
+		}
+
+		return cardCollection;
 	}
 
 	private CompletableFuture<JiraColumnResult> getJiraColumnsAsync(BoardRequestParam boardRequestParam, URI baseUrl,
@@ -556,21 +586,134 @@ public class JiraService {
 		jiraCards.forEach(doneCard -> {
 			CardHistoryResponseDTO cardHistoryResponseDTO = getJiraCardHistory(baseUrl, doneCard.getKey(), 0,
 					request.getToken());
-			CycleTimeInfoDTO cycleTimeInfoDTO = getCycleTime(cardHistoryResponseDTO, request.isTreatFlagCardAsBlock(),
-					keyFlagged, request.getStatus());
+
 			List<String> assigneeSet = getAssigneeSet(cardHistoryResponseDTO, filterMethod, doneCard);
 			if (users.stream().anyMatch(assigneeSet::contains)) {
-				JiraCardDTO jiraCardDTO = JiraCardDTO.builder()
-					.baseInfo(doneCard)
-					.cycleTime(cycleTimeInfoDTO.getCycleTimeInfos())
-					.originCycleTime(cycleTimeInfoDTO.getOriginCycleTimeInfos())
-					.cardCycleTime(calculateCardCycleTime(doneCard.getKey(), cycleTimeInfoDTO.getCycleTimeInfos(),
-							boardColumns))
-					.build();
+				CycleTimeInfoDTO cycleTimeInfoDTO;
+				JiraCardDTO jiraCardDTO = JiraCardDTO.builder().baseInfo(doneCard).build();
+				if (request.getBoardMetrics().contains(MetricEnum.CYCLE_TIME.getValue())) {
+					cycleTimeInfoDTO = getCycleTime(cardHistoryResponseDTO, request.isTreatFlagCardAsBlock(),
+							keyFlagged, request.getStatus());
+					jiraCardDTO.setCycleTime(cycleTimeInfoDTO.getCycleTimeInfos());
+					jiraCardDTO.setOriginCycleTime(cycleTimeInfoDTO.getOriginCycleTimeInfos());
+					jiraCardDTO.setCardCycleTime(calculateCardCycleTime(doneCard.getKey(),
+							cycleTimeInfoDTO.getCycleTimeInfos(), boardColumns));
+				}
+				if (request.getBoardMetrics().contains(MetricEnum.REWORK_TIMES.getValue())) {
+					jiraCardDTO.setReworkTimesInfos(getReworkTimesInfo(cardHistoryResponseDTO,
+							request.getReworkTimesSetting(), request.isTreatFlagCardAsBlock(), boardColumns));
+					jiraCardDTO.calculateTotalReworkTimes();
+				}
 				realDoneCards.add(jiraCardDTO);
 			}
 		});
 		return realDoneCards;
+	}
+
+	private List<ReworkTimesInfo> getReworkTimesInfo(CardHistoryResponseDTO jiraCardHistory,
+			ReworkTimesSetting reworkTimesSetting, boolean considerFlagAsBlock,
+			List<RequestJiraBoardColumnSetting> boardColumns) {
+		if (Objects.isNull(reworkTimesSetting)) {
+			return List.of();
+		}
+		Map<String, CardStepsEnum> stateMap = buildBoardStateMap(boardColumns);
+		if (considerFlagAsBlock) {
+			return getReworkTimesInfoWhenConsiderFlagAsBlock(jiraCardHistory, reworkTimesSetting.getEnumReworkState(),
+					new HashSet<>(reworkTimesSetting.getEnumExcludeStates()), stateMap);
+		}
+		else {
+			return getReworkTimesInfoWhenNotConsiderFlagAsBlock(jiraCardHistory,
+					reworkTimesSetting.getEnumReworkState(), new HashSet<>(reworkTimesSetting.getEnumExcludeStates()),
+					stateMap);
+		}
+	}
+
+	private List<ReworkTimesInfo> getReworkTimesInfoWhenConsiderFlagAsBlock(CardHistoryResponseDTO jiraCardHistory,
+			CardStepsEnum reworkState, Set<CardStepsEnum> excludedStates, Map<String, CardStepsEnum> stateMap) {
+		Map<CardStepsEnum, Integer> reworkTimesMap = new EnumMap<>(CardStepsEnum.class);
+		AtomicReference<CardStepsEnum> currentState = new AtomicReference<>();
+		AtomicBoolean hasFlag = new AtomicBoolean(false);
+		jiraCardHistory.getItems()
+			.stream()
+			.filter(jiraCardHistoryItem -> STATUS_FIELD_ID.equalsIgnoreCase(jiraCardHistoryItem.getFieldId())
+					|| FLAGGED.equalsIgnoreCase(jiraCardHistoryItem.getFieldDisplayName()))
+			.forEach(jiraCardHistoryItem -> {
+				if (STATUS_FIELD_ID.equalsIgnoreCase(jiraCardHistoryItem.getFieldId())) {
+					currentState
+						.set(convertBoardStateToEnumState(jiraCardHistoryItem.getTo().getDisplayName(), stateMap));
+					if (!hasFlag.get()) {
+						calculateReworkTimesMap(reworkState, excludedStates, reworkTimesMap, jiraCardHistoryItem,
+								stateMap);
+					}
+				}
+				else {
+					if (IMPEDIMENT.equalsIgnoreCase(jiraCardHistoryItem.getTo().getDisplayName())) {
+						hasFlag.set(true);
+						CardStepsEnum from = Objects.requireNonNull(currentState).get();
+						calculateTimes(reworkState, excludedStates, reworkTimesMap, from, CardStepsEnum.BLOCK);
+					}
+					else {
+						hasFlag.set(false);
+						CardStepsEnum to = Objects.requireNonNull(currentState).get();
+						calculateTimes(reworkState, excludedStates, reworkTimesMap, CardStepsEnum.BLOCK, to);
+					}
+				}
+			});
+		return reworkTimesMap.entrySet()
+			.stream()
+			.map(entry -> new ReworkTimesInfo(entry.getKey(), entry.getValue()))
+			.toList();
+	}
+
+	private Map<String, CardStepsEnum> buildBoardStateMap(List<RequestJiraBoardColumnSetting> boardColumns) {
+		return boardColumns.stream()
+			.collect(Collectors.toMap(boardColumn -> boardColumn.getName().toUpperCase(),
+					boardColumn -> CardStepsEnum.fromValue(boardColumn.getValue())));
+	}
+
+	private boolean isRework(CardStepsEnum from, CardStepsEnum to, Set<CardStepsEnum> excludedStates) {
+		return !excludedStates.contains(from) && reworkJudgmentMap.get(to).contains(from);
+	}
+
+	private CardStepsEnum convertBoardStateToEnumState(String value, Map<String, CardStepsEnum> stateMap) {
+		return stateMap.get(value.toUpperCase());
+	}
+
+	private List<ReworkTimesInfo> getReworkTimesInfoWhenNotConsiderFlagAsBlock(CardHistoryResponseDTO jiraCardHistory,
+			CardStepsEnum reworkState, Set<CardStepsEnum> excludedStates, Map<String, CardStepsEnum> stateMap) {
+		Map<CardStepsEnum, Integer> reworkTimesMap = new EnumMap<>(CardStepsEnum.class);
+		jiraCardHistory.getItems()
+			.stream()
+			.filter(jiraCardHistoryItem -> STATUS_FIELD_ID.equalsIgnoreCase(jiraCardHistoryItem.getFieldId()))
+			.forEach(jiraCardHistoryItem -> calculateReworkTimesMap(reworkState, excludedStates, reworkTimesMap,
+					jiraCardHistoryItem, stateMap));
+		return reworkTimesMap.entrySet()
+			.stream()
+			.map(entry -> new ReworkTimesInfo(entry.getKey(), entry.getValue()))
+			.toList();
+	}
+
+	private void calculateReworkTimesMap(CardStepsEnum reworkState, Set<CardStepsEnum> excludedStates,
+			Map<CardStepsEnum, Integer> reworkTimesMap, HistoryDetail jiraCardHistoryItem,
+			Map<String, CardStepsEnum> stateMap) {
+		CardStepsEnum from = convertBoardStateToEnumState(jiraCardHistoryItem.getFrom().getDisplayName(), stateMap);
+		CardStepsEnum to = convertBoardStateToEnumState(jiraCardHistoryItem.getTo().getDisplayName(), stateMap);
+		calculateTimes(reworkState, excludedStates, reworkTimesMap, from, to);
+	}
+
+	private void calculateTimes(CardStepsEnum reworkState, Set<CardStepsEnum> excludedStates,
+			Map<CardStepsEnum, Integer> reworkTimesMap, CardStepsEnum from, CardStepsEnum to) {
+		if (!to.equals(reworkState)) {
+			return;
+		}
+		if (isRework(from, to, excludedStates)) {
+			if (reworkTimesMap.containsKey(from)) {
+				reworkTimesMap.put(from, reworkTimesMap.get(from) + 1);
+			}
+			else {
+				reworkTimesMap.put(from, 1);
+			}
+		}
 	}
 
 	private List<String> getAssigneeSet(CardHistoryResponseDTO jiraCardHistory, String assigneeFilter,
@@ -773,7 +916,7 @@ public class JiraService {
 			switch (lowercaseName) {
 				case "story points", "story point estimate" -> cardCustomFieldKey.setStoryPoints(value.getKey());
 				case "sprint" -> cardCustomFieldKey.setSprint(value.getKey());
-				case "flagged" -> cardCustomFieldKey.setFlagged(value.getKey());
+				case FLAGGED -> cardCustomFieldKey.setFlagged(value.getKey());
 				default -> {
 				}
 			}
@@ -788,7 +931,7 @@ public class JiraService {
 				.orElse("");
 
 			String flaggedKey = overrideFields.stream()
-				.filter(targetField -> ("flagged").equalsIgnoreCase(targetField.getName()))
+				.filter(targetField -> FLAGGED.equalsIgnoreCase(targetField.getName()))
 				.map(TargetField::getKey)
 				.filter(key -> !key.isEmpty())
 				.findFirst()

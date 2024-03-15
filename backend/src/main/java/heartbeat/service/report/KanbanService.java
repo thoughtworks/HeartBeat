@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @Log4j2
 @RequiredArgsConstructor
@@ -33,21 +35,21 @@ public class KanbanService {
 	private CardCollection fetchRealDoneCardCollection(GenerateReportRequest request) {
 		JiraBoardSetting jiraBoardSetting = request.getJiraBoardSetting();
 		StoryPointsAndCycleTimeRequest storyPointsAndCycleTimeRequest = buildStoryPointsAndCycleTimeRequest(
-				jiraBoardSetting, request.getStartTime(), request.getEndTime());
-		return jiraService.getStoryPointsAndCycleTimeForDoneCards(storyPointsAndCycleTimeRequest,
+				jiraBoardSetting, request.getStartTime(), request.getEndTime(), request.getBoardMetrics());
+		return jiraService.getStoryPointsAndCycleTimeAndReworkInfoForDoneCards(storyPointsAndCycleTimeRequest,
 				jiraBoardSetting.getBoardColumns(), jiraBoardSetting.getUsers(), jiraBoardSetting.getAssigneeFilter());
 	}
 
 	private CardCollection fetchNonDoneCardCollection(GenerateReportRequest request) {
 		JiraBoardSetting jiraBoardSetting = request.getJiraBoardSetting();
 		StoryPointsAndCycleTimeRequest storyPointsAndCycleTimeRequest = buildStoryPointsAndCycleTimeRequest(
-				jiraBoardSetting, request.getStartTime(), request.getEndTime());
+				jiraBoardSetting, request.getStartTime(), request.getEndTime(), request.getBoardMetrics());
 		return jiraService.getStoryPointsAndCycleTimeForNonDoneCards(storyPointsAndCycleTimeRequest,
 				jiraBoardSetting.getBoardColumns(), jiraBoardSetting.getUsers());
 	}
 
 	private static StoryPointsAndCycleTimeRequest buildStoryPointsAndCycleTimeRequest(JiraBoardSetting jiraBoardSetting,
-			String startTime, String endTime) {
+			String startTime, String endTime, List<String> metrics) {
 		return StoryPointsAndCycleTimeRequest.builder()
 			.token(jiraBoardSetting.getToken())
 			.type(jiraBoardSetting.getType())
@@ -60,6 +62,8 @@ public class KanbanService {
 			.targetFields(jiraBoardSetting.getTargetFields())
 			.overrideFields(jiraBoardSetting.getOverrideFields())
 			.treatFlagCardAsBlock(jiraBoardSetting.getTreatFlagCardAsBlock())
+			.reworkTimesSetting(jiraBoardSetting.getReworkTimesSetting())
+			.boardMetrics(metrics)
 			.build();
 	}
 

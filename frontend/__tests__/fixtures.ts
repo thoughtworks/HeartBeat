@@ -207,6 +207,10 @@ export const MOCK_GENERATE_REPORT_REQUEST_PARAMS: ReportRequestDTO = {
     targetFields: [{ key: 'parent', name: 'Parent', flag: false }],
     doneColumn: ['Done'],
     overrideFields: [{ key: '123', name: 'Story Point', flag: true }],
+    reworkTimesSetting: {
+      reworkState: 'Done',
+      excludedStates: [],
+    },
   },
 };
 
@@ -339,7 +343,7 @@ export const MOCK_GITHUB_VERIFY_RESPONSE = {
 };
 
 export const CREWS_SETTING = 'Crew settings';
-export const BOARD_MAPPING = 'Board mapping';
+export const BOARD_MAPPING = 'Board mappings';
 export const CLASSIFICATION_SETTING = 'Classification setting';
 export const REAL_DONE = 'Real done setting';
 export const DEPLOYMENT_FREQUENCY_SETTINGS = 'Pipeline settings';
@@ -403,6 +407,19 @@ export const MOCK_REPORT_RESPONSE: ReportResponseDTO = {
         totalTime: 242.51,
       },
     ],
+  },
+  rework: {
+    totalReworkTimes: 111,
+    reworkState: 'Done',
+    fromToDo: 111,
+    fromInDev: 111,
+    fromBlock: 111,
+    fromWaitingForTesting: 111,
+    fromTesting: 111,
+    fromReview: 111,
+    fromDone: 111,
+    totalReworkCards: 111,
+    reworkCardsRatio: 111,
   },
   deploymentFrequency: {
     avgDeploymentFrequency: {
@@ -651,6 +668,7 @@ export const EMPTY_REPORT_VALUES: ReportResponseDTO = {
   velocity: null,
   classificationList: null,
   cycleTime: null,
+  rework: null,
   deploymentFrequency: null,
   changeFailureRate: null,
   meanTimeToRecovery: null,

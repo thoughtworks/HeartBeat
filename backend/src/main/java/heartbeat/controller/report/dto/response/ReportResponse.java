@@ -29,6 +29,8 @@ public class ReportResponse {
 
 	private ReportMetricsError reportMetricsError;
 
+	private Rework rework;
+
 	private Long exportValidityTime;
 
 	private boolean boardMetricsCompleted;

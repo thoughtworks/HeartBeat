@@ -22,7 +22,6 @@ export const TitleAndTooltipContainer = styled('div')({
   display: 'flex',
   flexDirection: 'row',
   alignItems: 'center',
-  gap: '1rem',
 });
 
 export const TooltipContainer = styled('div')({

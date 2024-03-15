@@ -1,6 +1,7 @@
 package heartbeat.service.report;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import heartbeat.controller.board.dto.request.ReworkTimesSetting;
 import heartbeat.controller.board.dto.response.CardCollection;
 import heartbeat.controller.report.dto.request.BuildKiteSetting;
 import heartbeat.controller.report.dto.request.CodebaseSetting;
@@ -17,6 +18,7 @@ import heartbeat.controller.report.dto.response.MeanTimeToRecovery;
 import heartbeat.controller.report.dto.response.MetricsDataCompleted;
 import heartbeat.controller.report.dto.response.PipelineCSVInfo;
 import heartbeat.controller.report.dto.response.ReportResponse;
+import heartbeat.controller.report.dto.response.Rework;
 import heartbeat.controller.report.dto.response.Velocity;
 import heartbeat.exception.BadRequestException;
 import heartbeat.exception.BaseException;
@@ -33,6 +35,7 @@ import heartbeat.service.report.calculator.CycleTimeCalculator;
 import heartbeat.service.report.calculator.DeploymentFrequencyCalculator;
 import heartbeat.service.report.calculator.LeadTimeForChangesCalculator;
 import heartbeat.service.report.calculator.MeanToRecoveryCalculator;
+import heartbeat.service.report.calculator.ReworkCalculator;
 import heartbeat.service.report.calculator.VelocityCalculator;
 import heartbeat.service.report.calculator.model.FetchedData;
 import org.junit.jupiter.api.AfterAll;
@@ -95,6 +98,9 @@ class GenerateReporterServiceTest {
 	ClassificationCalculator classificationCalculator;
 
 	@Mock
+	ReworkCalculator reworkCalculator;
+
+	@Mock
 	DeploymentFrequencyCalculator deploymentFrequency;
 
 	@Mock
@@ -143,6 +149,52 @@ class GenerateReporterServiceTest {
 
 	@Nested
 	class GenerateBoardReport {
+
+		@Test
+		void shouldSaveReportResponseWithReworkInfoWhenReworkInfoTimesIsNotEmpty() {
+			GenerateReportRequest request = GenerateReportRequest.builder()
+				.considerHoliday(false)
+				.metrics(List.of("rework times"))
+				.buildKiteSetting(BuildKiteSetting.builder().build())
+				.jiraBoardSetting(JiraBoardSetting.builder()
+					.reworkTimesSetting(
+							ReworkTimesSetting.builder().reworkState("In Dev").excludedStates(List.of()).build())
+					.build())
+				.csvTimeStamp(TIMESTAMP)
+				.build();
+			when(asyncMetricsDataHandler.getMetricsDataCompleted(any()))
+				.thenReturn(MetricsDataCompleted.builder().build());
+			doAnswer(invocation -> null).when(asyncMetricsDataHandler)
+				.updateMetricsDataCompletedInHandler(TIMESTAMP, MetricType.BOARD);
+			when(kanbanService.fetchDataFromKanban(request)).thenReturn(FetchedData.CardCollectionInfo.builder()
+				.realDoneCardCollection(CardCollection.builder().build())
+				.build());
+			when(reworkCalculator.calculateRework(any(), any())).thenReturn(Rework.builder()
+				.reworkState("In Dev")
+				.reworkCardsRatio(1.1)
+				.totalReworkTimes(4)
+				.totalReworkCards(2)
+				.fromTesting(2)
+				.fromReview(2)
+				.build());
+
+			generateReporterService.generateBoardReport(request);
+
+			verify(asyncExceptionHandler).remove(request.getBoardReportId());
+			verify(kanbanService).fetchDataFromKanban(request);
+			verify(workDay).changeConsiderHolidayMode(false);
+			verify(asyncReportRequestHandler).putReport(eq(request.getBoardReportId()),
+					responseArgumentCaptor.capture());
+			ReportResponse response = responseArgumentCaptor.getValue();
+			assertEquals(2, response.getRework().getFromTesting());
+			assertEquals(2, response.getRework().getFromReview());
+			assertEquals("In Dev", response.getRework().getReworkState());
+			assertEquals(1.1, response.getRework().getReworkCardsRatio());
+			assertEquals(4, response.getRework().getTotalReworkTimes());
+			assertEquals(2, response.getRework().getTotalReworkCards());
+			assertNull(response.getRework().getFromDone());
+			verify(asyncMetricsDataHandler).updateMetricsDataCompletedInHandler(eq(request.getBoardReportId()), any());
+		}
 
 		@Test
 		void shouldSaveReportResponseWithoutMetricDataAndUpdateMetricCompletedWhenMetricsIsEmpty() {

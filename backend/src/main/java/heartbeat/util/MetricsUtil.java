@@ -11,9 +11,10 @@ import java.util.stream.Stream;
 @RequiredArgsConstructor
 public enum MetricsUtil {
 
-	KANBAN_METRICS(Stream.of(MetricEnum.VELOCITY, MetricEnum.CYCLE_TIME, MetricEnum.CLASSIFICATION)
-		.map(MetricEnum::getValue)
-		.toList()),
+	KANBAN_METRICS(
+			Stream.of(MetricEnum.VELOCITY, MetricEnum.CYCLE_TIME, MetricEnum.CLASSIFICATION, MetricEnum.REWORK_TIMES)
+				.map(MetricEnum::getValue)
+				.toList()),
 
 	BUILDKITE_METRICS(
 			Stream.of(MetricEnum.CHANGE_FAILURE_RATE, MetricEnum.DEPLOYMENT_FREQUENCY, MetricEnum.MEAN_TIME_TO_RECOVERY)

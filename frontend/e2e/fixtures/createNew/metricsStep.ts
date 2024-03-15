@@ -28,7 +28,7 @@ export const config = {
   },
   reworkTimesSettings: {
     excludeStates: [],
-    rework2State: null,
+    rework2State: 'In Dev',
   },
   sourceControl: {
     type: 'GitHub',

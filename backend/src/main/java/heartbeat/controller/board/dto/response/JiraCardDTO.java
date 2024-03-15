@@ -26,6 +26,10 @@ public class JiraCardDTO {
 
 	private CardCycleTime cardCycleTime;
 
+	private List<ReworkTimesInfo> reworkTimesInfos;
+
+	private Integer totalReworkTimes;
+
 	private Object cycleTimeFlat;
 
 	@Nullable
@@ -54,6 +58,11 @@ public class JiraCardDTO {
 			cycleTimeFlat.put(cycleTimeInfo.getColumn().trim(), cycleTimeInfo.getDay());
 		}
 		return cycleTimeFlat;
+	}
+
+	@JsonIgnore
+	public void calculateTotalReworkTimes() {
+		this.totalReworkTimes = reworkTimesInfos.stream().mapToInt(ReworkTimesInfo::getTimes).sum();
 	}
 
 }

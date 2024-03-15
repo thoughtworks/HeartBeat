@@ -13,6 +13,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
@@ -38,13 +40,14 @@ class KanbanServiceTest {
 			.jiraBoardSetting(mockJiraBoardSetting)
 			.startTime("startTime")
 			.endTime("endTime")
+			.metrics(List.of("cycle time", "rework times"))
 			.build();
 		CardCollection realDoneCardCollection = CardCollection.builder().build();
 		CardCollection nonDoneCardCollection = CardCollection.builder().build();
 
 		when(jiraService.getStoryPointsAndCycleTimeForNonDoneCards(any(), any(), any()))
 			.thenReturn(nonDoneCardCollection);
-		when(jiraService.getStoryPointsAndCycleTimeForDoneCards(any(), any(), any(), any()))
+		when(jiraService.getStoryPointsAndCycleTimeAndReworkInfoForDoneCards(any(), any(), any(), any()))
 			.thenReturn(realDoneCardCollection);
 
 		FetchedData.CardCollectionInfo result = kanbanService.fetchDataFromKanban(request);
@@ -55,7 +58,7 @@ class KanbanServiceTest {
 		verify(jiraService).getStoryPointsAndCycleTimeForNonDoneCards(
 				KanbanFixture.MOCK_EXPECT_STORY_POINT_AND_CYCLE_TIME_REQUEST(), mockJiraBoardSetting.getBoardColumns(),
 				mockJiraBoardSetting.getUsers());
-		verify(jiraService).getStoryPointsAndCycleTimeForDoneCards(
+		verify(jiraService).getStoryPointsAndCycleTimeAndReworkInfoForDoneCards(
 				KanbanFixture.MOCK_EXPECT_STORY_POINT_AND_CYCLE_TIME_REQUEST(), mockJiraBoardSetting.getBoardColumns(),
 				mockJiraBoardSetting.getUsers(), mockJiraBoardSetting.getAssigneeFilter());
 	}

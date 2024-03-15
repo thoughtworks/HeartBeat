@@ -5,6 +5,7 @@ export const AdvancedTitleContainer = styled.div({
   fontSize: '1rem',
   lineHeight: '1.25rem',
   fontWeight: '600',
+  marginRight: '1rem',
 });
 
 export const AdvancedContainer = styled('div')({

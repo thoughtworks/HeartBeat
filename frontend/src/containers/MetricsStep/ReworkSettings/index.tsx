@@ -1,6 +1,6 @@
 import { selectReworkTimesSettings, updateReworkTimesSettings } from '@src/context/Metrics/metricsSlice';
-import { CYCLE_TIME_LIST, METRICS_CONSTANTS, REWORK_TIME_LIST } from '@src/constants/resources';
 import { MetricsSettingTitle } from '@src/components/Common/MetricsSettingTitle';
+import { METRICS_CONSTANTS, REWORK_TIME_LIST } from '@src/constants/resources';
 import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined';
 import MultiAutoComplete from '@src/components/Common/MultiAutoComplete';
 import { ReworkHeaderWrapper, ReworkSettingsWrapper } from './style';
@@ -15,9 +15,6 @@ function ReworkSettings() {
   const reworkTimesSettings = useAppSelector(selectReworkTimesSettings);
   const dispatch = useAppDispatch();
 
-  const isAllSelected =
-    CYCLE_TIME_LIST.length > 0 && reworkTimesSettings.excludeStates.length === CYCLE_TIME_LIST.length;
-
   const MultiOptions = reworkTimesSettings.rework2State
     ? [
         ...REWORK_TIME_LIST.slice(REWORK_TIME_LIST.indexOf(reworkTimesSettings.rework2State) + 1),
@@ -25,10 +22,12 @@ function ReworkSettings() {
       ]
     : [];
 
+  const isAllSelected = MultiOptions.length > 0 && reworkTimesSettings.excludeStates.length === MultiOptions.length;
+
   const handleReworkSettingsChange = (_: React.SyntheticEvent, value: string[]) => {
     let selectValue = value;
     if (value[value.length - 1] === 'All') {
-      selectValue = reworkTimesSettings.excludeStates.length === CYCLE_TIME_LIST.length ? [] : CYCLE_TIME_LIST;
+      selectValue = reworkTimesSettings.excludeStates.length === MultiOptions.length ? [] : MultiOptions;
     }
     dispatch(updateReworkTimesSettings({ ...reworkTimesSettings, excludeStates: selectValue }));
   };

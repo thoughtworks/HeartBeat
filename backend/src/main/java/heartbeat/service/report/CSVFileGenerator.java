@@ -101,43 +101,7 @@ public class CSVFileGenerator {
 
 				csvWriter.writeNext(headers);
 
-				for (PipelineCSVInfo csvInfo : leadTimeData) {
-					String committerName = null;
-					String commitDate = null;
-					String creatorName = null;
-					String organization = csvInfo.getOrganizationName();
-					String pipelineName = csvInfo.getPipeLineName();
-					String stepName = csvInfo.getStepName();
-					String valid = String.valueOf(csvInfo.getValid()).toLowerCase();
-					String buildNumber = String.valueOf(csvInfo.getBuildInfo().getNumber());
-					String state = csvInfo.getPiplineStatus().equals(CANCELED_STATUS) ? CANCELED_STATUS
-							: csvInfo.getDeployInfo().getState();
-					String branch = csvInfo.getBuildInfo().getBranch();
-					if (csvInfo.getCommitInfo() != null) {
-						committerName = csvInfo.getCommitInfo().getCommit().getAuthor().getName();
-						commitDate = csvInfo.getCommitInfo().getCommit().getAuthor().getDate();
-					}
-
-					if (csvInfo.getBuildInfo().getCreator() != null
-							&& csvInfo.getBuildInfo().getCreator().getName() != null) {
-						creatorName = csvInfo.getBuildInfo().getCreator().getName();
-					}
-
-					LeadTimeInfo leadTimeInfo = csvInfo.getLeadTimeInfo();
-					String firstCommitTimeInPr = leadTimeInfo.getFirstCommitTimeInPr();
-					String prCreatedTime = leadTimeInfo.getPrCreatedTime();
-					String prMergedTime = leadTimeInfo.getPrMergedTime();
-					String jobFinishTime = csvInfo.getDeployInfo().getJobFinishTime();
-					String totalTime = leadTimeInfo.getTotalTime();
-					String prLeadTime = leadTimeInfo.getPrLeadTime();
-					String pipelineLeadTime = leadTimeInfo.getPipelineLeadTime();
-
-					String[] rowData = { organization, pipelineName, stepName, valid, buildNumber, committerName,
-							creatorName, firstCommitTimeInPr, commitDate, prCreatedTime, prMergedTime, jobFinishTime,
-							totalTime, prLeadTime, pipelineLeadTime, state, branch };
-
-					csvWriter.writeNext(rowData);
-				}
+				leadTimeData.stream().map(this::getRowData).forEach(csvWriter::writeNext);
 			}
 			catch (IOException e) {
 				log.error("Failed to write pipeline file", e);
@@ -147,6 +111,42 @@ public class CSVFileGenerator {
 		else {
 			throw new GenerateReportException("Failed to generate pipeline csv file, invalid csvTimestamp");
 		}
+	}
+
+	private String[] getRowData(PipelineCSVInfo csvInfo) {
+		String committerName = null;
+		String commitDate = null;
+		if (csvInfo.getCommitInfo() != null) {
+			committerName = csvInfo.getCommitInfo().getCommit().getAuthor().getName();
+			commitDate = csvInfo.getCommitInfo().getCommit().getAuthor().getDate();
+		}
+
+		String creatorName = null;
+		if (csvInfo.getBuildInfo().getCreator() != null && csvInfo.getBuildInfo().getCreator().getName() != null) {
+			creatorName = csvInfo.getBuildInfo().getCreator().getName();
+		}
+
+		String organization = csvInfo.getOrganizationName();
+		String pipelineName = csvInfo.getPipeLineName();
+		String stepName = csvInfo.getStepName();
+		String valid = String.valueOf(csvInfo.getValid()).toLowerCase();
+		String buildNumber = String.valueOf(csvInfo.getBuildInfo().getNumber());
+		String state = csvInfo.getPiplineStatus().equals(CANCELED_STATUS) ? CANCELED_STATUS
+				: csvInfo.getDeployInfo().getState();
+		String branch = csvInfo.getBuildInfo().getBranch();
+
+		LeadTimeInfo leadTimeInfo = csvInfo.getLeadTimeInfo();
+		String firstCommitTimeInPr = leadTimeInfo.getFirstCommitTimeInPr();
+		String prCreatedTime = leadTimeInfo.getPrCreatedTime();
+		String prMergedTime = leadTimeInfo.getPrMergedTime();
+		String jobFinishTime = csvInfo.getDeployInfo().getJobFinishTime();
+		String totalTime = leadTimeInfo.getTotalTime();
+		String prLeadTime = leadTimeInfo.getPrLeadTime();
+		String pipelineLeadTime = leadTimeInfo.getPipelineLeadTime();
+
+		return new String[] { organization, pipelineName, stepName, valid, buildNumber, committerName, creatorName,
+				firstCommitTimeInPr, commitDate, prCreatedTime, prMergedTime, jobFinishTime, totalTime, prLeadTime,
+				pipelineLeadTime, state, branch };
 	}
 
 	public InputStreamResource getDataFromCSV(ReportType reportDataType, long csvTimeStamp) {
@@ -289,33 +289,7 @@ public class CSVFileGenerator {
 			rowData[0] = cardDTO.getBaseInfo().getKey();
 
 			if (cardDTO.getBaseInfo().getFields() != null) {
-				rowData[1] = cardDTO.getBaseInfo().getFields().getSummary();
-				rowData[2] = cardDTO.getBaseInfo().getFields().getIssuetype().getName();
-				rowData[3] = cardDTO.getBaseInfo().getFields().getStatus().getName();
-				if (cardDTO.getBaseInfo().getFields().getLastStatusChangeDate() != null) {
-					rowData[4] = convertToSimpleISOFormat(cardDTO.getBaseInfo().getFields().getLastStatusChangeDate());
-				}
-				rowData[5] = String.valueOf(cardDTO.getBaseInfo().getFields().getStoryPoints());
-				if (cardDTO.getBaseInfo().getFields().getAssignee() != null) {
-					rowData[6] = cardDTO.getBaseInfo().getFields().getAssignee().getDisplayName();
-				}
-				if (cardDTO.getBaseInfo().getFields().getReporter() != null) {
-					rowData[7] = cardDTO.getBaseInfo().getFields().getReporter().getDisplayName();
-				}
-
-				rowData[8] = cardDTO.getBaseInfo().getFields().getProject().getKey();
-				rowData[9] = cardDTO.getBaseInfo().getFields().getProject().getName();
-				rowData[10] = cardDTO.getBaseInfo().getFields().getPriority().getName();
-
-				if (cardDTO.getBaseInfo().getFields().getParent() != null) {
-					rowData[11] = cardDTO.getBaseInfo().getFields().getParent().getFields().getSummary();
-				}
-
-				if (cardDTO.getBaseInfo().getFields().getSprint() != null) {
-					rowData[12] = cardDTO.getBaseInfo().getFields().getSprint().getName();
-				}
-
-				rowData[13] = String.join(",", cardDTO.getBaseInfo().getFields().getLabels());
+				fixDataWithFields(cardDTO, rowData);
 			}
 
 		}
@@ -330,6 +304,36 @@ public class CSVFileGenerator {
 			rowData[21] = DecimalUtil.formatDecimalTwo(cardDTO.getCardCycleTime().getSteps().getReview());
 		}
 		return rowData;
+	}
+
+	private void fixDataWithFields(JiraCardDTO cardDTO, String[] rowData) {
+		rowData[1] = cardDTO.getBaseInfo().getFields().getSummary();
+		rowData[2] = cardDTO.getBaseInfo().getFields().getIssuetype().getName();
+		rowData[3] = cardDTO.getBaseInfo().getFields().getStatus().getName();
+		if (cardDTO.getBaseInfo().getFields().getLastStatusChangeDate() != null) {
+			rowData[4] = convertToSimpleISOFormat(cardDTO.getBaseInfo().getFields().getLastStatusChangeDate());
+		}
+		rowData[5] = String.valueOf(cardDTO.getBaseInfo().getFields().getStoryPoints());
+		if (cardDTO.getBaseInfo().getFields().getAssignee() != null) {
+			rowData[6] = cardDTO.getBaseInfo().getFields().getAssignee().getDisplayName();
+		}
+		if (cardDTO.getBaseInfo().getFields().getReporter() != null) {
+			rowData[7] = cardDTO.getBaseInfo().getFields().getReporter().getDisplayName();
+		}
+
+		rowData[8] = cardDTO.getBaseInfo().getFields().getProject().getKey();
+		rowData[9] = cardDTO.getBaseInfo().getFields().getProject().getName();
+		rowData[10] = cardDTO.getBaseInfo().getFields().getPriority().getName();
+
+		if (cardDTO.getBaseInfo().getFields().getParent() != null) {
+			rowData[11] = cardDTO.getBaseInfo().getFields().getParent().getFields().getSummary();
+		}
+
+		if (cardDTO.getBaseInfo().getFields().getSprint() != null) {
+			rowData[12] = cardDTO.getBaseInfo().getFields().getSprint().getName();
+		}
+
+		rowData[13] = String.join(",", cardDTO.getBaseInfo().getFields().getLabels());
 	}
 
 	private String getExtraDataPerRow(Object object, BoardCSVConfig extraField) {

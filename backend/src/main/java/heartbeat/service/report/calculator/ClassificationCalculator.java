@@ -46,52 +46,50 @@ public class ClassificationCalculator {
 			JiraCardField jiraCardFields = jiraCardResponse.getBaseInfo().getFields();
 			Map<String, Object> tempFields = extractFields(jiraCardFields);
 
-			for (String tempFieldsKey : tempFields.keySet()) {
-				Object object = tempFields.get(tempFieldsKey);
-				if (object instanceof JsonArray objectArray) {
-					List<JsonObject> objectList = new ArrayList<>();
-					for (JsonElement element : objectArray) {
-						if (element.isJsonObject()) {
-							JsonObject jsonObject = element.getAsJsonObject();
-							objectList.add(jsonObject);
-						}
-					}
-					mapArrayField(resultMap, tempFieldsKey, (List.of(objectList)));
-				}
-				else if (object instanceof List) {
-					mapArrayField(resultMap, tempFieldsKey, (List.of(object)));
-				}
-				else if (object != null) {
-					Map<String, Integer> countMap = resultMap.get(tempFieldsKey);
-					if (countMap != null) {
-						String displayName = pickDisplayNameFromObj(object);
-						Integer count = countMap.getOrDefault(displayName, 0);
-						countMap.put(displayName, count > 0 ? count + 1 : 1);
-						countMap.put(NONE_KEY, countMap.get(NONE_KEY) - 1);
-					}
-				}
-			}
+			mapFields(tempFields, resultMap);
 		}
 
-		for (Map.Entry<String, Map<String, Integer>> entry : resultMap.entrySet()) {
-			String fieldName = entry.getKey();
-			Map<String, Integer> valueMap = entry.getValue();
+		resultMap.forEach((fieldName, valueMap) -> {
 			List<ClassificationNameValuePair> classificationNameValuePair = new ArrayList<>();
 
 			if (valueMap.get(NONE_KEY) == 0) {
 				valueMap.remove(NONE_KEY);
 			}
 
-			for (Map.Entry<String, Integer> mapEntry : valueMap.entrySet()) {
-				String displayName = mapEntry.getKey();
-				Integer count = mapEntry.getValue();
-				classificationNameValuePair
-					.add(new ClassificationNameValuePair(displayName, (double) count / cards.getCardsNumber()));
-			}
+			valueMap.forEach((displayName, count) -> classificationNameValuePair
+				.add(new ClassificationNameValuePair(displayName, (double) count / cards.getCardsNumber())));
 
 			classificationFields.add(new Classification(nameMap.get(fieldName), classificationNameValuePair));
-		}
+		});
+
 		return classificationFields;
+	}
+
+	private void mapFields(Map<String, Object> tempFields, Map<String, Map<String, Integer>> resultMap) {
+		tempFields.forEach((tempFieldsKey, object) -> {
+			if (object instanceof JsonArray objectArray) {
+				List<JsonObject> objectList = new ArrayList<>();
+				objectArray.forEach(element -> {
+					if (element.isJsonObject()) {
+						JsonObject jsonObject = element.getAsJsonObject();
+						objectList.add(jsonObject);
+					}
+				});
+				mapArrayField(resultMap, tempFieldsKey, (List.of(objectList)));
+			}
+			else if (object instanceof List) {
+				mapArrayField(resultMap, tempFieldsKey, (List.of(object)));
+			}
+			else if (object != null) {
+				Map<String, Integer> countMap = resultMap.get(tempFieldsKey);
+				if (countMap != null) {
+					String displayName = pickDisplayNameFromObj(object);
+					Integer count = countMap.getOrDefault(displayName, 0);
+					countMap.put(displayName, count > 0 ? count + 1 : 1);
+					countMap.put(NONE_KEY, countMap.get(NONE_KEY) - 1);
+				}
+			}
+		});
 	}
 
 	private void mapArrayField(Map<String, Map<String, Integer>> resultMap, String fieldsKey, List<Object> objects) {

@@ -33,7 +33,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
@@ -80,51 +79,14 @@ public class KanbanCsvService {
 		List<JiraCardDTO> emptyJiraCard = List.of(JiraCardDTO.builder().build());
 
 		if (allDoneCards != null) {
-			if (allDoneCards.size() > 1) {
-				allDoneCards.sort((preCard, nextCard) -> {
-					Status preStatus = preCard.getBaseInfo().getFields().getStatus();
-					Status nextStatus = nextCard.getBaseInfo().getFields().getStatus();
-					Long preDateTimeStamp = preCard.getBaseInfo().getFields().getLastStatusChangeDate();
-					Long nextDateTimeStamp = nextCard.getBaseInfo().getFields().getLastStatusChangeDate();
-					if (Objects.isNull(preStatus) || Objects.isNull(nextStatus) || Objects.isNull(preDateTimeStamp)
-							|| Objects.isNull(nextDateTimeStamp)) {
-						return jiraColumns.size() + 1;
-					}
-					else {
-						return nextDateTimeStamp.compareTo(preDateTimeStamp);
-					}
-				});
-			}
+			sortAllDoneCardsByTime(allDoneCards, jiraColumns);
 			cardDTOList.addAll(allDoneCards);
 		}
 
 		cardDTOList.addAll(emptyJiraCard);
 
 		if (nonDoneCards != null) {
-			if (nonDoneCards.size() > 1) {
-				nonDoneCards.sort((preCard, nextCard) -> {
-					Status preStatus = preCard.getBaseInfo().getFields().getStatus();
-					Status nextStatus = nextCard.getBaseInfo().getFields().getStatus();
-					Long preDateTimeStamp = preCard.getBaseInfo().getFields().getLastStatusChangeDate();
-					Long nextDateTimeStamp = nextCard.getBaseInfo().getFields().getLastStatusChangeDate();
-					if (Objects.isNull(preStatus) || Objects.isNull(nextStatus)) {
-						return jiraColumns.size() + 1;
-					}
-					else {
-						String preCardStatusName = preStatus.getName();
-						String nextCardStatusName = nextStatus.getName();
-						int statusIndexComparison = getIndexForStatus(jiraColumns, nextCardStatusName)
-								- getIndexForStatus(jiraColumns, preCardStatusName);
-
-						if (statusIndexComparison == 0 && Objects.nonNull(preDateTimeStamp)
-								&& Objects.nonNull(nextDateTimeStamp)) {
-							return nextDateTimeStamp.compareTo(preDateTimeStamp);
-						}
-
-						return statusIndexComparison;
-					}
-				});
-			}
+			sortNonDoneCardsByStatusAndTime(nonDoneCards, jiraColumns);
 			cardDTOList.addAll(nonDoneCards);
 		}
 
@@ -160,6 +122,51 @@ public class KanbanCsvService {
 			card.setTotalCycleTimeDivideStoryPoints(card.getTotalCycleTimeDivideStoryPoints());
 		});
 		csvFileGenerator.convertBoardDataToCSV(cardDTOList, allBoardFields, newExtraFields, csvTimeStamp);
+	}
+
+	private void sortNonDoneCardsByStatusAndTime(List<JiraCardDTO> nonDoneCards, List<JiraColumnDTO> jiraColumns) {
+		if (nonDoneCards.size() > 1) {
+			nonDoneCards.sort((preCard, nextCard) -> {
+				Status preStatus = preCard.getBaseInfo().getFields().getStatus();
+				Status nextStatus = nextCard.getBaseInfo().getFields().getStatus();
+				Long preDateTimeStamp = preCard.getBaseInfo().getFields().getLastStatusChangeDate();
+				Long nextDateTimeStamp = nextCard.getBaseInfo().getFields().getLastStatusChangeDate();
+				if (Objects.isNull(preStatus) || Objects.isNull(nextStatus)) {
+					return jiraColumns.size() + 1;
+				}
+				else {
+					String preCardStatusName = preStatus.getName();
+					String nextCardStatusName = nextStatus.getName();
+					int statusIndexComparison = getIndexForStatus(jiraColumns, nextCardStatusName)
+							- getIndexForStatus(jiraColumns, preCardStatusName);
+
+					if (statusIndexComparison == 0 && Objects.nonNull(preDateTimeStamp)
+							&& Objects.nonNull(nextDateTimeStamp)) {
+						return nextDateTimeStamp.compareTo(preDateTimeStamp);
+					}
+
+					return statusIndexComparison;
+				}
+			});
+		}
+	}
+
+	private void sortAllDoneCardsByTime(List<JiraCardDTO> allDoneCards, List<JiraColumnDTO> jiraColumns) {
+		if (allDoneCards.size() > 1) {
+			allDoneCards.sort((preCard, nextCard) -> {
+				Status preStatus = preCard.getBaseInfo().getFields().getStatus();
+				Status nextStatus = nextCard.getBaseInfo().getFields().getStatus();
+				Long preDateTimeStamp = preCard.getBaseInfo().getFields().getLastStatusChangeDate();
+				Long nextDateTimeStamp = nextCard.getBaseInfo().getFields().getLastStatusChangeDate();
+				if (Objects.isNull(preStatus) || Objects.isNull(nextStatus) || Objects.isNull(preDateTimeStamp)
+						|| Objects.isNull(nextDateTimeStamp)) {
+					return jiraColumns.size() + 1;
+				}
+				else {
+					return nextDateTimeStamp.compareTo(preDateTimeStamp);
+				}
+			});
+		}
 	}
 
 	private List<BoardCSVConfig> insertExtraFieldsAfterCycleTime(final List<BoardCSVConfig> extraFields,
@@ -255,7 +262,7 @@ public class KanbanCsvService {
 	private List<BoardCSVConfig> getFixedBoardFields() {
 		return Arrays.stream(BoardCSVConfigEnum.values())
 			.map(field -> BoardCSVConfig.builder().label(field.getLabel()).value(field.getValue()).build())
-			.collect(Collectors.toList());
+			.toList();
 	}
 
 	private String getFieldDisplayValue(Object object) {

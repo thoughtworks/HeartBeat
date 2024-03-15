@@ -52,6 +52,13 @@ class CachePageServiceTest {
 			<https://api.buildkite.com/v2/organizations/test_org_id/pipelines/test_pipeline_id/builds?page=3&per_page=100>; rel="last"
 			""";
 
+	public static final String NONE_PAGE_HEADER = """
+			<https://api.buildkite.com/v2/organizations/test_org_id/pipelines/test_pipeline_id/builds?pages=1&per_page=100>; rel="first",
+			<https://api.buildkite.com/v2/organizations/test_org_id/pipelines/test_pipeline_id/builds?pages=1&per_page=100>; rel="prev",
+			<https://api.buildkite.com/v2/organizations/test_org_id/pipelines/test_pipeline_id/builds?per_page=100&pages=2>; rel="next",
+			<https://api.buildkite.com/v2/organizations/test_org_id/pipelines/test_pipeline_id/builds?pages=3&per_page=100>; rel="last"
+			""";
+
 	public static final String NONE_TOTAL_PAGE_HEADER = """
 			<https://api.buildkite.com/v2/organizations/test_org_id/pipelines/test_pipeline_id/builds?page=1&per_page=100>; rel="first",
 			<https://api.buildkite.com/v2/organizations/test_org_id/pipelines/test_pipeline_id/builds?page=1&per_page=100>; rel="prev",
@@ -112,6 +119,29 @@ class CachePageServiceTest {
 	void shouldReturnPageStepsInfoDtoWhenFetchPageStepsInfoSuccessGivenExistButNotMatchedLinkHeader() {
 		List<String> linkHeader = new ArrayList<>();
 		linkHeader.add(NONE_TOTAL_PAGE_HEADER);
+		HttpHeaders httpHeaders = new HttpHeaders();
+		httpHeaders.addAll(HttpHeaders.LINK, linkHeader);
+		List<BuildKiteBuildInfo> buildKiteBuildInfoList = new ArrayList<>();
+		BuildKiteJob testJob = BuildKiteJob.builder().name(TEST_JOB_NAME).build();
+		buildKiteBuildInfoList.add(BuildKiteBuildInfo.builder().jobs(List.of(testJob)).build());
+		ResponseEntity<List<BuildKiteBuildInfo>> responseEntity = new ResponseEntity<>(buildKiteBuildInfoList,
+				httpHeaders, HttpStatus.OK);
+		when(buildKiteFeignClient.getPipelineSteps(anyString(), anyString(), anyString(), anyString(), anyString(),
+				anyString(), anyString(), any()))
+			.thenReturn(responseEntity);
+
+		PageStepsInfoDto pageStepsInfoDto = cachePageService.fetchPageStepsInfo(MOCK_TOKEN, TEST_ORG_ID,
+				TEST_PIPELINE_ID, "1", "100", MOCK_START_TIME, MOCK_END_TIME, List.of("main"));
+
+		assertNotNull(pageStepsInfoDto);
+		assertThat(pageStepsInfoDto.getFirstPageStepsInfo()).isEqualTo(responseEntity.getBody());
+		assertThat(pageStepsInfoDto.getTotalPage()).isEqualTo(1);
+	}
+
+	@Test
+	void shouldReturnPageStepsInfoDtoWhenFetchPageStepsInfoSuccessGivenExistButNotMatchedPageLinkHeader() {
+		List<String> linkHeader = new ArrayList<>();
+		linkHeader.add(NONE_PAGE_HEADER);
 		HttpHeaders httpHeaders = new HttpHeaders();
 		httpHeaders.addAll(HttpHeaders.LINK, linkHeader);
 		List<BuildKiteBuildInfo> buildKiteBuildInfoList = new ArrayList<>();

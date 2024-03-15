@@ -96,6 +96,7 @@ export const SourceControl = () => {
       validatedError: '',
     }));
     handleUpdate(newFields);
+    setIsShowAlert(false);
   };
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {

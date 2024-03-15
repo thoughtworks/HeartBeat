@@ -110,6 +110,7 @@ export const PipelineTool = () => {
       validatedError: '',
     }));
     handleUpdate(newFields);
+    setIsShowAlert(false);
   };
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {

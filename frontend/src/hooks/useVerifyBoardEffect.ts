@@ -131,6 +131,7 @@ export const useVerifyBoardEffect = (): useVerifyBoardStateInterface => {
           },
     );
     handleUpdate(newFields);
+    setIsShowAlert(false);
   };
 
   const getFieldsWithNoVerifiedError = (fields: Field[]) =>

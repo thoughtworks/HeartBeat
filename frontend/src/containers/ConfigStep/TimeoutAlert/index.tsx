@@ -13,6 +13,7 @@ export const TimeoutAlert = ({ isVerifyTimeOut, isShowAlert, setIsShowAlert, mod
     <>
       {isVerifyTimeOut && isShowAlert && (
         <StyledAlert
+          data-testid='timeoutAlert'
           icon={<CancelIcon fontSize='inherit' />}
           severity='error'
           onClose={() => {
@@ -20,7 +21,7 @@ export const TimeoutAlert = ({ isVerifyTimeOut, isShowAlert, setIsShowAlert, mod
           }}
         >
           <EllipsisText fitContent>
-            Submission timeout on <StyledModuleType>{moduleType}</StyledModuleType> , please reverify!
+            Submission timeout on <StyledModuleType>{moduleType}</StyledModuleType>, please reverify!
           </EllipsisText>
         </StyledAlert>
       )}

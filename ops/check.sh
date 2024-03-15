@@ -4,20 +4,21 @@ set -euo pipefail
 display_help() {
   echo "Usage: $0 {shell|security|frontend|backend|backend-license|frontend-license|e2e|buildkite-status}" >&2
   echo
-  echo "   shell                run shell check for the whole project"
-  echo "   security             run security check for the whole project"
-  echo "   frontend             run check for the frontend"
-  echo "   frontned-type-check  run typescript check for the frontend"
-  echo "   px                   run css px check for the frontend"
-  echo "   backend              run check for the backend"
-  echo "   dot-star             run .* check for the backend"
-  echo "   rgba                 run css rgba check to deny it"
-  echo "   hex                  run css hex check to deny it"
-  echo "   backend-license      check license for the backend"
-  echo "   frontend-license     check license for the frontend"
-  echo "   e2e                  run e2e for the frontend"
-  echo "   e2e-container        run e2e for the frontend in container"
-  echo "   buildkite-status     run status check for the buildkite"
+  echo "   shell                    run shell check for the whole project"
+  echo "   security                 run security check for the whole project"
+  echo "   frontend                 run check for the frontend"
+  echo "   frontned-type-check      run typescript check for the frontend"
+  echo "   px                       run css px check for the frontend"
+  echo "   backend                  run check for the backend"
+  echo "   dot-star                 run .* check for the backend"
+  echo "   rgba                     run css rgba check to deny it"
+  echo "   hex                      run css hex check to deny it"
+  echo "   backend-license          check license for the backend"
+  echo "   frontend-license         check license for the frontend"
+  echo "   e2e                      run e2e for the frontend"
+  echo "   e2e-container            run e2e for the frontend in container"
+  echo "   buildkite-status         run status check for the buildkite"
+  echo "   buildkite-e2e-deployed   check whether the the app has been deployed into e2e env successfully"
   echo
   exit 1
 }
@@ -114,6 +115,28 @@ rgba_check() {
     exit 1
   else
     echo "No matching files found."
+  fi
+}
+
+buildkite_e2e_deployed_check() {
+  local MAX_ATTEMPTS=20
+  local attempt_count=0
+  echo "The git commit id is $GITHUB_SHA"
+  while [ $attempt_count -lt $MAX_ATTEMPTS ]; do
+    ((attempt_count++))
+    value=$(curl -H "Authorization: Bearer $BUILDKITE_TOKEN" -X GET "https://api.buildkite.com/v2/organizations/heartbeat-backup/pipelines/heartbeat/builds?branch=main&commit=$GITHUB_SHA&state=passed" | jq '.[0].jobs[] | select(.name == ":rocket: Deploy e2e" and .state == "passed") | any')
+    echo "Current e2e has been deploy? $value"
+    if [ "$value" == "true" ]; then
+      echo "Successfully deploy to E2E"
+      break
+    else
+      echo "WIP..."
+      sleep 30
+    fi
+  done
+  if [ $attempt_count -eq $MAX_ATTEMPTS ]; then
+    echo "Failed to wait for E2E deployment with Maximum attempts reached. Exiting..."
+    exit 1
   fi
 }
 
@@ -241,6 +264,7 @@ while [[ "$#" -gt 0 ]]; do
   "backend-license") backend_license_check ;;
   "frontend-license") frontend_license_check ;;
   "buildkite-status") buildkite_status_check ;;
+  "buildkite-e2e-deployed") buildkite_e2e_deployed_check ;;
   *) echo "Unknown parameter passed: $1" ;;
   esac
   shift

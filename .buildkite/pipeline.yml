@@ -82,7 +82,7 @@ steps:
     command: ./ops/build.sh backend
 
   - label: ":rocket: Deploy e2e"
-    if: build.branch == "main" && (build.message =~ /(?i)\[frontend\]/ || build.message =~ /(?i)\[backend\]/)
+    if: build.branch == "main"
     key: "deploy-e2e"
     depends_on:
       - "build-frontend"

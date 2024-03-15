@@ -228,21 +228,22 @@ jobs:
         run: |
           ./ops/check.sh frontend-license
 
-  #  check-buildkite-status:
-  #    if: ${{ github.event_name == 'pull_request' }}
-  #    runs-on: ubuntu-latest
-  #    steps:
-  #      - name: Checkout code
-  #        uses: actions/checkout@v4
-  #
-  #      - name: Check BuildKite status
-  #        run: |
-  #          buildkite_status=$(curl -H "Authorization: Bearer ${{ secrets.BUILDKITE_TOKEN }}" "https://api.buildkite.com/v2/organizations/thoughtworks-Heartbeat/pipelines/heartbeat/builds?branch=main"| jq -r '.[0].state')
-  #
-  #          if [ "$buildkite_status" != "passed" ]; then
-  #            echo "BuildKite build failed. Cannot merge the PR."
-  #            exit 1
-  #          fi
+  check-buildkite-status:
+    if: ${{ github.event_name == 'pull_request' && !contains(github.event.pull_request.title, 'Revert') }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check BuildKite status
+        env:
+          BUILDKITE_TOKEN: ${{ secrets.BUILDKITE_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_ACTOR: ${{ github.actor }}
+        run: |
+          ./ops/check.sh buildkite_status_check
+
   images-check:
     runs-on: ubuntu-latest
     steps:
@@ -289,6 +290,7 @@ jobs:
       - credential-check
       - frontend-license-check
       - backend-license-check
+      - check-buildkite-status
     runs-on: ubuntu-latest
     permissions:
       id-token: write

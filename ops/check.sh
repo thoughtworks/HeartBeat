@@ -2,7 +2,7 @@
 set -euo pipefail
 
 display_help() {
-  echo "Usage: $0 {shell|security|frontend|backend|backend-license|frontend-license|e2e}" >&2
+  echo "Usage: $0 {shell|security|frontend|backend|backend-license|frontend-license|e2e|buildkite-status}" >&2
   echo
   echo "   shell                run shell check for the whole project"
   echo "   security             run security check for the whole project"
@@ -17,6 +17,7 @@ display_help() {
   echo "   frontend-license     check license for the frontend"
   echo "   e2e                  run e2e for the frontend"
   echo "   e2e-container        run e2e for the frontend in container"
+  echo "   buildkite-status     run status check for the buildkite"
   echo
   exit 1
 }
@@ -190,6 +191,37 @@ e2e_check() {
   pnpm run e2e:ci
 }
 
+buildkite_status_check() {
+  buildkite_status=$(curl -H "Authorization: Bearer $BUILDKITE_TOKEN" "https://api.buildkite.com/v2/organizations/heartbeat-backup/pipelines/heartbeat/builds?branch=main"| jq -r '.[0].state')
+
+  if [ "$buildkite_status" != "passed" ]; then
+
+    # 使用GitHub API获取最近的commit信息
+    LATEST_COMMIT=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
+    "https://api.github.com/repos/$GITHUB_REPOSITORY/commits?per_page=1" | jq -r '.[0].author.login')
+
+    # 获取当前trigger的GitHub用户名
+    CURRENT_ACTOR="$GITHUB_ACTOR"
+
+    echo "Latest commit author login: $LATEST_COMMIT"
+    echo "Current actor: $CURRENT_ACTOR"
+
+    # 比较用户名
+    if [ "$CURRENT_ACTOR" != "$LATEST_COMMIT" ]; then
+      echo "BuildKite build failed. Cannot merge the PR."
+      echo "And the committer not match"
+      echo "The last commit was made by: $LATEST_COMMIT"
+      exit 1
+    else
+      echo "BuildKite build failed. Cannot merge the PR."
+      echo "But the committer match, So let go"
+      echo "Both actions were performed by: $CURRENT_ACTOR"
+    fi
+  else
+    echo "BuildKite build was successful, feel free to merge!"
+  fi
+}
+
 if [[ "$#" -le 0 ]]; then
   display_help
 fi
@@ -210,6 +242,7 @@ while [[ "$#" -gt 0 ]]; do
   "e2e-container") e2e_container_check ;;
   "backend-license") backend_license_check ;;
   "frontend-license") frontend_license_check ;;
+  "buildkite-status") buildkite_status_check ;;
   *) echo "Unknown parameter passed: $1" ;;
   esac
   shift

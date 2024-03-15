@@ -242,7 +242,7 @@ jobs:
           GITHUB_REPOSITORY: ${{ github.repository }}
           GITHUB_ACTOR: ${{ github.actor }}
         run: |
-          ./ops/check.sh buildkite_status_check
+          ./ops/check.sh buildkite-status
 
   images-check:
     runs-on: ubuntu-latest

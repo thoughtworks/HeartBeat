@@ -192,33 +192,31 @@ e2e_check() {
 }
 
 buildkite_status_check() {
-  buildkite_status=$(curl -H "Authorization: Bearer $BUILDKITE_TOKEN" "https://api.buildkite.com/v2/organizations/heartbeat-backup/pipelines/heartbeat/builds?branch=main"| jq -r '.[0].state')
-
-  if [ "$buildkite_status" != "passed" ]; then
-
-    # 使用GitHub API获取最近的commit信息
-    LATEST_COMMIT=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
-    "https://api.github.com/repos/$GITHUB_REPOSITORY/commits?per_page=1" | jq -r '.[0].author.login')
-
-    # 获取当前trigger的GitHub用户名
-    CURRENT_ACTOR="$GITHUB_ACTOR"
-
-    echo "Latest commit author login: $LATEST_COMMIT"
-    echo "Current actor: $CURRENT_ACTOR"
-
-    # 比较用户名
-    if [ "$CURRENT_ACTOR" != "$LATEST_COMMIT" ]; then
-      echo "BuildKite build failed. Cannot merge the PR."
-      echo "And the committer not match"
-      echo "The last commit was made by: $LATEST_COMMIT"
-      exit 1
+  if [[ "$EVENT_NAME" == "pull_request" && "$CURRENT_BRANCH_NAME" != "refs/heads/main" ]]; then
+    if echo "$PULL_REQUEST_TITLE" | grep -iq "revert"; then
+      echo "PR contains revert. Skipping the action."
     else
-      echo "BuildKite build failed. Cannot merge the PR."
-      echo "But the committer match, So let go"
-      echo "Both actions were performed by: $CURRENT_ACTOR"
+      echo "Start to check the latest BuildKite build status"
+      buildkite_status=$(curl -H "Authorization: Bearer $BUILDKITE_TOKEN" "https://api.buildkite.com/v2/organizations/heartbeat-backup/pipelines/heartbeat/builds?branch=main"| jq -r '.[0].state')
+      if [ "$buildkite_status" != "passed" ]; then
+        latest_commiter=$(curl -s -H "Authorization: token $GITHUB_TOKEN" "https://api.github.com/repos/$GITHUB_REPOSITORY/commits?per_page=1" | jq -r '.[0].author.login')
+        echo "The latest commit author is $latest_commiter, the current author is $CURRENT_ACTOR"
+        if [ "$CURRENT_ACTOR" != "$latest_commiter" ]; then
+          echo "❌ BuildKite build failed. Cannot merge this PR."
+          echo "And the committer does not match"
+          echo "The last commit was made by: $latest_commiter, not you."
+          exit 1
+        else
+          echo "🎉 The last build of BuildKite is failed."
+          echo "But the committer is matched, So let go"
+          echo "Both actions were performed by: $CURRENT_ACTOR"
+        fi
+      else
+        echo "🎉 The latest build of BuildKite is passed, feel free to merge."
+      fi
     fi
   else
-    echo "BuildKite build was successful, feel free to merge!"
+    echo "🎉 Not a pull request or not in a non-main branch. Skipping the action."
   fi
 }
 

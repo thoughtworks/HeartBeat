@@ -229,18 +229,19 @@ jobs:
           ./ops/check.sh frontend-license
 
   check-buildkite-status:
-    if: ${{ github.event_name == 'pull_request' && !contains(github.event.pull_request.title, 'Revert') }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
       - name: Check BuildKite status
         env:
           BUILDKITE_TOKEN: ${{ secrets.BUILDKITE_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_REPOSITORY: ${{ github.repository }}
-          GITHUB_ACTOR: ${{ github.actor }}
+          CURRENT_ACTOR: ${{ github.actor }}
+          EVENT_NAME: ${{ github.event_name }}
+          CURRENT_BRANCH_NAME: ${{ github.ref }}
+          PULL_REQUEST_TITLE: ${{ github.event.pull_request.title }}
         run: |
           ./ops/check.sh buildkite-status
 

@@ -461,7 +461,7 @@ jobs:
       - name: Check e2e deployment
         env:
           BUILDKITE_TOKEN: ${{ secrets.BUILDKITE_TOKEN }}
-          GITHUB_SHA: ${{ github.sha }}"
+          GITHUB_SHA: ${{ github.sha }}
         shell: bash {0}
         run: ./ops/check.sh buildkite-e2e-deployed
       - name: Install

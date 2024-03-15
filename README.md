@@ -283,6 +283,7 @@ _Image 3-17，Cycle Time Report_
 ### 3.4.3 Classification
 
 It will show the classification data of Board based on your selection on `Classification Settings` in metrics page.
+
 The percentage value represent the count of that type tickets vs total count of tickets.
 
 ![Image 3-18](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/readme/11.png)\

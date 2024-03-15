@@ -52,8 +52,8 @@ export const REQUIRED_DATA_LIST = [
   'Rework times',
   'Lead time for changes',
   'Deployment frequency',
-  'Change failure rate',
-  'Mean time to recovery',
+  'Dev change failure rate',
+  'Dev mean time to recovery',
 ];
 export const ALL = 'All';
 export const VELOCITY = 'Velocity';
@@ -62,8 +62,8 @@ export const CLASSIFICATION = 'Classification';
 export const REWORK_TIMES = 'Rework times';
 export const LEAD_TIME_FOR_CHANGES = 'Lead time for changes';
 export const DEPLOYMENT_FREQUENCY = 'Deployment frequency';
-export const CHANGE_FAILURE_RATE = 'Change failure rate';
-export const MEAN_TIME_TO_RECOVERY = 'Mean time to recovery';
+export const DEV_CHANGE_FAILURE_RATE = 'Dev change failure rate';
+export const DEV_MEAN_TIME_TO_RECOVERY = 'Dev mean time to recovery';
 export const REQUIRED_DATA = 'Required metrics';
 export const TEST_PROJECT_NAME = 'test project Name';
 export const ERROR_MESSAGE_COLOR = 'color: #d32f2f';
@@ -440,12 +440,12 @@ export const MOCK_REPORT_RESPONSE: ReportResponseDTO = {
       },
     ],
   },
-  meanTimeToRecovery: {
-    avgMeanTimeToRecovery: {
+  devMeanTimeToRecovery: {
+    avgDevMeanTimeToRecovery: {
       name: 'Average',
       timeToRecovery: 14396108.777777776,
     },
-    meanTimeRecoveryPipelines: [
+    devMeanTimeToRecoveryOfPipelines: [
       {
         name: 'Heartbeat',
         step: ':react: Build Frontend',
@@ -480,14 +480,14 @@ export const MOCK_REPORT_RESPONSE: ReportResponseDTO = {
       totalDelayTime: 5989.22,
     },
   },
-  changeFailureRate: {
-    avgChangeFailureRate: {
+  devChangeFailureRate: {
+    avgDevChangeFailureRate: {
       name: 'Average',
       totalTimes: 6,
       totalFailedTimes: 0,
       failureRate: 0.0,
     },
-    changeFailureRateOfPipelines: [
+    devChangeFailureRateOfPipelines: [
       {
         name: 'fs-platform-onboarding',
         step: ' :shipit: deploy to PROD',
@@ -577,13 +577,13 @@ export const EXPECTED_REPORT_VALUES = {
       ],
     },
   ],
-  meanTimeToRecoveryList: [
+  devMeanTimeToRecoveryList: [
     {
       id: 0,
       name: 'Heartbeat/:react: Build Frontend',
       valuesList: [
         {
-          name: 'Mean Time To Recovery',
+          name: 'Dev mean time to recovery',
           value: '4.32',
         },
       ],
@@ -593,7 +593,7 @@ export const EXPECTED_REPORT_VALUES = {
       name: 'Heartbeat/:cloudformation: Deploy infra',
       valuesList: [
         {
-          name: 'Mean Time To Recovery',
+          name: 'Dev mean time to recovery',
           value: '0.00',
         },
       ],
@@ -603,7 +603,7 @@ export const EXPECTED_REPORT_VALUES = {
       name: 'Heartbeat/:rocket: Run e2e',
       valuesList: [
         {
-          name: 'Mean Time To Recovery',
+          name: 'Dev mean time to recovery',
           value: '7.67',
         },
       ],
@@ -613,7 +613,7 @@ export const EXPECTED_REPORT_VALUES = {
       name: 'Average',
       valuesList: [
         {
-          name: 'Mean Time To Recovery',
+          name: 'Dev mean time to recovery',
           value: '4.00',
         },
       ],
@@ -639,13 +639,13 @@ export const EXPECTED_REPORT_VALUES = {
       ],
     },
   ],
-  changeFailureRateList: [
+  devChangeFailureRateList: [
     {
       id: 0,
       name: 'fs-platform-onboarding/ :shipit: deploy to PROD',
       valuesList: [
         {
-          name: 'Failure rate',
+          name: 'Dev change failure rate',
           value: '0.00%(0/2)',
         },
       ],
@@ -655,7 +655,7 @@ export const EXPECTED_REPORT_VALUES = {
       name: 'Average',
       valuesList: [
         {
-          name: 'Failure rate',
+          name: 'Dev change failure rate',
           value: '0.00%(0/6)',
         },
       ],
@@ -670,8 +670,8 @@ export const EMPTY_REPORT_VALUES: ReportResponseDTO = {
   cycleTime: null,
   rework: null,
   deploymentFrequency: null,
-  changeFailureRate: null,
-  meanTimeToRecovery: null,
+  devChangeFailureRate: null,
+  devMeanTimeToRecovery: null,
   leadTimeForChanges: null,
   exportValidityTime: null,
   boardMetricsCompleted: false,

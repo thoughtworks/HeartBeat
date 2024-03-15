@@ -61,21 +61,21 @@ export class ReportClient extends HttpClient {
         totalDelayTime: 1,
       },
     },
-    changeFailureRate: {
-      avgChangeFailureRate: {
+    devChangeFailureRate: {
+      avgDevChangeFailureRate: {
         name: '',
         totalTimes: 0,
         totalFailedTimes: 0,
         failureRate: 0.0,
       },
-      changeFailureRateOfPipelines: [],
+      devChangeFailureRateOfPipelines: [],
     },
     reportMetricsError: {
       boardMetricsError: null,
       pipelineMetricsError: null,
       sourceControlMetricsError: null,
     },
-    meanTimeToRecovery: null,
+    devMeanTimeToRecovery: null,
     exportValidityTime: null,
     boardMetricsCompleted: false,
     doraMetricsCompleted: false,

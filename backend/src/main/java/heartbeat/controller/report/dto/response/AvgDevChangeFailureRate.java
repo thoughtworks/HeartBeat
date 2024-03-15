@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AvgChangeFailureRate {
+public class AvgDevChangeFailureRate {
 
 	@Builder.Default
 	private String name = "Average";

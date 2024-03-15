@@ -16,10 +16,10 @@ public enum MetricsUtil {
 				.map(MetricEnum::getValue)
 				.toList()),
 
-	BUILDKITE_METRICS(
-			Stream.of(MetricEnum.CHANGE_FAILURE_RATE, MetricEnum.DEPLOYMENT_FREQUENCY, MetricEnum.MEAN_TIME_TO_RECOVERY)
-				.map(MetricEnum::getValue)
-				.toList()),
+	BUILDKITE_METRICS(Stream
+		.of(MetricEnum.DEV_CHANGE_FAILURE_RATE, MetricEnum.DEPLOYMENT_FREQUENCY, MetricEnum.DEV_MEAN_TIME_TO_RECOVERY)
+		.map(MetricEnum::getValue)
+		.toList()),
 
 	CODEBASE_METRICS(Stream.of(MetricEnum.LEAD_TIME_FOR_CHANGES).map(MetricEnum::getValue).toList());
 

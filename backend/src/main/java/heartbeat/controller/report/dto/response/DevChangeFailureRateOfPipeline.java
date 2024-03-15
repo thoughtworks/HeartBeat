@@ -1,19 +1,24 @@
 package heartbeat.controller.report.dto.response;
 
-import java.math.BigDecimal;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class AvgMeanTimeToRecovery {
+public class DevChangeFailureRateOfPipeline {
 
-	private final String name = "Average";
+	private String name;
 
-	private BigDecimal timeToRecovery;
+	private String step;
+
+	private int failedTimesOfPipeline;
+
+	private int totalTimesOfPipeline;
+
+	private float failureRate;
 
 }

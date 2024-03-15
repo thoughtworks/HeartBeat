@@ -59,45 +59,45 @@ describe('DoraDetail', () => {
     });
   });
 
-  describe('Change Failure Rate', () => {
-    it('should show changeFailureRateList when changeFailureRateList data is existing', () => {
+  describe('Dev Change Failure Rate', () => {
+    it('should show devChangeFailureRateList when devChangeFailureRateList data is existing', () => {
       (reportMapper as jest.Mock).mockReturnValue({
-        changeFailureRateList: [{ id: 0, name: 'name1', valuesList: [{ name: 'test1', value: 1 }] }],
+        devChangeFailureRateList: [{ id: 0, name: 'name1', valuesList: [{ name: 'test1', value: 1 }] }],
       });
       render(<DoraDetail data={data} onBack={jest.fn()} />);
-      const changeFailureRateTable = screen.getByTestId('Change Failure Rate');
-      expect(screen.getByText('Change Failure Rate')).toBeInTheDocument();
-      expect(changeFailureRateTable).toBeInTheDocument();
-      expect(within(changeFailureRateTable).queryAllByTestId('tr').length).toBe(2);
+      const devChangeFailureRateTable = screen.getByTestId('Dev Change Failure Rate');
+      expect(screen.getByText('Dev Change Failure Rate')).toBeInTheDocument();
+      expect(devChangeFailureRateTable).toBeInTheDocument();
+      expect(within(devChangeFailureRateTable).queryAllByTestId('tr').length).toBe(2);
     });
 
-    it('should not show changeFailureRateList when changeFailureRateList data is not existing', () => {
+    it('should not show devChangeFailureRateList when devChangeFailureRateList data is not existing', () => {
       (reportMapper as jest.Mock).mockReturnValue({
-        changeFailureRateList: null,
+        devChangeFailureRateList: null,
       });
       render(<DoraDetail data={data} onBack={jest.fn()} />);
-      expect(screen.queryAllByText('Change Failure Rate').length).toEqual(0);
+      expect(screen.queryAllByText('Dev Change Failure Rate').length).toEqual(0);
     });
   });
 
-  describe('Mean Time To Recovery', () => {
-    it('should show meanTimeToRecoveryList when meanTimeToRecoveryList data is existing', () => {
+  describe('Dev Mean Time To Recovery', () => {
+    it('should show devMeanTimeToRecoveryList when devMeanTimeToRecoveryList data is existing', () => {
       (reportMapper as jest.Mock).mockReturnValue({
-        meanTimeToRecoveryList: [{ id: 0, name: 'name1', valuesList: [{ name: 'test1', value: 1 }] }],
+        devMeanTimeToRecoveryList: [{ id: 0, name: 'name1', valuesList: [{ name: 'test1', value: 1 }] }],
       });
       render(<DoraDetail data={data} onBack={jest.fn()} />);
-      const meanTimeToRecoveryTable = screen.getByTestId('Mean Time To Recovery');
-      expect(screen.getByText('Mean Time To Recovery')).toBeInTheDocument();
-      expect(meanTimeToRecoveryTable).toBeInTheDocument();
-      expect(within(meanTimeToRecoveryTable).queryAllByTestId('tr').length).toBe(2);
+      const devMeanTimeToRecoveryTable = screen.getByTestId('Dev Mean Time To Recovery');
+      expect(screen.getByText('Dev Mean Time To Recovery')).toBeInTheDocument();
+      expect(devMeanTimeToRecoveryTable).toBeInTheDocument();
+      expect(within(devMeanTimeToRecoveryTable).queryAllByTestId('tr').length).toBe(2);
     });
 
-    it('should not show meanTimeToRecoveryList when meanTimeToRecoveryList data is not existing', () => {
+    it('should not show devMeanTimeToRecoveryList when devMeanTimeToRecoveryList data is not existing', () => {
       (reportMapper as jest.Mock).mockReturnValue({
-        meanTimeToRecoveryList: null,
+        devMeanTimeToRecoveryList: null,
       });
       render(<DoraDetail data={data} onBack={jest.fn()} />);
-      expect(screen.queryAllByText('Mean Time To Recovery').length).toEqual(0);
+      expect(screen.queryAllByText('Dev Mean Time To Recovery').length).toEqual(0);
     });
   });
 });

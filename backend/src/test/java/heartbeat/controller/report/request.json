@@ -5,7 +5,7 @@
     "Classification",
     "Lead time for changes",
     "Deployment frequency",
-    "Change failure rate"
+    "Dev change failure rate"
   ],
   "startTime": 1661702400000,
   "endTime": 1662739199000,

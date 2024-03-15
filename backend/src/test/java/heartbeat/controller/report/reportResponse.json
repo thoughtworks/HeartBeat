@@ -96,14 +96,14 @@
       }
     ]
   },
-  "changeFailureRate": {
-    "avgChangeFailureRate": {
+  "devChangeFailureRate": {
+    "avgDevChangeFailureRate": {
       "name": "Average",
       "totalTimes": 56,
       "totalFailedTimes": 0,
       "failureRate": 0.0
     },
-    "changeFailureRateOfPipelines": [
+    "devChangeFailureRateOfPipelines": [
       {
         "name": "Heartbeat",
         "step": ":lock: Check Security",
@@ -113,12 +113,12 @@
       }
     ]
   },
-  "meanTimeToRecovery": {
-    "avgMeanTimeToRecovery": {
+  "devMeanTimeToRecovery": {
+    "avgDevMeanTimeToRecovery": {
       "name": "Average",
       "timeToRecovery": 0
     },
-    "meanTimeRecoveryPipelines": [
+    "devMeanTimeToRecoveryOfPipelines": [
       {
         "timeToRecovery": 0,
         "name": "Heartbeat",

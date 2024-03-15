@@ -1,12 +1,12 @@
-import { meanTimeToRecoveryMapper } from '@src/hooks/reportMapper/meanTimeToRecovery';
+import { devMeanTimeToRecoveryMapper } from '@src/hooks/reportMapper/devMeanTimeToRecovery';
 
-describe('mean time to recovery data mapper', () => {
-  const mockMeanTimeToRecovery = {
-    avgMeanTimeToRecovery: {
+describe('dev mean time to recovery data mapper', () => {
+  const mockDevMeanTimeToRecovery = {
+    avgDevMeanTimeToRecovery: {
       name: 'Average',
       timeToRecovery: 162120031.8,
     },
-    meanTimeRecoveryPipelines: [
+    devMeanTimeToRecoveryOfPipelines: [
       {
         name: 'fs-platform-onboarding',
         step: ' :shipit: deploy to PROD',
@@ -14,14 +14,14 @@ describe('mean time to recovery data mapper', () => {
       },
     ],
   };
-  it('maps response change failure rate values to ui display value', () => {
-    const expectedMeanTimeToRecovery = [
+  it('maps response dev change failure rate values to ui display value', () => {
+    const expectedDevMeanTimeToRecovery = [
       {
         id: 0,
         name: 'fs-platform-onboarding/ :shipit: deploy to PROD',
         valuesList: [
           {
-            name: 'Mean Time To Recovery',
+            name: 'Dev mean time to recovery',
             value: '45.03',
           },
         ],
@@ -31,24 +31,24 @@ describe('mean time to recovery data mapper', () => {
         name: 'Average',
         valuesList: [
           {
-            name: 'Mean Time To Recovery',
+            name: 'Dev mean time to recovery',
             value: '45.03',
           },
         ],
       },
     ];
-    const mappedMeanTimeToRecovery = meanTimeToRecoveryMapper(mockMeanTimeToRecovery);
+    const mappedDevMeanTimeToRecovery = devMeanTimeToRecoveryMapper(mockDevMeanTimeToRecovery);
 
-    expect(mappedMeanTimeToRecovery).toEqual(expectedMeanTimeToRecovery);
+    expect(mappedDevMeanTimeToRecovery).toEqual(expectedDevMeanTimeToRecovery);
   });
 
   it('should format time when timeToRecovery is greater than 0 but less than 1', () => {
-    const mockMeanTimeToRecovery = {
-      avgMeanTimeToRecovery: {
+    const mockDevMeanTimeToRecovery = {
+      avgDevMeanTimeToRecovery: {
         name: 'Average',
         timeToRecovery: 0.32,
       },
-      meanTimeRecoveryPipelines: [
+      devMeanTimeToRecoveryOfPipelines: [
         {
           name: 'fs-platform-onboarding',
           step: ' :shipit: deploy to PROD',
@@ -56,13 +56,13 @@ describe('mean time to recovery data mapper', () => {
         },
       ],
     };
-    const expectedMeanTimeToRecovery = [
+    const expectedDevMeanTimeToRecovery = [
       {
         id: 0,
         name: 'fs-platform-onboarding/ :shipit: deploy to PROD',
         valuesList: [
           {
-            name: 'Mean Time To Recovery',
+            name: 'Dev mean time to recovery',
             value: '0.00',
           },
         ],
@@ -72,24 +72,24 @@ describe('mean time to recovery data mapper', () => {
         name: 'Average',
         valuesList: [
           {
-            name: 'Mean Time To Recovery',
+            name: 'Dev mean time to recovery',
             value: '0.00',
           },
         ],
       },
     ];
-    const mappedMeanTimeToRecovery = meanTimeToRecoveryMapper(mockMeanTimeToRecovery);
+    const mappedDevMeanTimeToRecovery = devMeanTimeToRecoveryMapper(mockDevMeanTimeToRecovery);
 
-    expect(mappedMeanTimeToRecovery).toEqual(expectedMeanTimeToRecovery);
+    expect(mappedDevMeanTimeToRecovery).toEqual(expectedDevMeanTimeToRecovery);
   });
 
   it('should map time to 0 minute when it is 0', () => {
-    const mockMeanTimeToRecovery = {
-      avgMeanTimeToRecovery: {
+    const mockDevMeanTimeToRecovery = {
+      avgDevMeanTimeToRecovery: {
         name: 'Average',
         timeToRecovery: 0,
       },
-      meanTimeRecoveryPipelines: [
+      devMeanTimeToRecoveryOfPipelines: [
         {
           name: 'fs-platform-onboarding',
           step: ' :shipit: deploy to PROD',
@@ -97,13 +97,13 @@ describe('mean time to recovery data mapper', () => {
         },
       ],
     };
-    const expectedMeanTimeToRecovery = [
+    const expectedDevMeanTimeToRecovery = [
       {
         id: 0,
         name: 'fs-platform-onboarding/ :shipit: deploy to PROD',
         valuesList: [
           {
-            name: 'Mean Time To Recovery',
+            name: 'Dev mean time to recovery',
             value: '0.00',
           },
         ],
@@ -113,14 +113,14 @@ describe('mean time to recovery data mapper', () => {
         name: 'Average',
         valuesList: [
           {
-            name: 'Mean Time To Recovery',
+            name: 'Dev mean time to recovery',
             value: '0.00',
           },
         ],
       },
     ];
-    const mappedMeanTimeToRecovery = meanTimeToRecoveryMapper(mockMeanTimeToRecovery);
+    const mappedDevMeanTimeToRecovery = devMeanTimeToRecoveryMapper(mockDevMeanTimeToRecovery);
 
-    expect(mappedMeanTimeToRecovery).toEqual(expectedMeanTimeToRecovery);
+    expect(mappedDevMeanTimeToRecovery).toEqual(expectedDevMeanTimeToRecovery);
   });
 });

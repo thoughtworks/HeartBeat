@@ -15,7 +15,7 @@ import heartbeat.handler.AsyncExceptionHandler;
 import heartbeat.handler.AsyncMetricsDataHandler;
 import heartbeat.handler.AsyncReportRequestHandler;
 import heartbeat.handler.base.AsyncExceptionDTO;
-import heartbeat.service.report.calculator.ChangeFailureRateCalculator;
+import heartbeat.service.report.calculator.DevChangeFailureRateCalculator;
 import heartbeat.service.report.calculator.ClassificationCalculator;
 import heartbeat.service.report.calculator.CycleTimeCalculator;
 import heartbeat.service.report.calculator.DeploymentFrequencyCalculator;
@@ -57,7 +57,7 @@ public class GenerateReporterService {
 
 	private final DeploymentFrequencyCalculator deploymentFrequency;
 
-	private final ChangeFailureRateCalculator changeFailureRate;
+	private final DevChangeFailureRateCalculator devChangeFailureRate;
 
 	private final MeanToRecoveryCalculator meanToRecoveryCalculator;
 
@@ -178,9 +178,9 @@ public class GenerateReporterService {
 				case "deployment frequency" -> reportResponse.setDeploymentFrequency(
 						deploymentFrequency.calculate(fetchedData.getBuildKiteData().getDeployTimesList(),
 								Long.parseLong(request.getStartTime()), Long.parseLong(request.getEndTime())));
-				case "change failure rate" -> reportResponse.setChangeFailureRate(
-						changeFailureRate.calculate(fetchedData.getBuildKiteData().getDeployTimesList()));
-				case "mean time to recovery" -> reportResponse.setMeanTimeToRecovery(
+				case "dev change failure rate" -> reportResponse.setDevChangeFailureRate(
+						devChangeFailureRate.calculate(fetchedData.getBuildKiteData().getDeployTimesList()));
+				case "dev mean time to recovery" -> reportResponse.setDevMeanTimeToRecovery(
 						meanToRecoveryCalculator.calculate(fetchedData.getBuildKiteData().getDeployTimesList()));
 				default -> {
 					// TODO
@@ -351,8 +351,8 @@ public class GenerateReporterService {
 			.rework(getValueOrNull(boardReportResponse, ReportResponse::getRework))
 			.exportValidityTime(EXPORT_CSV_VALIDITY_TIME)
 			.deploymentFrequency(getValueOrNull(pipleineReportResponse, ReportResponse::getDeploymentFrequency))
-			.changeFailureRate(getValueOrNull(pipleineReportResponse, ReportResponse::getChangeFailureRate))
-			.meanTimeToRecovery(getValueOrNull(pipleineReportResponse, ReportResponse::getMeanTimeToRecovery))
+			.devChangeFailureRate(getValueOrNull(pipleineReportResponse, ReportResponse::getDevChangeFailureRate))
+			.devMeanTimeToRecovery(getValueOrNull(pipleineReportResponse, ReportResponse::getDevMeanTimeToRecovery))
 			.leadTimeForChanges(getValueOrNull(sourceControlReportResponse, ReportResponse::getLeadTimeForChanges))
 			.boardMetricsCompleted(reportReadyStatus.isBoardReady)
 			.doraMetricsCompleted(reportReadyStatus.isDoraReady)

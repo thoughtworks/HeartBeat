@@ -73,7 +73,7 @@ test('Create a new project', async ({ homePage, configStep, metricsStep, reportS
     DORA_METRICS_RESULT.TotalLeadTime,
     DORA_METRICS_RESULT.DeploymentFrequency,
     DORA_METRICS_RESULT.FailureRate,
-    DORA_METRICS_RESULT.MeanTimeToRecovery,
+    DORA_METRICS_RESULT.DevMeanTimeToRecovery,
   );
   await reportStep.checkDoraMetricsDetails(ProjectCreationType.CREATE_A_NEW_PROJECT);
   await reportStep.checkMetricDownloadData();

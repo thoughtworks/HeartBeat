@@ -131,8 +131,8 @@ const DoraMetrics = ({
 
   const getPipelineItems = () => {
     const deploymentFrequency = doraReport?.deploymentFrequency;
-    const meanTimeToRecovery = doraReport?.meanTimeToRecovery;
-    const changeFailureRate = doraReport?.changeFailureRate;
+    const devMeanTimeToRecovery = doraReport?.devMeanTimeToRecovery;
+    const devChangeFailureRate = doraReport?.devChangeFailureRate;
 
     const deploymentFrequencyList = metrics.includes(REQUIRED_DATA.DEPLOYMENT_FREQUENCY)
       ? [
@@ -148,28 +148,28 @@ const DoraMetrics = ({
         ]
       : [];
 
-    const meanTimeToRecoveryList = metrics.includes(REQUIRED_DATA.MEAN_TIME_TO_RECOVERY)
+    const devMeanTimeToRecoveryList = metrics.includes(REQUIRED_DATA.DEV_MEAN_TIME_TO_RECOVERY)
       ? [
           {
-            title: METRICS_TITLE.MEAN_TIME_TO_RECOVERY,
-            items: meanTimeToRecovery && [
+            title: METRICS_TITLE.DEV_MEAN_TIME_TO_RECOVERY,
+            items: devMeanTimeToRecovery && [
               {
-                value: formatMillisecondsToHours(meanTimeToRecovery.avgMeanTimeToRecovery.timeToRecovery),
-                subtitle: METRICS_SUBTITLE.MEAN_TIME_TO_RECOVERY_HOURS,
+                value: formatMillisecondsToHours(devMeanTimeToRecovery.avgDevMeanTimeToRecovery.timeToRecovery),
+                subtitle: METRICS_SUBTITLE.DEV_MEAN_TIME_TO_RECOVERY_HOURS,
               },
             ],
           },
         ]
       : [];
 
-    const changeFailureRateList = metrics.includes(REQUIRED_DATA.CHANGE_FAILURE_RATE)
+    const devChangeFailureRateList = metrics.includes(REQUIRED_DATA.DEV_CHANGE_FAILURE_RATE)
       ? [
           {
-            title: METRICS_TITLE.CHANGE_FAILURE_RATE,
-            items: changeFailureRate && [
+            title: METRICS_TITLE.DEV_CHANGE_FAILURE_RATE,
+            items: devChangeFailureRate && [
               {
-                value: changeFailureRate.avgChangeFailureRate.failureRate * 100,
-                extraValue: `% (${changeFailureRate.avgChangeFailureRate.totalFailedTimes}/${changeFailureRate.avgChangeFailureRate.totalTimes})`,
+                value: devChangeFailureRate.avgDevChangeFailureRate.failureRate * 100,
+                extraValue: `% (${devChangeFailureRate.avgDevChangeFailureRate.totalFailedTimes}/${devChangeFailureRate.avgDevChangeFailureRate.totalTimes})`,
                 subtitle: METRICS_SUBTITLE.FAILURE_RATE,
               },
             ],
@@ -177,7 +177,7 @@ const DoraMetrics = ({
         ]
       : [];
 
-    return [...deploymentFrequencyList, ...changeFailureRateList, ...meanTimeToRecoveryList];
+    return [...deploymentFrequencyList, ...devChangeFailureRateList, ...devMeanTimeToRecoveryList];
   };
 
   const getErrorMessage4BuildKite = () =>

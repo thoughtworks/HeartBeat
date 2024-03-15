@@ -13,8 +13,8 @@ export const importProjectFromFile = {
     'Rework times',
     'Lead time for changes',
     'Deployment frequency',
-    'Change failure rate',
-    'Mean time to recovery',
+    'Dev change failure rate',
+    'Dev mean time to recovery',
   ],
   board: {
     type: 'Jira',

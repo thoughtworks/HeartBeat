@@ -143,8 +143,8 @@ describe('Report Step', () => {
       expect(screen.getByText('DORA Metrics')).toBeInTheDocument();
       expect(screen.getByText('Lead Time For Changes')).toBeInTheDocument();
       expect(screen.getByText('Deployment Frequency')).toBeInTheDocument();
-      expect(screen.getByText('Change Failure Rate')).toBeInTheDocument();
-      expect(screen.getByText('Mean Time To Recovery')).toBeInTheDocument();
+      expect(screen.getByText('Dev Change Failure Rate')).toBeInTheDocument();
+      expect(screen.getByText('Dev Mean Time To Recovery')).toBeInTheDocument();
     });
 
     it('should render loading page when report data is empty', () => {
@@ -195,14 +195,14 @@ describe('Report Step', () => {
       expect(screen.getByText('0.40')).toBeInTheDocument();
     });
 
-    it('should render the Change failure rate component with correct props', () => {
+    it('should render the Dev change failure rate component with correct props', () => {
       setup([REQUIRED_DATA_LIST[7]]);
 
       expect(screen.getByText('0.00')).toBeInTheDocument();
       expect(screen.getByText('% (0/6)')).toBeInTheDocument();
     });
 
-    it('should render the Mean time to recovery component with correct props', () => {
+    it('should render the Dev mean time to recovery component with correct props', () => {
       setup([REQUIRED_DATA_LIST[8]]);
 
       expect(screen.getByText('4.00')).toBeInTheDocument();

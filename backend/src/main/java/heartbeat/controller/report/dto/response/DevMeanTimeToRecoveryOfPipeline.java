@@ -5,16 +5,18 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
+import java.math.BigDecimal;
 
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ChangeFailureRate {
+@Builder
+public class DevMeanTimeToRecoveryOfPipeline {
 
-	private AvgChangeFailureRate avgChangeFailureRate;
+	private String name;
 
-	private List<ChangeFailureRateOfPipeline> changeFailureRateOfPipelines;
+	private String step;
+
+	private BigDecimal timeToRecovery;
 
 }

@@ -1,6 +1,13 @@
+import {
+  BOARD_METRICS,
+  CALENDAR,
+  DORA_METRICS,
+  IMPORT_METRICS_MAPPING,
+  MESSAGE,
+  REQUIRED_DATA,
+} from '@src/constants/resources';
 import { initialPipelineToolState, IPipelineToolState } from '@src/context/config/pipelineTool/pipelineToolSlice';
 import { initialSourceControlState, ISourceControl } from '@src/context/config/sourceControl/sourceControlSlice';
-import { BOARD_METRICS, CALENDAR, DORA_METRICS, MESSAGE, REQUIRED_DATA } from '@src/constants/resources';
 import { IBoardState, initialBoardState } from '@src/context/config/board/boardSlice';
 import { pipeline } from '@src/context/config/pipelineTool/verifyResponseSlice';
 import { createSlice } from '@reduxjs/toolkit';
@@ -49,18 +56,20 @@ const getMetricsInfo = (metrics: string[]) => {
     CLASSIFICATION,
     LEAD_TIME_FOR_CHANGES,
     DEPLOYMENT_FREQUENCY,
-    CHANGE_FAILURE_RATE,
-    MEAN_TIME_TO_RECOVERY,
+    DEV_CHANGE_FAILURE_RATE,
+    DEV_MEAN_TIME_TO_RECOVERY,
     REWORK_TIMES,
   } = REQUIRED_DATA;
   return {
-    metrics: metrics.filter((metric) => (Object.values(REQUIRED_DATA) as string[]).includes(metric)),
+    metrics: metrics
+      .map((metric) => IMPORT_METRICS_MAPPING[metric])
+      .filter((metric) => (Object.values(REQUIRED_DATA) as string[]).includes(metric)),
     shouldBoardShow: [VELOCITY, CYCLE_TIME, CLASSIFICATION, REWORK_TIMES].some((metric) => metrics.includes(metric)),
     shouldPipelineToolShow: [
       LEAD_TIME_FOR_CHANGES,
       DEPLOYMENT_FREQUENCY,
-      CHANGE_FAILURE_RATE,
-      MEAN_TIME_TO_RECOVERY,
+      DEV_CHANGE_FAILURE_RATE,
+      DEV_MEAN_TIME_TO_RECOVERY,
     ].some((metric) => metrics.includes(metric)),
     shouldSourceControlShow: [LEAD_TIME_FOR_CHANGES].some((metric) => metrics.includes(metric)),
   };

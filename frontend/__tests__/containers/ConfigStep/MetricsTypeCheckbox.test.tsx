@@ -1,12 +1,12 @@
 import {
   ALL,
-  CHANGE_FAILURE_RATE,
+  DEV_CHANGE_FAILURE_RATE,
   CLASSIFICATION,
   CONFIG_TITLE,
   CYCLE_TIME,
   DEPLOYMENT_FREQUENCY,
   LEAD_TIME_FOR_CHANGES,
-  MEAN_TIME_TO_RECOVERY,
+  DEV_MEAN_TIME_TO_RECOVERY,
   REQUIRED_DATA,
   REQUIRED_DATA_LIST,
   REWORK_TIMES,
@@ -117,8 +117,8 @@ describe('MetricsTypeCheckbox', () => {
       listBox.getByRole('option', { name: REWORK_TIMES }),
       listBox.getByRole('option', { name: LEAD_TIME_FOR_CHANGES }),
       listBox.getByRole('option', { name: DEPLOYMENT_FREQUENCY }),
-      listBox.getByRole('option', { name: CHANGE_FAILURE_RATE }),
-      listBox.getByRole('option', { name: MEAN_TIME_TO_RECOVERY }),
+      listBox.getByRole('option', { name: DEV_CHANGE_FAILURE_RATE }),
+      listBox.getByRole('option', { name: DEV_MEAN_TIME_TO_RECOVERY }),
     ];
     await Promise.all(optionsToClick.map((opt) => fireEvent.click(opt)));
 
@@ -138,10 +138,10 @@ describe('MetricsTypeCheckbox', () => {
       await userEvent.click(listBox.getByRole('option', { name: ALL }));
     });
     await act(async () => {
-      await userEvent.click(listBox.getByRole('option', { name: MEAN_TIME_TO_RECOVERY }));
+      await userEvent.click(listBox.getByRole('option', { name: DEV_MEAN_TIME_TO_RECOVERY }));
     });
 
-    expect(listBox.getByRole('option', { name: MEAN_TIME_TO_RECOVERY })).toHaveAttribute('aria-selected', 'false');
+    expect(listBox.getByRole('option', { name: DEV_MEAN_TIME_TO_RECOVERY })).toHaveAttribute('aria-selected', 'false');
     expect(within(listBox.getByRole('option', { name: ALL })).getByTestId('CheckBoxOutlineBlankIcon')).toBeTruthy();
     expect(getByText(displayedDataList.join(SELECTED_VALUE_SEPARATOR))).toBeInTheDocument();
   });

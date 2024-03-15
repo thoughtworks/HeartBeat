@@ -9,12 +9,12 @@ import heartbeat.controller.report.dto.request.GenerateReportRequest;
 import heartbeat.controller.report.dto.request.JiraBoardSetting;
 import heartbeat.controller.report.dto.request.MetricEnum;
 import heartbeat.controller.report.dto.request.MetricType;
-import heartbeat.controller.report.dto.response.ChangeFailureRate;
+import heartbeat.controller.report.dto.response.DevChangeFailureRate;
 import heartbeat.controller.report.dto.response.Classification;
 import heartbeat.controller.report.dto.response.CycleTime;
 import heartbeat.controller.report.dto.response.DeploymentFrequency;
 import heartbeat.controller.report.dto.response.LeadTimeForChanges;
-import heartbeat.controller.report.dto.response.MeanTimeToRecovery;
+import heartbeat.controller.report.dto.response.DevMeanTimeToRecovery;
 import heartbeat.controller.report.dto.response.MetricsDataCompleted;
 import heartbeat.controller.report.dto.response.PipelineCSVInfo;
 import heartbeat.controller.report.dto.response.ReportResponse;
@@ -29,7 +29,7 @@ import heartbeat.handler.AsyncExceptionHandler;
 import heartbeat.handler.AsyncMetricsDataHandler;
 import heartbeat.handler.AsyncReportRequestHandler;
 import heartbeat.handler.base.AsyncExceptionDTO;
-import heartbeat.service.report.calculator.ChangeFailureRateCalculator;
+import heartbeat.service.report.calculator.DevChangeFailureRateCalculator;
 import heartbeat.service.report.calculator.ClassificationCalculator;
 import heartbeat.service.report.calculator.CycleTimeCalculator;
 import heartbeat.service.report.calculator.DeploymentFrequencyCalculator;
@@ -107,7 +107,7 @@ class GenerateReporterServiceTest {
 	VelocityCalculator velocityCalculator;
 
 	@Mock
-	ChangeFailureRateCalculator changeFailureRate;
+	DevChangeFailureRateCalculator devChangeFailureRate;
 
 	@Mock
 	MeanToRecoveryCalculator meanToRecoveryCalculator;
@@ -501,7 +501,7 @@ class GenerateReporterServiceTest {
 				.considerHoliday(false)
 				.startTime("10000")
 				.endTime("20000")
-				.metrics(List.of("deployment frequency", "change failure rate", "mean time to recovery"))
+				.metrics(List.of("deployment frequency", "dev change failure rate", "dev mean time to recovery"))
 				.buildKiteSetting(BuildKiteSetting.builder().build())
 				.csvTimeStamp(TIMESTAMP)
 				.build();
@@ -515,10 +515,10 @@ class GenerateReporterServiceTest {
 			when(pipelineService.fetchBuildKiteInfo(request))
 				.thenReturn(FetchedData.BuildKiteData.builder().buildInfosList(List.of()).build());
 			DeploymentFrequency fakeDeploymentFrequency = DeploymentFrequency.builder().build();
-			ChangeFailureRate fakeChangeFailureRate = ChangeFailureRate.builder().build();
-			MeanTimeToRecovery fakeMeantime = MeanTimeToRecovery.builder().build();
+			DevChangeFailureRate fakeDevChangeFailureRate = DevChangeFailureRate.builder().build();
+			DevMeanTimeToRecovery fakeMeantime = DevMeanTimeToRecovery.builder().build();
 			when(deploymentFrequency.calculate(any(), any(), any())).thenReturn(fakeDeploymentFrequency);
-			when(changeFailureRate.calculate(any())).thenReturn(fakeChangeFailureRate);
+			when(devChangeFailureRate.calculate(any())).thenReturn(fakeDevChangeFailureRate);
 			when(meanToRecoveryCalculator.calculate(any())).thenReturn(fakeMeantime);
 
 			generateReporterService.generateDoraReport(request);
@@ -530,9 +530,9 @@ class GenerateReporterServiceTest {
 			ReportResponse response = responseArgumentCaptor.getValue();
 
 			assertEquals(1800000L, response.getExportValidityTime());
-			assertEquals(fakeChangeFailureRate, response.getChangeFailureRate());
-			assertEquals(fakeMeantime, response.getMeanTimeToRecovery());
-			assertEquals(fakeChangeFailureRate, response.getChangeFailureRate());
+			assertEquals(fakeDevChangeFailureRate, response.getDevChangeFailureRate());
+			assertEquals(fakeMeantime, response.getDevMeanTimeToRecovery());
+			assertEquals(fakeDevChangeFailureRate, response.getDevChangeFailureRate());
 			assertEquals(fakeDeploymentFrequency, response.getDeploymentFrequency());
 
 			verify(csvFileGenerator).convertPipelineDataToCSV(eq(pipelineCSVInfos), eq(request.getCsvTimeStamp()));
@@ -544,7 +544,7 @@ class GenerateReporterServiceTest {
 				.considerHoliday(false)
 				.startTime("10000")
 				.endTime("20000")
-				.metrics(List.of("change failure rate"))
+				.metrics(List.of("dev change failure rate"))
 				.buildKiteSetting(BuildKiteSetting.builder().build())
 				.csvTimeStamp(TIMESTAMP)
 				.build();
@@ -557,7 +557,7 @@ class GenerateReporterServiceTest {
 				.thenReturn(pipelineCSVInfos);
 			when(pipelineService.fetchBuildKiteInfo(request))
 				.thenReturn(FetchedData.BuildKiteData.builder().buildInfosList(List.of()).build());
-			when(changeFailureRate.calculate(any())).thenThrow(new NotFoundException(""));
+			when(devChangeFailureRate.calculate(any())).thenThrow(new NotFoundException(""));
 
 			generateReporterService.generateDoraReport(request);
 
@@ -606,8 +606,8 @@ class GenerateReporterServiceTest {
 				.considerHoliday(false)
 				.startTime("10000")
 				.endTime("20000")
-				.metrics(
-						List.of(MetricEnum.LEAD_TIME_FOR_CHANGES.getValue(), MetricEnum.CHANGE_FAILURE_RATE.getValue()))
+				.metrics(List.of(MetricEnum.LEAD_TIME_FOR_CHANGES.getValue(),
+						MetricEnum.DEV_CHANGE_FAILURE_RATE.getValue()))
 				.codebaseSetting(CodebaseSetting.builder().build())
 				.buildKiteSetting(BuildKiteSetting.builder().build())
 				.csvTimeStamp(TIMESTAMP)

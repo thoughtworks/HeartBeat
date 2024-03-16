@@ -121,23 +121,25 @@ rgba_check() {
 buildkite_e2e_deployed_check() {
   #!/bin/bash
 
-  MAX_ATTEMPTS=20
-  SLEEP_DURATION_SECONDS=30
-  BRANCH="main"
-  attempt_count=0
+  MAX_ATTEMPTS="${MAX_ATTEMPTS:-20}"
+  SLEEP_DURATION_SECONDS="${SLEEP_DURATION_SECONDS:-30}"
+  BRANCH="${BRANCH:-"main"}"
+  BUILDKITE_TOKEN="${BUILDKITE_TOKEN:-empty BuildKite token}"
+  COMMIT_SHA="${COMMIT_SHA:-empty commit sha}"
 
+  attempt_count=0
   echo "The git commit id is $COMMIT_SHA"
 
-  while [ $attempt_count -lt $MAX_ATTEMPTS ]; do
+  while [ $attempt_count -lt "$MAX_ATTEMPTS" ]; do
     ((attempt_count += 1))
     echo "Start to get deployment status, attempt count is $attempt_count"
 
-    response=$(curl -H "Authorization: Bearer $BUILDKITE_TOKEN" -X GET "https://api.buildkite.com/v2/organizations/heartbeat-backup/pipelines/heartbeat/builds?branch=$BRANCH&commit=$COMMIT_SHA&state=passed")
+    response=$(curl -H "Authorization: Bearer $BUILDKITE_TOKEN" -X GET "https://api.buildkite.com/v2/organizations/heartbeat-backup/pipelines/heartbeat/builds?branch=$BRANCH&commit=$COMMIT_SHA")
     echo "The current build response: $response"
     is_empty=$(echo "$response" | jq 'length == 0')
     if [ "$is_empty" == "true" ]; then
       echo "The current BuildKite build has not deployed into e2e env"
-      sleep $SLEEP_DURATION_SECONDS
+      sleep "$SLEEP_DURATION_SECONDS"
       continue
     fi
 
@@ -148,11 +150,11 @@ buildkite_e2e_deployed_check() {
       break
     else
       echo "WIP..."
-      sleep $SLEEP_DURATION_SECONDS
+      sleep "$SLEEP_DURATION_SECONDS"
     fi
   done
 
-  if [ $attempt_count -eq $MAX_ATTEMPTS ]; then
+  if [ $attempt_count -eq "$MAX_ATTEMPTS" ]; then
     echo "❌ Failed to wait for E2E deployment with Maximum attempts reached. Exiting..."
     exit 1
   fi

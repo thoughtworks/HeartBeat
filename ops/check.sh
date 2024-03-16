@@ -126,8 +126,8 @@ buildkite_e2e_deployed_check() {
   echo "The git commit id is $COMMIT_SHA"
 
   while [ $attempt_count -lt $MAX_ATTEMPTS ]; do
+    ((attempt_count += 1))
     echo "Start to get deployment status, attempt count is $attempt_count"
-    ((attempt_count++))
 
     response=$(curl -H "Authorization: Bearer $BUILDKITE_TOKEN" -X GET "https://api.buildkite.com/v2/organizations/heartbeat-backup/pipelines/heartbeat/builds?branch=main&commit=$COMMIT_SHA&state=passed")
 

@@ -1,19 +1,20 @@
-# Heartbeat Project（2023/07）
+# Heartbeat Project
 
 [![Build status](https://badge.buildkite.com/62f2d9def796f9bf8d79dc67e548341b6e3e3ad07631164b07.svg)](https://buildkite.com/heartbeat-backup/heartbeat)[![Codacy Badge](https://app.codacy.com/project/badge/Grade/2e19839055d3429598b2141884496c49)](https://www.codacy.com/gh/au-heartbeat/HeartBeat/dashboard?utm_source=github.com&utm_medium=referral&utm_content=au-heartbeat/HeartBeat&utm_campaign=Badge_Grade)[![Codacy Badge](https://app.codacy.com/project/badge/Coverage/2e19839055d3429598b2141884496c49)](https://www.codacy.com/gh/au-heartbeat/HeartBeat/dashboard?utm_source=github.com&utm_medium=referral&utm_content=au-heartbeat/HeartBeat&utm_campaign=Badge_Coverage)
 
-[![Docs](https://github.com/au-heartbeat/HeartBeat/actions/workflows/Docs.yaml/badge.svg)](https://github.com/au-heartbeat/HeartBeat/actions/workflows/Docs.yaml) [![Frontend](https://github.com/au-heartbeat/HeartBeat/actions/workflows/frontend.yml/badge.svg)](https://github.com/au-heartbeat/HeartBeat/actions/workflows/frontend.yml) [![Backend](https://github.com/au-heartbeat/HeartBeat/actions/workflows/backend.yml/badge.svg)](https://github.com/au-heartbeat/HeartBeat/actions/workflows/backend.yml) [![Security](https://github.com/au-heartbeat/HeartBeat/actions/workflows/Security.yml/badge.svg)](https://github.com/au-heartbeat/HeartBeat/actions/workflows/Security.yml) [![Build and Deploy](https://github.com/au-heartbeat/Heartbeat/actions/workflows/build-and-deploy.yml/badge.svg)](https://github.com/au-heartbeat/Heartbeat/actions/workflows/build-and-deploy.yml)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=heartbeat-frontend&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=heartbeat-frontend)[![Frontend Coverage](https://sonarcloud.io/api/project_badges/measure?project=heartbeat-frontend&metric=coverage)](https://sonarcloud.io/summary/new_code?id=heartbeat-frontend)[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=au-heartbeat-heartbeat-backend&metric=coverage)](https://sonarcloud.io/summary/new_code?id=au-heartbeat-heartbeat-backend)
+
+[![Docs](https://github.com/au-heartbeat/HeartBeat/actions/workflows/Docs.yaml/badge.svg)](https://github.com/au-heartbeat/HeartBeat/actions/workflows/Docs.yaml) [![Build and Deploy](https://github.com/au-heartbeat/Heartbeat/actions/workflows/build-and-deploy.yml/badge.svg)](https://github.com/au-heartbeat/Heartbeat/actions/workflows/build-and-deploy.yml)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 [![FOSSA Status](https://app.fossa.com/api/projects/custom%2B23211%2Fgithub.com%2Fau-heartbeat%2FHeartbeat.svg?type=large)](https://app.fossa.com/projects/custom%2B23211%2Fgithub.com%2Fau-heartbeat%2FHeartbeat?ref=badge_large)
 
-- [Heartbeat Project（2023/07）](#heartbeat-project202307)
+- [Heartbeat Project](#heartbeat-project)
 - [News](#news)
 - [1 About Heartbeat](#1-about-heartbeat)
 - [2 Support tools](#2-support-tools)
 - [3 Product Features](#3-product-features)
-
   - [3.1 Config project info](#31-config-project-info)
     - [3.1.1 Config Board/Pipeline/Source data](#311-config-boardpipelinesource-data)
       - [3.1.2 Config search data](#312-config-search-data)
@@ -21,12 +22,12 @@
     - [3.2 Config Metrics data](#32-config-metrics-data)
       - [3.2.1 Config Crews/Cycle Time](#321-config-crewscycle-time)
       - [3.2.2 Setting Classification](#322-setting-classification)
-      - [3.2.3 Setting advanced settings](#323-setting-advanced-setting)
+      - [3.2.3 Setting advanced Setting](#323-setting-advanced-setting)
       - [3.2.4 Pipeline configuration](#324-pipeline-configuration)
   - [3.3 Export and import config info](#33-export-and-import-config-info)
     - [3.3.1 Export Config Json File](#331-export-config-json-file)
     - [3.3.2 Import Config Json File](#332-import-config-json-file)
-  - [3.4 Generate Metrics Data](#34-generate-metrics-data)
+  - [3.4 Generate Metrics report](#34-generate-metrics-report)
     - [3.4.1 Velocity](#341-velocity)
     - [3.4.2 Cycle Time](#342-cycle-time)
     - [3.4.3 Classification](#343-classification)
@@ -36,10 +37,12 @@
     - [3.4.7 Mean time to recovery](#347-mean-time-to-recovery)
   - [3.5 Export original data](#35-export-original-data)
     - [3.5.1 Export board data](#351-export-board-data)
+      - [3.5.1.1 Done card exporting](#3511-done-card-exporting)
+      - [3.5.1.1 Undone card exporting](#3511-undone-card-exporting)
     - [3.5.2 Export pipeline data](#352-export-pipeline-data)
   - [3.6 Caching data](#36-caching-data)
 - [4 Known issues](#4-known-issues)
-  - [4.1 Change status name in Jira board](#41-change-status-name-in-jira-board-setting-when-there-are-cards-in-this-status)
+  - [4.1  Change status name in Jira board setting when there are cards in this status](#41--change-status-name-in-jira-board-setting-when-there-are-cards-in-this-status)
 - [5 Instructions](#5-instructions)
   - [5.1 Prepare for Jira Project](#51-prepare-for-jira-project)
   - [5.2 Prepare env to use Heartbeat tool](#52-prepare-env-to-use-heartbeat-tool)

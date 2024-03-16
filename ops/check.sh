@@ -119,24 +119,39 @@ rgba_check() {
 }
 
 buildkite_e2e_deployed_check() {
-  local MAX_ATTEMPTS=20
-  local attempt_count=0
-  echo "Current git commit id is $COMMIT_SHA"
+  #!/bin/bash
+
+  MAX_ATTEMPTS=20
+  attempt_count=0
+  echo "The git commit id is $COMMIT_SHA"
+
   while [ $attempt_count -lt $MAX_ATTEMPTS ]; do
-    ((attempt_count += 1))
-    echo "Start to get deployment status: attempt count is $attempt_count"
-    value=$(curl -H "Authorization: Bearer $BUILDKITE_TOKEN" -X GET "https://api.buildkite.com/v2/organizations/heartbeat-backup/pipelines/heartbeat/builds?branch=main&commit=$COMMIT_SHA&state=passed" | jq '.[0].jobs[] | select(.name == ":rocket: Deploy e2e" and .state == "passed") | any')
-    echo "Successfully get the e2e deployment staut: $value"
+    echo "Start to get deployment status, attempt count is $attempt_count"
+    ((attempt_count++))
+
+    response=$(curl -H "Authorization: Bearer $BUILDKITE_TOKEN" -X GET "https://api.buildkite.com/v2/organizations/heartbeat-backup/pipelines/heartbeat/builds?branch=main&commit=$COMMIT_SHA&state=passed")
+
+    if [ -z "$response" ]; then
+      echo "🪹 API response is empty. Retrying..."
+      sleep 30
+      continue
+    fi
+
+    value=$(echo "$response" | jq '.[0].jobs[] | select(.name == ":rocket: Deploy e2e" and .state == "passed") | any')
+
+    echo "Current e2e has been deploy? $value"
+
     if [ "$value" == "true" ]; then
-      echo "Successfully deploy to E2E"
+      echo "🎉 Successfully deploy to E2E"
       break
     else
-      echo "WIP..."
+      echo "🛝 WIP..."
       sleep 30
     fi
   done
+
   if [ $attempt_count -eq $MAX_ATTEMPTS ]; then
-    echo "Failed to wait for E2E deployment with Maximum attempts reached. Exiting..."
+    echo "❌ Failed to wait for E2E deployment with Maximum attempts reached. Exiting..."
     exit 1
   fi
 }

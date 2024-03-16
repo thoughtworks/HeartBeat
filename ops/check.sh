@@ -137,15 +137,13 @@ buildkite_e2e_deployed_check() {
       continue
     fi
 
-    value=$(echo "$response" | jq '.[0].jobs[] | select(.name == ":rocket: Deploy e2e" and .state == "passed") | any')
-
-    echo "Current e2e has been deploy? $value"
+    value=$(echo "$response" | jq '.[0].jobs[] | select(.name == ":rocket: Deploy e2e" and .state == "passed") | . != null')
 
     if [ "$value" == "true" ]; then
-      echo "🎉 Successfully deploy to E2E"
+      echo "Successfully deploy to E2E"
       break
     else
-      echo "🛝 WIP..."
+      echo "WIP..."
       sleep 30
     fi
   done

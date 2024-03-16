@@ -153,7 +153,7 @@ describe('ConfigStep', () => {
   it('should show board component when MetricsTypeCheckbox select Velocity,Cycle time', async () => {
     setup();
 
-    await userEvent.click(screen.getByRole('button', { name: REQUIRED_DATA }));
+    await userEvent.click(screen.getByRole('combobox', { name: REQUIRED_DATA }));
 
     await waitFor(() => {
       expect(screen.getByRole('listbox')).toBeInTheDocument();
@@ -171,7 +171,7 @@ describe('ConfigStep', () => {
   it('should show board component when MetricsTypeCheckbox select  Classification, ', async () => {
     setup();
 
-    await userEvent.click(screen.getByRole('button', { name: REQUIRED_DATA }));
+    await userEvent.click(screen.getByRole('combobox', { name: REQUIRED_DATA }));
 
     await waitFor(() => {
       expect(screen.getByRole('listbox')).toBeInTheDocument();
@@ -210,7 +210,7 @@ describe('ConfigStep', () => {
     const today = dayjs().format('MM/DD/YYYY');
     setup();
 
-    await userEvent.click(screen.getByRole('button', { name: REQUIRED_DATA }));
+    await userEvent.click(screen.getByRole('combobox', { name: REQUIRED_DATA }));
     const requireDateSelection = within(screen.getByRole('listbox'));
     await userEvent.click(requireDateSelection.getByRole('option', { name: VELOCITY }));
     await closeMuiModal(userEvent);
@@ -230,7 +230,7 @@ describe('ConfigStep', () => {
     const today = dayjs().format('MM/DD/YYYY');
     setup();
 
-    const requiredMetricsField = screen.getByRole('button', { name: REQUIRED_DATA });
+    const requiredMetricsField = screen.getByRole('combobox', { name: REQUIRED_DATA });
     await userEvent.click(requiredMetricsField);
     const requireDateSelection = within(screen.getByRole('listbox'));
     await userEvent.click(requireDateSelection.getByRole('option', { name: DEPLOYMENT_FREQUENCY }));

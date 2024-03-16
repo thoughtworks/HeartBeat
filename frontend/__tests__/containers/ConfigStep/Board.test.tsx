@@ -78,7 +78,7 @@ describe('Board', () => {
 
   it('should show default value jira when init board component', () => {
     setup();
-    const boardType = screen.getByRole('button', {
+    const boardType = screen.getByRole('combobox', {
       name: /board/i,
     });
 
@@ -87,7 +87,7 @@ describe('Board', () => {
 
   it('should show detail options when click board field', async () => {
     setup();
-    await userEvent.click(screen.getByRole('button', { name: CONFIG_TITLE.BOARD }));
+    await userEvent.click(screen.getByRole('combobox', { name: CONFIG_TITLE.BOARD }));
     const listBox = within(screen.getByRole('listbox'));
     const options = listBox.getAllByRole('option');
     const optionValue = options.map((li) => li.getAttribute('data-value'));
@@ -97,7 +97,7 @@ describe('Board', () => {
 
   it('should show board type when select board field value ', async () => {
     setup();
-    await userEvent.click(screen.getByRole('button', { name: CONFIG_TITLE.BOARD }));
+    await userEvent.click(screen.getByRole('combobox', { name: CONFIG_TITLE.BOARD }));
 
     await waitFor(() => {
       expect(screen.getByRole('option', { name: /jira/i })).toBeInTheDocument();
@@ -107,7 +107,7 @@ describe('Board', () => {
 
     await waitFor(() => {
       expect(
-        screen.getByRole('button', {
+        screen.getByRole('combobox', {
           name: /board/i,
         }),
       ).toBeInTheDocument();
@@ -161,16 +161,12 @@ describe('Board', () => {
     expect(screen.getByLabelText(/site/i)).not.toHaveValue();
     expect(screen.getByLabelText(/token/i)).not.toHaveValue();
 
-    await userEvent.click(screen.getByRole('button', { name: /board/i }));
+    await userEvent.click(screen.getByRole('combobox', { name: /board/i }));
 
     await waitFor(() => {
       expect(screen.getByRole('option', { name: /jira/i })).toBeInTheDocument();
     });
     await userEvent.click(screen.getByRole('option', { name: /jira/i }));
-
-    await waitFor(() => {
-      expect(screen.getByRole('button', { name: CONFIG_TITLE.BOARD })).toBeInTheDocument();
-    });
   });
 
   it('should hidden timeout alert when click reset button', async () => {

@@ -47,7 +47,7 @@ describe('MetricsTypeCheckbox', () => {
 
   it('should show detail options when click require data button', async () => {
     const { getByRole } = setup();
-    await userEvent.click(screen.getByRole('button', { name: REQUIRED_DATA }));
+    await userEvent.click(screen.getByRole('combobox', { name: REQUIRED_DATA }));
     const listBox = within(getByRole('listbox'));
     const options = listBox.getAllByRole('option');
     const optionValue = options.map((li) => li.getAttribute('data-value'));
@@ -57,7 +57,7 @@ describe('MetricsTypeCheckbox', () => {
 
   it('should show multiple selections when multiple options are selected', async () => {
     const { getByRole, getByText } = setup();
-    await userEvent.click(screen.getByRole('button', { name: REQUIRED_DATA }));
+    await userEvent.click(screen.getByRole('combobox', { name: REQUIRED_DATA }));
     const listBox = within(getByRole('listbox'));
     await act(async () => {
       await userEvent.click(listBox.getByRole('option', { name: VELOCITY }));
@@ -73,7 +73,7 @@ describe('MetricsTypeCheckbox', () => {
     const { getByRole, getByText } = setup();
     const displayedDataList = REQUIRED_DATA_LIST.slice(1);
     await act(async () => {
-      await userEvent.click(getByRole('button', { name: REQUIRED_DATA }));
+      await userEvent.click(getByRole('combobox', { name: REQUIRED_DATA }));
     });
     const listBox = within(getByRole('listbox'));
     await act(async () => {
@@ -89,7 +89,7 @@ describe('MetricsTypeCheckbox', () => {
     const displayedDataList = REQUIRED_DATA_LIST.slice(1);
 
     await act(async () => {
-      await userEvent.click(getByRole('button', { name: REQUIRED_DATA }));
+      await userEvent.click(getByRole('combobox', { name: REQUIRED_DATA }));
     });
     const listBox = within(getByRole('listbox'));
     await act(async () => {
@@ -106,7 +106,7 @@ describe('MetricsTypeCheckbox', () => {
   it('should be checked of All selected option when click any other options', async () => {
     const { getByRole } = setup();
     await act(async () => {
-      await userEvent.click(getByRole('button', { name: REQUIRED_DATA }));
+      await userEvent.click(getByRole('combobox', { name: REQUIRED_DATA }));
     });
 
     const listBox = within(getByRole('listbox'));
@@ -130,7 +130,7 @@ describe('MetricsTypeCheckbox', () => {
     const displayedDataList = REQUIRED_DATA_LIST.slice(1, REQUIRED_DATA_LIST.length - 1);
 
     await act(async () => {
-      await userEvent.click(getByRole('button', { name: REQUIRED_DATA }));
+      await userEvent.click(getByRole('combobox', { name: REQUIRED_DATA }));
     });
 
     const listBox = within(getByRole('listbox'));
@@ -148,7 +148,7 @@ describe('MetricsTypeCheckbox', () => {
 
   it('should show none selection when double click all option', async () => {
     const { getByRole, getByText } = setup();
-    await userEvent.click(getByRole('button', { name: REQUIRED_DATA }));
+    await userEvent.click(getByRole('combobox', { name: REQUIRED_DATA }));
     const listBox = within(getByRole('listbox'));
     await userEvent.dblClick(listBox.getByRole('option', { name: ALL }));
     await userEvent.click(getByRole('listbox', { name: REQUIRED_DATA }));
@@ -161,7 +161,7 @@ describe('MetricsTypeCheckbox', () => {
     const { getByRole, getByText } = setup();
 
     await act(async () => {
-      await userEvent.click(getByRole('button', { name: REQUIRED_DATA }));
+      await userEvent.click(getByRole('combobox', { name: REQUIRED_DATA }));
     });
     const listBox = within(getByRole('listbox'));
     await act(async () => {
@@ -181,7 +181,7 @@ describe('MetricsTypeCheckbox', () => {
   it('should show board component when click MetricsTypeCheckbox selection velocity ', async () => {
     const { getByRole, getAllByText } = setup();
     await act(async () => {
-      await userEvent.click(getByRole('button', { name: REQUIRED_DATA }));
+      await userEvent.click(getByRole('combobox', { name: REQUIRED_DATA }));
     });
     const listBox = within(getByRole('listbox'));
     await act(async () => {
@@ -195,7 +195,7 @@ describe('MetricsTypeCheckbox', () => {
     const { getByRole, queryByText } = setup();
 
     await act(async () => {
-      await userEvent.click(getByRole('button', { name: REQUIRED_DATA }));
+      await userEvent.click(getByRole('combobox', { name: REQUIRED_DATA }));
     });
     const requireDateSelection = within(getByRole('listbox'));
     await act(async () => {

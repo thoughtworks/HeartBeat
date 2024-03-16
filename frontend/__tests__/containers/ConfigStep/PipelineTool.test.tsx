@@ -81,7 +81,7 @@ describe('PipelineTool', () => {
     ) as HTMLInputElement;
 
     await fillPipelineToolFieldsInformation();
-    await userEvent.click(screen.getByRole('button', { name: 'Pipeline Tool' }));
+    await userEvent.click(screen.getByRole('combobox', { name: 'Pipeline Tool' }));
 
     const requireDateSelection = within(getByLabelText('Pipeline Tool type select'));
     await userEvent.click(requireDateSelection.getByText(PIPELINE_TOOL_TYPES.BUILD_KITE));
@@ -124,7 +124,7 @@ describe('PipelineTool', () => {
 
   it('should show detail options when click pipelineTool fields', async () => {
     const { getByRole } = setup();
-    await userEvent.click(screen.getByRole('button', { name: 'Pipeline Tool' }));
+    await userEvent.click(screen.getByRole('combobox', { name: 'Pipeline Tool' }));
     const listBox = within(getByRole('listbox'));
     const options = listBox.getAllByRole('option');
     const optionValue = options.map((li) => li.getAttribute('data-value'));

@@ -18,11 +18,11 @@
     "baseUrl": "./",
     "paths": {
       "@src/*": ["./src/*"],
-      "@test/*": ["./__tests__/*"],
+      "@test/*": ["./__tests__/*"]
     },
-    "types": ["node", "vite-plugin-pwa/react", "jest"],
+    "types": ["node", "vite-plugin-pwa/react", "jest"]
   },
   "include": ["src", "__tests__", "e2e", "*.ts"],
   "exclude": ["__tests__/__mocks__/svgTransformer.ts", "package.json", "pnpm-lock.yaml"],
-  "references": [{ "path": "./tsconfig.node.json" }, { "path": "./tsconfig.scripts.json" }],
+  "references": [{ "path": "./tsconfig.node.json" }, { "path": "./tsconfig.scripts.json" }]
 }

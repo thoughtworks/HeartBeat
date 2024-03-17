@@ -122,42 +122,15 @@ Resources:
               StringLike:
                 token.actions.githubusercontent.com:sub: !Sub repo:${GitHubOrg}/${RepositoryName}:ref:refs/heads/main
       Policies:
-        - PolicyName: IAMAccess
-          PolicyDocument:
-            Version: "2012-10-17"
-            Statement:
-              - Action:
-                  - iam:GetRole
-                Effect: Allow
-                Resource: "*"
         - PolicyName: GitHubAccess
           PolicyDocument:
             Version: "2012-10-17"
             Statement:
               - Action:
                   - ecr:GetAuthorizationToken
-                  - ecr:BatchCheckLayerAvailability
-                  - ecr:GetDownloadUrlForLayer
-                  - ecr:GetRepositoryPolicy
-                  - ecr:DescribeRepositories
-                  - ecr:ListImages
                   - ecr:BatchGetImage
-                  - ecr:CompleteLayerUpload
-                  - ecr:InitiateLayerUpload
-                  - ecr:PutImage
-                  - ecr:UploadLayerPart
-                  - cloudformation:CreateStack
-                  - cloudformation:CreateChangeSet
-                  - cloudformation:ListStacks
-                  - cloudformation:UpdateStack
-                  - cloudformation:DescribeStacks
-                  - cloudformation:DescribeStackResource
-                  - cloudformation:DescribeStackEvents
-                  - cloudformation:ValidateTemplate
-                  - cloudformation:DescribeChangeSet
-                  - cloudformation:ExecuteChangeSet
-                  - cloudformation:GetTemplateSummary
-                  - ec2:*
+                  - ecr:GetAuthorizationToken
+                  - ecr:GetDownloadUrlForLayer
                 Effect: Allow
                 Resource: "*"
   AWSBuildKiteStepsRole:

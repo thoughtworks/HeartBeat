@@ -121,7 +121,7 @@ rgba_check() {
 buildkite_e2e_deployed_check() {
   #!/bin/bash
 
-  MAX_ATTEMPTS="${MAX_ATTEMPTS:-20}"
+  MAX_ATTEMPTS="${MAX_ATTEMPTS:-40}"
   SLEEP_DURATION_SECONDS="${SLEEP_DURATION_SECONDS:-30}"
   BRANCH="${BRANCH:-"main"}"
   BUILDKITE_TOKEN="${BUILDKITE_TOKEN:-empty BuildKite token}"
@@ -135,7 +135,7 @@ buildkite_e2e_deployed_check() {
     echo "Start to get deployment status, attempt count is $attempt_count"
 
     response=$(curl -H "Authorization: Bearer $BUILDKITE_TOKEN" -X GET "https://api.buildkite.com/v2/organizations/heartbeat-backup/pipelines/heartbeat/builds?branch=$BRANCH&commit=$COMMIT_SHA")
-    echo "The current build response: $response"
+    echo "The current build response: ${response:0:50}"
     is_empty=$(echo "$response" | jq 'length == 0')
     if [ "$is_empty" == "true" ]; then
       echo "The current BuildKite build has not deployed into e2e env"

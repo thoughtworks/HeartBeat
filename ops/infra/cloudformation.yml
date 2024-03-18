@@ -112,10 +112,7 @@ Resources:
           - Effect: Allow
             Action: sts:AssumeRoleWithWebIdentity
             Principal:
-              Federated: !If
-                - CreateOIDCProvider
-                - !Ref GithubOidc
-                - !Ref OIDCProviderArn
+              Federated: !Ref GithubOidc
             Condition:
               StringEquals:
                 token.actions.githubusercontent.com:aud: !Ref OIDCAudience

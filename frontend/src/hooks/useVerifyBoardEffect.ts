@@ -199,6 +199,8 @@ export const useVerifyBoardEffect = (): useVerifyBoardStateInterface => {
     } catch (e) {
       if (isHeartBeatException(e)) {
         const { description, code } = e as IHeartBeatError;
+        setIsVerifyTimeOut(false);
+        setIsShowAlert(false);
         if (code === HttpStatusCode.Unauthorized) {
           setVerifiedError(
             [KEYS.EMAIL, KEYS.TOKEN],

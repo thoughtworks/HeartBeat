@@ -11,11 +11,7 @@ describe('verify sourceControl request', () => {
   afterAll(() => server.close());
 
   it('should return isSourceControlVerify true when sourceControl verify response status is 204', async () => {
-    const result = await sourceControlClient.verifyToken(
-      MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS,
-      jest.fn(),
-      jest.fn(),
-    );
+    const result = await sourceControlClient.verifyToken(MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS);
 
     expect(result.code).toEqual(204);
   });
@@ -25,11 +21,7 @@ describe('verify sourceControl request', () => {
       rest.post(MOCK_SOURCE_CONTROL_VERIFY_TOKEN_URL, (req, res, ctx) => res(ctx.status(HttpStatusCode.Unauthorized))),
     );
 
-    const result = await sourceControlClient.verifyToken(
-      MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS,
-      jest.fn(),
-      jest.fn(),
-    );
+    const result = await sourceControlClient.verifyToken(MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS);
     expect(result.code).toEqual(HttpStatusCode.Unauthorized);
     expect(result.errorTitle).toEqual('Token is incorrect!');
   });
@@ -41,11 +33,7 @@ describe('verify sourceControl request', () => {
       ),
     );
 
-    const result = await sourceControlClient.verifyToken(
-      MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS,
-      jest.fn(),
-      jest.fn(),
-    );
+    const result = await sourceControlClient.verifyToken(MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS);
     expect(result.code).toEqual(HttpStatusCode.InternalServerError);
     expect(result.errorTitle).toEqual('Unknown error');
   });

@@ -9,6 +9,7 @@ import {
   VERIFY,
   MOCK_PIPELINE_VERIFY_URL,
   FAKE_PIPELINE_TOKEN,
+  REVERIFY,
 } from '../../fixtures';
 import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { pipelineToolClient } from '@src/clients/pipeline/PipelineToolClient';
@@ -118,6 +119,22 @@ describe('PipelineTool', () => {
     expect(getByTestId('timeoutAlert')).toBeInTheDocument();
 
     await userEvent.click(screen.getByRole('button', { name: RESET }));
+
+    expect(queryByTestId('timeoutAlert')).not.toBeInTheDocument();
+  });
+
+  it('should hidden timeout alert when the error type of api call becomes other', async () => {
+    const { getByTestId, queryByTestId } = setup();
+    await fillPipelineToolFieldsInformation();
+    pipelineToolClient.verify = jest.fn().mockResolvedValue({ code: AXIOS_REQUEST_ERROR_CODE.TIMEOUT });
+
+    await userEvent.click(screen.getByText(VERIFY));
+
+    expect(getByTestId('timeoutAlert')).toBeInTheDocument();
+
+    pipelineToolClient.verify = jest.fn().mockResolvedValue({ code: HttpStatusCode.Unauthorized });
+
+    await userEvent.click(screen.getByText(REVERIFY));
 
     expect(queryByTestId('timeoutAlert')).not.toBeInTheDocument();
   });

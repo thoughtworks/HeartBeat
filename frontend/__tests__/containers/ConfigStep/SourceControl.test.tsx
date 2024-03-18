@@ -4,6 +4,7 @@ import {
   MOCK_SOURCE_CONTROL_VERIFY_ERROR_CASE_TEXT,
   MOCK_SOURCE_CONTROL_VERIFY_TOKEN_URL,
   RESET,
+  REVERIFY,
   SOURCE_CONTROL_FIELDS,
   TOKEN_ERROR_MESSAGE,
   VERIFIED,
@@ -108,6 +109,26 @@ describe('SourceControl', () => {
     expect(getByTestId('timeoutAlert')).toBeInTheDocument();
 
     await userEvent.click(screen.getByRole('button', { name: RESET }));
+
+    expect(queryByTestId('timeoutAlert')).not.toBeInTheDocument();
+  });
+
+  it('should hidden timeout alert when the error type of api call becomes other', async () => {
+    const { getByTestId, queryByTestId } = setup();
+    await fillSourceControlFieldsInformation();
+    sourceControlClient.verifyToken = jest.fn().mockResolvedValue({
+      code: AXIOS_REQUEST_ERROR_CODE.TIMEOUT,
+    });
+
+    await userEvent.click(screen.getByText(VERIFY));
+
+    expect(getByTestId('timeoutAlert')).toBeInTheDocument();
+
+    sourceControlClient.verifyToken = jest.fn().mockResolvedValue({
+      code: HttpStatusCode.Unauthorized,
+    });
+
+    await userEvent.click(screen.getByText(REVERIFY));
 
     expect(queryByTestId('timeoutAlert')).not.toBeInTheDocument();
   });

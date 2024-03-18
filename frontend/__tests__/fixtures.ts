@@ -28,6 +28,8 @@ export const BOARD_METRICS_TITLE = 'Board Metrics';
 
 export const VERIFY = 'Verify';
 
+export const REVERIFY = 'Reverify';
+
 export const RESET = 'Reset';
 
 export const EXPORT_PIPELINE_DATA = 'Export pipeline data';

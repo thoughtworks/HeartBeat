@@ -21,7 +21,7 @@ afterAll(() => server.close());
 describe('PipelineToolClient', () => {
   describe('verify pipelineTool request', () => {
     it('should isPipelineVerified is true when pipelineTool verify response status 204', async () => {
-      const result = await pipelineToolClient.verify(MOCK_PIPELINE_VERIFY_REQUEST_PARAMS, jest.fn(), jest.fn());
+      const result = await pipelineToolClient.verify(MOCK_PIPELINE_VERIFY_REQUEST_PARAMS);
 
       expect(result.code).toEqual(HttpStatusCode.NoContent);
     });
@@ -45,7 +45,7 @@ describe('PipelineToolClient', () => {
       it.each(errorCases)('should return error code when verify endponint returns error', async ({ code }) => {
         server.use(rest.post(MOCK_PIPELINE_VERIFY_URL, (req, res, ctx) => res(ctx.status(code))));
 
-        const result = await pipelineToolClient.verify(MOCK_PIPELINE_VERIFY_REQUEST_PARAMS, jest.fn(), jest.fn());
+        const result = await pipelineToolClient.verify(MOCK_PIPELINE_VERIFY_REQUEST_PARAMS);
 
         expect(result.code).toEqual(code);
       });

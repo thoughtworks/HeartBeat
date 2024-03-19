@@ -7,6 +7,7 @@ import {
 import { selectDateRange, updateDateRange } from '@src/context/config/configSlice';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { StyledDateRangePicker, StyledDateRangePickerContainer } from './style';
+import { DEFAULT_SPRINT_INTERVAL_OFFSET_DAYS } from '@src/constants/resources';
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -24,7 +25,18 @@ export const DateRangePicker = () => {
     dispatch(initDeploymentFrequencySettings());
     dispatch(saveUsers([]));
   };
+
   const changeStartDate = (value: Nullable<Dayjs>) => {
+    let daysAddToEndDate = DEFAULT_SPRINT_INTERVAL_OFFSET_DAYS;
+    if (value) {
+      const currentDate = dayjs(new Date());
+      const valueToStartDate = value.startOf('date').format('YYYY-MM-DDTHH:mm:ss.SSSZ');
+      const daysBetweenCurrentAndStartDate = currentDate.diff(valueToStartDate, 'days');
+      daysAddToEndDate =
+        daysBetweenCurrentAndStartDate >= DEFAULT_SPRINT_INTERVAL_OFFSET_DAYS
+          ? DEFAULT_SPRINT_INTERVAL_OFFSET_DAYS
+          : daysBetweenCurrentAndStartDate;
+    }
     dispatch(
       updateDateRange(
         isNull(value)
@@ -34,7 +46,7 @@ export const DateRangePicker = () => {
             }
           : {
               startDate: value.startOf('date').format('YYYY-MM-DDTHH:mm:ss.SSSZ'),
-              endDate: value.endOf('date').add(13, 'day').format('YYYY-MM-DDTHH:mm:ss.SSSZ'),
+              endDate: value.endOf('date').add(daysAddToEndDate, 'day').format('YYYY-MM-DDTHH:mm:ss.SSSZ'),
             },
       ),
     );
@@ -55,6 +67,7 @@ export const DateRangePicker = () => {
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <StyledDateRangePickerContainer>
         <StyledDateRangePicker
+          disableFuture
           label='From *'
           value={startDate ? dayjs(startDate) : null}
           onChange={(newValue) => changeStartDate(newValue as unknown as Dayjs)}
@@ -71,8 +84,10 @@ export const DateRangePicker = () => {
           }}
         />
         <StyledDateRangePicker
+          disableFuture
           label='To *'
           value={endDate ? dayjs(endDate) : null}
+          maxDate={dayjs(startDate).add(30, 'day')}
           minDate={dayjs(startDate)}
           onChange={(newValue) => changeEndDate(newValue as unknown as Dayjs)}
           slots={{

@@ -1608,11 +1608,11 @@ class JiraServiceTest {
 			.isEqualTo(CardStepsEnum.BLOCK);
 		assertThat(cardCollection.getJiraCardDTOList().get(0).getReworkTimesInfos().get(0).getTimes()).isEqualTo(1);
 		assertThat(cardCollection.getJiraCardDTOList().get(0).getReworkTimesInfos().get(1).getState())
-			.isEqualTo(CardStepsEnum.TESTING);
-		assertThat(cardCollection.getJiraCardDTOList().get(0).getReworkTimesInfos().get(1).getTimes()).isEqualTo(1);
-		assertThat(cardCollection.getJiraCardDTOList().get(0).getReworkTimesInfos().get(2).getState())
 			.isEqualTo(CardStepsEnum.REVIEW);
-		assertThat(cardCollection.getJiraCardDTOList().get(0).getReworkTimesInfos().get(2).getTimes()).isEqualTo(1);
+		assertThat(cardCollection.getJiraCardDTOList().get(0).getReworkTimesInfos().get(1).getTimes()).isEqualTo(1);
+		assertThat(cardCollection.getJiraCardDTOList().get(0).getReworkTimesInfos().get(3).getState())
+			.isEqualTo(CardStepsEnum.TESTING);
+		assertThat(cardCollection.getJiraCardDTOList().get(0).getReworkTimesInfos().get(3).getTimes()).isEqualTo(1);
 	}
 
 	@Test
@@ -1698,11 +1698,14 @@ class JiraServiceTest {
 		assertThat(cardCollection.getReworkRatio()).isEqualTo(0.5);
 		assertThat(cardCollection.getJiraCardDTOList().get(0).getTotalReworkTimes()).isEqualTo(2);
 		assertThat(cardCollection.getJiraCardDTOList().get(0).getReworkTimesInfos().get(0).getState())
-			.isEqualTo(CardStepsEnum.TESTING);
+			.isEqualTo(CardStepsEnum.REVIEW);
 		assertThat(cardCollection.getJiraCardDTOList().get(0).getReworkTimesInfos().get(0).getTimes()).isEqualTo(1);
 		assertThat(cardCollection.getJiraCardDTOList().get(0).getReworkTimesInfos().get(1).getState())
-			.isEqualTo(CardStepsEnum.REVIEW);
-		assertThat(cardCollection.getJiraCardDTOList().get(0).getReworkTimesInfos().get(1).getTimes()).isEqualTo(1);
+			.isEqualTo(CardStepsEnum.WAITING);
+		assertThat(cardCollection.getJiraCardDTOList().get(0).getReworkTimesInfos().get(1).getTimes()).isZero();
+		assertThat(cardCollection.getJiraCardDTOList().get(0).getReworkTimesInfos().get(2).getState())
+			.isEqualTo(CardStepsEnum.TESTING);
+		assertThat(cardCollection.getJiraCardDTOList().get(0).getReworkTimesInfos().get(2).getTimes()).isEqualTo(1);
 	}
 
 }

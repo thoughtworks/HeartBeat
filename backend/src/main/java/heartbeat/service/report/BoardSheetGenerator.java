@@ -3,6 +3,7 @@ package heartbeat.service.report;
 import heartbeat.controller.board.dto.response.JiraCardDTO;
 import heartbeat.controller.report.dto.response.BoardCSVConfig;
 import lombok.Builder;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.List;
@@ -32,7 +33,10 @@ public class BoardSheetGenerator {
 		return this;
 	}
 
-	BoardSheetGenerator generateReworkTimes() {
+	BoardSheetGenerator mergeReworkTimesSheet() {
+		if (CollectionUtils.isEmpty(reworkFields)) {
+			return this;
+		}
 		int columnCount = reworkFields.size();
 		String[][] reworkTimesSheet = new String[jiraCardDTOList.size() + 1][columnCount];
 

@@ -24,6 +24,7 @@ import heartbeat.service.board.jira.JiraColumnResult;
 import heartbeat.service.board.jira.JiraService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
@@ -34,6 +35,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Stream;
+
+import static heartbeat.controller.board.dto.request.CardStepsEnum.reworkJudgmentMap;
 
 @Service
 @Log4j2
@@ -68,13 +71,28 @@ public class KanbanCsvService {
 				boardRequestParam.getToken());
 		JiraColumnResult jiraColumns = jiraService.getJiraColumns(boardRequestParam, baseUrl, jiraBoardConfigDTO);
 
+		List<String> reworkFromStates = null;
+		CardStepsEnum reworkState = null;
+		if (request.getJiraBoardSetting().getReworkTimesSetting() != null) {
+			reworkState = request.getJiraBoardSetting().getReworkTimesSetting().getEnumReworkState();
+			List<CardStepsEnum> reworkExcludeStates = request.getJiraBoardSetting()
+				.getReworkTimesSetting()
+				.getEnumExcludeStates();
+			reworkFromStates = reworkJudgmentMap.get(reworkState)
+				.stream()
+				.sorted()
+				.filter(state -> !reworkExcludeStates.contains(state))
+				.map(CardStepsEnum::getValue)
+				.toList();
+		}
 		this.generateCSVForBoard(realDoneCardCollection.getJiraCardDTOList(),
 				nonDoneCardCollection.getJiraCardDTOList(), jiraColumns.getJiraColumnResponse(),
-				jiraBoardSetting.getTargetFields(), request.getCsvTimeStamp());
+				jiraBoardSetting.getTargetFields(), request.getCsvTimeStamp(), reworkState, reworkFromStates);
 	}
 
 	private void generateCSVForBoard(List<JiraCardDTO> allDoneCards, List<JiraCardDTO> nonDoneCards,
-			List<JiraColumnDTO> jiraColumns, List<TargetField> targetFields, String csvTimeStamp) {
+			List<JiraColumnDTO> jiraColumns, List<TargetField> targetFields, String csvTimeStamp,
+			CardStepsEnum reworkState, List<String> reworkFromStates) {
 		List<JiraCardDTO> cardDTOList = new ArrayList<>();
 		List<JiraCardDTO> emptyJiraCard = List.of(JiraCardDTO.builder().build());
 
@@ -116,18 +134,35 @@ public class KanbanCsvService {
 				.label("OriginCycleTime: " + column)
 				.value("cycleTimeFlat." + column)
 				.build()));
+		// rework times fields
+		List<BoardCSVConfig> reworkFields = new ArrayList<>();
+		if (CollectionUtils.isNotEmpty(reworkFromStates) && reworkState != null) {
+			reworkFields.add(BoardCSVConfig.builder()
+				.label(reworkState.getValue() + "total rework times")
+				.value("totalReworkTimes")
+				.build());
+			reworkFields.addAll(reworkFromStates.stream()
+				.map(state -> BoardCSVConfig.builder()
+					.label("from " + state + " to " + reworkState.getValue())
+					.value("reworkTimesFlat." + state)
+					.build())
+				.toList());
+		}
 
 		cardDTOList.forEach(card -> {
 			card.setCycleTimeFlat(card.buildCycleTimeFlatObject());
 			card.setTotalCycleTimeDivideStoryPoints(card.getTotalCycleTimeDivideStoryPoints());
+			card.setReworkTimesFlat(card.buildReworkTimesFlatObject());
 		});
 		String[][] sheet = BoardSheetGenerator.builder()
 			.csvFileGenerator(csvFileGenerator)
 			.jiraCardDTOList(cardDTOList)
 			.fields(allBoardFields)
 			.extraFields(newExtraFields)
+			.reworkFields(reworkFields)
 			.build()
 			.mergeBaseInfoAndCycleTimeSheet()
+			.mergeReworkTimesSheet()
 			.generate();
 		csvFileGenerator.writeDataToCSV(csvTimeStamp, sheet);
 	}

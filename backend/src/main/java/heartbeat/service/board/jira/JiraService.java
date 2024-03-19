@@ -43,7 +43,6 @@ import heartbeat.controller.board.dto.response.ReworkTimesInfo;
 import heartbeat.controller.board.dto.response.StatusChangedItem;
 import heartbeat.controller.board.dto.response.StepsDay;
 import heartbeat.controller.board.dto.response.TargetField;
-import heartbeat.controller.report.dto.request.MetricEnum;
 import heartbeat.exception.BadRequestException;
 import heartbeat.exception.BaseException;
 import heartbeat.exception.InternalServerErrorException;
@@ -259,30 +258,27 @@ public class JiraService {
 		}
 		List<JiraCardDTO> realDoneCards = getRealDoneCards(request, boardColumns, users, baseUrl, allDoneCards,
 				jiraCardWithFields.getTargetFields(), assigneeFilter);
+
 		double storyPointSum = realDoneCards.stream()
 			.mapToDouble(card -> card.getBaseInfo().getFields().getStoryPoints())
 			.sum();
 
-		CardCollection cardCollection = CardCollection.builder()
+		int reworkCardNumber = realDoneCards.stream()
+			.filter(realDoneCard -> !realDoneCard.getReworkTimesInfos().isEmpty())
+			.toList()
+			.size();
+		double reworkRatio = realDoneCards.isEmpty() ? 0
+				: BigDecimal.valueOf(reworkCardNumber)
+					.divide(BigDecimal.valueOf(realDoneCards.size()), 2, RoundingMode.HALF_UP)
+					.doubleValue();
+
+		return CardCollection.builder()
 			.storyPointSum(storyPointSum)
 			.cardsNumber(realDoneCards.size())
+			.reworkCardNumber(reworkCardNumber)
+			.reworkRatio(reworkRatio)
 			.jiraCardDTOList(realDoneCards)
 			.build();
-
-		if (request.getBoardMetrics().contains(MetricEnum.REWORK_TIMES.getValue())) {
-			int reworkCardNumber = realDoneCards.stream()
-				.filter(realDoneCard -> !realDoneCard.getReworkTimesInfos().isEmpty())
-				.toList()
-				.size();
-			double reworkRatio = realDoneCards.isEmpty() ? 0
-					: BigDecimal.valueOf(reworkCardNumber)
-						.divide(BigDecimal.valueOf(realDoneCards.size()), 2, RoundingMode.HALF_UP)
-						.doubleValue();
-			cardCollection.setReworkCardNumber(reworkCardNumber);
-			cardCollection.setReworkRatio(reworkRatio);
-		}
-
-		return cardCollection;
 	}
 
 	private CompletableFuture<JiraColumnResult> getJiraColumnsAsync(BoardRequestParam boardRequestParam, URI baseUrl,
@@ -602,24 +598,20 @@ public class JiraService {
 		jiraCards.forEach(doneCard -> {
 			CardHistoryResponseDTO cardHistoryResponseDTO = getJiraCardHistory(baseUrl, doneCard.getKey(), 0,
 					request.getToken());
-
 			List<String> assigneeSet = getAssigneeSet(cardHistoryResponseDTO, filterMethod, doneCard);
+			CycleTimeInfoDTO cycleTimeInfoDTO = getCycleTime(cardHistoryResponseDTO, request.isTreatFlagCardAsBlock(),
+					keyFlagged, request.getStatus());
 			if (users.stream().anyMatch(assigneeSet::contains)) {
-				CycleTimeInfoDTO cycleTimeInfoDTO;
-				JiraCardDTO jiraCardDTO = JiraCardDTO.builder().baseInfo(doneCard).build();
-				if (request.getBoardMetrics().contains(MetricEnum.CYCLE_TIME.getValue())) {
-					cycleTimeInfoDTO = getCycleTime(cardHistoryResponseDTO, request.isTreatFlagCardAsBlock(),
-							keyFlagged, request.getStatus());
-					jiraCardDTO.setCycleTime(cycleTimeInfoDTO.getCycleTimeInfos());
-					jiraCardDTO.setOriginCycleTime(cycleTimeInfoDTO.getOriginCycleTimeInfos());
-					jiraCardDTO.setCardCycleTime(calculateCardCycleTime(doneCard.getKey(),
-							cycleTimeInfoDTO.getCycleTimeInfos(), boardColumns));
-				}
-				if (request.getBoardMetrics().contains(MetricEnum.REWORK_TIMES.getValue())) {
-					jiraCardDTO.setReworkTimesInfos(getReworkTimesInfo(cardHistoryResponseDTO,
-							request.getReworkTimesSetting(), request.isTreatFlagCardAsBlock(), boardColumns));
-					jiraCardDTO.calculateTotalReworkTimes();
-				}
+				JiraCardDTO jiraCardDTO = JiraCardDTO.builder()
+					.baseInfo(doneCard)
+					.cycleTime(cycleTimeInfoDTO.getCycleTimeInfos())
+					.originCycleTime(cycleTimeInfoDTO.getOriginCycleTimeInfos())
+					.cardCycleTime(calculateCardCycleTime(doneCard.getKey(), cycleTimeInfoDTO.getCycleTimeInfos(),
+							boardColumns))
+					.reworkTimesInfos(getReworkTimesInfo(cardHistoryResponseDTO, request.getReworkTimesSetting(),
+							request.isTreatFlagCardAsBlock(), boardColumns))
+					.build();
+				jiraCardDTO.calculateTotalReworkTimes();
 				realDoneCards.add(jiraCardDTO);
 			}
 		});

@@ -535,7 +535,6 @@ public class JiraBoardConfigDTOFixture {
 			.startTime(START_TIME)
 			.endTime(END_TIME)
 			.targetFields(jiraBoardSetting.getTargetFields())
-			.boardMetrics(List.of("cycle time", "rework times"))
 			.treatFlagCardAsBlock(jiraBoardSetting.getTreatFlagCardAsBlock());
 	}
 
@@ -551,7 +550,6 @@ public class JiraBoardConfigDTOFixture {
 			.startTime(START_TIME)
 			.endTime(END_TIME)
 			.targetFields(jiraBoardSetting.getTargetFields())
-			.boardMetrics(List.of("cycle time", "rework times"))
 			.treatFlagCardAsBlock(jiraBoardSetting.getTreatFlagCardAsBlock());
 	}
 
@@ -567,7 +565,6 @@ public class JiraBoardConfigDTOFixture {
 			.startTime(START_TIME)
 			.endTime(END_TIME)
 			.targetFields(jiraBoardSetting.getTargetFields())
-			.boardMetrics(List.of("cycle time", "rework times"))
 			.treatFlagCardAsBlock(jiraBoardSetting.getTreatFlagCardAsBlock());
 	}
 
@@ -650,7 +647,6 @@ public class JiraBoardConfigDTOFixture {
 			.startTime(START_TIME)
 			.endTime(END_TIME)
 			.targetFields(jiraBoardSetting.getTargetFields())
-			.boardMetrics(List.of("cycle time", "rework times"))
 			.treatFlagCardAsBlock(jiraBoardSetting.getTreatFlagCardAsBlock());
 	}
 
@@ -666,7 +662,6 @@ public class JiraBoardConfigDTOFixture {
 			.startTime(START_TIME)
 			.endTime(END_TIME)
 			.targetFields(jiraBoardSetting.getTargetFields())
-			.boardMetrics(List.of("cycle time", "rework times"))
 			.treatFlagCardAsBlock(jiraBoardSetting.getTreatFlagCardAsBlock());
 	}
 

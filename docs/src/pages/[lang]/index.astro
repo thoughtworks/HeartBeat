@@ -6,4 +6,7 @@ export const getStaticPaths = () => Object.keys(languages).map((lang) => ({ para
 const { lang } = Astro.params;
 ---
 
-<meta http-equiv="refresh" content={`0;url=/${import.meta.env.BASE_URL}/${lang}/getting-started/`} />
+<meta
+	http-equiv="refresh"
+	content={`0;url=/${import.meta.env.BASE_URL}/${lang}/getting-started/`}
+/>

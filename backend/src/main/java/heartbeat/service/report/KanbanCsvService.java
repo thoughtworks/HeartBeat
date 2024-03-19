@@ -121,7 +121,15 @@ public class KanbanCsvService {
 			card.setCycleTimeFlat(card.buildCycleTimeFlatObject());
 			card.setTotalCycleTimeDivideStoryPoints(card.getTotalCycleTimeDivideStoryPoints());
 		});
-		csvFileGenerator.convertBoardDataToCSV(cardDTOList, allBoardFields, newExtraFields, csvTimeStamp);
+		String[][] sheet = BoardSheetGenerator.builder()
+			.csvFileGenerator(csvFileGenerator)
+			.jiraCardDTOList(cardDTOList)
+			.fields(allBoardFields)
+			.extraFields(newExtraFields)
+			.build()
+			.mergeBaseInfoAndCycleTimeSheet()
+			.generate();
+		csvFileGenerator.writeDataToCSV(csvTimeStamp, sheet);
 	}
 
 	private void sortNonDoneCardsByStatusAndTime(List<JiraCardDTO> nonDoneCards, List<JiraColumnDTO> jiraColumns) {

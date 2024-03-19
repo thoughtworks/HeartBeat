@@ -86,7 +86,7 @@ class KanbanCsvServiceTest {
 				CardCollection.builder().jiraCardDTOList(List.of(jiraCardDTO)).build(),
 				CardCollection.builder().build());
 
-		verify(csvFileGenerator).convertBoardDataToCSV(jiraCardDTOCaptor.capture(), anyList(), any(), any());
+		verify(csvFileGenerator).assembleBoardData(jiraCardDTOCaptor.capture(), anyList(), any());
 		assertEquals(2, jiraCardDTOCaptor.getValue().size());
 		assertTrue(jiraCardDTOCaptor.getValue().contains(jiraCardDTO));
 	}
@@ -109,7 +109,7 @@ class KanbanCsvServiceTest {
 				CardCollection.builder().jiraCardDTOList(List.of(jiraCardDTO)).build(),
 				CardCollection.builder().jiraCardDTOList(Lists.list()).build());
 
-		verify(csvFileGenerator).convertBoardDataToCSV(jiraCardDTOCaptor.capture(), anyList(), any(), any());
+		verify(csvFileGenerator).assembleBoardData(jiraCardDTOCaptor.capture(), anyList(), any());
 		assertEquals(2, jiraCardDTOCaptor.getValue().size());
 		assertTrue(jiraCardDTOCaptor.getValue().contains(jiraCardDTO));
 	}
@@ -169,7 +169,7 @@ class KanbanCsvServiceTest {
 				CardCollection.builder().jiraCardDTOList(List.of(jiraCardDTO)).build(),
 				CardCollection.builder().jiraCardDTOList(NonDoneJiraCardDTOList).build());
 
-		verify(csvFileGenerator).convertBoardDataToCSV(jiraCardDTOCaptor.capture(), anyList(), any(), any());
+		verify(csvFileGenerator).assembleBoardData(jiraCardDTOCaptor.capture(), anyList(), any());
 		assertEquals(5, jiraCardDTOCaptor.getValue().size());
 		assertEquals(testingJiraCard, jiraCardDTOCaptor.getValue().get(2));
 		assertEquals(blockedJiraCard, jiraCardDTOCaptor.getValue().get(3));
@@ -231,7 +231,7 @@ class KanbanCsvServiceTest {
 				CardCollection.builder().jiraCardDTOList(List.of(jiraCardDTO)).build(),
 				CardCollection.builder().jiraCardDTOList(NonDoneJiraCardDTOList).build());
 
-		verify(csvFileGenerator).convertBoardDataToCSV(jiraCardDTOCaptor.capture(), anyList(), any(), any());
+		verify(csvFileGenerator).assembleBoardData(jiraCardDTOCaptor.capture(), anyList(), any());
 		assertEquals(5, jiraCardDTOCaptor.getValue().size());
 		assertEquals(preDoingJiraCard, jiraCardDTOCaptor.getValue().get(3));
 		assertEquals(nextDoingJiraCard, jiraCardDTOCaptor.getValue().get(4));
@@ -275,7 +275,7 @@ class KanbanCsvServiceTest {
 				CardCollection.builder().jiraCardDTOList(doneJiraCardDTOList).build(),
 				CardCollection.builder().jiraCardDTOList(List.of(jiraCardDTO)).build());
 
-		verify(csvFileGenerator).convertBoardDataToCSV(jiraCardDTOCaptor.capture(), anyList(), any(), any());
+		verify(csvFileGenerator).assembleBoardData(jiraCardDTOCaptor.capture(), anyList(), any());
 		assertEquals(4, jiraCardDTOCaptor.getValue().size());
 		assertEquals(preDoneJiraCard, jiraCardDTOCaptor.getValue().get(0));
 		assertEquals(nextDoneJiraCard, jiraCardDTOCaptor.getValue().get(1));
@@ -323,7 +323,7 @@ class KanbanCsvServiceTest {
 				CardCollection.builder().jiraCardDTOList(doneJiraCardDTOList).build(),
 				CardCollection.builder().jiraCardDTOList(List.of(jiraCardDTO)).build());
 
-		verify(csvFileGenerator).convertBoardDataToCSV(jiraCardDTOCaptor.capture(), anyList(), any(), any());
+		verify(csvFileGenerator).assembleBoardData(jiraCardDTOCaptor.capture(), anyList(), any());
 		assertEquals(4, jiraCardDTOCaptor.getValue().size());
 		assertEquals(preDoneJiraCard, jiraCardDTOCaptor.getValue().get(1));
 		assertEquals(nextDoneJiraCard, jiraCardDTOCaptor.getValue().get(0));
@@ -374,7 +374,7 @@ class KanbanCsvServiceTest {
 				CardCollection.builder().jiraCardDTOList(List.of(jiraCardDTO)).build(),
 				CardCollection.builder().jiraCardDTOList(NonDoneJiraCardDTOList).build());
 
-		verify(csvFileGenerator).convertBoardDataToCSV(jiraCardDTOCaptor.capture(), anyList(), any(), any());
+		verify(csvFileGenerator).assembleBoardData(jiraCardDTOCaptor.capture(), anyList(), any());
 		assertEquals(5, jiraCardDTOCaptor.getValue().size());
 		assertEquals(blockedJiraCard, jiraCardDTOCaptor.getValue().get(2));
 		assertEquals(doingJiraCard, jiraCardDTOCaptor.getValue().get(3));
@@ -423,7 +423,7 @@ class KanbanCsvServiceTest {
 				CardCollection.builder().jiraCardDTOList(List.of(jiraCardDTO)).build(),
 				CardCollection.builder().jiraCardDTOList(NonDoneJiraCardDTOList).build());
 
-		verify(csvFileGenerator).convertBoardDataToCSV(jiraCardDTOCaptor.capture(), anyList(), any(), any());
+		verify(csvFileGenerator).assembleBoardData(jiraCardDTOCaptor.capture(), anyList(), any());
 		assertEquals(5, jiraCardDTOCaptor.getValue().size());
 		assertEquals(doingJiraCard, jiraCardDTOCaptor.getValue().get(2));
 		assertEquals(blockedJiraCard, jiraCardDTOCaptor.getValue().get(3));
@@ -462,8 +462,7 @@ class KanbanCsvServiceTest {
 				CardCollection.builder().jiraCardDTOList(List.of(jiraCardDTO)).build(),
 				CardCollection.builder().jiraCardDTOList(NonDoneJiraCardDTOList).build());
 
-		verify(csvFileGenerator).convertBoardDataToCSV(anyList(), csvFieldsCaptor.capture(),
-				csvNewFieldsCaptor.capture(), any());
+		verify(csvFileGenerator).assembleBoardData(anyList(), csvFieldsCaptor.capture(), csvNewFieldsCaptor.capture());
 		assertEquals(23, csvFieldsCaptor.getValue().size());
 		BoardCSVConfig targetValue = csvNewFieldsCaptor.getValue().get(0);
 		assertEquals("baseInfo.fields.customFields.key-target1", targetValue.getValue());
@@ -504,7 +503,7 @@ class KanbanCsvServiceTest {
 				CardCollection.builder().jiraCardDTOList(List.of(jiraCardDTO)).build(),
 				CardCollection.builder().jiraCardDTOList(NonDoneJiraCardDTOList).build());
 
-		verify(csvFileGenerator).convertBoardDataToCSV(anyList(), csvFieldsCaptor.capture(), anyList(), any());
+		verify(csvFileGenerator).assembleBoardData(anyList(), csvFieldsCaptor.capture(), anyList());
 		assertEquals(24, csvFieldsCaptor.getValue().size());
 		BoardCSVConfig targetValue = csvFieldsCaptor.getValue().get(22);
 		assertEquals("cardCycleTime.steps.review", targetValue.getValue());
@@ -546,7 +545,7 @@ class KanbanCsvServiceTest {
 				CardCollection.builder().jiraCardDTOList(List.of(jiraCardDTO)).build(),
 				CardCollection.builder().jiraCardDTOList(NonDoneJiraCardDTOList).build());
 
-		verify(csvFileGenerator).convertBoardDataToCSV(anyList(), csvFieldsCaptor.capture(), anyList(), any());
+		verify(csvFileGenerator).assembleBoardData(anyList(), csvFieldsCaptor.capture(), anyList());
 		assertEquals(23, csvFieldsCaptor.getValue().size());
 		BoardCSVConfig targetValue = csvFieldsCaptor.getValue().get(22);
 		assertEquals("cardCycleTime.steps.review", targetValue.getValue());
@@ -595,8 +594,7 @@ class KanbanCsvServiceTest {
 				CardCollection.builder().jiraCardDTOList(List.of(doneJiraCardDTO)).build(),
 				CardCollection.builder().jiraCardDTOList(NonDoneJiraCardDTOList).build());
 
-		verify(csvFileGenerator).convertBoardDataToCSV(anyList(), csvFieldsCaptor.capture(),
-				csvNewFieldsCaptor.capture(), any());
+		verify(csvFileGenerator).assembleBoardData(anyList(), csvFieldsCaptor.capture(), csvNewFieldsCaptor.capture());
 
 		assertEquals(28, csvFieldsCaptor.getValue().size());
 		BoardCSVConfig targetValue1 = csvNewFieldsCaptor.getValue().get(0);

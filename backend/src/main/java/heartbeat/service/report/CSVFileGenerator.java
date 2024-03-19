@@ -174,7 +174,7 @@ public class CSVFileGenerator {
 		writeDataToCSV(csvTimeStamp, mergedArrays);
 	}
 
-	private void writeDataToCSV(String csvTimeStamp, String[][] mergedArrays) {
+	public void writeDataToCSV(String csvTimeStamp, String[][] mergedArrays) {
 		createCsvDirToConvertData();
 
 		String fileName = CSVFileNameEnum.BOARD.getValue() + FILENAME_SEPARATOR + csvTimeStamp + CSV_EXTENSION;
@@ -192,7 +192,7 @@ public class CSVFileGenerator {
 		}
 	}
 
-	private String[][] assembleBoardData(List<JiraCardDTO> cardDTOList, List<BoardCSVConfig> fields,
+	public String[][] assembleBoardData(List<JiraCardDTO> cardDTOList, List<BoardCSVConfig> fields,
 			List<BoardCSVConfig> extraFields) {
 		List<BoardCSVConfig> fixedFields = new ArrayList<>(fields);
 		fixedFields.removeAll(extraFields);
@@ -343,7 +343,7 @@ public class CSVFileGenerator {
 		rowData[13] = String.join(",", cardDTO.getBaseInfo().getFields().getLabels());
 	}
 
-	private String getExtraDataPerRow(Object object, BoardCSVConfig extraField) {
+	public String getExtraDataPerRow(Object object, BoardCSVConfig extraField) {
 		Map<String, JsonElement> elementMap = (Map<String, JsonElement>) object;
 		if (elementMap == null) {
 			return null;

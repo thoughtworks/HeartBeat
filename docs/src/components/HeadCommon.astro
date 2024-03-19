@@ -14,12 +14,10 @@ import '@fontsource/ibm-plex-mono/400-italic.css';
 
 
 <script is:inline type="module">
-
-	const sc = document.createElement("script");
-	console.log(import.meta.url)
-
 	const hostAddress = new URL(import.meta.url);
-	const baseURL = `${hostAddress.origin}/${hostAddress.pathname.split('/')[1]}`
+	const baseURL = `${hostAddress.origin}/${hostAddress.pathname.split('/')[1]}`;
+	
+	const sc = document.createElement("script");
 	sc.setAttribute("type", "module");
 	sc.setAttribute("src", `${baseURL}/make-scrollable-code-focusable.js`);
 	sc.setAttribute("type", "text/javascript");

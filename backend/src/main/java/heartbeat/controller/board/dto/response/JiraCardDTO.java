@@ -12,6 +12,7 @@ import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Data
@@ -69,10 +70,12 @@ public class JiraCardDTO {
 		if (CollectionUtils.isEmpty(this.getReworkTimesInfos())) {
 			return null;
 		}
-		return this.getReworkTimesInfos()
+		Map<String, Integer> reworkTimesMap = this.getReworkTimesInfos()
 			.stream()
 			.collect(Collectors.toMap(reworkTimesInfo -> reworkTimesInfo.getState().getValue(),
 					ReworkTimesInfo::getTimes));
+		reworkTimesMap.put("totalReworkTimes", totalReworkTimes);
+		return reworkTimesMap;
 	}
 
 	@JsonIgnore

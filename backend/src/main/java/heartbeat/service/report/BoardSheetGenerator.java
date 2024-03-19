@@ -46,7 +46,7 @@ public class BoardSheetGenerator {
 		for (int row = 0; row < jiraCardDTOList.size(); row++) {
 			JiraCardDTO cardDTO = jiraCardDTOList.get(row);
 			for (int column = 0; column < columnCount; column++) {
-				reworkTimesSheet[row + 1][column] = csvFileGenerator.getExtraDataPerRow(cardDTO.getCycleTimeFlat(),
+				reworkTimesSheet[row + 1][column] = csvFileGenerator.getExtraDataPerRow(cardDTO.getReworkTimesFlat(),
 						reworkFields.get(column));
 			}
 		}

@@ -170,26 +170,17 @@ public class CSVFileGenerator {
 	public void convertBoardDataToCSV(List<JiraCardDTO> cardDTOList, List<BoardCSVConfig> fields,
 			List<BoardCSVConfig> extraFields, String csvTimeStamp) {
 		log.info("Start to create board csv directory");
+		String[][] mergedArrays = assembleBoardData(cardDTOList, fields, extraFields);
+		writeDataToCSV(csvTimeStamp, mergedArrays);
+	}
+
+	private void writeDataToCSV(String csvTimeStamp, String[][] mergedArrays) {
 		createCsvDirToConvertData();
 
 		String fileName = CSVFileNameEnum.BOARD.getValue() + FILENAME_SEPARATOR + csvTimeStamp + CSV_EXTENSION;
 		if (!fileName.contains("..") && fileName.startsWith(FILE_LOCAL_PATH)) {
 			try (CSVWriter writer = new CSVWriter(new FileWriter(fileName))) {
-				List<BoardCSVConfig> fixedFields = new ArrayList<>(fields);
-				fixedFields.removeAll(extraFields);
-
-				String[][] fixedFieldsData = getFixedFieldsData(cardDTOList, fixedFields);
-				String[][] extraFieldsData = getExtraFieldsData(cardDTOList, extraFields);
-
-				String[] fixedFieldsRow = fixedFieldsData[0];
-				String targetElement = "Cycle Time";
-				List<String> fixedFieldsRowList = Arrays.asList(fixedFieldsRow);
-				int targetIndex = fixedFieldsRowList.indexOf(targetElement) + 1;
-
-				String[][] mergedArrays = mergeArrays(fixedFieldsData, extraFieldsData, targetIndex);
-
 				writer.writeAll(Arrays.asList(mergedArrays));
-
 			}
 			catch (IOException e) {
 				log.error("Failed to write board file", e);
@@ -199,6 +190,22 @@ public class CSVFileGenerator {
 		else {
 			throw new GenerateReportException("Failed to generate board csv file, invalid csvTimestamp");
 		}
+	}
+
+	private String[][] assembleBoardData(List<JiraCardDTO> cardDTOList, List<BoardCSVConfig> fields,
+			List<BoardCSVConfig> extraFields) {
+		List<BoardCSVConfig> fixedFields = new ArrayList<>(fields);
+		fixedFields.removeAll(extraFields);
+
+		String[][] fixedFieldsData = getFixedFieldsData(cardDTOList, fixedFields);
+		String[][] extraFieldsData = getExtraFieldsData(cardDTOList, extraFields);
+
+		String[] fixedFieldsRow = fixedFieldsData[0];
+		String targetElement = "Cycle Time";
+		List<String> fixedFieldsRowList = Arrays.asList(fixedFieldsRow);
+		int targetIndex = fixedFieldsRowList.indexOf(targetElement) + 1;
+
+		return mergeArrays(fixedFieldsData, extraFieldsData, targetIndex);
 	}
 
 	public String[][] mergeArrays(String[][] fixedFieldsData, String[][] extraFieldsData, int fixedColumnCount) {

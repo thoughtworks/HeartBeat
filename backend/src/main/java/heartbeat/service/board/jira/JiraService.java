@@ -264,7 +264,9 @@ public class JiraService {
 			.sum();
 
 		int reworkCardNumber = realDoneCards.stream()
-			.filter(realDoneCard -> !realDoneCard.getReworkTimesInfos().isEmpty())
+			.filter(realDoneCard -> realDoneCard.getReworkTimesInfos()
+				.stream()
+				.anyMatch(reworkTimesInfo -> reworkTimesInfo.getTimes() != 0))
 			.toList()
 			.size();
 		double reworkRatio = realDoneCards.isEmpty() ? 0
@@ -638,7 +640,7 @@ public class JiraService {
 
 	private List<ReworkTimesInfo> getReworkTimesInfoWhenConsiderFlagAsBlock(CardHistoryResponseDTO jiraCardHistory,
 			CardStepsEnum reworkState, Set<CardStepsEnum> excludedStates, Map<String, CardStepsEnum> stateMap) {
-		Map<CardStepsEnum, Integer> reworkTimesMap = new EnumMap<>(CardStepsEnum.class);
+		Map<CardStepsEnum, Integer> reworkTimesMap = initialReworkTimesMap(reworkState, excludedStates);
 		AtomicReference<CardStepsEnum> currentState = new AtomicReference<>();
 		AtomicBoolean hasFlag = new AtomicBoolean(false);
 		jiraCardHistory.getItems()
@@ -673,6 +675,15 @@ public class JiraService {
 			.toList();
 	}
 
+	private static Map<CardStepsEnum, Integer> initialReworkTimesMap(CardStepsEnum reworkState,
+			Set<CardStepsEnum> excludedStates) {
+		Map<CardStepsEnum, Integer> reworkTimesMap = new EnumMap<>(CardStepsEnum.class);
+		Set<CardStepsEnum> stateReworkEnums = new HashSet<>(reworkJudgmentMap.get(reworkState));
+		stateReworkEnums.removeAll(excludedStates);
+		stateReworkEnums.forEach(state -> reworkTimesMap.put(state, 0));
+		return reworkTimesMap;
+	}
+
 	private Map<String, CardStepsEnum> buildBoardStateMap(List<RequestJiraBoardColumnSetting> boardColumns) {
 		return boardColumns.stream()
 			.collect(Collectors.toMap(boardColumn -> boardColumn.getName().toUpperCase(),
@@ -689,7 +700,7 @@ public class JiraService {
 
 	private List<ReworkTimesInfo> getReworkTimesInfoWhenNotConsiderFlagAsBlock(CardHistoryResponseDTO jiraCardHistory,
 			CardStepsEnum reworkState, Set<CardStepsEnum> excludedStates, Map<String, CardStepsEnum> stateMap) {
-		Map<CardStepsEnum, Integer> reworkTimesMap = new EnumMap<>(CardStepsEnum.class);
+		Map<CardStepsEnum, Integer> reworkTimesMap = initialReworkTimesMap(reworkState, excludedStates);
 		jiraCardHistory.getItems()
 			.stream()
 			.filter(jiraCardHistoryItem -> STATUS_FIELD_ID.equalsIgnoreCase(jiraCardHistoryItem.getFieldId()))
@@ -717,9 +728,6 @@ public class JiraService {
 		if (isRework(from, to, excludedStates)) {
 			if (reworkTimesMap.containsKey(from)) {
 				reworkTimesMap.put(from, reworkTimesMap.get(from) + 1);
-			}
-			else {
-				reworkTimesMap.put(from, 1);
 			}
 		}
 	}

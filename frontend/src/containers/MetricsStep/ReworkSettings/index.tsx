@@ -1,4 +1,5 @@
 import { selectReworkTimesSettings, updateReworkTimesSettings } from '@src/context/Metrics/metricsSlice';
+import { ReworkDialog } from '@src/containers/MetricsStep/ReworkSettings/ReworkDialog';
 import { MetricsSettingTitle } from '@src/components/Common/MetricsSettingTitle';
 import { METRICS_CONSTANTS, REWORK_TIME_LIST } from '@src/constants/resources';
 import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined';
@@ -7,11 +8,10 @@ import { ReworkHeaderWrapper, ReworkSettingsWrapper } from './style';
 import { StyledLink } from '@src/containers/MetricsStep/style';
 import { useAppDispatch, useAppSelector } from '@src/hooks';
 import { SingleSelection } from './SingleSelection';
-import React from 'react';
-
-const url = 'XXX';
+import React, { useState } from 'react';
 
 function ReworkSettings() {
+  const [isShowDialog, setIsShowDialog] = useState(false);
   const reworkTimesSettings = useAppSelector(selectReworkTimesSettings);
   const dispatch = useAppDispatch();
 
@@ -32,11 +32,20 @@ function ReworkSettings() {
     dispatch(updateReworkTimesSettings({ ...reworkTimesSettings, excludeStates: selectValue }));
   };
 
+  const showReworkDialog = () => {
+    setIsShowDialog(true);
+  };
+
+  const hiddenReworkDialog = () => {
+    setIsShowDialog(false);
+  };
+
   return (
     <>
+      {isShowDialog && <ReworkDialog isShowDialog={isShowDialog} hiddenDialog={hiddenReworkDialog} />}
       <ReworkHeaderWrapper>
         <MetricsSettingTitle title='Rework times settings' />
-        <StyledLink underline='none' href={url} target='_blank' rel='noopener'>
+        <StyledLink onClick={showReworkDialog}>
           <HelpOutlineOutlinedIcon fontSize='small' />
           How to setup
         </StyledLink>

@@ -56,6 +56,33 @@ describe('reworkSetting', () => {
     });
   });
 
+  it('should show dialog when click how to setup', async () => {
+    setup();
+
+    await act(async () => {
+      await userEvent.click(screen.getByTestId('HelpOutlineOutlinedIcon'));
+    });
+
+    await waitFor(() => {
+      expect(screen.getByRole('dialog')).toBeVisible();
+    });
+  });
+
+  it('should hidden dialog when handle hiddenReworkDialog', async () => {
+    setup();
+
+    await act(async () => {
+      await userEvent.click(screen.getByTestId('HelpOutlineOutlinedIcon'));
+    });
+    await act(async () => {
+      await userEvent.click(screen.getByTestId('CloseIcon'));
+    });
+
+    await waitFor(() => {
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    });
+  });
+
   it('should get correct value when pick all or other value', async () => {
     const { getByRole, getAllByRole, queryByRole } = setup();
     await act(async () => {

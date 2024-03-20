@@ -30,6 +30,7 @@ declare module '@mui/material/styles' {
       loading: {
         backgroundColor: string;
       };
+      note: string;
       errorMessage: {
         color: string;
       };
@@ -110,6 +111,7 @@ export const theme = createTheme({
         color: '#929292',
       },
     },
+    note: '#535353',
     errorMessage: {
       color: '#A2A2A2',
     },

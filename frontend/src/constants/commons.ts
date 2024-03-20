@@ -76,6 +76,7 @@ export const COMMON_BUTTONS = {
   SAVE: 'Save',
   BACK: 'Previous',
   NEXT: 'Next',
+  CONFIRM: 'Confirm',
   EXPORT_PIPELINE_DATA: 'Export pipeline data',
   EXPORT_BOARD_DATA: 'Export board data',
   EXPORT_METRIC_DATA: 'Export metric data',

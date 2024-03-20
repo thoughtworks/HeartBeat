@@ -53,4 +53,5 @@ export const StyledLink = styled(Link)({
   alignItems: 'center',
   display: 'flex',
   gap: '0.25rem',
+  textDecoration: 'none',
 });

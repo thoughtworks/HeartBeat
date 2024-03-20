@@ -25,7 +25,8 @@ public class ReworkCalculator {
 			.forEach(reworkTimesInfo -> {
 				Integer times = reworkTimesInfo.getTimes();
 				switch (reworkTimesInfo.getState()) {
-					case TODO -> rework.setFromToDo(Optional.ofNullable(rework.getFromToDo()).orElse(0) + times);
+					case ANALYSE ->
+						rework.setFromAnalysis(Optional.ofNullable(rework.getFromAnalysis()).orElse(0) + times);
 					case DEVELOPMENT ->
 						rework.setFromInDev(Optional.ofNullable(rework.getFromInDev()).orElse(0) + times);
 					case BLOCK -> rework.setFromBlock(Optional.ofNullable(rework.getFromBlock()).orElse(0) + times);

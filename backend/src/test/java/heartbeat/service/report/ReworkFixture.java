@@ -18,7 +18,7 @@ import static heartbeat.controller.board.dto.request.CardStepsEnum.WAITING;
 public class ReworkFixture {
 
 	public static CardCollection MOCK_CARD_COLLECTION() {
-		List<ReworkTimesInfo> reworkTimesInfos = List.of(ReworkTimesInfo.builder().state(TODO).times(1).build(),
+		List<ReworkTimesInfo> reworkTimesInfos = List.of(ReworkTimesInfo.builder().state(ANALYSE).times(1).build(),
 				ReworkTimesInfo.builder().state(DEVELOPMENT).times(1).build(),
 				ReworkTimesInfo.builder().state(BLOCK).times(1).build(),
 				ReworkTimesInfo.builder().state(WAITING).times(1).build(),
@@ -30,9 +30,8 @@ public class ReworkFixture {
 		return CardCollection.builder().reworkCardNumber(2).reworkRatio(1).jiraCardDTOList(jiraCardList).build();
 	}
 
-	public static CardCollection MOCK_CARD_COLLECTION_WITH_ANALYSE() {
+	public static CardCollection MOCK_CARD_COLLECTION_WITH_TODO() {
 		List<ReworkTimesInfo> reworkTimesInfos = List.of(ReworkTimesInfo.builder().state(TODO).times(1).build(),
-				ReworkTimesInfo.builder().state(ANALYSE).times(1).build(),
 				ReworkTimesInfo.builder().state(DEVELOPMENT).times(1).build(),
 				ReworkTimesInfo.builder().state(BLOCK).times(1).build(),
 				ReworkTimesInfo.builder().state(WAITING).times(1).build(),

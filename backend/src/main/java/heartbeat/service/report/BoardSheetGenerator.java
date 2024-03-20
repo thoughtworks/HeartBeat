@@ -55,7 +55,7 @@ public class BoardSheetGenerator {
 	}
 
 	private String[][] mergeSheetHorizontally(String[][] sheet, String[][] sheetToMerge) {
-		int rows = jiraCardDTOList.size();
+		int rows = jiraCardDTOList.size() + 1;
 		String[][] combinedArray = new String[rows][];
 		if (ArrayUtils.isEmpty(sheet)) {
 			return sheetToMerge;

@@ -7,6 +7,7 @@ import heartbeat.client.dto.board.jira.JiraBoardConfigDTO;
 import heartbeat.client.dto.board.jira.JiraCard;
 import heartbeat.client.dto.board.jira.JiraCardField;
 import heartbeat.client.dto.board.jira.Status;
+import heartbeat.controller.board.dto.request.ReworkTimesSetting;
 import heartbeat.controller.board.dto.response.CardCollection;
 import heartbeat.controller.board.dto.response.ColumnValue;
 import heartbeat.controller.board.dto.response.CycleTimeInfo;
@@ -35,11 +36,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static heartbeat.service.report.BoardCsvFixture.MOCK_JIRA_CARD;
+import static heartbeat.service.report.BoardCsvFixture.MOCK_REWORK_TIMES_INFO_LIST;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -64,6 +67,9 @@ class KanbanCsvServiceTest {
 
 	@Captor
 	private ArgumentCaptor<List<BoardCSVConfig>> csvFieldsCaptor;
+
+	@Captor
+	private ArgumentCaptor<String[][]> csvSheetCaptor;
 
 	@Captor
 	private ArgumentCaptor<List<BoardCSVConfig>> csvNewFieldsCaptor;
@@ -609,6 +615,74 @@ class KanbanCsvServiceTest {
 		assertEquals("baseInfo.fields.customFields.customfield_1014[0].key", targetValue3.getValue());
 		assertEquals("baseInfo.fields.customFields.customfield_1015[0].displayName", targetValue4.getValue());
 		assertEquals("baseInfo.fields.customFields.json-array[0]", targetValue5.getValue());
+	}
+
+	@Test
+	void shouldAddReworkFieldsWhenGenerateSheetGivenReworkStateAndExcludeState() throws URISyntaxException {
+		URI uri = new URI("site-uri");
+		when(urlGenerator.getUri(any())).thenReturn(uri);
+		when(jiraService.getJiraBoardConfig(any(), any(), any())).thenReturn(JiraBoardConfigDTO.builder().build());
+		when(jiraService.getJiraColumns(any(), any(), any())).thenReturn(JiraColumnResult.builder()
+			.jiraColumnResponse(List
+				.of(JiraColumnDTO.builder().value(ColumnValue.builder().statuses(List.of("BLOCKED")).build()).build()))
+			.build());
+		JiraCard jiraCard = JiraCard.builder().fields(MOCK_JIRA_CARD()).build();
+		JiraCard jiraCard2 = JiraCard.builder().fields(MOCK_JIRA_CARD()).build();
+		jiraCard2.getFields().setLastStatusChangeDate(1701251323000L);
+		List<JiraCardDTO> jiraCardDTOS = new ArrayList<>(List.of(
+				JiraCardDTO.builder()
+					.baseInfo(jiraCard)
+					.reworkTimesInfos(MOCK_REWORK_TIMES_INFO_LIST())
+					.totalReworkTimes(3)
+					.build(),
+				JiraCardDTO.builder()
+					.baseInfo(jiraCard2)
+					.reworkTimesInfos(MOCK_REWORK_TIMES_INFO_LIST())
+					.totalReworkTimes(3)
+					.build()));
+		JiraCardDTO blockedJiraCard = JiraCardDTO.builder()
+			.baseInfo(JiraCard.builder().fields(MOCK_JIRA_CARD()).build())
+			.build();
+		List<JiraCardDTO> NonDoneJiraCardDTOList = new ArrayList<>() {
+			{
+				add(blockedJiraCard);
+			}
+		};
+		String[][] fakeSringArray = new String[][] { { "cycle time" }, { "1" }, { "2" }, { "3" }, { "4" } };
+		when(csvFileGenerator.assembleBoardData(anyList(), anyList(), anyList())).thenReturn(fakeSringArray);
+		kanbanCsvService.generateCsvInfo(
+				GenerateReportRequest.builder()
+					.jiraBoardSetting(JiraBoardSetting.builder()
+						.targetFields(List.of(
+								TargetField.builder().name("assignee").flag(true).key("key-assignee").build(),
+								TargetField.builder().name("fake-target1").flag(true).key("key-target1").build(),
+								TargetField.builder().name("fake-target2").flag(false).key("key-target2").build()))
+						.reworkTimesSetting(ReworkTimesSetting.builder()
+							.reworkState("In Dev")
+							.excludedStates(List.of("Review"))
+							.build())
+						.build())
+					.csvTimeStamp("2022-01-01 00:00:00")
+					.build(),
+				CardCollection.builder().jiraCardDTOList(jiraCardDTOS).build(),
+				CardCollection.builder().jiraCardDTOList(NonDoneJiraCardDTOList).build());
+
+		verify(csvFileGenerator).assembleBoardData(anyList(), csvFieldsCaptor.capture(), anyList());
+		verify(csvFileGenerator).writeDataToCSV(anyString(), csvSheetCaptor.capture());
+
+		assertEquals(23, csvFieldsCaptor.getValue().size());
+		BoardCSVConfig targetValue = csvFieldsCaptor.getValue().get(22);
+		assertEquals("cardCycleTime.steps.review", targetValue.getValue());
+		assertEquals("Review Days", targetValue.getLabel());
+		assertNull(targetValue.getOriginKey());
+
+		assertEquals(5, csvSheetCaptor.getValue().length);
+		assertEquals("cycle time", csvSheetCaptor.getValue()[0][0]);
+		assertEquals("In dev total rework times", csvSheetCaptor.getValue()[0][1]);
+		assertEquals("from Block to In dev", csvSheetCaptor.getValue()[0][2]);
+		assertEquals("from Waiting for testing to In dev", csvSheetCaptor.getValue()[0][3]);
+		assertEquals("from Testing to In dev", csvSheetCaptor.getValue()[0][4]);
+		assertEquals("from Done to In dev", csvSheetCaptor.getValue()[0][5]);
 	}
 
 }

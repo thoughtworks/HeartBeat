@@ -95,10 +95,12 @@ const BoardMetrics = ({
         assigneeFilter,
         targetFields: formatDuplicatedNameWithSuffix(targetFields),
         doneColumn: getRealDoneStatus(cycleTimeSettings, cycleTimeSettingsType, doneColumn),
-        reworkTimesSetting: {
-          reworkState: includeRework ? reworkTimesSettings.rework2State : null,
-          excludedStates: includeRework ? reworkTimesSettings.excludeStates : [],
-        },
+        reworkTimesSetting: includeRework
+          ? {
+              reworkState: reworkTimesSettings.rework2State,
+              excludedStates: reworkTimesSettings.excludeStates,
+            }
+          : null,
         overrideFields: [
           {
             name: 'Story Points',

@@ -72,6 +72,7 @@ const BoardMetrics = ({
   const { token, type, site, projectKey, boardId, email } = board.config;
   const jiraToken = getJiraBoardToken(token, email);
   const boardMetrics = metrics.filter((metric) => BOARD_METRICS.includes(metric));
+  const includeRework = boardMetrics.includes(REQUIRED_DATA.REWORK_TIMES);
   const boardMetricsCompleted = boardMetrics
     .map((metric) => BOARD_METRICS_MAPPING[metric])
     .every((metric) => boardReport?.[metric] ?? false);
@@ -94,12 +95,12 @@ const BoardMetrics = ({
         assigneeFilter,
         targetFields: formatDuplicatedNameWithSuffix(targetFields),
         doneColumn: getRealDoneStatus(cycleTimeSettings, cycleTimeSettingsType, doneColumn),
-        reworkTimesSetting: boardMetrics.includes(REQUIRED_DATA.REWORK_TIMES)
+        reworkTimesSetting: includeRework
           ? {
               reworkState: reworkTimesSettings.rework2State,
               excludedStates: reworkTimesSettings.excludeStates,
             }
-          : {},
+          : null,
         overrideFields: [
           {
             name: 'Story Points',

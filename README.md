@@ -53,7 +53,8 @@
   - [6.1.1 How to build and local preview](#611-how-to-build-and-local-preview)
   - [6.1.2 How to run unit tests](#612-how-to-run-unit-tests)
   - [6.1.3 How to generate a test report](#613-how-to-generate-a-test-report)
-  - [6.1.4 How to run e2e tests locally](#614-how-to-run-e2e-tests-locally)
+  - [6.1.4 How to run E2E tests locally](#614-how-to-run-e2e-tests-locally)
+  - [6.2 How to run backend](#62-how-to-run-backend)
 - [7 How to trigger BuildKite Pipeline](#7-how-to-trigger-buildkite-pipeline)
   - [Release](#release)
     - [Release command in main branch](#release-command-in-main-branch)
@@ -63,6 +64,7 @@
     - [7.1.2 Multiple instance deployment](#712-multiple-instance-deployment)
   - [7.2 K8S](#72-k8s)
     - [7.2.1 Multiple instance deployment](#721-multiple-instance-deployment)
+- [8. Contribution](#8-contribution)
 
 # News
 
@@ -449,7 +451,7 @@ pnpm test
 pnpm coverage
 ```
 
-## 6.1.4 How to run e2e tests locally
+## 6.1.4 How to run E2E tests locally
 
 2. Start the backend service
 
@@ -465,12 +467,14 @@ cd HearBeat/frontend
 pnpm start
 ```
 
-4. Run the e2e tests
+4. Run the E2E tests
 
 ```
 cd HearBeat/frontend
-pnpm e2e
+pnpm run e2e:headed
 ```
+## 6.2 How to run backend
+Refer to [run backend](backend/README.md#1-how-to-start-backend-application)
 
 # 7 How to trigger BuildKite Pipeline
 
@@ -660,3 +664,8 @@ kubectl apply -f k8s-heartbeat.yml
 ### 7.2.1 Multiple instance deployment
 
 You also can deploy Heartbeats in multiple instances using K8S through the following [documentation](https://au-heartbeat.github.io/Heartbeat/en/devops/how-to-deploy-heartbeat-in-multiple-instances-by-k8s/).
+
+# 8. Contribution
+
+We love your input! Please see our [contributing guide](contribution.md) to get started. Thank you 🙏 to all our contributors!
+

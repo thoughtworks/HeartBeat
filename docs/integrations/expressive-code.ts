@@ -22,23 +22,23 @@ export const astroDocsExpressiveCode = () =>
 			scrollbarThumbColor: 'hsl(269deg 20% 90% / 0.25)',
 			scrollbarThumbHoverColor: 'hsl(269deg 20% 90% / 0.5)',
 		},
-		frames: {
-			styleOverrides: {
-				editorTabBarBackground: 'var(--theme-code-tabs)',
-				editorActiveTabBackground: 'hsl(269deg 40% 65% / 0.15)',
-				editorActiveTabBorderBottom: 'hsl(269deg 35% 55%)',
-				editorTabBarBorderBottom: 'var(--theme-code-tabs)',
+		// frames: {
+		// 	styleOverrides: {
+		// 		editorTabBarBackground: 'var(--theme-code-tabs)',
+		// 		editorActiveTabBackground: 'hsl(269deg 40% 65% / 0.15)',
+		// 		editorActiveTabBorderBottom: 'hsl(269deg 35% 55%)',
+		// 		editorTabBarBorderBottom: 'var(--theme-code-tabs)',
 
-				terminalTitlebarBackground: 'var(--theme-code-tabs)',
-				terminalTitlebarBorderBottom: 'transparent',
-				terminalBackground: 'var(--theme-code-bg)',
-			},
-		},
-		textMarkers: {
-			styleOverrides: {
-				defaultChroma: '55',
-			},
-		},
+		// 		terminalTitlebarBackground: 'var(--theme-code-tabs)',
+		// 		terminalTitlebarBorderBottom: 'transparent',
+		// 		terminalBackground: 'var(--theme-code-bg)',
+		// 	},
+		// },
+		// textMarkers: {
+		// 	styleOverrides: {
+		// 		defaultChroma: '55',
+		// 	},
+		// },
 		getBlockLocale: ({ file }) => {
 			// Path format: `src/content/docs/en/getting-started.mdx`
 			// Part indices:  0     1      2   3         4

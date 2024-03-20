@@ -74,7 +74,7 @@ class LanguageScaffolder {
 					name
 						? true
 						: kleur.reset('[Press Enter to resubmit] ') +
-						  kleur.red().italic('Please enter a language name.'),
+							kleur.red().italic('Please enter a language name.'),
 				format: (value) => value.trim(),
 			},
 			{
@@ -140,8 +140,8 @@ class LanguageScaffolder {
 					const key = t.isStringLiteral(prop.key)
 						? prop.key.value
 						: t.isIdentifier(prop.key)
-						? prop.key.name
-						: undefined;
+							? prop.key.name
+							: undefined;
 					if (key !== this.#tag) continue;
 
 					langAlreadyInList = true;

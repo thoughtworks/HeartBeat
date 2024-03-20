@@ -5,7 +5,7 @@ import java.util.Set;
 
 public enum CardStepsEnum {
 
-	ANALYSE("Analysis", "Analysis"), TODO("To do", "To do"), DEVELOPMENT("In Dev", "In dev"), BLOCK("Block", "Block"),
+	TODO("To do", "To do"), ANALYSE("Analysis", "Analysis"), DEVELOPMENT("In Dev", "In dev"), BLOCK("Block", "Block"),
 	FLAG("FLAG", "Flag"), REMOVEFLAG("removeFlag", "Remove flag"), REVIEW("Review", "Review"),
 	WAITING("Waiting for testing", "Waiting for testing"), TESTING("Testing", "Testing"), DONE("Done", "Done"),
 	CLOSED("Closed", "Closed"), UNKNOWN("UNKNOWN", "Unknown");

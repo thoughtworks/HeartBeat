@@ -5,18 +5,26 @@ import java.util.Set;
 
 public enum CardStepsEnum {
 
-	ANALYSE("Analysis"), TODO("To do"), DEVELOPMENT("In Dev"), BLOCK("Block"), FLAG("FLAG"), REMOVEFLAG("removeFlag"),
-	REVIEW("Review"), WAITING("Waiting for testing"), TESTING("Testing"), DONE("Done"), CLOSED("Closed"),
-	UNKNOWN("UNKNOWN");
+	ANALYSE("Analysis", "Analysis"), TODO("To do", "To do"), DEVELOPMENT("In Dev", "In dev"), BLOCK("Block", "Block"),
+	FLAG("FLAG", "Flag"), REMOVEFLAG("removeFlag", "Remove flag"), REVIEW("Review", "Review"),
+	WAITING("Waiting for testing", "Waiting for testing"), TESTING("Testing", "Testing"), DONE("Done", "Done"),
+	CLOSED("Closed", "Closed"), UNKNOWN("UNKNOWN", "Unknown");
 
 	private final String value;
 
-	CardStepsEnum(String value) {
+	private final String alias;
+
+	CardStepsEnum(String value, String alias) {
 		this.value = value;
+		this.alias = alias;
 	}
 
 	public String getValue() {
 		return value;
+	}
+
+	public String getAlias() {
+		return alias;
 	}
 
 	public static CardStepsEnum fromValue(String type) {

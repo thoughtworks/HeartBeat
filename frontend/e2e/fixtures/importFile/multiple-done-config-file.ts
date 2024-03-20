@@ -10,6 +10,7 @@ export const importMultipleDoneProjectFromFile = {
     'Velocity',
     'Cycle time',
     'Classification',
+    'Rework times',
     'Lead time for changes',
     'Deployment frequency',
     'Dev change failure rate',
@@ -97,4 +98,8 @@ export const importMultipleDoneProjectFromFile = {
       branches: ['main'],
     },
   ],
+  reworkTimesSettings: {
+    rework2State: 'In Dev',
+    excludeStates: [],
+  },
 };

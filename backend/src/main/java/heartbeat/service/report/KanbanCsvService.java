@@ -138,7 +138,7 @@ public class KanbanCsvService {
 		List<BoardCSVConfig> reworkFields = new ArrayList<>();
 		if (CollectionUtils.isNotEmpty(reworkFromStates) && reworkState != null) {
 			reworkFields.add(BoardCSVConfig.builder()
-				.label(reworkState.getValue() + "total rework times")
+				.label(reworkState.getValue() + " total rework times")
 				.value("totalReworkTimes")
 				.build());
 			reworkFields.addAll(reworkFromStates.stream()

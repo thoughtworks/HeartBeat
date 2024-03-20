@@ -10,11 +10,12 @@ import {
   StyledImg,
   StyledButtonGroup,
   StyledStepButton,
+  StyledStepLabel,
 } from '@src/containers/MetricsStep/ReworkSettings/ReworkDialog/style';
 import { REWORK_DIALOG_NOTE, REWORK_STEPS, REWORK_STEPS_NAME } from '@src/constants/resources';
 import ReworkSelectedWaitingForTest from '@src/assets/ReworkSelectedWaitingForTest.svg';
-import { StyledStep, StyledStepLabel } from '@src/containers/MetricsStepper/style';
 import ReworkSelectedInDev from '@src/assets/ReworkSelectedInDev.svg';
+import { StyledStep } from '@src/containers/MetricsStepper/style';
 import StepOfExcludeJira from '@src/assets/StepOfExcludeJira.svg';
 import StepOfReworkJira from '@src/assets/StepOfReworkJira.svg';
 import { COMMON_BUTTONS } from '@src/constants/commons';

@@ -618,7 +618,7 @@ class KanbanCsvServiceTest {
 	}
 
 	@Test
-	void shouldAddReworkFieldsWhenGenerateSheetGivenReworkStateAndExcludeState() throws URISyntaxException {
+	void shouldAddReworkFieldsWhenGenerateSheetGivenReworkStateAndExcludedStates() throws URISyntaxException {
 		URI uri = new URI("site-uri");
 		when(urlGenerator.getUri(any())).thenReturn(uri);
 		when(jiraService.getJiraBoardConfig(any(), any(), any())).thenReturn(JiraBoardConfigDTO.builder().build());

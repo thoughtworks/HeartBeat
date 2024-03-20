@@ -113,7 +113,7 @@ deactivate Backend
 Backend --> Backend: initialize reportStatus according to metricTypes list element
 activate Backend
 
-group async check if metricCsv can be generated 
+group check if metricCsv can be generated 
 loop until (metricTypes list final element)
     
     alt metricsType is Board

@@ -57,8 +57,15 @@ export const StyledStepOfRework = styled('div')({
   margin: '1rem auto',
 });
 
-export const StyledImg = styled('img')({
+export const StyledSelectedImg = styled('img')({
   width: '100%',
+  height: '6rem',
+  margin: '0.5rem 0',
+});
+
+export const StyledJiraImg = styled('img')({
+  width: '100%',
+  height: '13.5rem',
   margin: '0.5rem 0',
 });
 
@@ -80,6 +87,7 @@ export const StyledNoteText = styled('p')({
   fontWeight: '400',
   color: theme.main.note,
   lineHeight: '1.25rem',
+  opacity: '0.8',
 });
 
 export const StyledButtonGroup = styled('div')({

@@ -7,7 +7,8 @@ import {
   StyledNote,
   StyledNoteTitle,
   StyledNoteText,
-  StyledImg,
+  StyledSelectedImg,
+  StyledJiraImg,
   StyledButtonGroup,
   StyledStepButton,
   StyledStepLabel,
@@ -39,8 +40,8 @@ export const ReworkDialog = (props: { isShowDialog: boolean; hiddenDialog: () =>
   const renderContent = (selectedImg: string, jiraImg: string, explanationText: string, noteText: string) => {
     return (
       <StyledStepOfRework>
-        <StyledImg src={selectedImg} alt='selected' />
-        <StyledImg src={jiraImg} alt='jira' />
+        <StyledSelectedImg src={selectedImg} alt='selected' />
+        <StyledJiraImg src={jiraImg} alt='jira' />
         <StyledNote>
           <StyledNoteTitle>Explanation: </StyledNoteTitle>
           <StyledNoteText>{explanationText}</StyledNoteText>

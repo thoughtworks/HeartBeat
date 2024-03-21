@@ -29,6 +29,8 @@ public class Rework {
 
 	private Integer totalReworkCards;
 
+	private Integer throughput;
+
 	private Double reworkCardsRatio;
 
 }

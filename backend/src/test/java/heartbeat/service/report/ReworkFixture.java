@@ -27,7 +27,12 @@ public class ReworkFixture {
 				ReworkTimesInfo.builder().state(DONE).times(1).build());
 		List<JiraCardDTO> jiraCardList = List.of(JiraCardDTO.builder().reworkTimesInfos(reworkTimesInfos).build(),
 				JiraCardDTO.builder().reworkTimesInfos(reworkTimesInfos).build());
-		return CardCollection.builder().reworkCardNumber(2).reworkRatio(1).jiraCardDTOList(jiraCardList).build();
+		return CardCollection.builder()
+			.reworkCardNumber(2)
+			.cardsNumber(2)
+			.reworkRatio(1)
+			.jiraCardDTOList(jiraCardList)
+			.build();
 	}
 
 	public static CardCollection MOCK_CARD_COLLECTION_WITH_TODO() {

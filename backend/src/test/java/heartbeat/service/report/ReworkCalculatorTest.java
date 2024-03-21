@@ -37,6 +37,7 @@ class ReworkCalculatorTest {
 		assertEquals(2, rework.getFromTesting());
 		assertEquals(2, rework.getFromReview());
 		assertEquals(2, rework.getFromDone());
+		assertEquals(2, rework.getThroughput());
 	}
 
 	@Test

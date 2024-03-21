@@ -39,6 +39,7 @@ test('Import project from file', async ({ homePage, configStep, metricsStep, rep
     BOARD_METRICS_RESULT.totalReworkTimes,
     BOARD_METRICS_RESULT.totalReworkCards,
     BOARD_METRICS_RESULT.reworkCardsRatio,
+    BOARD_METRICS_RESULT.throughput,
   );
   await reportStep.checkBoardMetricsDetails(ProjectCreationType.IMPORT_PROJECT_FROM_FILE, 9);
   await reportStep.checkDoraMetricsDetails(ProjectCreationType.IMPORT_PROJECT_FROM_FILE);
@@ -62,5 +63,6 @@ test('Import project from flag as block', async ({ homePage, configStep, metrics
     FLAG_AS_BLOCK_PROJECT_BOARD_METRICS_RESULT.totalReworkTimes,
     FLAG_AS_BLOCK_PROJECT_BOARD_METRICS_RESULT.totalReworkCards,
     FLAG_AS_BLOCK_PROJECT_BOARD_METRICS_RESULT.reworkCardsRatio,
+    FLAG_AS_BLOCK_PROJECT_BOARD_METRICS_RESULT.throughput,
   );
 });

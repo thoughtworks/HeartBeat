@@ -269,7 +269,7 @@ describe('CycleTime', () => {
       const inputElements = screen.getAllByRole('combobox');
       const selectedInputValue = inputElements.map((option) => option.getAttribute('value'))[0];
 
-      expect(selectedInputValue).toBe('Review');
+      expect(selectedInputValue).toBe('Testing');
       await waitFor(() => expect(mockedUseAppDispatch).toHaveBeenCalledWith(saveDoneColumn([])));
     });
   });
@@ -402,7 +402,7 @@ describe('CycleTime', () => {
 
       const inputElements = screen.getAllByRole('combobox');
       const selectedInputValue = inputElements.map((option) => option.getAttribute('value'))[0];
-      expect(selectedInputValue).toBe('Review');
+      expect(selectedInputValue).toBe('Testing');
       expect(mockedUseAppDispatch).not.toHaveBeenCalledWith(saveDoneColumn([]));
     });
   });

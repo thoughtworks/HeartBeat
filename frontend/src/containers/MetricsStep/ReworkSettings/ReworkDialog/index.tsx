@@ -7,14 +7,16 @@ import {
   StyledNote,
   StyledNoteTitle,
   StyledNoteText,
-  StyledImg,
+  StyledSelectedImg,
+  StyledJiraImg,
   StyledButtonGroup,
   StyledStepButton,
+  StyledStepLabel,
 } from '@src/containers/MetricsStep/ReworkSettings/ReworkDialog/style';
 import { REWORK_DIALOG_NOTE, REWORK_STEPS, REWORK_STEPS_NAME } from '@src/constants/resources';
 import ReworkSelectedWaitingForTest from '@src/assets/ReworkSelectedWaitingForTest.svg';
-import { StyledStep, StyledStepLabel } from '@src/containers/MetricsStepper/style';
 import ReworkSelectedInDev from '@src/assets/ReworkSelectedInDev.svg';
+import { StyledStep } from '@src/containers/MetricsStepper/style';
 import StepOfExcludeJira from '@src/assets/StepOfExcludeJira.svg';
 import StepOfReworkJira from '@src/assets/StepOfReworkJira.svg';
 import { COMMON_BUTTONS } from '@src/constants/commons';
@@ -38,8 +40,8 @@ export const ReworkDialog = (props: { isShowDialog: boolean; hiddenDialog: () =>
   const renderContent = (selectedImg: string, jiraImg: string, explanationText: string, noteText: string) => {
     return (
       <StyledStepOfRework>
-        <StyledImg src={selectedImg} alt='selected' />
-        <StyledImg src={jiraImg} alt='jira' />
+        <StyledSelectedImg src={selectedImg} alt='selected' />
+        <StyledJiraImg src={jiraImg} alt='jira' />
         <StyledNote>
           <StyledNoteTitle>Explanation: </StyledNoteTitle>
           <StyledNoteText>{explanationText}</StyledNoteText>

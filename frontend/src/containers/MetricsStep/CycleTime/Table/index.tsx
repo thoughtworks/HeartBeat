@@ -10,6 +10,7 @@ import {
   saveDoneColumn,
   selectMetricsContent,
   setCycleTimeSettingsType,
+  updateReworkTimesSettings,
 } from '@src/context/Metrics/metricsSlice';
 import {
   StyledRadioGroup,
@@ -56,6 +57,7 @@ const CycleTimeTable = () => {
       );
       isColumnAsKey && resetRealDoneColumn(name, value);
       dispatch(updateCycleTimeSettings(newCycleTimeSettings));
+      dispatch(updateReworkTimesSettings({ excludeStates: [], rework2State: null }));
     },
     [cycleTimeSettings, dispatch, isColumnAsKey, resetRealDoneColumn],
   );

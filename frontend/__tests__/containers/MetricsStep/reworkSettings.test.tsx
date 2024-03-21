@@ -7,6 +7,7 @@ import {
 } from '../../fixtures';
 import { METRICS_CONSTANTS, REWORK_TIME_LIST } from '@src/constants/resources';
 import { act, render, screen, waitFor, within } from '@testing-library/react';
+import { updateCycleTimeSettings } from '@src/context/Metrics/metricsSlice';
 import ReworkSettings from '@src/containers/MetricsStep/ReworkSettings';
 import { setupStore } from '../../utils/setupStoreUtil';
 import userEvent from '@testing-library/user-event';
@@ -19,6 +20,29 @@ jest.mock('@src/hooks/useAppDispatch', () => ({
 }));
 
 const store = setupStore();
+const mockCycleTimeSettings1 = [
+  {
+    column: 'TODO',
+    status: 'TODO',
+    value: 'To do',
+  },
+  {
+    column: 'Doing',
+    status: 'DOING',
+    value: 'In Dev',
+  },
+  {
+    column: 'Blocked',
+    status: 'BLOCKED',
+    value: 'Block',
+  },
+  {
+    column: 'Done',
+    status: 'DONE',
+    value: 'Done',
+  },
+];
+const mockCycleTimeSettings2 = mockCycleTimeSettings1.filter((item) => item.value !== 'Done');
 
 describe('reworkSetting', () => {
   const setup = () =>
@@ -27,6 +51,11 @@ describe('reworkSetting', () => {
         <ReworkSettings />
       </Provider>,
     );
+
+  beforeEach(() => {
+    store.dispatch(updateCycleTimeSettings(mockCycleTimeSettings1));
+  });
+
   afterEach(() => {
     jest.clearAllMocks();
   });
@@ -100,7 +129,7 @@ describe('reworkSetting', () => {
       await userEvent.click(stepsListBox2.getByText(ALL));
     });
     await waitFor(async () => {
-      REWORK_TIME_LIST.slice(1).forEach((value) => {
+      [...new Set(mockCycleTimeSettings1.map((item) => item.value))].slice(1).forEach((value) => {
         expect(getByRole('button', { name: value })).toBeInTheDocument();
       });
     });
@@ -109,16 +138,41 @@ describe('reworkSetting', () => {
       await userEvent.click(stepsListBox2.getByText(ALL));
     });
     await waitFor(() => {
-      REWORK_TIME_LIST.forEach((value) => {
+      [...new Set(mockCycleTimeSettings1.map((item) => item.value))].slice(1).forEach((value) => {
         expect(queryByRole('button', { name: value })).not.toBeInTheDocument();
       });
     });
 
     await act(async () => {
-      await userEvent.click(stepsListBox2.getByText(REWORK_TIME_LIST[1]));
+      await userEvent.click(stepsListBox2.getByText(REWORK_TIME_LIST[3]));
     });
     await waitFor(async () => {
-      expect(getByRole('button', { name: REWORK_TIME_LIST[1] })).toBeInTheDocument();
+      expect(getByRole('button', { name: REWORK_TIME_LIST[3] })).toBeInTheDocument();
+    });
+  });
+
+  it('should get correct value when board mappings have not done value', async () => {
+    store.dispatch(updateCycleTimeSettings(mockCycleTimeSettings2));
+    const { getByRole, getAllByRole } = setup();
+    await act(async () => {
+      await userEvent.click(getAllByRole('button', { name: LIST_OPEN })[0]);
+    });
+    const stepsListBox1 = within(getByRole('listbox'));
+    await act(async () => {
+      await userEvent.click(stepsListBox1.getByText(METRICS_CONSTANTS.todoValue));
+    });
+    await act(async () => {
+      await userEvent.click(getAllByRole('button', { name: LIST_OPEN })[1]);
+    });
+    const stepsListBox2 = within(getByRole('listbox'));
+
+    await act(async () => {
+      await userEvent.click(stepsListBox2.getByText(ALL));
+    });
+    await waitFor(async () => {
+      [...new Set(mockCycleTimeSettings2.map((item) => item.value))].slice(1).forEach((value) => {
+        expect(getByRole('button', { name: value })).toBeInTheDocument();
+      });
     });
   });
 });

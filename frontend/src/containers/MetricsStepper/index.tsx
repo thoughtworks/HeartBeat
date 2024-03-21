@@ -78,6 +78,8 @@ const MetricsStepper = () => {
     requiredData.includes(REQUIRED_DATA.CLASSIFICATION) ||
     requiredData.includes(REQUIRED_DATA.VELOCITY);
   const isCycleTimeSettingsVerified = cycleTimeSettings.some((e) => e.value === DONE);
+  const boardingMappingStatus = [...new Set(cycleTimeSettings.map((item) => item.value))];
+  const onlyDoneStateSelected = isCycleTimeSettingsVerified && boardingMappingStatus.length === 2;
   const isShowClassificationSetting = requiredData.includes(REQUIRED_DATA.CLASSIFICATION);
   const isShowReworkSettings = requiredData.includes(REQUIRED_DATA.REWORK_TIMES);
   const isClassificationSettingVerified = metricsConfig.targetFields.some((item) => item.flag);
@@ -135,7 +137,7 @@ const MetricsStepper = () => {
         { isShow: isShowDeploymentFrequency, isValid: isDeploymentFrequencyValid },
         { isShow: isShowCycleTimeSettings, isValid: isCycleTimeSettingsVerified },
         { isShow: isShowClassificationSetting, isValid: isClassificationSettingVerified },
-        { isShow: isShowReworkSettings, isValid: isRework2StateSelected },
+        { isShow: isShowReworkSettings, isValid: isRework2StateSelected || onlyDoneStateSelected },
       ];
       const activeNextButtonValidityOptions = nextButtonValidityOptions.filter(({ isShow }) => isShow);
       activeNextButtonValidityOptions.every(({ isValid }) => isValid)
@@ -165,6 +167,7 @@ const MetricsStepper = () => {
     isClassificationSettingVerified,
     isRework2StateSelected,
     isShowReworkSettings,
+    onlyDoneStateSelected,
   ]);
 
   const filterMetricsConfig = (metricsConfig: savedMetricsSettingState) => {

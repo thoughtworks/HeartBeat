@@ -121,6 +121,8 @@ const BoardMetrics = ({
   const getBoardItems = () => {
     const velocity = boardReport?.velocity;
     const cycleTime = boardReport?.cycleTime;
+    const rework = boardReport?.rework;
+
     const velocityItems = boardMetrics.includes(REQUIRED_DATA.VELOCITY)
       ? [
           {
@@ -159,7 +161,32 @@ const BoardMetrics = ({
         ]
       : [];
 
-    return [...velocityItems, ...cycleTimeItems];
+    const reworkItems = boardMetrics.includes(REQUIRED_DATA.REWORK_TIMES)
+      ? [
+          {
+            title: METRICS_TITLE.REWORK,
+            items: rework && [
+              {
+                value: rework.totalReworkTimes,
+                subtitle: METRICS_SUBTITLE.TOTAL_REWORK_TIMES,
+                isToFixed: false,
+              },
+              {
+                value: rework.totalReworkCards,
+                subtitle: METRICS_SUBTITLE.TOTAL_REWORK_CARDS,
+                isToFixed: false,
+              },
+              {
+                value: rework.reworkCardsRatio,
+                extraValue: `% (${rework.totalReworkCards}/${rework.throughput})`,
+                subtitle: METRICS_SUBTITLE.REWORK_CARDS_RATIO,
+              },
+            ],
+          },
+        ]
+      : [];
+
+    return [...velocityItems, ...cycleTimeItems, ...reworkItems];
   };
 
   const handleRetry = () => {
@@ -192,7 +219,7 @@ const BoardMetrics = ({
           )}
           {errorMessage && <StyledRetry onClick={handleRetry}>{RETRY}</StyledRetry>}
         </StyledTitleWrapper>
-        <ReportGrid reportDetails={getBoardItems()} errorMessage={errorMessage} />
+        <ReportGrid reportDetails={getBoardItems()} errorMessage={errorMessage} lastGrid={true} />
       </StyledMetricsSection>
     </>
   );

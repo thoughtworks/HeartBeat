@@ -1,6 +1,6 @@
 import { selectAdvancedSettings, updateAdvancedSettings } from '@src/context/Metrics/metricsSlice';
+import { AdvancedContainer, AdvancedForm, AdvancedTitleContainer, AdvancedWrapper } from './style';
 import { ItemCheckbox, TitleAndTooltipContainer, TooltipContainer } from '../CycleTime/style';
-import { AdvancedContainer, AdvancedForm, AdvancedTitleContainer } from './style';
 import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined';
 import { StyledLink } from '@src/containers/MetricsStep/style';
 import { useAppDispatch } from '@src/hooks/useAppDispatch';
@@ -82,21 +82,23 @@ export const Advance = () => {
 
       {open && (
         <>
-          <AdvancedForm>
-            {fields.map(({ key, col, value }, index) => (
-              <TextField
-                variant='standard'
-                sx={{ gridColumn: `span ${col}` }}
-                key={index}
-                label={key}
-                value={value}
-                data-testid={key}
-                inputProps={{ 'aria-label': `input ${key}` }}
-                onChange={(e) => updateField(key, e.target.value)}
-                placeholder={'Customized filed key'}
-              />
-            ))}
-          </AdvancedForm>
+          <AdvancedWrapper>
+            <AdvancedForm>
+              {fields.map(({ key, col, value }, index) => (
+                <TextField
+                  variant='standard'
+                  sx={{ gridColumn: `span ${col}` }}
+                  key={index}
+                  label={key}
+                  value={value}
+                  data-testid={key}
+                  inputProps={{ 'aria-label': `input ${key}` }}
+                  onChange={(e) => updateField(key, e.target.value)}
+                  placeholder={'Customized filed key'}
+                />
+              ))}
+            </AdvancedForm>
+          </AdvancedWrapper>
         </>
       )}
     </>

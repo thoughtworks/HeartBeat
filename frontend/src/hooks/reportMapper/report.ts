@@ -7,6 +7,7 @@ import { ReportResponse, ReportResponseDTO } from '@src/clients/report/dto/respo
 import { classificationMapper } from '@src/hooks/reportMapper/classification';
 import { cycleTimeMapper } from '@src/hooks/reportMapper/cycleTime';
 import { velocityMapper } from '@src/hooks/reportMapper/velocity';
+import reworkMapper from '@src/hooks/reportMapper/reworkMapper';
 
 export const reportMapper = ({
   velocity,
@@ -17,10 +18,13 @@ export const reportMapper = ({
   leadTimeForChanges,
   devChangeFailureRate,
   exportValidityTime,
+  rework,
 }: ReportResponseDTO): ReportResponse => {
   const velocityList = velocity && velocityMapper(velocity);
 
   const cycleTimeList = cycleTime && cycleTimeMapper(cycleTime);
+
+  const reworkList = rework && reworkMapper(rework);
 
   const classification = classificationList && classificationMapper(classificationList);
 
@@ -37,11 +41,12 @@ export const reportMapper = ({
   return {
     velocityList,
     cycleTimeList,
+    reworkList,
     classification,
     deploymentFrequencyList,
-    devMeanTimeToRecoveryList: devMeanTimeToRecoveryList,
+    devMeanTimeToRecoveryList,
     leadTimeForChangesList,
-    devChangeFailureRateList: devChangeFailureRateList,
+    devChangeFailureRateList,
     exportValidityTimeMin,
   };
 };

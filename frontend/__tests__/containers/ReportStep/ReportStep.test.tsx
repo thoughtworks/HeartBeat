@@ -152,7 +152,7 @@ describe('Report Step', () => {
 
       setup(REQUIRED_DATA_LIST);
 
-      expect(screen.getAllByTestId('loading-page')).toHaveLength(6);
+      expect(screen.getAllByTestId('loading-page')).toHaveLength(7);
     });
 
     it('should render detail page when metrics only select classification', () => {

@@ -66,6 +66,8 @@ public class CSVFileGenerator {
 
 	private static final String CANCELED_STATUS = "canceled";
 
+	private static final String reworkField = "Rework";
+
 	private static InputStreamResource readStringFromCsvFile(String fileName) {
 		try {
 			InputStream inputStream = new FileInputStream(fileName);
@@ -478,9 +480,9 @@ public class CSVFileGenerator {
 
 	private List<String[]> getRowFromRework(Rework rework) {
 		List<String[]> rows = new ArrayList<>();
-		rows.add(new String[] { "Rework", "Total rework times", String.valueOf(rework.getTotalReworkTimes()) });
-		rows.add(new String[] { "Rework", "Total rework cards", String.valueOf(rework.getTotalReworkCards()) });
-		rows.add(new String[] { "Rework", "Rework cards ratio(Total rework cards/Throughput)",
+		rows.add(new String[] { reworkField, "Total rework times", String.valueOf(rework.getTotalReworkTimes()) });
+		rows.add(new String[] { reworkField, "Total rework cards", String.valueOf(rework.getTotalReworkCards()) });
+		rows.add(new String[] { reworkField, "Rework cards ratio(Total rework cards/Throughput)",
 				String.valueOf(rework.getReworkCardsRatio()) });
 		return rows;
 	}

@@ -3,6 +3,7 @@ package heartbeat.service.report;
 import heartbeat.controller.report.dto.response.Classification;
 import heartbeat.controller.report.dto.response.ClassificationNameValuePair;
 import heartbeat.controller.report.dto.response.ReportResponse;
+import heartbeat.controller.report.dto.response.Rework;
 import heartbeat.controller.report.dto.response.Velocity;
 import heartbeat.controller.report.dto.response.CycleTime;
 import heartbeat.controller.report.dto.response.CycleTimeForSelectedStepItem;
@@ -158,6 +159,7 @@ public class MetricCsvFixture {
 
 	public static ReportResponse MOCK_METRIC_CSV_DATA_WITH_ONE_PIPELINE() {
 		return ReportResponse.builder()
+			.rework(Rework.builder().totalReworkTimes(3).totalReworkCards(3).reworkCardsRatio(0.99).build())
 			.deploymentFrequency(DeploymentFrequency.builder()
 				.avgDeploymentFrequency(
 						AvgDeploymentFrequency.builder().name("Average").deploymentFrequency(0.67F).build())

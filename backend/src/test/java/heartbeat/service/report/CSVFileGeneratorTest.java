@@ -527,6 +527,9 @@ class CSVFileGeneratorTest {
 
 		Assertions.assertEquals(metricCsvData, """
 				"Group","Metrics","Value"
+				"Rework","Total rework times","3"
+				"Rework","Total rework cards","3"
+				"Rework","Rework cards ratio(Total rework cards/Throughput)","0.99"
 				"Deployment frequency","Heartbeat / Deploy prod / Deployment frequency(Deployments/Day)","0.78"
 				"Lead time for changes","Heartbeat / Deploy prod / PR Lead Time","0"
 				"Lead time for changes","Heartbeat / Deploy prod / Pipeline Lead Time","0.02"

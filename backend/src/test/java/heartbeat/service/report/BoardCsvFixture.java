@@ -9,6 +9,7 @@ import heartbeat.client.dto.board.jira.JiraCard;
 import heartbeat.client.dto.board.jira.JiraCardField;
 import heartbeat.client.dto.board.jira.Sprint;
 import heartbeat.client.dto.board.jira.Status;
+import heartbeat.controller.board.dto.request.CardStepsEnum;
 import heartbeat.controller.board.dto.response.CardCycleTime;
 import heartbeat.controller.board.dto.response.CardParent;
 import heartbeat.controller.board.dto.response.ColumnValue;
@@ -21,6 +22,7 @@ import heartbeat.controller.board.dto.response.JiraColumnDTO;
 import heartbeat.controller.board.dto.response.JiraProject;
 import heartbeat.controller.board.dto.response.Priority;
 import heartbeat.controller.board.dto.response.Reporter;
+import heartbeat.controller.board.dto.response.ReworkTimesInfo;
 import heartbeat.controller.board.dto.response.StepsDay;
 import heartbeat.controller.board.dto.response.TargetField;
 import heartbeat.controller.report.dto.response.BoardCSVConfig;
@@ -508,6 +510,14 @@ public class BoardCsvFixture {
 					.key("正在进行")
 					.value(ColumnValue.builder().name("Review").statuses(List.of("REVIEW")).build())
 					.build());
+	}
+
+	public static List<ReworkTimesInfo> MOCK_REWORK_TIMES_INFO_LIST() {
+		return List.of(ReworkTimesInfo.builder().state(CardStepsEnum.BLOCK).times(2).build(),
+				ReworkTimesInfo.builder().state(CardStepsEnum.REVIEW).times(0).build(),
+				ReworkTimesInfo.builder().state(CardStepsEnum.WAITING).times(1).build(),
+				ReworkTimesInfo.builder().state(CardStepsEnum.TESTING).times(0).build(),
+				ReworkTimesInfo.builder().state(CardStepsEnum.DONE).times(0).build());
 	}
 
 }

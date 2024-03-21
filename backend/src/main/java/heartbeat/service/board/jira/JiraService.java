@@ -726,7 +726,7 @@ public class JiraService {
 			return;
 		}
 		if (isRework(from, to, excludedStates)) {
-			reworkTimesMap.put(from, reworkTimesMap.get(from) + 1);
+			reworkTimesMap.computeIfPresent(from, (key, value) -> value + 1);
 		}
 	}
 

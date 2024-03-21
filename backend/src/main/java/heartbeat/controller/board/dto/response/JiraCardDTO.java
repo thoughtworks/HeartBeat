@@ -8,9 +8,12 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Data
 @Builder
@@ -31,6 +34,8 @@ public class JiraCardDTO {
 	private Integer totalReworkTimes;
 
 	private Object cycleTimeFlat;
+
+	private Object reworkTimesFlat;
 
 	@Nullable
 	private String totalCycleTimeDivideStoryPoints;
@@ -58,6 +63,19 @@ public class JiraCardDTO {
 			cycleTimeFlat.put(cycleTimeInfo.getColumn().trim(), cycleTimeInfo.getDay());
 		}
 		return cycleTimeFlat;
+	}
+
+	@JsonIgnore
+	public Object buildReworkTimesFlatObject() {
+		if (CollectionUtils.isEmpty(this.getReworkTimesInfos())) {
+			return null;
+		}
+		Map<String, Integer> reworkTimesMap = this.getReworkTimesInfos()
+			.stream()
+			.collect(Collectors.toMap(reworkTimesInfo -> reworkTimesInfo.getState().getValue(),
+					ReworkTimesInfo::getTimes));
+		reworkTimesMap.put("totalReworkTimes", totalReworkTimes);
+		return reworkTimesMap;
 	}
 
 	@JsonIgnore

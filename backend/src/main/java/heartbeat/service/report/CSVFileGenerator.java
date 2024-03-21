@@ -26,6 +26,7 @@ import heartbeat.controller.report.dto.response.DevMeanTimeToRecovery;
 import heartbeat.controller.report.dto.response.DevMeanTimeToRecoveryOfPipeline;
 import heartbeat.controller.report.dto.response.PipelineCSVInfo;
 import heartbeat.controller.report.dto.response.ReportResponse;
+import heartbeat.controller.report.dto.response.Rework;
 import heartbeat.controller.report.dto.response.Velocity;
 import heartbeat.exception.FileIOException;
 import heartbeat.exception.GenerateReportException;
@@ -64,6 +65,8 @@ public class CSVFileGenerator {
 	public static final String FILE_LOCAL_PATH = "./app/output/csv";
 
 	private static final String CANCELED_STATUS = "canceled";
+
+	private static final String REWORK_FIELD = "Rework";
 
 	private static InputStreamResource readStringFromCsvFile(String fileName) {
 		try {
@@ -170,26 +173,17 @@ public class CSVFileGenerator {
 	public void convertBoardDataToCSV(List<JiraCardDTO> cardDTOList, List<BoardCSVConfig> fields,
 			List<BoardCSVConfig> extraFields, String csvTimeStamp) {
 		log.info("Start to create board csv directory");
+		String[][] mergedArrays = assembleBoardData(cardDTOList, fields, extraFields);
+		writeDataToCSV(csvTimeStamp, mergedArrays);
+	}
+
+	public void writeDataToCSV(String csvTimeStamp, String[][] mergedArrays) {
 		createCsvDirToConvertData();
 
 		String fileName = CSVFileNameEnum.BOARD.getValue() + FILENAME_SEPARATOR + csvTimeStamp + CSV_EXTENSION;
 		if (!fileName.contains("..") && fileName.startsWith(FILE_LOCAL_PATH)) {
 			try (CSVWriter writer = new CSVWriter(new FileWriter(fileName))) {
-				List<BoardCSVConfig> fixedFields = new ArrayList<>(fields);
-				fixedFields.removeAll(extraFields);
-
-				String[][] fixedFieldsData = getFixedFieldsData(cardDTOList, fixedFields);
-				String[][] extraFieldsData = getExtraFieldsData(cardDTOList, extraFields);
-
-				String[] fixedFieldsRow = fixedFieldsData[0];
-				String targetElement = "Cycle Time";
-				List<String> fixedFieldsRowList = Arrays.asList(fixedFieldsRow);
-				int targetIndex = fixedFieldsRowList.indexOf(targetElement) + 1;
-
-				String[][] mergedArrays = mergeArrays(fixedFieldsData, extraFieldsData, targetIndex);
-
 				writer.writeAll(Arrays.asList(mergedArrays));
-
 			}
 			catch (IOException e) {
 				log.error("Failed to write board file", e);
@@ -199,6 +193,22 @@ public class CSVFileGenerator {
 		else {
 			throw new GenerateReportException("Failed to generate board csv file, invalid csvTimestamp");
 		}
+	}
+
+	public String[][] assembleBoardData(List<JiraCardDTO> cardDTOList, List<BoardCSVConfig> fields,
+			List<BoardCSVConfig> extraFields) {
+		List<BoardCSVConfig> fixedFields = new ArrayList<>(fields);
+		fixedFields.removeAll(extraFields);
+
+		String[][] fixedFieldsData = getFixedFieldsData(cardDTOList, fixedFields);
+		String[][] extraFieldsData = getExtraFieldsData(cardDTOList, extraFields);
+
+		String[] fixedFieldsRow = fixedFieldsData[0];
+		String targetElement = "Cycle Time";
+		List<String> fixedFieldsRowList = Arrays.asList(fixedFieldsRow);
+		int targetIndex = fixedFieldsRowList.indexOf(targetElement) + 1;
+
+		return mergeArrays(fixedFieldsData, extraFieldsData, targetIndex);
 	}
 
 	public String[][] mergeArrays(String[][] fixedFieldsData, String[][] extraFieldsData, int fixedColumnCount) {
@@ -336,7 +346,7 @@ public class CSVFileGenerator {
 		rowData[13] = String.join(",", cardDTO.getBaseInfo().getFields().getLabels());
 	}
 
-	private String getExtraDataPerRow(Object object, BoardCSVConfig extraField) {
+	public String getExtraDataPerRow(Object object, BoardCSVConfig extraField) {
 		Map<String, JsonElement> elementMap = (Map<String, JsonElement>) object;
 		if (elementMap == null) {
 			return null;
@@ -405,6 +415,11 @@ public class CSVFileGenerator {
 		if (cycleTime != null)
 			rows.addAll(getRowsFromCycleTime(cycleTime));
 
+		Rework rework = reportResponse.getRework();
+		if (rework != null) {
+			rows.addAll(getRowFromRework(rework));
+		}
+
 		List<Classification> classificationList = reportResponse.getClassificationList();
 		if (classificationList != null)
 			classificationList.forEach(classification -> rows.addAll(getRowsFormClassification(classification)));
@@ -460,6 +475,15 @@ public class CSVFileGenerator {
 		});
 		rows.addAll(rowsForSelectedStepItemAverageTime);
 
+		return rows;
+	}
+
+	private List<String[]> getRowFromRework(Rework rework) {
+		List<String[]> rows = new ArrayList<>();
+		rows.add(new String[] { REWORK_FIELD, "Total rework times", String.valueOf(rework.getTotalReworkTimes()) });
+		rows.add(new String[] { REWORK_FIELD, "Total rework cards", String.valueOf(rework.getTotalReworkCards()) });
+		rows.add(new String[] { REWORK_FIELD, "Rework cards ratio(Total rework cards/Throughput)",
+				String.valueOf(rework.getReworkCardsRatio()) });
 		return rows;
 	}
 

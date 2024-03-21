@@ -37,7 +37,7 @@ export class ReportClient extends HttpClient {
       fromReview: 0,
       fromDone: 0,
       totalReworkCards: 0,
-      throughput: 0,
+      throughput: 1,
       reworkCardsRatio: 0,
     },
     classificationList: [

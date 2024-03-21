@@ -1,5 +1,5 @@
+import { CALENDAR, REWORK_TIME_LIST } from '@src/constants/resources';
 import { IReworkConfig } from '@src/context/Metrics/metricsSlice';
-import { CALENDAR } from '@src/constants/resources';
 
 export interface OldFileConfig {
   projectName: string;
@@ -36,7 +36,7 @@ export interface OldFileConfig {
   deployment?: OldConfigSetting[];
   leadTime?: OldConfigSetting[];
   pipelineCrews?: string[];
-  reworkTimesSettings: IReworkConfig;
+  reworkTimesSettings?: IReworkConfig;
 }
 
 interface OldConfigSetting {
@@ -89,8 +89,22 @@ export interface NewFileConfig {
   deployment?: NewConfigSetting[];
   leadTime?: NewConfigSetting[];
   pipelineCrews?: string[];
-  reworkTimesSettings: IReworkConfig;
+  reworkTimesSettings?: IReworkConfig;
 }
+
+const filterExcludeReworkStatus = (reworkTimesSettings: IReworkConfig | undefined) => {
+  if (!reworkTimesSettings) return;
+  const rework2State = REWORK_TIME_LIST.includes(reworkTimesSettings?.rework2State as string)
+    ? reworkTimesSettings.rework2State
+    : null;
+  const excludeStates = reworkTimesSettings?.excludeStates.filter((value) => {
+    return REWORK_TIME_LIST.includes(value);
+  });
+  return {
+    rework2State,
+    excludeStates: rework2State ? excludeStates : [],
+  };
+};
 
 export const convertToNewFileConfig = (fileConfig: OldFileConfig | NewFileConfig): NewFileConfig => {
   if ('considerHoliday' in fileConfig) {
@@ -138,7 +152,7 @@ export const convertToNewFileConfig = (fileConfig: OldFileConfig | NewFileConfig
       pipelineCrews,
       cycleTime,
       doneStatus,
-      reworkTimesSettings,
+      reworkTimesSettings: filterExcludeReworkStatus(reworkTimesSettings),
       classification: classifications,
       deployment: deployment?.map((item, index) => ({
         id: index,
@@ -149,5 +163,5 @@ export const convertToNewFileConfig = (fileConfig: OldFileConfig | NewFileConfig
       })),
     };
   }
-  return fileConfig;
+  return { ...fileConfig, reworkTimesSettings: filterExcludeReworkStatus(fileConfig.reworkTimesSettings) };
 };

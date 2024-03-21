@@ -17,6 +17,10 @@ jest.mock('react-redux', () => ({
 
 describe('use verify pipelineTool state', () => {
   it('should return empty error message when call verify feature given client returns 204', async () => {
+    pipelineToolClient.verify = jest.fn().mockResolvedValue({
+      code: HttpStatusCode.NoContent,
+    });
+
     const { result } = renderHook(() => useVerifyPipelineToolEffect());
 
     act(() => {

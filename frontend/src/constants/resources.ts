@@ -161,9 +161,9 @@ export const CYCLE_TIME_LIST = [
   METRICS_CONSTANTS.analysisValue,
   METRICS_CONSTANTS.inDevValue,
   METRICS_CONSTANTS.blockValue,
+  METRICS_CONSTANTS.reviewValue,
   METRICS_CONSTANTS.waitingValue,
   METRICS_CONSTANTS.testingValue,
-  METRICS_CONSTANTS.reviewValue,
   METRICS_CONSTANTS.doneValue,
 ];
 

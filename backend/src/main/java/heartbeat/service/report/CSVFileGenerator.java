@@ -26,6 +26,7 @@ import heartbeat.controller.report.dto.response.DevMeanTimeToRecovery;
 import heartbeat.controller.report.dto.response.DevMeanTimeToRecoveryOfPipeline;
 import heartbeat.controller.report.dto.response.PipelineCSVInfo;
 import heartbeat.controller.report.dto.response.ReportResponse;
+import heartbeat.controller.report.dto.response.Rework;
 import heartbeat.controller.report.dto.response.Velocity;
 import heartbeat.exception.FileIOException;
 import heartbeat.exception.GenerateReportException;
@@ -412,6 +413,11 @@ public class CSVFileGenerator {
 		if (cycleTime != null)
 			rows.addAll(getRowsFromCycleTime(cycleTime));
 
+		Rework rework = reportResponse.getRework();
+		if (rework != null) {
+			rows.addAll(getRowFromRework(rework));
+		}
+
 		List<Classification> classificationList = reportResponse.getClassificationList();
 		if (classificationList != null)
 			classificationList.forEach(classification -> rows.addAll(getRowsFormClassification(classification)));
@@ -467,6 +473,15 @@ public class CSVFileGenerator {
 		});
 		rows.addAll(rowsForSelectedStepItemAverageTime);
 
+		return rows;
+	}
+
+	private List<String[]> getRowFromRework(Rework rework) {
+		List<String[]> rows = new ArrayList<>();
+		rows.add(new String[] { "Rework", "Total rework times", String.valueOf(rework.getTotalReworkTimes()) });
+		rows.add(new String[] { "Rework", "Total rework cards", String.valueOf(rework.getTotalReworkCards()) });
+		rows.add(new String[] { "Rework", "Rework cards ratio(Total rework cards/Throughput)",
+				String.valueOf(rework.getReworkCardsRatio()) });
 		return rows;
 	}
 

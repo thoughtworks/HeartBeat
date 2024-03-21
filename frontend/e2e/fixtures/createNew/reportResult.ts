@@ -3,6 +3,10 @@ export const BOARD_METRICS_RESULT = {
   Throughput: '9',
   AverageCycleTime4SP: '4.86',
   AverageCycleTime4Card: '9.18',
+  totalReworkTimes: '11',
+  totalReworkCards: '6',
+  reworkCardsRatio: '0.67',
+  throughput: '9',
 };
 
 export const FLAG_AS_BLOCK_PROJECT_BOARD_METRICS_RESULT = {
@@ -10,6 +14,10 @@ export const FLAG_AS_BLOCK_PROJECT_BOARD_METRICS_RESULT = {
   Throughput: '5',
   AverageCycleTime4SP: '0.19',
   AverageCycleTime4Card: '0.28',
+  totalReworkTimes: '3',
+  totalReworkCards: '3',
+  reworkCardsRatio: '0.60',
+  throughput: '5',
 };
 
 export const DORA_METRICS_RESULT = {

@@ -65,6 +65,10 @@ test('Create a new project', async ({ homePage, configStep, metricsStep, reportS
     BOARD_METRICS_RESULT.Throughput,
     BOARD_METRICS_RESULT.AverageCycleTime4SP,
     BOARD_METRICS_RESULT.AverageCycleTime4Card,
+    BOARD_METRICS_RESULT.totalReworkTimes,
+    BOARD_METRICS_RESULT.totalReworkCards,
+    BOARD_METRICS_RESULT.reworkCardsRatio,
+    BOARD_METRICS_RESULT.throughput,
   );
   await reportStep.checkBoardMetricsDetails(ProjectCreationType.CREATE_A_NEW_PROJECT, 9);
   await reportStep.checkDoraMetrics(

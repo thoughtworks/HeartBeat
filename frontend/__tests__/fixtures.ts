@@ -414,16 +414,17 @@ export const MOCK_REPORT_RESPONSE: ReportResponseDTO = {
   },
   rework: {
     totalReworkTimes: 111,
-    reworkState: 'Done',
-    fromToDo: 111,
+    reworkState: 'In Dev',
+    fromAnalysis: null,
     fromInDev: 111,
     fromBlock: 111,
     fromWaitingForTesting: 111,
-    fromTesting: 111,
+    fromTesting: null,
     fromReview: 111,
     fromDone: 111,
     totalReworkCards: 111,
     reworkCardsRatio: 111,
+    throughput: 1110,
   },
   deploymentFrequency: {
     avgDeploymentFrequency: {
@@ -666,6 +667,88 @@ export const EXPECTED_REPORT_VALUES = {
     },
   ],
   exportValidityTimeMin: 30,
+  reworkList: [
+    {
+      id: 0,
+      name: 'Total rework ',
+      valueList: [
+        {
+          value: 111,
+          unit: ' (times)',
+        },
+      ],
+    },
+    {
+      id: 2,
+      name: 'From in dev to in dev ',
+      valueList: [
+        {
+          value: 111,
+          unit: ' (times)',
+        },
+      ],
+    },
+    {
+      id: 3,
+      name: 'From block to in dev ',
+      valueList: [
+        {
+          value: 111,
+          unit: ' (times)',
+        },
+      ],
+    },
+    {
+      id: 4,
+      name: 'From waiting for testing to in dev ',
+      valueList: [
+        {
+          value: 111,
+          unit: ' (times)',
+        },
+      ],
+    },
+    {
+      id: 6,
+      name: 'From review to in dev ',
+      valueList: [
+        {
+          value: 111,
+          unit: ' (times)',
+        },
+      ],
+    },
+    {
+      id: 7,
+      name: 'From done to in dev ',
+      valueList: [
+        {
+          value: 111,
+          unit: ' (times)',
+        },
+      ],
+    },
+    {
+      id: 8,
+      name: 'Total rework cards ',
+      valueList: [
+        {
+          value: 111,
+          unit: ' (cards)',
+        },
+      ],
+    },
+    {
+      id: 9,
+      name: 'Rework cards ratio ',
+      valueList: [
+        {
+          value: 111,
+          unit: ' (rework cards/throughput)',
+        },
+      ],
+    },
+  ],
 };
 
 export const EMPTY_REPORT_VALUES: ReportResponseDTO = {

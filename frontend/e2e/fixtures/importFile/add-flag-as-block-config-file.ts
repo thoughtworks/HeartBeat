@@ -5,7 +5,7 @@ export const importFlagAsBlockFile = {
     endDate: '2024-02-01T23:59:59.999+08:00',
   },
   calendarType: 'Calendar with Chinese Holiday',
-  metrics: ['Velocity', 'Cycle time', 'Classification'],
+  metrics: ['Velocity', 'Cycle time', 'Classification', 'Rework times'],
   board: {
     type: 'Jira',
     boardId: '1',
@@ -47,4 +47,8 @@ export const importFlagAsBlockFile = {
     'assignee',
     'customfield_10030',
   ],
+  reworkTimesSettings: {
+    rework2State: 'In Dev',
+    excludeStates: [],
+  },
 };

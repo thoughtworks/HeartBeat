@@ -15,6 +15,7 @@ export class ReportStep {
   readonly velocityPart: Locator;
   readonly averageCycleTimeForSP: Locator;
   readonly averageCycleTimeForCard: Locator;
+  readonly boardMetricRework: Locator;
   readonly prLeadTime: Locator;
   readonly pipelineLeadTime: Locator;
   readonly totalLeadTime: Locator;
@@ -34,6 +35,7 @@ export class ReportStep {
   readonly leadTimeForChangesRows: Locator;
   readonly devChangeFailureRateRows: Locator;
   readonly devMeanTimeToRecoveryRows: Locator;
+  readonly reworkRows: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -41,6 +43,8 @@ export class ReportStep {
     this.velocityPart = this.page.locator('[data-test-id="Velocity"] [data-test-id="report-section"]');
     this.averageCycleTimeForSP = this.page.locator('[data-test-id="Cycle Time"] [data-test-id="report-section"]');
     this.averageCycleTimeForCard = this.page.locator('[data-test-id="Cycle Time"] [data-test-id="report-section"]');
+    this.boardMetricRework = this.page.locator('[data-test-id="Rework"] [data-test-id="report-section"]');
+
     this.prLeadTime = this.page.locator('[data-test-id="Lead Time For Changes"] [data-test-id="report-section"]');
     this.pipelineLeadTime = this.page.locator('[data-test-id="Lead Time For Changes"] [data-test-id="report-section"]');
     this.totalLeadTime = this.page.locator('[data-test-id="Lead Time For Changes"] [data-test-id="report-section"]');
@@ -64,6 +68,7 @@ export class ReportStep {
     this.leadTimeForChangesRows = this.page.getByTestId('Lead Time For Changes').getByRole('row');
     this.devChangeFailureRateRows = this.page.getByTestId('Dev Change Failure Rate').getByRole('row');
     this.devMeanTimeToRecoveryRows = this.page.getByTestId('Dev Mean Time To Recovery').getByRole('row');
+    this.reworkRows = this.page.getByTestId('Rework').getByRole('row');
   }
   combineStrings(arr: string[]): string {
     return arr.join('');
@@ -125,11 +130,20 @@ export class ReportStep {
     throughPut: string,
     averageCycleTimeForSP: string,
     averageCycleTimeForCard: string,
+    totalReworkTimes: string,
+    totalReworkCards: string,
+    reworkCardsRatio: string,
+    throughput: string,
   ) {
     await expect(this.velocityPart).toContainText(`${velocity}Velocity(Story Point)`);
     await expect(this.velocityPart).toContainText(`${throughPut}Throughput(Cards Count)`);
     await expect(this.averageCycleTimeForSP).toContainText(`${averageCycleTimeForSP}Average Cycle Time(Days/SP)`);
     await expect(this.averageCycleTimeForCard).toContainText(`${averageCycleTimeForCard}Average Cycle Time(Days/Card)`);
+    await expect(this.boardMetricRework).toContainText(`${totalReworkTimes}Total rework times`);
+    await expect(this.boardMetricRework).toContainText(`${totalReworkCards}Total rework cards`);
+    await expect(this.boardMetricRework).toContainText(
+      `${reworkCardsRatio}% (${totalReworkCards}/${throughput})Rework cards ratio`,
+    );
   }
 
   async checkBoardMetricsReportReportDetail() {
@@ -215,6 +229,18 @@ export class ReportStep {
     await expect(this.classificationRows.nth(44)).toContainText(this.combineStrings(['Weiran Sun', '11.11%']));
     await expect(this.classificationRows.nth(45)).toContainText(this.combineStrings(['Xuebing Li', '11.11%']));
     await expect(this.classificationRows.nth(46)).toContainText(this.combineStrings(['Yunsong Yang', '11.11%']));
+    await expect(this.reworkRows.filter({ hasText: 'Total rework' }).getByRole('cell').nth(1)).toContainText(
+      '11 (times)',
+    );
+    await expect(this.reworkRows.filter({ hasText: 'From block to In Dev' }).getByRole('cell').nth(1)).toContainText(
+      '11 (times)',
+    );
+    await expect(this.reworkRows.filter({ hasText: 'Total rework cards' }).getByRole('cell').nth(1)).toContainText(
+      '6 (cards)',
+    );
+    await expect(this.reworkRows.filter({ hasText: 'Rework cards ratio' }).getByRole('cell').nth(1)).toContainText(
+      '0.67 (rework cards/throughput)',
+    );
   }
 
   async checkBoardMetricsDetails(boardDetailType: ProjectCreationType, csvCompareLines: number) {

@@ -17,6 +17,7 @@ public class ReworkCalculator {
 			.reworkState(reworkState.getValue())
 			.reworkCardsRatio(realDoneCardCollection.getReworkRatio())
 			.totalReworkCards(realDoneCardCollection.getReworkCardNumber())
+			.throughput(realDoneCardCollection.getCardsNumber())
 			.totalReworkTimes(0)
 			.build();
 		realDoneCardCollection.getJiraCardDTOList()

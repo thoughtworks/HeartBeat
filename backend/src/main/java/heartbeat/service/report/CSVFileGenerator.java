@@ -483,7 +483,7 @@ public class CSVFileGenerator {
 		rows.add(new String[] { REWORK_FIELD, "Total rework times", String.valueOf(rework.getTotalReworkTimes()) });
 		rows.add(new String[] { REWORK_FIELD, "Total rework cards", String.valueOf(rework.getTotalReworkCards()) });
 		rows.add(new String[] { REWORK_FIELD, "Rework cards ratio(Total rework cards/Throughput)",
-				String.valueOf(rework.getReworkCardsRatio()) });
+				String.valueOf(rework.getReworkCardsRatio() * 100) });
 		return rows;
 	}
 

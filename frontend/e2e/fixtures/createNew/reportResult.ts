@@ -5,7 +5,7 @@ export const BOARD_METRICS_RESULT = {
   AverageCycleTime4Card: '9.18',
   totalReworkTimes: '11',
   totalReworkCards: '6',
-  reworkCardsRatio: '0.67',
+  reworkCardsRatio: '0.6667',
   throughput: '9',
 };
 
@@ -16,7 +16,7 @@ export const FLAG_AS_BLOCK_PROJECT_BOARD_METRICS_RESULT = {
   AverageCycleTime4Card: '0.28',
   totalReworkTimes: '3',
   totalReworkCards: '3',
-  reworkCardsRatio: '0.60',
+  reworkCardsRatio: '0.6000',
   throughput: '5',
 };
 

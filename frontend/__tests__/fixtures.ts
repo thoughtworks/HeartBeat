@@ -412,20 +412,6 @@ export const MOCK_REPORT_RESPONSE: ReportResponseDTO = {
       },
     ],
   },
-  rework: {
-    totalReworkTimes: 111,
-    reworkState: 'In Dev',
-    fromAnalysis: null,
-    fromInDev: 111,
-    fromBlock: 111,
-    fromWaitingForTesting: 111,
-    fromTesting: null,
-    fromReview: 111,
-    fromDone: 111,
-    totalReworkCards: 111,
-    reworkCardsRatio: 111,
-    throughput: 1110,
-  },
   deploymentFrequency: {
     avgDeploymentFrequency: {
       name: 'Average',
@@ -467,6 +453,21 @@ export const MOCK_REPORT_RESPONSE: ReportResponseDTO = {
         timeToRecovery: 27628149.333333332,
       },
     ],
+  },
+  rework: {
+    totalReworkTimes: 111,
+    reworkState: 'In Dev',
+    fromAnalysis: null,
+    fromInDev: null,
+    fromBlock: 111,
+    fromFlag: null,
+    fromReview: 111,
+    fromWaitingForTesting: 111,
+    fromTesting: null,
+    fromDone: 111,
+    totalReworkCards: 111,
+    reworkCardsRatio: 0.8888,
+    throughput: 1110,
   },
   leadTimeForChanges: {
     leadTimeForChangesOfPipelines: [
@@ -523,232 +524,6 @@ export const MOCK_REPORT_RESPONSE: ReportResponseDTO = {
 export const MOCK_RETRIEVE_REPORT_RESPONSE = {
   callbackUrl: 'reports/123',
   interval: 10,
-};
-
-export const EXPECTED_REPORT_VALUES = {
-  velocityList: [
-    { id: 0, name: 'Velocity(Story Point)', valueList: [{ value: 20 }] },
-    { id: 1, name: 'Throughput(Cards Count)', valueList: [{ value: 14 }] },
-  ],
-  cycleTimeList: [
-    {
-      id: 0,
-      name: 'Average cycle time',
-      valueList: [
-        { value: 21.18, unit: '(Days/SP)' },
-        { value: '30.26', unit: '(Days/Card)' },
-      ],
-    },
-    {
-      id: 1,
-      name: 'Total development time / Total cycle time',
-      valueList: [{ value: '57.25%' }],
-    },
-    {
-      id: 2,
-      name: 'Average development time',
-      valueList: [
-        { value: '12.13', unit: '(Days/SP)' },
-        { value: '17.32', unit: '(Days/Card)' },
-      ],
-    },
-  ],
-  classification: [
-    {
-      id: 0,
-      name: 'FS Work Type',
-      valuesList: [{ name: 'Feature Work - Planned', value: '57.14%' }],
-    },
-  ],
-  deploymentFrequencyList: [
-    {
-      id: 0,
-      name: 'fs-platform-onboarding/ :shipit: deploy to PROD',
-      valuesList: [
-        {
-          name: 'Deployment frequency',
-          value: '0.30',
-        },
-      ],
-    },
-    {
-      id: 1,
-      name: 'Average',
-      valuesList: [
-        {
-          name: 'Deployment frequency',
-          value: '0.40',
-        },
-      ],
-    },
-  ],
-  devMeanTimeToRecoveryList: [
-    {
-      id: 0,
-      name: 'Heartbeat/:react: Build Frontend',
-      valuesList: [
-        {
-          name: 'Dev mean time to recovery',
-          value: '4.32',
-        },
-      ],
-    },
-    {
-      id: 1,
-      name: 'Heartbeat/:cloudformation: Deploy infra',
-      valuesList: [
-        {
-          name: 'Dev mean time to recovery',
-          value: '0.00',
-        },
-      ],
-    },
-    {
-      id: 2,
-      name: 'Heartbeat/:rocket: Run e2e',
-      valuesList: [
-        {
-          name: 'Dev mean time to recovery',
-          value: '7.67',
-        },
-      ],
-    },
-    {
-      id: 3,
-      name: 'Average',
-      valuesList: [
-        {
-          name: 'Dev mean time to recovery',
-          value: '4.00',
-        },
-      ],
-    },
-  ],
-  leadTimeForChangesList: [
-    {
-      id: 0,
-      name: 'fs-platform-payment-selector/RECORD RELEASE TO PROD',
-      valuesList: [
-        { name: PR_LEAD_TIME, value: '45.04' },
-        { name: PIPELINE_LEAD_TIME, value: '43.12' },
-        { name: TOTAL_DELAY_TIME, value: '88.17' },
-      ],
-    },
-    {
-      id: 1,
-      name: 'Average',
-      valuesList: [
-        { name: PR_LEAD_TIME, value: '60.79' },
-        { name: PIPELINE_LEAD_TIME, value: '39.03' },
-        { name: TOTAL_DELAY_TIME, value: '99.82' },
-      ],
-    },
-  ],
-  devChangeFailureRateList: [
-    {
-      id: 0,
-      name: 'fs-platform-onboarding/ :shipit: deploy to PROD',
-      valuesList: [
-        {
-          name: 'Dev change failure rate',
-          value: '0.00%(0/2)',
-        },
-      ],
-    },
-    {
-      id: 1,
-      name: 'Average',
-      valuesList: [
-        {
-          name: 'Dev change failure rate',
-          value: '0.00%(0/6)',
-        },
-      ],
-    },
-  ],
-  exportValidityTimeMin: 30,
-  reworkList: [
-    {
-      id: 0,
-      name: 'Total rework ',
-      valueList: [
-        {
-          value: 111,
-          unit: ' (times)',
-        },
-      ],
-    },
-    {
-      id: 2,
-      name: 'From in dev to in dev ',
-      valueList: [
-        {
-          value: 111,
-          unit: ' (times)',
-        },
-      ],
-    },
-    {
-      id: 3,
-      name: 'From block to in dev ',
-      valueList: [
-        {
-          value: 111,
-          unit: ' (times)',
-        },
-      ],
-    },
-    {
-      id: 4,
-      name: 'From waiting for testing to in dev ',
-      valueList: [
-        {
-          value: 111,
-          unit: ' (times)',
-        },
-      ],
-    },
-    {
-      id: 6,
-      name: 'From review to in dev ',
-      valueList: [
-        {
-          value: 111,
-          unit: ' (times)',
-        },
-      ],
-    },
-    {
-      id: 7,
-      name: 'From done to in dev ',
-      valueList: [
-        {
-          value: 111,
-          unit: ' (times)',
-        },
-      ],
-    },
-    {
-      id: 8,
-      name: 'Total rework cards ',
-      valueList: [
-        {
-          value: 111,
-          unit: ' (cards)',
-        },
-      ],
-    },
-    {
-      id: 9,
-      name: 'Rework cards ratio ',
-      valueList: [
-        {
-          value: 111,
-          unit: ' (rework cards/throughput)',
-        },
-      ],
-    },
-  ],
 };
 
 export const EMPTY_REPORT_VALUES: ReportResponseDTO = {

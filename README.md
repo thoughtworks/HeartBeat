@@ -136,6 +136,14 @@ All need to select which data you want to get, for now, we support seven metrics
 ![Image 3-3](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/readme/3.png)\
 _Image 3-3，Metrics Data_
 
+##### 3.1.2.1 Date picker validation rules
+
+User can not select future time in calendar (both start time & end time). The max date interval between start time and end time is 31 days (e.g. 01/01/2024 - 01/31/2024).
+
+Invalid dates may be, e.g. future dates, interval between start time and end time is more than 31 days, end time is before start time, etc.
+
+If user selects and invalid date, a warning may be shown.
+
 #### 3.1.3 Config project account
 
 Because all metrics data from different tools that your projects use. Need to have the access to these tools then you can get the data. So after select time period and metrics data, then you need to input the config for different tools(Image 3-4).

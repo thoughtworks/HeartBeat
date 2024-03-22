@@ -14,7 +14,7 @@ const getRowName = (value: string, reworkState: string): ReactNode => {
   if (REWORK_BOARD_STATUS.includes(value)) {
     return (
       <>
-        From <StyledSpan>{value}</StyledSpan> to <StyledSpan>{reworkState.toLowerCase()}</StyledSpan>
+        From <StyledSpan>{`'${value}'`}</StyledSpan> to <StyledSpan>{`'${reworkState.toLowerCase()}'`}</StyledSpan>
       </>
     );
   } else {
@@ -33,7 +33,7 @@ const reworkMapper = (reworkTimeResponse: ReworkTimeResponse) => {
           {
             value:
               key === 'reworkCardsRatio'
-                ? Number(reworkTimeResponse[key as keyof ReworkTimeResponse]) * 100
+                ? (Number(reworkTimeResponse[key as keyof ReworkTimeResponse]) * 100).toFixed(2)
                 : reworkTimeResponse[key as keyof ReworkTimeResponse]!,
             unit: getUnit(value),
           },

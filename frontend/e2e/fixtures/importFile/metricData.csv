@@ -20,7 +20,7 @@
 "Cycle time","Average testing time(days/card)","0.84"
 "Rework","Total rework times","11"
 "Rework","Total rework cards","6"
-"Rework","Rework cards ratio(Total rework cards/Throughput)","67.00"
+"Rework","Rework cards ratio(Total rework cards/Throughput)","66.67"
 "Classifications","Issue Type / Spike","11.11"
 "Classifications","Issue Type / Task","88.89"
 "Classifications","Parent / ADM-322","66.67"

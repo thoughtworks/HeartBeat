@@ -87,26 +87,16 @@ public class KanbanCsvService {
 				.map(RequestJiraBoardColumnSetting::getValue)
 				.map(CardStepsEnum::fromValue)
 				.collect(Collectors.toSet());
-			if(!mappedColumns.contains(BLOCK) && Boolean.TRUE.equals(request.getJiraBoardSetting().getTreatFlagCardAsBlock())){
-				Set<CardStepsEnum> cardStepsEnums = new HashSet<>(reworkJudgmentMap.get(reworkState));
-				cardStepsEnums.add(FLAG);
-				mappedColumns.add(FLAG);
-				reworkFromStates = cardStepsEnums.stream()
-					.sorted()
-					.filter(state -> !reworkExcludeStates.contains(state))
-					.filter(mappedColumns::contains)
-					.map(CardStepsEnum::getAlias)
-					.toList();
+			if(Boolean.TRUE.equals(request.getJiraBoardSetting().getTreatFlagCardAsBlock())){
+				mappedColumns.add(BLOCK);
 			}
-			else{
-				reworkFromStates = reworkJudgmentMap.get(reworkState)
-					.stream()
-					.sorted()
-					.filter(state -> !reworkExcludeStates.contains(state))
-					.filter(mappedColumns::contains)
-					.map(CardStepsEnum::getAlias)
-					.toList();
-			}
+			reworkFromStates = reworkJudgmentMap.get(reworkState)
+				.stream()
+				.sorted()
+				.filter(state -> !reworkExcludeStates.contains(state))
+				.filter(mappedColumns::contains)
+				.map(CardStepsEnum::getAlias)
+				.toList();
 
 		}
 		this.generateCSVForBoard(realDoneCardCollection.getJiraCardDTOList(),

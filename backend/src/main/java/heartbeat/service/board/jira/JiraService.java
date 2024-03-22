@@ -672,12 +672,8 @@ public class JiraService {
 					}
 				}
 			});
-		if(stateMap.containsValue(BLOCK)){
-			reworkTimesMap.put(BLOCK, reworkTimesMap.get(BLOCK) + reworkTimesMap.get(FLAG));
-			reworkTimesMap.remove(FLAG);
-		}else {
-			reworkTimesMap.remove(BLOCK);
-		}
+		reworkTimesMap.put(BLOCK, reworkTimesMap.getOrDefault(BLOCK, 0) + reworkTimesMap.get(FLAG));
+		reworkTimesMap.remove(FLAG);
 		return reworkTimesMap.entrySet()
 			.stream()
 			.map(entry -> new ReworkTimesInfo(entry.getKey(), entry.getValue()))
@@ -715,6 +711,7 @@ public class JiraService {
 	private List<ReworkTimesInfo> getReworkTimesInfoWhenNotConsiderFlagAsBlock(CardHistoryResponseDTO jiraCardHistory,
 			CardStepsEnum reworkState, Set<CardStepsEnum> excludedStates, Map<String, CardStepsEnum> stateMap) {
 		Map<CardStepsEnum, Integer> reworkTimesMap = initializeReworkTimesMap(reworkState, excludedStates, stateMap);
+		reworkTimesMap.remove(FLAG);
 		jiraCardHistory.getItems()
 			.stream()
 			.filter(jiraCardHistoryItem -> STATUS_FIELD_ID.equalsIgnoreCase(jiraCardHistoryItem.getFieldId()))

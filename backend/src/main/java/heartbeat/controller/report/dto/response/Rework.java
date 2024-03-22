@@ -19,8 +19,6 @@ public class Rework {
 
 	private Integer fromBlock;
 
-	private Integer fromFlag;
-
 	private Integer fromWaitingForTesting;
 
 	private Integer fromTesting;

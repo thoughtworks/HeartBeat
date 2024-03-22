@@ -30,7 +30,6 @@ public class ReworkCalculator {
 						rework.setFromAnalysis(Optional.ofNullable(rework.getFromAnalysis()).orElse(0) + times);
 					case DEVELOPMENT ->
 						rework.setFromInDev(Optional.ofNullable(rework.getFromInDev()).orElse(0) + times);
-					case FLAG -> rework.setFromFlag(Optional.ofNullable(rework.getFromFlag()).orElse(0) + times);
 					case BLOCK -> rework.setFromBlock(Optional.ofNullable(rework.getFromBlock()).orElse(0) + times);
 					case WAITING -> rework.setFromWaitingForTesting(
 							Optional.ofNullable(rework.getFromWaitingForTesting()).orElse(0) + times);

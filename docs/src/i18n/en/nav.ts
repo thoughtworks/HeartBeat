@@ -174,7 +174,7 @@ export default [
 	{
 		text: 'Integrate react hook form',
 		slug: 'spikes/tech-spikes-react-hook-form',
-		key: 'spikes/tech-spikes-react-hook-form'
+		key: 'spikes/tech-spikes-react-hook-form',
 	},
 
 	{ text: 'Biz', header: true, type: 'biz', key: 'Biz' },

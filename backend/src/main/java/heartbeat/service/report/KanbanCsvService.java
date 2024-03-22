@@ -31,6 +31,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -38,6 +39,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static heartbeat.controller.board.dto.request.CardStepsEnum.BLOCK;
+import static heartbeat.controller.board.dto.request.CardStepsEnum.FLAG;
 import static heartbeat.controller.board.dto.request.CardStepsEnum.reworkJudgmentMap;
 
 @Service
@@ -84,13 +87,27 @@ public class KanbanCsvService {
 				.map(RequestJiraBoardColumnSetting::getValue)
 				.map(CardStepsEnum::fromValue)
 				.collect(Collectors.toSet());
-			reworkFromStates = reworkJudgmentMap.get(reworkState)
-				.stream()
-				.sorted()
-				.filter(state -> !reworkExcludeStates.contains(state))
-				.filter(mappedColumns::contains)
-				.map(CardStepsEnum::getAlias)
-				.toList();
+			if(!mappedColumns.contains(BLOCK) && Boolean.TRUE.equals(request.getJiraBoardSetting().getTreatFlagCardAsBlock())){
+				Set<CardStepsEnum> cardStepsEnums = new HashSet<>(reworkJudgmentMap.get(reworkState));
+				cardStepsEnums.add(FLAG);
+				mappedColumns.add(FLAG);
+				reworkFromStates = cardStepsEnums.stream()
+					.sorted()
+					.filter(state -> !reworkExcludeStates.contains(state))
+					.filter(mappedColumns::contains)
+					.map(CardStepsEnum::getAlias)
+					.toList();
+			}
+			else{
+				reworkFromStates = reworkJudgmentMap.get(reworkState)
+					.stream()
+					.sorted()
+					.filter(state -> !reworkExcludeStates.contains(state))
+					.filter(mappedColumns::contains)
+					.map(CardStepsEnum::getAlias)
+					.toList();
+			}
+
 		}
 		this.generateCSVForBoard(realDoneCardCollection.getJiraCardDTOList(),
 				nonDoneCardCollection.getJiraCardDTOList(), jiraColumns.getJiraColumnResponse(),

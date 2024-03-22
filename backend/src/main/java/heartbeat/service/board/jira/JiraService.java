@@ -85,6 +85,8 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import static heartbeat.controller.board.dto.request.CardStepsEnum.BLOCK;
+import static heartbeat.controller.board.dto.request.CardStepsEnum.FLAG;
 import static heartbeat.controller.board.dto.request.CardStepsEnum.reworkJudgmentMap;
 import static java.lang.Long.parseLong;
 import static java.util.Objects.isNull;
@@ -641,6 +643,7 @@ public class JiraService {
 	private List<ReworkTimesInfo> getReworkTimesInfoWhenConsiderFlagAsBlock(CardHistoryResponseDTO jiraCardHistory,
 			CardStepsEnum reworkState, Set<CardStepsEnum> excludedStates, Map<String, CardStepsEnum> stateMap) {
 		Map<CardStepsEnum, Integer> reworkTimesMap = initializeReworkTimesMap(reworkState, excludedStates, stateMap);
+		reworkTimesMap.put(FLAG, 0);
 		AtomicReference<CardStepsEnum> currentState = new AtomicReference<>();
 		AtomicBoolean hasFlag = new AtomicBoolean(false);
 		jiraCardHistory.getItems()
@@ -660,15 +663,21 @@ public class JiraService {
 					if (IMPEDIMENT.equalsIgnoreCase(jiraCardHistoryItem.getTo().getDisplayName())) {
 						hasFlag.set(true);
 						CardStepsEnum from = Objects.requireNonNull(currentState).get();
-						calculateTimes(reworkState, excludedStates, reworkTimesMap, from, CardStepsEnum.BLOCK);
+						calculateTimes(reworkState, excludedStates, reworkTimesMap, from, FLAG);
 					}
 					else {
 						hasFlag.set(false);
 						CardStepsEnum to = Objects.requireNonNull(currentState).get();
-						calculateTimes(reworkState, excludedStates, reworkTimesMap, CardStepsEnum.BLOCK, to);
+						calculateTimes(reworkState, excludedStates, reworkTimesMap, FLAG, to);
 					}
 				}
 			});
+		if(stateMap.containsValue(BLOCK)){
+			reworkTimesMap.put(BLOCK, reworkTimesMap.get(BLOCK) + reworkTimesMap.get(FLAG));
+			reworkTimesMap.remove(FLAG);
+		}else {
+			reworkTimesMap.remove(BLOCK);
+		}
 		return reworkTimesMap.entrySet()
 			.stream()
 			.map(entry -> new ReworkTimesInfo(entry.getKey(), entry.getValue()))

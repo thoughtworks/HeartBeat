@@ -15,7 +15,7 @@ test('Import project from file', async ({ homePage, configStep, metricsStep, rep
 
   await homePage.goto();
 
-  await homePage.importMultipleDoneProjectFromFile();
+  await homePage.importProjectFromFile('../fixtures/input-files/multiple-done-config-file.json');
   await configStep.clickPreviousButtonAndClickCancelThenRemainPage();
   await configStep.verifyAllConfig();
   await configStep.goToMetrics();
@@ -49,7 +49,7 @@ test('Import project from file', async ({ homePage, configStep, metricsStep, rep
 test('Import project from flag as block', async ({ homePage, configStep, metricsStep, reportStep }) => {
   await homePage.goto();
 
-  await homePage.importFlagAsBlockProjectFromFile();
+  await homePage.importProjectFromFile('../fixtures/input-files/add-flag-as-block-config-file.json');
   await configStep.verifyBoardConfig();
   await configStep.goToMetrics();
   await metricsStep.waitForShown();

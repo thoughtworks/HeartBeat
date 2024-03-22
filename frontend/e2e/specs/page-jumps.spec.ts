@@ -17,7 +17,7 @@ test('Page jump for import', async ({ homePage, configStep, metricsStep, reportS
   );
 
   await homePage.goto();
-  await homePage.importProjectFromFile();
+  await homePage.importProjectFromFile('../fixtures/input-files/hb-e2e-for-importing-file.json');
   await configStep.goToPreviousStep();
   await configStep.cancelGoToPreviousStep();
   await configStep.waitForShown();

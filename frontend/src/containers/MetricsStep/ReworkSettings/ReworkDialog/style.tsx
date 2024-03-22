@@ -54,7 +54,8 @@ export const StyledStepLabel = styled(StepLabel)({
 
 export const StyledStepOfRework = styled('div')({
   width: '100%',
-  margin: '1rem auto',
+  height: '34rem',
+  marginTop: '1rem',
 });
 
 export const StyledSelectedImg = styled('img')({
@@ -92,7 +93,6 @@ export const StyledNoteText = styled('p')({
 
 export const StyledButtonGroup = styled('div')({
   width: '100%',
-  marginTop: '1rem',
   display: 'flex',
   alignItems: 'flex-end',
   justifyContent: 'flex-end',

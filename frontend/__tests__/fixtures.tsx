@@ -1,6 +1,8 @@
 import { ReportResponseDTO, ReworkTimeResponse } from '@src/clients/report/dto/response';
 import { CSVReportRequestDTO, ReportRequestDTO } from '@src/clients/report/dto/request';
+import { StyledSpan } from '@src/containers/ReportStep/ReportDetail/style';
 import { SOURCE_CONTROL_TYPES } from '@src/constants/resources';
+import React from 'react';
 
 export const PROJECT_NAME = 'Heartbeat';
 export const PROJECT_DESCRIPTION =
@@ -454,7 +456,20 @@ export const MOCK_REPORT_RESPONSE: ReportResponseDTO = {
       },
     ],
   },
-  rework: null,
+  rework: {
+    totalReworkTimes: 111,
+    reworkState: 'In Dev',
+    fromAnalysis: null,
+    fromInDev: null,
+    fromBlock: 111,
+    fromReview: 111,
+    fromWaitingForTesting: 111,
+    fromTesting: null,
+    fromDone: 111,
+    totalReworkCards: 111,
+    reworkCardsRatio: 0.8888,
+    throughput: 1110,
+  },
   leadTimeForChanges: {
     leadTimeForChangesOfPipelines: [
       {
@@ -668,7 +683,94 @@ export const EXPECTED_REPORT_VALUES = {
     },
   ],
   exportValidityTimeMin: 30,
-  reworkList: null,
+  reworkList: [
+    {
+      id: 0,
+      name: <React.Fragment>Total rework</React.Fragment>,
+      valueList: [
+        {
+          value: 111,
+          unit: ' (times)',
+        },
+      ],
+    },
+    {
+      id: 3,
+      name: (
+        <React.Fragment>
+          From <StyledSpan>'block'</StyledSpan> to <StyledSpan>'in dev'</StyledSpan>
+        </React.Fragment>
+      ),
+      valueList: [
+        {
+          value: 111,
+          unit: ' (times)',
+        },
+      ],
+    },
+    {
+      id: 4,
+      name: (
+        <React.Fragment>
+          From <StyledSpan>'review'</StyledSpan> to <StyledSpan>'in dev'</StyledSpan>
+        </React.Fragment>
+      ),
+      valueList: [
+        {
+          value: 111,
+          unit: ' (times)',
+        },
+      ],
+    },
+    {
+      id: 5,
+      name: (
+        <React.Fragment>
+          From <StyledSpan>'waiting for testing'</StyledSpan> to <StyledSpan>'in dev'</StyledSpan>
+        </React.Fragment>
+      ),
+      valueList: [
+        {
+          value: 111,
+          unit: ' (times)',
+        },
+      ],
+    },
+    {
+      id: 7,
+      name: (
+        <React.Fragment>
+          From <StyledSpan>'done'</StyledSpan> to <StyledSpan>'in dev'</StyledSpan>
+        </React.Fragment>
+      ),
+      valueList: [
+        {
+          value: 111,
+          unit: ' (times)',
+        },
+      ],
+    },
+    {
+      id: 8,
+      name: <React.Fragment>Total rework cards</React.Fragment>,
+      valueList: [
+        {
+          value: 111,
+          unit: ' (cards)',
+        },
+      ],
+    },
+    {
+      id: 9,
+      name: <React.Fragment>Rework cards ratio</React.Fragment>,
+      valueList: [
+        {
+          value: '88.88',
+          unit: '% (rework cards/throughput)',
+        },
+      ],
+    },
+  ],
 };
 
 export const EMPTY_REPORT_VALUES: ReportResponseDTO = {

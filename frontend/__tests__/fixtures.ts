@@ -258,7 +258,7 @@ export const IMPORTED_NEW_CONFIG_FIXTURE = {
     ],
   },
   reworkTimesSettings: {
-    rework2State: null,
+    reworkState: null,
     excludeStates: [],
   },
 };
@@ -813,7 +813,7 @@ export const BASIC_IMPORTED_OLD_CONFIG_FIXTURE = {
     },
   ],
   reworkTimesSettings: {
-    rework2State: null,
+    reworkState: null,
     excludeStates: [],
   },
 };
@@ -867,7 +867,7 @@ export const REWORK_TO_WHICH_STATE = 'Rework to which state';
 export const REWORK_EXCLUDE_WHICH_STATE = 'Exclude which states (optional)';
 
 export const DEFAULT_REWORK_SETTINGS = {
-  rework2State: null,
+  reworkState: null,
   excludeStates: [],
 };
 

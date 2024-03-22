@@ -40,7 +40,7 @@ const MultiAutoComplete = ({
       value={selectedOption}
       filterOptions={(options, params) => {
         const filtered = filter(options, params);
-        return ['All', ...filtered];
+        return filtered.length > 0 ? ['All', ...filtered] : filtered;
       }}
       getOptionLabel={(option) => option as string}
       onChange={(event, value) => !!value && onChangeHandler(event, value as unknown as string[])}

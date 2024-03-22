@@ -99,7 +99,7 @@ export const importMultipleDoneProjectFromFile = {
     },
   ],
   reworkTimesSettings: {
-    rework2State: 'In Dev',
+    reworkState: 'In Dev',
     excludeStates: [],
   },
 };

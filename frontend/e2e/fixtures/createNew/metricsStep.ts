@@ -28,7 +28,7 @@ export const config = {
   },
   reworkTimesSettings: {
     excludeStates: [],
-    rework2State: 'In Dev',
+    reworkState: 'In Dev',
   },
   sourceControl: {
     type: 'GitHub',
@@ -133,7 +133,7 @@ export const modifiedConfig = {
   },
   reworkTimesSettings: {
     excludeStates: [],
-    rework2State: null,
+    reworkState: null,
   },
   sourceControl: {
     type: 'GitHub',

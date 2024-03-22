@@ -20,7 +20,7 @@ export interface IPipelineConfig {
 }
 
 export interface IReworkConfig {
-  rework2State: string | null;
+  reworkState: string | null;
   excludeStates: string[];
 }
 
@@ -98,7 +98,7 @@ const initialState: savedMetricsSettingState = {
     importedDeployment: [],
     importedAdvancedSettings: null,
     reworkTimesSettings: {
-      rework2State: null,
+      reworkState: null,
       excludeStates: [],
     },
   },

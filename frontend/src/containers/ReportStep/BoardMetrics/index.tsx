@@ -97,7 +97,7 @@ const BoardMetrics = ({
         doneColumn: getRealDoneStatus(cycleTimeSettings, cycleTimeSettingsType, doneColumn),
         reworkTimesSetting: includeRework
           ? {
-              reworkState: reworkTimesSettings.rework2State,
+              reworkState: reworkTimesSettings.reworkState,
               excludedStates: reworkTimesSettings.excludeStates,
             }
           : null,

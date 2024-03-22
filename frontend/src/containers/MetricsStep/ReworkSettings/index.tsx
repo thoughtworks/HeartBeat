@@ -32,9 +32,9 @@ function ReworkSettings() {
       return REWORK_TIME_LIST.indexOf(a) - REWORK_TIME_LIST.indexOf(b);
     });
 
-  const multiOptions = reworkTimesSettings.rework2State
+  const multiOptions = reworkTimesSettings.reworkState
     ? [
-        ...singleOptions.slice(singleOptions.indexOf(reworkTimesSettings.rework2State as string) + 1),
+        ...singleOptions.slice(singleOptions.indexOf(reworkTimesSettings.reworkState as string) + 1),
         ...(boardingMappingHasDoneStatus ? [METRICS_CONSTANTS.doneValue] : []),
       ]
     : [];
@@ -74,15 +74,15 @@ function ReworkSettings() {
           <SingleSelection
             options={singleOptions}
             label={'Rework to which state'}
-            value={reworkTimesSettings.rework2State}
+            value={reworkTimesSettings.reworkState}
             onValueChange={(newValue: string) =>
-              dispatch(updateReworkTimesSettings({ excludeStates: [], rework2State: newValue }))
+              dispatch(updateReworkTimesSettings({ excludeStates: [], reworkState: newValue }))
             }
           />
           <MultiAutoComplete
             testId='rework-settings-exclude-selection'
             ariaLabel='Exclude which states (optional)'
-            disabled={!reworkTimesSettings.rework2State}
+            disabled={!reworkTimesSettings.reworkState}
             optionList={multiOptions}
             isError={false}
             isSelectAll={isAllSelected}

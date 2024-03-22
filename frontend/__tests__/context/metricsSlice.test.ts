@@ -598,11 +598,11 @@ describe('saveMetricsSetting reducer', () => {
   it('should update rework time setting', () => {
     const updateReworkTimesSettingsResult = saveMetricsSettingReducer(
       initState,
-      updateReworkTimesSettings({ rework2State: 'rework2State', excludeStates: ['excludeStates'] }),
+      updateReworkTimesSettings({ reworkState: 'reworkState', excludeStates: ['excludeStates'] }),
     );
 
     const rework = updateReworkTimesSettingsResult.importedData.reworkTimesSettings;
-    expect(rework.rework2State).toBe('rework2State');
+    expect(rework.reworkState).toBe('reworkState');
     expect(rework.excludeStates.length).toEqual(1);
     expect(rework.excludeStates).toContain('excludeStates');
   });
@@ -1346,7 +1346,7 @@ describe('saveMetricsSetting reducer', () => {
       expect(selectShouldGetBoardConfig(store.getState())).toBeFalsy();
       expect(selectShouldGetPipelineConfig(store.getState())).toBeFalsy();
       expect(selectDeploymentFrequencySettings(store.getState()).length).toBeGreaterThan(1);
-      expect(selectReworkTimesSettings(store.getState())).toStrictEqual({ excludeStates: [], rework2State: null });
+      expect(selectReworkTimesSettings(store.getState())).toStrictEqual({ excludeStates: [], reworkState: null });
       expect(selectCycleTimeSettings(store.getState())).toEqual([]);
       expect(selectMetricsContent(store.getState()).assigneeFilter).toEqual('lastAssignee');
       expect(selectAdvancedSettings(store.getState())).toEqual(null);

@@ -11,11 +11,12 @@ import heartbeat.client.dto.board.jira.JiraCardField;
 import heartbeat.client.dto.board.jira.Status;
 import heartbeat.controller.board.dto.request.BoardRequestParam;
 import heartbeat.controller.board.dto.request.CardStepsEnum;
+import heartbeat.controller.board.dto.request.RequestJiraBoardColumnSetting;
 import heartbeat.controller.board.dto.response.CardCollection;
+import heartbeat.controller.board.dto.response.CycleTimeInfo;
 import heartbeat.controller.board.dto.response.JiraCardDTO;
 import heartbeat.controller.board.dto.response.JiraColumnDTO;
 import heartbeat.controller.board.dto.response.TargetField;
-import heartbeat.controller.board.dto.response.CycleTimeInfo;
 import heartbeat.controller.report.dto.request.GenerateReportRequest;
 import heartbeat.controller.report.dto.request.JiraBoardSetting;
 import heartbeat.controller.report.dto.response.BoardCSVConfig;
@@ -24,7 +25,6 @@ import heartbeat.service.board.jira.JiraColumnResult;
 import heartbeat.service.board.jira.JiraService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
@@ -34,6 +34,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static heartbeat.controller.board.dto.request.CardStepsEnum.reworkJudgmentMap;
@@ -78,10 +80,15 @@ public class KanbanCsvService {
 			List<CardStepsEnum> reworkExcludeStates = request.getJiraBoardSetting()
 				.getReworkTimesSetting()
 				.getEnumExcludeStates();
+			Set<CardStepsEnum> mappedColumns = request.getJiraBoardSetting().getBoardColumns().stream()
+				.map(RequestJiraBoardColumnSetting::getValue)
+				.map(CardStepsEnum::fromValue)
+				.collect(Collectors.toSet());
 			reworkFromStates = reworkJudgmentMap.get(reworkState)
 				.stream()
 				.sorted()
 				.filter(state -> !reworkExcludeStates.contains(state))
+				.filter(mappedColumns::contains)
 				.map(CardStepsEnum::getAlias)
 				.toList();
 		}

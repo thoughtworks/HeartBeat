@@ -640,7 +640,7 @@ public class JiraService {
 
 	private List<ReworkTimesInfo> getReworkTimesInfoWhenConsiderFlagAsBlock(CardHistoryResponseDTO jiraCardHistory,
 			CardStepsEnum reworkState, Set<CardStepsEnum> excludedStates, Map<String, CardStepsEnum> stateMap) {
-		Map<CardStepsEnum, Integer> reworkTimesMap = initializeReworkTimesMap(reworkState, excludedStates);
+		Map<CardStepsEnum, Integer> reworkTimesMap = initializeReworkTimesMap(reworkState, excludedStates, stateMap);
 		AtomicReference<CardStepsEnum> currentState = new AtomicReference<>();
 		AtomicBoolean hasFlag = new AtomicBoolean(false);
 		jiraCardHistory.getItems()
@@ -676,11 +676,13 @@ public class JiraService {
 	}
 
 	private static Map<CardStepsEnum, Integer> initializeReworkTimesMap(CardStepsEnum reworkState,
-			Set<CardStepsEnum> excludedStates) {
+			Set<CardStepsEnum> excludedStates, Map<String, CardStepsEnum> stateMap) {
 		Map<CardStepsEnum, Integer> reworkTimesMap = new EnumMap<>(CardStepsEnum.class);
 		Set<CardStepsEnum> stateReworkEnums = new HashSet<>(reworkJudgmentMap.get(reworkState));
 		stateReworkEnums.removeAll(excludedStates);
-		stateReworkEnums.forEach(state -> reworkTimesMap.put(state, 0));
+		stateReworkEnums.stream()
+			.filter(stateMap.values()::contains)
+			.forEach(state -> reworkTimesMap.put(state, 0));
 		return reworkTimesMap;
 	}
 
@@ -695,12 +697,15 @@ public class JiraService {
 	}
 
 	private CardStepsEnum convertBoardStateToEnumState(String value, Map<String, CardStepsEnum> stateMap) {
-		return stateMap.get(value.toUpperCase());
+		if(stateMap.containsKey(value.toUpperCase())){
+			return stateMap.get(value.toUpperCase());
+		}
+		return CardStepsEnum.UNKNOWN;
 	}
 
 	private List<ReworkTimesInfo> getReworkTimesInfoWhenNotConsiderFlagAsBlock(CardHistoryResponseDTO jiraCardHistory,
 			CardStepsEnum reworkState, Set<CardStepsEnum> excludedStates, Map<String, CardStepsEnum> stateMap) {
-		Map<CardStepsEnum, Integer> reworkTimesMap = initializeReworkTimesMap(reworkState, excludedStates);
+		Map<CardStepsEnum, Integer> reworkTimesMap = initializeReworkTimesMap(reworkState, excludedStates, stateMap);
 		jiraCardHistory.getItems()
 			.stream()
 			.filter(jiraCardHistoryItem -> STATUS_FIELD_ID.equalsIgnoreCase(jiraCardHistoryItem.getFieldId()))

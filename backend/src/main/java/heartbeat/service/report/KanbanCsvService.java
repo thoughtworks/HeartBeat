@@ -82,7 +82,7 @@ public class KanbanCsvService {
 				.stream()
 				.sorted()
 				.filter(state -> !reworkExcludeStates.contains(state))
-				.map(CardStepsEnum::getValue)
+				.map(CardStepsEnum::getAlias)
 				.toList();
 		}
 		this.generateCSVForBoard(realDoneCardCollection.getJiraCardDTOList(),

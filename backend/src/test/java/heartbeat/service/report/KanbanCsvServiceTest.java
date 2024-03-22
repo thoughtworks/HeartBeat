@@ -663,6 +663,7 @@ class KanbanCsvServiceTest {
 							.excludedStates(List.of("Review"))
 							.build())
 						.boardColumns(MOCK_JIRA_BOARD_COLUMN_SETTING_LIST())
+						.treatFlagCardAsBlock(Boolean.TRUE)
 						.build())
 					.csvTimeStamp("2022-01-01 00:00:00")
 					.build(),

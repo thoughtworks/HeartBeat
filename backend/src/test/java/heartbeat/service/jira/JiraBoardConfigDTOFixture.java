@@ -756,6 +756,8 @@ public class JiraBoardConfigDTOFixture {
 					new HistoryDetail(TIMESTAMP_6, "status", new Status(IN_DEV), new Status(REVIEW),
 							new HistoryDetail.Actor(DISPLAY_NAME_ONE), null),
 					new HistoryDetail(TIMESTAMP_7, "status", new Status(IN_DEV), new Status(BLOCK),
+							new HistoryDetail.Actor(DISPLAY_NAME_ONE), null),
+					new HistoryDetail(TIMESTAMP_7, "status", new Status("noExistStatus"), new Status("noExistStatus"),
 							new HistoryDetail.Actor(DISPLAY_NAME_ONE), null)));
 	}
 
@@ -803,18 +805,14 @@ public class JiraBoardConfigDTOFixture {
 							null)));
 	}
 
-
 	public static List<RequestJiraBoardColumnSetting> MOCK_JIRA_BOARD_COLUMN_SETTING_LIST() {
 		return List.of(RequestJiraBoardColumnSetting.builder().name(IN_DEV).value(IN_DEV).build(),
-			RequestJiraBoardColumnSetting.builder().name(ANALYSE).value(ANALYSE).build(),
-			RequestJiraBoardColumnSetting.builder()
-				.name(WAITING_FOR_TESTING)
-				.value(WAITING_FOR_TESTING)
-				.build(),
-			RequestJiraBoardColumnSetting.builder().name(BLOCK).value(BLOCK).build(),
-			RequestJiraBoardColumnSetting.builder().name(TESTING).value(TESTING).build(),
-			RequestJiraBoardColumnSetting.builder().name(DONE).value(DONE).build(),
-			RequestJiraBoardColumnSetting.builder().name(REVIEW).value(REVIEW).build());
+				RequestJiraBoardColumnSetting.builder().name(ANALYSE).value(ANALYSE).build(),
+				RequestJiraBoardColumnSetting.builder().name(WAITING_FOR_TESTING).value(WAITING_FOR_TESTING).build(),
+				RequestJiraBoardColumnSetting.builder().name(BLOCK).value(BLOCK).build(),
+				RequestJiraBoardColumnSetting.builder().name(TESTING).value(TESTING).build(),
+				RequestJiraBoardColumnSetting.builder().name(DONE).value(DONE).build(),
+				RequestJiraBoardColumnSetting.builder().name(REVIEW).value(REVIEW).build());
 	}
 
 }

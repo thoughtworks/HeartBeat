@@ -72,7 +72,7 @@ public class JiraCardDTO {
 		}
 		Map<String, Integer> reworkTimesMap = this.getReworkTimesInfos()
 			.stream()
-			.collect(Collectors.toMap(reworkTimesInfo -> reworkTimesInfo.getState().getValue(),
+			.collect(Collectors.toMap(reworkTimesInfo -> reworkTimesInfo.getState().getAlias(),
 					ReworkTimesInfo::getTimes));
 		reworkTimesMap.put("totalReworkTimes", totalReworkTimes);
 		return reworkTimesMap;

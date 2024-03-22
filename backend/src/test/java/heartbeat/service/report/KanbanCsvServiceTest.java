@@ -35,6 +35,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static heartbeat.service.jira.JiraBoardConfigDTOFixture.MOCK_JIRA_BOARD_COLUMN_SETTING_LIST;
 import static heartbeat.service.report.BoardCsvFixture.MOCK_JIRA_CARD;
 import static heartbeat.service.report.BoardCsvFixture.MOCK_REWORK_TIMES_INFO_LIST;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -661,6 +662,7 @@ class KanbanCsvServiceTest {
 							.reworkState("In Dev")
 							.excludedStates(List.of("Review"))
 							.build())
+						.boardColumns(MOCK_JIRA_BOARD_COLUMN_SETTING_LIST())
 						.build())
 					.csvTimeStamp("2022-01-01 00:00:00")
 					.build(),
@@ -678,11 +680,11 @@ class KanbanCsvServiceTest {
 
 		assertEquals(5, csvSheetCaptor.getValue().length);
 		assertEquals("cycle time", csvSheetCaptor.getValue()[0][0]);
-		assertEquals("In dev total rework times", csvSheetCaptor.getValue()[0][1]);
-		assertEquals("from Block to In dev", csvSheetCaptor.getValue()[0][2]);
-		assertEquals("from Waiting for testing to In dev", csvSheetCaptor.getValue()[0][3]);
-		assertEquals("from Testing to In dev", csvSheetCaptor.getValue()[0][4]);
-		assertEquals("from Done to In dev", csvSheetCaptor.getValue()[0][5]);
+		assertEquals("Rework: total - In dev", csvSheetCaptor.getValue()[0][1]);
+		assertEquals("Rework: from Block", csvSheetCaptor.getValue()[0][2]);
+		assertEquals("Rework: from Waiting for testing", csvSheetCaptor.getValue()[0][3]);
+		assertEquals("Rework: from Testing", csvSheetCaptor.getValue()[0][4]);
+		assertEquals("Rework: from Done", csvSheetCaptor.getValue()[0][5]);
 	}
 
 }

@@ -83,11 +83,13 @@ public class KanbanCsvService {
 			List<CardStepsEnum> reworkExcludeStates = request.getJiraBoardSetting()
 				.getReworkTimesSetting()
 				.getEnumExcludeStates();
-			Set<CardStepsEnum> mappedColumns = request.getJiraBoardSetting().getBoardColumns().stream()
+			Set<CardStepsEnum> mappedColumns = request.getJiraBoardSetting()
+				.getBoardColumns()
+				.stream()
 				.map(RequestJiraBoardColumnSetting::getValue)
 				.map(CardStepsEnum::fromValue)
 				.collect(Collectors.toSet());
-			if(Boolean.TRUE.equals(request.getJiraBoardSetting().getTreatFlagCardAsBlock())){
+			if (Boolean.TRUE.equals(request.getJiraBoardSetting().getTreatFlagCardAsBlock())) {
 				mappedColumns.add(BLOCK);
 			}
 			reworkFromStates = reworkJudgmentMap.get(reworkState)

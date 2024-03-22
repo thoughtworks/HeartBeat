@@ -685,9 +685,7 @@ public class JiraService {
 		Map<CardStepsEnum, Integer> reworkTimesMap = new EnumMap<>(CardStepsEnum.class);
 		Set<CardStepsEnum> stateReworkEnums = new HashSet<>(reworkJudgmentMap.get(reworkState));
 		stateReworkEnums.removeAll(excludedStates);
-		stateReworkEnums.stream()
-			.filter(stateMap.values()::contains)
-			.forEach(state -> reworkTimesMap.put(state, 0));
+		stateReworkEnums.stream().filter(stateMap.values()::contains).forEach(state -> reworkTimesMap.put(state, 0));
 		return reworkTimesMap;
 	}
 
@@ -702,7 +700,7 @@ public class JiraService {
 	}
 
 	private CardStepsEnum convertBoardStateToEnumState(String value, Map<String, CardStepsEnum> stateMap) {
-		if(stateMap.containsKey(value.toUpperCase())){
+		if (stateMap.containsKey(value.toUpperCase())) {
 			return stateMap.get(value.toUpperCase());
 		}
 		return CardStepsEnum.UNKNOWN;

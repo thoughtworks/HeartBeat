@@ -133,7 +133,7 @@ export class ReportStep {
     totalReworkTimes: string,
     totalReworkCards: string,
     reworkCardsRatio: string,
-    throughput: string,
+    reworkThroughput: string,
   ) {
     await expect(this.velocityPart).toContainText(`${velocity}Velocity(Story Point)`);
     await expect(this.velocityPart).toContainText(`${throughPut}Throughput(Cards Count)`);
@@ -142,7 +142,7 @@ export class ReportStep {
     await expect(this.boardMetricRework).toContainText(`${totalReworkTimes}Total rework times`);
     await expect(this.boardMetricRework).toContainText(`${totalReworkCards}Total rework cards`);
     await expect(this.boardMetricRework).toContainText(
-      `${reworkCardsRatio}% (${totalReworkCards}/${throughput})Rework cards ratio`,
+      `${(Number(reworkCardsRatio) * 100).toFixed(2)}% (${totalReworkCards}/${reworkThroughput})Rework cards ratio`,
     );
   }
 
@@ -232,14 +232,14 @@ export class ReportStep {
     await expect(this.reworkRows.filter({ hasText: 'Total rework' }).getByRole('cell').nth(1)).toContainText(
       '11 (times)',
     );
-    await expect(this.reworkRows.filter({ hasText: 'From block to In Dev' }).getByRole('cell').nth(1)).toContainText(
-      '11 (times)',
-    );
+    await expect(
+      this.reworkRows.filter({ hasText: "From 'block' to 'in Dev'" }).getByRole('cell').nth(1),
+    ).toContainText('11 (times)');
     await expect(this.reworkRows.filter({ hasText: 'Total rework cards' }).getByRole('cell').nth(1)).toContainText(
       '6 (cards)',
     );
     await expect(this.reworkRows.filter({ hasText: 'Rework cards ratio' }).getByRole('cell').nth(1)).toContainText(
-      '0.67 (rework cards/throughput)',
+      '66.67% (rework cards/throughput)',
     );
   }
 

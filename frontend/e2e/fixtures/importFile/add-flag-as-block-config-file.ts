@@ -48,7 +48,7 @@ export const importFlagAsBlockFile = {
     'customfield_10030',
   ],
   reworkTimesSettings: {
-    rework2State: 'In Dev',
+    reworkState: 'In Dev',
     excludeStates: [],
   },
 };

@@ -12,7 +12,7 @@ describe('MultiAutoComplete', () => {
   const textFieldLabel = 'Select Options';
   const isError = false;
   const testId = 'multi-auto-complete';
-  const setup = () =>
+  const setup = (optionList: string[]) =>
     render(
       <MultiAutoComplete
         optionList={optionList}
@@ -26,19 +26,19 @@ describe('MultiAutoComplete', () => {
     );
 
   it('renders the component', () => {
-    setup();
+    setup(optionList);
 
     expect(screen.getByTestId(testId)).toBeInTheDocument();
   });
 
   it('When passed selected option changed, the correct option would be displayed', async () => {
-    setup();
+    setup(optionList);
 
     expect(screen.getByRole('button', { name: 'Option 1' })).toBeVisible();
   });
 
   it('When user select All option, all options in drop box would be selected', async () => {
-    setup();
+    setup(optionList);
 
     const inputField = screen.getByRole('combobox');
     await userEvent.click(inputField);
@@ -46,5 +46,14 @@ describe('MultiAutoComplete', () => {
     await userEvent.click(allOption);
 
     expect(onChangeHandler).toHaveBeenCalledWith(expect.anything(), [MOCK_AUTOCOMPLETE_LIST[0], ALL]);
+  });
+
+  it('When user select All option, all options in drop box would be selected', async () => {
+    setup([]);
+
+    const inputField = screen.getByRole('combobox');
+    await userEvent.click(inputField);
+
+    expect(screen.getByText('No options')).toBeInTheDocument();
   });
 });

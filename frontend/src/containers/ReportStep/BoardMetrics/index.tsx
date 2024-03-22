@@ -23,6 +23,7 @@ import {
   getRealDoneStatus,
 } from '@src/utils/util';
 import { IBasicReportRequestDTO, ReportRequestDTO } from '@src/clients/report/dto/request';
+import { GridContainer } from '@src/containers/ReportStep/BoardMetrics/style';
 import { ReportTitle } from '@src/components/Common/ReportGrid/ReportTitle';
 import { selectMetricsContent } from '@src/context/Metrics/metricsSlice';
 import { ReportResponseDTO } from '@src/clients/report/dto/response';
@@ -97,7 +98,7 @@ const BoardMetrics = ({
         doneColumn: getRealDoneStatus(cycleTimeSettings, cycleTimeSettingsType, doneColumn),
         reworkTimesSetting: includeRework
           ? {
-              reworkState: reworkTimesSettings.rework2State,
+              reworkState: reworkTimesSettings.reworkState,
               excludedStates: reworkTimesSettings.excludeStates,
             }
           : null,
@@ -121,7 +122,6 @@ const BoardMetrics = ({
   const getBoardItems = () => {
     const velocity = boardReport?.velocity;
     const cycleTime = boardReport?.cycleTime;
-    const rework = boardReport?.rework;
 
     const velocityItems = boardMetrics.includes(REQUIRED_DATA.VELOCITY)
       ? [
@@ -161,6 +161,12 @@ const BoardMetrics = ({
         ]
       : [];
 
+    return [...velocityItems, ...cycleTimeItems];
+  };
+
+  const getReworkBoardItem = () => {
+    const rework = boardReport?.rework;
+
     const reworkItems = boardMetrics.includes(REQUIRED_DATA.REWORK_TIMES)
       ? [
           {
@@ -177,7 +183,7 @@ const BoardMetrics = ({
                 isToFixed: false,
               },
               {
-                value: rework.reworkCardsRatio,
+                value: Number(rework.reworkCardsRatio) * 100,
                 extraValue: `% (${rework.totalReworkCards}/${rework.throughput})`,
                 subtitle: METRICS_SUBTITLE.REWORK_CARDS_RATIO,
               },
@@ -185,8 +191,7 @@ const BoardMetrics = ({
           },
         ]
       : [];
-
-    return [...velocityItems, ...cycleTimeItems, ...reworkItems];
+    return [...reworkItems];
   };
 
   const handleRetry = () => {
@@ -219,7 +224,10 @@ const BoardMetrics = ({
           )}
           {errorMessage && <StyledRetry onClick={handleRetry}>{RETRY}</StyledRetry>}
         </StyledTitleWrapper>
-        <ReportGrid reportDetails={getBoardItems()} errorMessage={errorMessage} lastGrid={true} />
+        <GridContainer>
+          <ReportGrid reportDetails={getBoardItems()} errorMessage={errorMessage} lastGrid={true} />
+          <ReportGrid reportDetails={getReworkBoardItem()} errorMessage={errorMessage} lastGrid={true} />
+        </GridContainer>
       </StyledMetricsSection>
     </>
   );

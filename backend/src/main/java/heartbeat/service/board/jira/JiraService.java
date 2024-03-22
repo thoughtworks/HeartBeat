@@ -273,7 +273,7 @@ public class JiraService {
 			.size();
 		double reworkRatio = realDoneCards.isEmpty() ? 0
 				: BigDecimal.valueOf(reworkCardNumber)
-					.divide(BigDecimal.valueOf(realDoneCards.size()), 2, RoundingMode.HALF_UP)
+					.divide(BigDecimal.valueOf(realDoneCards.size()), 4, RoundingMode.HALF_UP)
 					.doubleValue();
 
 		return CardCollection.builder()

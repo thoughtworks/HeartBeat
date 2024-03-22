@@ -455,7 +455,7 @@ export class MetricsStep {
     await this.boardReworkTimeSettingSingleInput.click();
     await this.page
       .getByRole('listbox')
-      .getByText(reworkSetting.rework2State as string)
+      .getByText(reworkSetting.reworkState as string)
       .click();
   }
 

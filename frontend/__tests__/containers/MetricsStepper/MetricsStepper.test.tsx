@@ -401,7 +401,7 @@ describe('MetricsStepper', () => {
       doneStatus: ['Done', 'Canceled'],
       leadTime: undefined,
       reworkTimesSettings: {
-        rework2State: null,
+        reworkState: null,
         excludeStates: [],
       },
     };

@@ -77,17 +77,17 @@ describe('#fileConfig', () => {
     ).toEqual(expected);
   });
 
-  it('should get default rework value when rework2State and excludeStates are all invalid', () => {
+  it('should get default rework value when reworkState and excludeStates are all invalid', () => {
     const expected = {
       ...BASIC_NEW_CONFIG,
       calendarType: CHINA_CALENDAR,
-      reworkTimesSettings: { rework2State: null, excludeStates: [] },
+      reworkTimesSettings: { reworkState: null, excludeStates: [] },
     };
     expect(
       convertToNewFileConfig({
         ...BASIC_IMPORTED_OLD_CONFIG_FIXTURE,
         considerHoliday: true,
-        reworkTimesSettings: { rework2State: 'test', excludeStates: ['In Dev'] },
+        reworkTimesSettings: { reworkState: 'test', excludeStates: ['In Dev'] },
       }),
     ).toEqual(expected);
   });
@@ -96,13 +96,13 @@ describe('#fileConfig', () => {
     const expected = {
       ...BASIC_NEW_CONFIG,
       calendarType: CHINA_CALENDAR,
-      reworkTimesSettings: { rework2State: 'In Dev', excludeStates: ['Review'] },
+      reworkTimesSettings: { reworkState: 'In Dev', excludeStates: ['Review'] },
     };
     expect(
       convertToNewFileConfig({
         ...BASIC_IMPORTED_OLD_CONFIG_FIXTURE,
         considerHoliday: true,
-        reworkTimesSettings: { rework2State: 'In Dev', excludeStates: ['Review', 'test'] },
+        reworkTimesSettings: { reworkState: 'In Dev', excludeStates: ['Review', 'test'] },
       }),
     ).toEqual(expected);
   });

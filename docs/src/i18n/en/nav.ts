@@ -171,6 +171,11 @@ export default [
 		slug: 'spikes/tech-spikes-export-all-metrics-button-polling-api-backend-change',
 		key: 'spikes/tech-spikes-export-all-metrics-button-polling-api-backend-change',
 	},
+	{
+		text: 'Integrate react hook form',
+		slug: 'spikes/tech-spikes-react-hook-form',
+		key: 'spikes/tech-spikes-react-hook-form',
+	},
 
 	{ text: 'Biz', header: true, type: 'biz', key: 'Biz' },
 	{ text: 'Biz context', slug: 'biz/business-context', key: 'biz/business-context' },

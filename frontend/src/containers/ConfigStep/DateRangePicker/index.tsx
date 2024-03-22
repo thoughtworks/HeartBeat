@@ -4,10 +4,10 @@ import {
   updateShouldGetBoardConfig,
   updateShouldGetPipelineConfig,
 } from '@src/context/Metrics/metricsSlice';
+import { DEFAULT_MONTH_INTERVAL_DAYS, DEFAULT_SPRINT_INTERVAL_OFFSET_DAYS } from '@src/constants/resources';
 import { selectDateRange, updateDateRange } from '@src/context/config/configSlice';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { StyledDateRangePicker, StyledDateRangePickerContainer } from './style';
-import { DEFAULT_SPRINT_INTERVAL_OFFSET_DAYS } from '@src/constants/resources';
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -87,7 +87,7 @@ export const DateRangePicker = () => {
           disableFuture
           label='To *'
           value={endDate ? dayjs(endDate) : null}
-          maxDate={dayjs(startDate).add(30, 'day')}
+          maxDate={dayjs(startDate).add(DEFAULT_MONTH_INTERVAL_DAYS, 'day')}
           minDate={dayjs(startDate)}
           onChange={(newValue) => changeEndDate(newValue as unknown as Dayjs)}
           slots={{

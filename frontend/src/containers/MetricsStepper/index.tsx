@@ -83,7 +83,7 @@ const MetricsStepper = () => {
   const isShowClassificationSetting = requiredData.includes(REQUIRED_DATA.CLASSIFICATION);
   const isShowReworkSettings = requiredData.includes(REQUIRED_DATA.REWORK_TIMES);
   const isClassificationSettingVerified = metricsConfig.targetFields.some((item) => item.flag);
-  const isRework2StateSelected = !!metricsConfig.importedData.reworkTimesSettings.rework2State;
+  const isreworkStateSelected = !!metricsConfig.importedData.reworkTimesSettings.reworkState;
   const { metrics, projectName, dateRange } = config.basic;
 
   const isShowRealDone =
@@ -137,7 +137,7 @@ const MetricsStepper = () => {
         { isShow: isShowDeploymentFrequency, isValid: isDeploymentFrequencyValid },
         { isShow: isShowCycleTimeSettings, isValid: isCycleTimeSettingsVerified },
         { isShow: isShowClassificationSetting, isValid: isClassificationSettingVerified },
-        { isShow: isShowReworkSettings, isValid: isRework2StateSelected || onlyDoneStateSelected },
+        { isShow: isShowReworkSettings, isValid: isreworkStateSelected || onlyDoneStateSelected },
       ];
       const activeNextButtonValidityOptions = nextButtonValidityOptions.filter(({ isShow }) => isShow);
       activeNextButtonValidityOptions.every(({ isValid }) => isValid)
@@ -165,7 +165,7 @@ const MetricsStepper = () => {
     isCycleTimeSettingsVerified,
     isShowClassificationSetting,
     isClassificationSettingVerified,
-    isRework2StateSelected,
+    isreworkStateSelected,
     isShowReworkSettings,
     onlyDoneStateSelected,
   ]);

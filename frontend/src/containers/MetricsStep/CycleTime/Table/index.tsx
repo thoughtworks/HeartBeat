@@ -57,7 +57,7 @@ const CycleTimeTable = () => {
       );
       isColumnAsKey && resetRealDoneColumn(name, value);
       dispatch(updateCycleTimeSettings(newCycleTimeSettings));
-      dispatch(updateReworkTimesSettings({ excludeStates: [], rework2State: null }));
+      dispatch(updateReworkTimesSettings({ excludeStates: [], reworkState: null }));
     },
     [cycleTimeSettings, dispatch, isColumnAsKey, resetRealDoneColumn],
   );

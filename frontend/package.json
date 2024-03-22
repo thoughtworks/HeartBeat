@@ -47,7 +47,7 @@
     "@fontsource/roboto": "^5.0.12",
     "@mui/icons-material": "^5.15.14",
     "@mui/material": "^5.15.14",
-    "@mui/x-date-pickers": "^6.19.8",
+    "@mui/x-date-pickers": "^7.0.0",
     "@reduxjs/toolkit": "^1.9.7",
     "axios": "^1.6.8",
     "dayjs": "^1.11.10",

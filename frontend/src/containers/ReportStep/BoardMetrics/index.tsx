@@ -177,7 +177,7 @@ const BoardMetrics = ({
                 isToFixed: false,
               },
               {
-                value: rework.reworkCardsRatio,
+                value: Number(rework.reworkCardsRatio) * 100,
                 extraValue: `% (${rework.totalReworkCards}/${rework.throughput})`,
                 subtitle: METRICS_SUBTITLE.REWORK_CARDS_RATIO,
               },

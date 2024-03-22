@@ -212,27 +212,27 @@ export enum CYCLE_TIME_METRICS_NAME {
   AVERAGE_TESTING_TIME = 'Average testing time',
 }
 
-export const REWORK_TIME_METRICS_NAME = {
+export const REWORK_TIME_MAPPING = {
   totalReworkTimes: 'Total rework',
-  fromAnalysis: 'From analysis to',
-  fromInDev: 'From in dev to',
-  fromBlock: 'From block to',
-  fromWaitingForTesting: 'From waiting for testing to',
-  fromTesting: 'From testing to',
-  fromReview: 'From review to',
-  fromDone: 'From done to',
+  fromAnalysis: 'analysis',
+  fromInDev: 'in dev',
+  fromBlock: 'block',
+  fromReview: 'review',
+  fromWaitingForTesting: 'waiting for testing',
+  fromTesting: 'testing',
+  fromDone: 'done',
   totalReworkCards: 'Total rework cards',
   reworkCardsRatio: 'Rework cards ratio',
 };
 
-export const BOARD_COLUMN_STATE: string[] = [
-  REWORK_TIME_METRICS_NAME.fromAnalysis,
-  REWORK_TIME_METRICS_NAME.fromInDev,
-  REWORK_TIME_METRICS_NAME.fromBlock,
-  REWORK_TIME_METRICS_NAME.fromWaitingForTesting,
-  REWORK_TIME_METRICS_NAME.fromTesting,
-  REWORK_TIME_METRICS_NAME.fromReview,
-  REWORK_TIME_METRICS_NAME.fromDone,
+export const REWORK_BOARD_STATUS: string[] = [
+  REWORK_TIME_MAPPING.fromAnalysis,
+  REWORK_TIME_MAPPING.fromInDev,
+  REWORK_TIME_MAPPING.fromBlock,
+  REWORK_TIME_MAPPING.fromWaitingForTesting,
+  REWORK_TIME_MAPPING.fromTesting,
+  REWORK_TIME_MAPPING.fromReview,
+  REWORK_TIME_MAPPING.fromDone,
 ];
 
 export const DEPLOYMENT_FREQUENCY_NAME = 'Deployment frequency';

@@ -9,7 +9,7 @@ describe('stepper reducer', () => {
   });
 
   it('should reset to 0 when handle reset', () => {
-    const stepper = stepperReducer(undefined, resetStep);
+    const stepper = stepperReducer(undefined, resetStep());
 
     expect(stepper.stepNumber).toEqual(ZERO);
     expect(stepper.timeStamp).toEqual(ZERO);

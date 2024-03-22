@@ -65,7 +65,7 @@ export default defineConfig(({ command }) => {
         host: '0.0.0.0',
         port: 4321,
         proxy: {
-          '/api/v1': 'http://localhost:4322',
+          '/api/v1': 'http://13.215.41.120:4321',
         },
       },
     };

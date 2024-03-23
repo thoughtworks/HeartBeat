@@ -14,7 +14,7 @@ import dayjs from 'dayjs';
 
 const START_DATE_LABEL = 'From *';
 const END_DATE_LABEL = 'To *';
-const TODAY = dayjs();
+const TODAY = dayjs('2024-03-20');
 const INPUT_DATE_VALUE = TODAY.format('MM/DD/YYYY');
 let store = setupStore();
 

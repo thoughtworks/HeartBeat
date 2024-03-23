@@ -16,6 +16,8 @@ import { Nullable } from '@src/utils/types';
 import dayjs, { Dayjs } from 'dayjs';
 import isNull from 'lodash/isNull';
 
+const DATE_TIME_FORMAT = 'YYYY-MM-DDTHH:mm:ss.SSSZ';
+
 export const DateRangePicker = () => {
   const dispatch = useAppDispatch();
   const { startDate, endDate } = useAppSelector(selectDateRange);
@@ -30,7 +32,7 @@ export const DateRangePicker = () => {
     let daysAddToEndDate = DEFAULT_SPRINT_INTERVAL_OFFSET_DAYS;
     if (value) {
       const currentDate = dayjs(new Date());
-      const valueToStartDate = value.startOf('date').format('YYYY-MM-DDTHH:mm:ss.SSSZ');
+      const valueToStartDate = value.startOf('date').format(DATE_TIME_FORMAT);
       const daysBetweenCurrentAndStartDate = currentDate.diff(valueToStartDate, 'days');
       daysAddToEndDate =
         daysBetweenCurrentAndStartDate >= DEFAULT_SPRINT_INTERVAL_OFFSET_DAYS
@@ -45,8 +47,8 @@ export const DateRangePicker = () => {
               endDate: null,
             }
           : {
-              startDate: value.startOf('date').format('YYYY-MM-DDTHH:mm:ss.SSSZ'),
-              endDate: value.endOf('date').add(daysAddToEndDate, 'day').format('YYYY-MM-DDTHH:mm:ss.SSSZ'),
+              startDate: value.startOf('date').format(DATE_TIME_FORMAT),
+              endDate: value.endOf('date').add(daysAddToEndDate, 'day').format(DATE_TIME_FORMAT),
             },
       ),
     );
@@ -57,7 +59,7 @@ export const DateRangePicker = () => {
     dispatch(
       updateDateRange({
         startDate: startDate,
-        endDate: !isNull(value) ? value.endOf('date').format('YYYY-MM-DDTHH:mm:ss.SSSZ') : null,
+        endDate: !isNull(value) ? value.endOf('date').format(DATE_TIME_FORMAT) : null,
       }),
     );
     dispatchUpdateConfig();

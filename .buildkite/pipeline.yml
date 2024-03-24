@@ -2,83 +2,38 @@ env:
   RETENTION_DAYS: "10"
 
 steps:
-  - label: ":white_check_mark: Check Shell"
-    key: "check-shell"
-    command: ./ops/check.sh shell
-
-  - label: ":lock: Check Security"
-    key: "check-security"
-    command: ./ops/check.sh security
-
-  - label: ":lock: Check CSS px"
-    key: "check-px"
-    command: ./ops/check.sh px
-
-  - label: ":lock: Deny CSS hex"
-    key: "deny-css-hex-check"
-    command: ./ops/check.sh hex
-
-  - label: ":lock: Deny CSS rgba"
-    key: "deny-css-rgba-check"
-    command: ./ops/check.sh rgba
-
-  - label: ":lock: Check .* in backend"
-    key: "check-dot-star"
-    command: ./ops/check.sh dot-star
-
-  - label: ":white_check_mark: Check Backend"
-    if: build.branch == "main" && build.message =~ /(?i)\[backend\]/
-    key: "check-backend"
-    command: ./ops/check.sh backend
-
-  - label: ":white_check_mark: Check Frontend"
-    if: build.branch == "main" && build.message =~ /(?i)\[frontend\]/
-    key: "check-frontend"
-    command: ./ops/check.sh frontend
-
-  - label: ":mag: Check Frontend License"
-    key: "check-frontend-license"
-    commands: ./ops/check.sh frontend-license
-
-  - label: ":mag: Check Backend License"
-    key: "check-backend-license"
-    commands: ./ops/check.sh backend-license
-    plugins:
-      - artifacts#v1.9.3:
-          upload:
-            - "backend/build/reports/dependency-license/**/*"
-          name: "backend-license-report"
-          expire_in: "${RETENTION_DAYS} days"
-
   - label: ":cloudformation: Deploy infra"
     if: build.branch == "main" && build.message =~ /(?i)\[infra\]/
     key: "deploy-infra"
-    depends_on:
-      - "check-shell"
-      - "check-security"
-      - "check-frontend"
-      - "check-px"
-      - deny-css-rgba-check
-      - deny-css-hex-check
-      - "check-backend"
-      - "check-frontend-license"
-      - "check-backend-license"
     env:
       AWSHost: "$AWS_HOST"
       AWSAccountId: "$AWS_ACCOUNT_ID"
       AWSRegion: "$AWS_REGION"
     command: ./ops/deploy.sh infra
 
+  - label: ":white_check_mark: GitHub Basic Check"
+    if: build.branch == "main"
+    key: "check-github-basic"
+    command: ./ops/check.sh github-basic-passed
+    env:
+      COMMIT_SHA: "$BUILDKITE_COMMIT"
+      GITHUB_TOKEN: "$E2E_TOKEN_GITHUB"
+      BRANCH: "$BUILDKITE_BRANCH"
+    depends_on:
+      - "deploy-infra"
+
   - label: ":react: Build Frontend"
     if: build.branch == "main" && build.message =~ /(?i)\[frontend\]/
     key: "build-frontend"
-    depends_on: "deploy-infra"
+    depends_on:
+      - "check-github-basic"
     command: ./ops/build.sh frontend
 
   - label: ":java: Build Backend"
     if: build.branch == "main" && build.message =~ /(?i)\[backend\]/
     key: "build-backend"
-    depends_on: "deploy-infra"
+    depends_on:
+      - "check-github-basic"
     command: ./ops/build.sh backend
 
   - label: ":rocket: Deploy e2e"
@@ -87,22 +42,14 @@ steps:
     depends_on:
       - "build-frontend"
       - "build-backend"
+      - "check-github-basic"
     command: ./ops/deploy.sh e2e
 
   - label: ":rocket: Run e2e"
-    branches: main
+    if: build.branch == "main"
     key: "check-e2e"
     depends_on:
       - "deploy-e2e"
-      - "check-shell"
-      - "check-security"
-      - "check-frontend"
-      - "check-px"
-      - deny-css-rgba-check
-      - deny-css-hex-check
-      - "check-backend"
-      - "check-frontend-license"
-      - "check-backend-license"
     command: ./ops/check.sh e2e-container
     plugins:
       - artifacts#v1.9.3:

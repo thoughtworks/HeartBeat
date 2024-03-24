@@ -65,7 +65,8 @@
     - [8.1.2 Multiple instance deployment](#812-multiple-instance-deployment)
   - [8.2 K8S](#82-k8s)
     - [8.2.1 Multiple instance deployment](#821-multiple-instance-deployment)
-- [9. Contribution](#9-contribution)
+- [9 Contribution](#9-contribution)
+- [10 Pipeline Strategy](#10-pipeline-strategy)
 
 # News
 
@@ -674,7 +675,46 @@ kubectl apply -f k8s-heartbeat.yml
 
 You also can deploy Heartbeats in multiple instances using K8S through the following [documentation](https://au-heartbeat.github.io/Heartbeat/en/devops/how-to-deploy-heartbeat-in-multiple-instances-by-k8s/).
 
-# 9. Contribution
+# 9 Contribution
 
 We love your input! Please see our [contributing guide](contribution.md) to get started. Thank you 🙏 to all our contributors!
 
+# 10 Pipeline Strategy
+
+Now, Heartbeat uses `GitHub Actions` and `BuildKite` to build and deploy Heartbeat application. 
+
+But there is some constrains, like some pipeline dependency. 
+
+So, committer should pay attention to this flow when there is some pipeline issues. 
+
+```mermaid
+	sequenceDiagram
+  actor Committer
+  participant GitHub_Actions as GitHub Actions
+  participant BuildKite
+
+	Committer ->> GitHub_Actions : Push code
+	Committer ->> BuildKite : Push code
+  loop 30s/40 times
+    BuildKite->> GitHub_Actions: Check the basic check(all check before 'deploy-infra' job) has been passed
+    GitHub_Actions -->> BuildKite: Basic check has passed?
+    alt Yes
+      BuildKite ->> BuildKite: Build and deploy e2e env
+      Note over BuildKite, GitHub_Actions: Some times passed
+      loop 30s/60 times
+        GitHub_Actions ->> BuildKite: Request to check if the e2e has been deployed
+        BuildKite -->> GitHub_Actions: e2e deployment status, if the e2e has been deployed?
+        alt Yes
+          GitHub_Actions ->> GitHub_Actions: Run e2e check on GitHub actions
+          Note over BuildKite, GitHub_Actions: Some times passed
+          GitHub_Actions -->> Committer: Response the pipeline result to committer
+          BuildKite -->> Committer: Response the pipeline result to committer
+        else No
+          GitHub_Actions -->> Committer: Break the pipeline 
+        end
+      end
+    else No
+      BuildKite -->> Committer: Break the pipeline
+    end
+  end
+```

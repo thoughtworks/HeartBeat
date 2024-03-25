@@ -11,11 +11,12 @@ import heartbeat.client.dto.board.jira.JiraCardField;
 import heartbeat.client.dto.board.jira.Status;
 import heartbeat.controller.board.dto.request.BoardRequestParam;
 import heartbeat.controller.board.dto.request.CardStepsEnum;
+import heartbeat.controller.board.dto.request.RequestJiraBoardColumnSetting;
 import heartbeat.controller.board.dto.response.CardCollection;
+import heartbeat.controller.board.dto.response.CycleTimeInfo;
 import heartbeat.controller.board.dto.response.JiraCardDTO;
 import heartbeat.controller.board.dto.response.JiraColumnDTO;
 import heartbeat.controller.board.dto.response.TargetField;
-import heartbeat.controller.board.dto.response.CycleTimeInfo;
 import heartbeat.controller.report.dto.request.GenerateReportRequest;
 import heartbeat.controller.report.dto.request.JiraBoardSetting;
 import heartbeat.controller.report.dto.response.BoardCSVConfig;
@@ -31,11 +32,16 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static heartbeat.controller.board.dto.request.CardStepsEnum.BLOCK;
+import static heartbeat.controller.board.dto.request.CardStepsEnum.FLAG;
 import static heartbeat.controller.board.dto.request.CardStepsEnum.reworkJudgmentMap;
 
 @Service
@@ -78,12 +84,23 @@ public class KanbanCsvService {
 			List<CardStepsEnum> reworkExcludeStates = request.getJiraBoardSetting()
 				.getReworkTimesSetting()
 				.getEnumExcludeStates();
+			Set<CardStepsEnum> mappedColumns = request.getJiraBoardSetting()
+				.getBoardColumns()
+				.stream()
+				.map(RequestJiraBoardColumnSetting::getValue)
+				.map(CardStepsEnum::fromValue)
+				.collect(Collectors.toSet());
+			if (Boolean.TRUE.equals(request.getJiraBoardSetting().getTreatFlagCardAsBlock())) {
+				mappedColumns.add(BLOCK);
+			}
 			reworkFromStates = reworkJudgmentMap.get(reworkState)
 				.stream()
 				.sorted()
 				.filter(state -> !reworkExcludeStates.contains(state))
-				.map(CardStepsEnum::getValue)
+				.filter(mappedColumns::contains)
+				.map(CardStepsEnum::getAlias)
 				.toList();
+
 		}
 		this.generateCSVForBoard(realDoneCardCollection.getJiraCardDTOList(),
 				nonDoneCardCollection.getJiraCardDTOList(), jiraColumns.getJiraColumnResponse(),
@@ -138,12 +155,12 @@ public class KanbanCsvService {
 		List<BoardCSVConfig> reworkFields = new ArrayList<>();
 		if (reworkState != null) {
 			reworkFields.add(BoardCSVConfig.builder()
-				.label(reworkState.getAlias() + " total rework times")
+				.label("Rework: total - " + reworkState.getAlias())
 				.value("totalReworkTimes")
 				.build());
 			reworkFields.addAll(reworkFromStates.stream()
 				.map(state -> BoardCSVConfig.builder()
-					.label("from " + state + " to " + reworkState.getAlias())
+					.label("Rework: from " + state)
 					.value("reworkTimesFlat." + state)
 					.build())
 				.toList());

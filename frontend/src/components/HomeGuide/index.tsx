@@ -5,7 +5,7 @@ import {
 } from '@src/context/Metrics/metricsSlice';
 import { resetImportedData, updateBasicConfigState, updateProjectCreatedState } from '@src/context/config/configSlice';
 import { convertToNewFileConfig, NewFileConfig, OldFileConfig } from '@src/constants/fileConfig';
-import { GuideButton, HomeGuideContainer, StyledStack } from '@src/components/HomeGuide/style';
+import { GuideButton, HomeGuideContainer, ImportFileWrapper, StyledStack } from '@src/components/HomeGuide/style';
 import { WarningNotification } from '@src/components/Common/WarningNotification';
 import { CYCLE_TIME_SETTINGS_TYPES, MESSAGE } from '@src/constants/resources';
 import { resetStep } from '@src/context/stepper/StepperSlice';
@@ -13,14 +13,14 @@ import { resetFormMeta } from '@src/context/meta/metaSlice';
 import { useAppDispatch } from '@src/hooks/useAppDispatch';
 import { useNavigate } from 'react-router-dom';
 import { ROUTE } from '@src/constants/router';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 export const HomeGuide = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const [validConfig, setValidConfig] = useState(true);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const getImportFileElement = () => document.getElementById('importJson') as HTMLInputElement;
   const isValidImportedConfig = (config: NewFileConfig) => {
     try {
       const {
@@ -57,8 +57,10 @@ export const HomeGuide = () => {
             setValidConfig(false);
           }
         }
-        const fileInput = getImportFileElement();
-        fileInput.value = '';
+        const fileInput = fileInputRef.current;
+        if(fileInput) {
+          fileInput.value = '';
+        }
       };
       reader.readAsText(input, 'utf-8');
     }
@@ -74,8 +76,10 @@ export const HomeGuide = () => {
   const openFileImportBox = () => {
     setValidConfig(true);
     resetState();
-    const fileInput = getImportFileElement();
-    fileInput.click();
+    const fileInput = fileInputRef.current;
+    if(fileInput) {
+      fileInput.click();
+    }
   };
 
   const createNewProject = () => {
@@ -88,7 +92,7 @@ export const HomeGuide = () => {
       {!validConfig && <WarningNotification message={MESSAGE.HOME_VERIFY_IMPORT_WARNING} />}
       <StyledStack direction='column' justifyContent='center' alignItems='center' flex={'auto'}>
         <GuideButton onClick={openFileImportBox}>Import project from file</GuideButton>
-        <input hidden type='file' data-testid='testInput' id='importJson' accept='.json' onChange={handleChange} />
+        <ImportFileWrapper ref={fileInputRef} type='file' data-testid='testInput' id='importJson' accept='.json' onChange={handleChange}/>
         <GuideButton onClick={createNewProject}>Create a new project</GuideButton>
       </StyledStack>
     </HomeGuideContainer>

@@ -87,6 +87,7 @@ import java.util.stream.Stream;
 
 import static heartbeat.controller.board.dto.request.CardStepsEnum.BLOCK;
 import static heartbeat.controller.board.dto.request.CardStepsEnum.FLAG;
+import static heartbeat.controller.board.dto.request.CardStepsEnum.fromValue;
 import static heartbeat.controller.board.dto.request.CardStepsEnum.reworkJudgmentMap;
 import static java.lang.Long.parseLong;
 import static java.util.Objects.isNull;
@@ -672,7 +673,9 @@ public class JiraService {
 					}
 				}
 			});
-		reworkTimesMap.put(BLOCK, reworkTimesMap.getOrDefault(BLOCK, 0) + reworkTimesMap.get(FLAG));
+		if (reworkJudgmentMap.get(fromValue(reworkState.getValue())).contains(BLOCK)) {
+			reworkTimesMap.put(BLOCK, reworkTimesMap.getOrDefault(BLOCK, 0) + reworkTimesMap.get(FLAG));
+		}
 		reworkTimesMap.remove(FLAG);
 		return reworkTimesMap.entrySet()
 			.stream()

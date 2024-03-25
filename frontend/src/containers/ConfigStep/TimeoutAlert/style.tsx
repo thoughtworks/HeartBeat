@@ -17,7 +17,3 @@ export const StyledAlert = styled(Alert)({
     },
   },
 });
-export const StyledModuleType = styled('span')({
-  color: theme.main.secondColor,
-  fontWeight: 600,
-});

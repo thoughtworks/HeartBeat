@@ -232,9 +232,9 @@ export class ReportStep {
     await expect(this.reworkRows.filter({ hasText: 'Total rework' }).getByRole('cell').nth(1)).toContainText(
       '11 (times)',
     );
-    await expect(
-      this.reworkRows.filter({ hasText: "From 'block' to 'in Dev'" }).getByRole('cell').nth(1),
-    ).toContainText('11 (times)');
+    await expect(this.reworkRows.filter({ hasText: 'From block to in Dev' }).getByRole('cell').nth(1)).toContainText(
+      '11 (times)',
+    );
     await expect(this.reworkRows.filter({ hasText: 'Total rework cards' }).getByRole('cell').nth(1)).toContainText(
       '6 (cards)',
     );

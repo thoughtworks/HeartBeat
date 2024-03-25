@@ -4,8 +4,8 @@ import {
   updateMetricsImportedData,
 } from '@src/context/Metrics/metricsSlice';
 import { resetImportedData, updateBasicConfigState, updateProjectCreatedState } from '@src/context/config/configSlice';
-import { convertToNewFileConfig, NewFileConfig, OldFileConfig } from '@src/constants/fileConfig';
 import { GuideButton, HomeGuideContainer, ImportFileWrapper, StyledStack } from '@src/components/HomeGuide/style';
+import { convertToNewFileConfig, NewFileConfig, OldFileConfig } from '@src/constants/fileConfig';
 import { WarningNotification } from '@src/components/Common/WarningNotification';
 import { CYCLE_TIME_SETTINGS_TYPES, MESSAGE } from '@src/constants/resources';
 import { resetStep } from '@src/context/stepper/StepperSlice';
@@ -58,7 +58,7 @@ export const HomeGuide = () => {
           }
         }
         const fileInput = fileInputRef.current;
-        if(fileInput) {
+        if (fileInput) {
           fileInput.value = '';
         }
       };
@@ -77,7 +77,7 @@ export const HomeGuide = () => {
     setValidConfig(true);
     resetState();
     const fileInput = fileInputRef.current;
-    if(fileInput) {
+    if (fileInput) {
       fileInput.click();
     }
   };
@@ -92,7 +92,14 @@ export const HomeGuide = () => {
       {!validConfig && <WarningNotification message={MESSAGE.HOME_VERIFY_IMPORT_WARNING} />}
       <StyledStack direction='column' justifyContent='center' alignItems='center' flex={'auto'}>
         <GuideButton onClick={openFileImportBox}>Import project from file</GuideButton>
-        <ImportFileWrapper ref={fileInputRef} type='file' data-testid='testInput' id='importJson' accept='.json' onChange={handleChange}/>
+        <ImportFileWrapper
+          ref={fileInputRef}
+          type='file'
+          data-testid='testInput'
+          id='importJson'
+          accept='.json'
+          onChange={handleChange}
+        />
         <GuideButton onClick={createNewProject}>Create a new project</GuideButton>
       </StyledStack>
     </HomeGuideContainer>

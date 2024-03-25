@@ -1,8 +1,8 @@
 import Button, { ButtonProps } from '@mui/material/Button';
+import { InputProps } from '@mui/material';
 import Stack from '@mui/material/Stack';
 import styled from '@emotion/styled';
 import { theme } from '@src/theme';
-import { InputProps } from '@mui/material';
 
 export const basicStyle = {
   backgroundColor: theme.main.backgroundColor,
@@ -43,4 +43,4 @@ export const HomeGuideContainer = styled.div({
 
 export const ImportFileWrapper = styled.input<InputProps>({
   display: 'none',
-})
+});

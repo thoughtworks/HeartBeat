@@ -3,8 +3,8 @@ import { CYCLE_TIME_SETTINGS_TYPES, METRICS_CONSTANTS } from '@src/constants/res
 import { ICycleTimeSetting, IPipelineConfig } from '@src/context/Metrics/metricsSlice';
 import { ITargetFieldType } from '@src/components/Common/MultiAutoComplete/styles';
 import { DATE_FORMAT_TEMPLATE } from '@src/constants/template';
+import { includes, isEqual, sortBy } from 'lodash';
 import duration from 'dayjs/plugin/duration';
-import { includes, sortBy } from 'lodash';
 import dayjs from 'dayjs';
 
 dayjs.extend(duration);
@@ -117,3 +117,8 @@ export const formatDuplicatedNameWithSuffix = (data: ITargetFieldType[]) => {
     return newItem;
   });
 };
+
+export const onlyEmptyAndDoneState = (boardingMappingStates: string[]) =>
+  isEqual(boardingMappingStates, [METRICS_CONSTANTS.doneValue]) ||
+  isEqual(boardingMappingStates, [METRICS_CONSTANTS.cycleTimeEmptyStr, METRICS_CONSTANTS.doneValue]) ||
+  isEqual(boardingMappingStates, [METRICS_CONSTANTS.doneValue, METRICS_CONSTANTS.cycleTimeEmptyStr]);

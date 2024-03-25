@@ -11,6 +11,7 @@ import MultiAutoComplete from '@src/components/Common/MultiAutoComplete';
 import { ReworkHeaderWrapper, ReworkSettingsWrapper } from './style';
 import { StyledLink } from '@src/containers/MetricsStep/style';
 import { useAppDispatch, useAppSelector } from '@src/hooks';
+import { onlyEmptyAndDoneState } from '@src/utils/util';
 import { SingleSelection } from './SingleSelection';
 import React, { useState, useMemo } from 'react';
 
@@ -25,7 +26,7 @@ function ReworkSettings() {
 
   const boardingMappingHasDoneStatus = boardingMappingStatus.includes(METRICS_CONSTANTS.doneValue);
   const allStateIsEmpty = boardingMappingStatus.every((value) => value === METRICS_CONSTANTS.cycleTimeEmptyStr);
-  const onlyDoneStateSelected = boardingMappingHasDoneStatus && boardingMappingStatus.length === 2;
+  const isOnlyEmptyAndDoneState = onlyEmptyAndDoneState(boardingMappingStatus);
   const singleOptions = boardingMappingStatus
     .filter((item) => item !== METRICS_CONSTANTS.doneValue && item !== METRICS_CONSTANTS.cycleTimeEmptyStr)
     .sort((a, b) => {
@@ -67,7 +68,7 @@ function ReworkSettings() {
           How to setup
         </StyledLink>
       </ReworkHeaderWrapper>
-      {allStateIsEmpty || onlyDoneStateSelected ? (
+      {allStateIsEmpty || isOnlyEmptyAndDoneState ? (
         <></>
       ) : (
         <ReworkSettingsWrapper>

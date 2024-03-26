@@ -59,7 +59,7 @@
     "dedent-js": "^1.0.1",
     "domhandler": "^5.0.3",
     "eslint": "^8.57.0",
-    "eslint-plugin-astro": "^0.32.0",
+    "eslint-plugin-astro": "^0.33.0",
     "eslint-plugin-react": "^7.34.1",
     "fast-glob": "^3.3.2",
     "gray-matter": "^4.0.3",

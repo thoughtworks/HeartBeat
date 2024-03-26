@@ -65,7 +65,7 @@
     "vite-plugin-pwa": "^0.19.5"
   },
   "devDependencies": {
-    "@dotenvx/dotenvx": "^0.26.0",
+    "@dotenvx/dotenvx": "^0.27.0",
     "@playwright/test": "^1.42.1",
     "@testing-library/jest-dom": "^6.4.2",
     "@testing-library/react": "^14.2.2",
@@ -114,10 +114,5 @@
   "bugs": {
     "url": "https://github.com/thoughtworks/HeartBeat/issues",
     "email": "heartbeat@thoughtworks.com"
-  },
-  "pnpm": {
-    "overrides": {
-      "got@<11.8.5": ">=11.8.5"
-    }
   }
 }

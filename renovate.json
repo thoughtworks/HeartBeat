@@ -1,6 +1,7 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "semanticCommits": true,
+  "schedule": "0 12 * * 5",
   "packageRules": [
     {
       "updateTypes": ["minor", "patch", "pin", "digest"],

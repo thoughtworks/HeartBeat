@@ -6,7 +6,7 @@ import { NotFoundError } from '@src/errors/NotFoundError';
 import { TimeoutError } from '@src/errors/TimeoutError';
 import { UnknownError } from '@src/errors/UnknownError';
 
-export const isHeartBeatException = (o: unknown) =>
+export const isAppError = (o: unknown) =>
   [
     BadRequestError,
     UnauthorizedError,
@@ -15,4 +15,4 @@ export const isHeartBeatException = (o: unknown) =>
     InternalServerError,
     TimeoutError,
     UnknownError,
-  ].some((excptionClass) => o instanceof excptionClass);
+  ].some((exceptionClass) => o instanceof exceptionClass);

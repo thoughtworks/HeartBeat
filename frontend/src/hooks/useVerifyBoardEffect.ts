@@ -6,9 +6,9 @@ import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch';
 import { DEFAULT_HELPER_TEXT, EMPTY_STRING } from '@src/constants/commons';
 import { BoardRequestDTO } from '@src/clients/board/dto/request';
 import { boardClient } from '@src/clients/board/BoardClient';
-import { IHeartBeatError } from '@src/errors/ErrorType';
-import { isHeartBeatException } from '@src/errors';
+import { IAppError } from '@src/errors/ErrorType';
 import { REGEX } from '@src/constants/regex';
+import { isAppError } from '@src/errors';
 import { HttpStatusCode } from 'axios';
 import { useState } from 'react';
 
@@ -197,8 +197,8 @@ export const useVerifyBoardEffect = (): useVerifyBoardStateInterface => {
         dispatch(updateBoard({ ...boardInfo, projectKey: res.response.projectKey }));
       }
     } catch (e) {
-      if (isHeartBeatException(e)) {
-        const { description, code } = e as IHeartBeatError;
+      if (isAppError(e)) {
+        const { description, code } = e as IAppError;
         setIsVerifyTimeOut(false);
         setIsShowAlert(false);
         if (code === HttpStatusCode.Unauthorized) {

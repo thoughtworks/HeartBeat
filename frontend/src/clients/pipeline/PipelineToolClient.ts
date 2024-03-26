@@ -6,9 +6,9 @@ import {
 } from '@src/constants/resources';
 import { IPipelineVerifyRequestDTO, PipelineInfoRequestDTO } from '@src/clients/pipeline/dto/request';
 import { IPipelineInfoResponseDTO } from '@src/clients/pipeline/dto/response';
-import { IHeartBeatError } from '@src/errors/ErrorType';
 import { HttpClient } from '@src/clients/HttpClient';
-import { isHeartBeatException } from '@src/errors';
+import { IAppError } from '@src/errors/ErrorType';
+import { isAppError } from '@src/errors';
 import { HttpStatusCode } from 'axios';
 
 export interface IVerifyPipelineToolResult {
@@ -33,8 +33,8 @@ export class PipelineToolClient extends HttpClient {
       const response = await this.axiosInstance.post(`/pipelines/${params.type.toLowerCase()}/verify`, params);
       result.code = response.status;
     } catch (e) {
-      if (isHeartBeatException(e)) {
-        const exception = e as IHeartBeatError;
+      if (isAppError(e)) {
+        const exception = e as IAppError;
         result.code = exception.code;
         result.errorTitle = PIPELINE_TOOL_VERIFY_ERROR_CASE_TEXT_MAPPING[`${exception.code}`] || UNKNOWN_ERROR_TITLE;
       }
@@ -61,8 +61,8 @@ export class PipelineToolClient extends HttpClient {
       }
       result.code = response.status;
     } catch (e) {
-      if (isHeartBeatException(e)) {
-        const exception = e as IHeartBeatError;
+      if (isAppError(e)) {
+        const exception = e as IAppError;
         result.code = exception.code;
         result.errorTitle = PIPELINE_TOOL_GET_INFO_ERROR_CASE_TEXT_MAPPING[`${exception.code}`] || UNKNOWN_ERROR_TITLE;
       }

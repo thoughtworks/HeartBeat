@@ -1,6 +1,6 @@
-import { IHeartBeatError } from '@src/errors/ErrorType';
+import { IAppError } from '@src/errors/ErrorType';
 
-export class BadRequestError extends Error implements IHeartBeatError {
+export class BadRequestError extends Error implements IAppError {
   code: number;
   description?: string;
   constructor(message: string, status: number, description: string) {

@@ -1,7 +1,7 @@
 import { ReportDataWithTwoColumns } from '@src/hooks/reportMapper/reportUIDataStructure';
 import { REWORK_BOARD_STATUS, REWORK_TIME_MAPPING } from '@src/constants/resources';
 import { ReworkTimeResponse } from '@src/clients/report/dto/response';
-import { StyledBoldText } from '@src/containers/style';
+import BoldText from '@src/components/Common/BoldText';
 import { ReactNode } from 'react';
 
 const getUnit = (value: string) => {
@@ -14,8 +14,8 @@ const getRowName = (value: string, reworkState: string): ReactNode => {
   if (REWORK_BOARD_STATUS.includes(value)) {
     return (
       <>
-        From <StyledBoldText>{`${value}`}</StyledBoldText> to
-        <StyledBoldText>{` ${reworkState.toLowerCase()}`}</StyledBoldText>
+        From <BoldText>{`${value}`}</BoldText> to
+        <BoldText>{` ${reworkState.toLowerCase()}`}</BoldText>
       </>
     );
   } else {

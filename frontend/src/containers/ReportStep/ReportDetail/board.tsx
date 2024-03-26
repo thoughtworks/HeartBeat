@@ -42,7 +42,6 @@ export const BoardDetail = withGoBack(({ data, errorMessage }: Property) => {
     <>
       {showSectionWith2Columns(METRICS_TITLE.VELOCITY, mappedData?.velocityList)}
       {showSectionWith2Columns(METRICS_TITLE.CYCLE_TIME, mappedData?.cycleTimeList)}
-      {showSectionWith2Columns(METRICS_TITLE.REWORK, mappedData?.reworkList)}
       {metrics.includes(REQUIRED_DATA.CLASSIFICATION) && (
         <ReportForThreeColumns
           title={METRICS_TITLE.CLASSIFICATION}
@@ -52,6 +51,7 @@ export const BoardDetail = withGoBack(({ data, errorMessage }: Property) => {
           errorMessage={errorMessage}
         />
       )}
+      {showSectionWith2Columns(METRICS_TITLE.REWORK, mappedData?.reworkList)}
     </>
   );
 });

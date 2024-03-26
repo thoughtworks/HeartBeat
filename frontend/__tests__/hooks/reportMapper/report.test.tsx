@@ -1,6 +1,6 @@
 import { MOCK_REPORT_RESPONSE, PIPELINE_LEAD_TIME, PR_LEAD_TIME, TOTAL_DELAY_TIME } from '../../fixtures';
 import { reportMapper } from '@src/hooks/reportMapper/report';
-import { StyledBoldText } from '@src/containers/style';
+import BoldText from '@src/components/Common/BoldText';
 import React from 'react';
 
 export const EXPECTED_REPORT_VALUES = {
@@ -160,7 +160,7 @@ export const EXPECTED_REPORT_VALUES = {
       id: 3,
       name: (
         <React.Fragment>
-          From <StyledBoldText>block</StyledBoldText> to<StyledBoldText> in dev</StyledBoldText>
+          From <BoldText>block</BoldText> to<BoldText> in dev</BoldText>
         </React.Fragment>
       ),
       valueList: [
@@ -174,7 +174,7 @@ export const EXPECTED_REPORT_VALUES = {
       id: 5,
       name: (
         <React.Fragment>
-          From <StyledBoldText>review</StyledBoldText> to<StyledBoldText> in dev</StyledBoldText>
+          From <BoldText>review</BoldText> to<BoldText> in dev</BoldText>
         </React.Fragment>
       ),
       valueList: [
@@ -188,7 +188,7 @@ export const EXPECTED_REPORT_VALUES = {
       id: 6,
       name: (
         <React.Fragment>
-          From <StyledBoldText>waiting for testing</StyledBoldText> to<StyledBoldText> in dev</StyledBoldText>
+          From <BoldText>waiting for testing</BoldText> to<BoldText> in dev</BoldText>
         </React.Fragment>
       ),
       valueList: [
@@ -202,7 +202,7 @@ export const EXPECTED_REPORT_VALUES = {
       id: 8,
       name: (
         <React.Fragment>
-          From <StyledBoldText>done</StyledBoldText> to<StyledBoldText> in dev</StyledBoldText>
+          From <BoldText>done</BoldText> to<BoldText> in dev</BoldText>
         </React.Fragment>
       ),
       valueList: [

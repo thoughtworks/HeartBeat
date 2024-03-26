@@ -25,6 +25,8 @@ import heartbeat.controller.board.dto.response.IssueType;
 import heartbeat.controller.board.dto.response.TargetField;
 import heartbeat.controller.report.dto.request.JiraBoardSetting;
 
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -71,31 +73,31 @@ public class JiraBoardConfigDTOFixture {
 
 	public static final String END_TIME = "1676908799000";
 
-	public static final long TIMESTAMP_1 = 1673556350000L;
+	public static final long TIMESTAMP_1 = mockTimeStamp(2023, 1, 13, 4, 45, 50);
 
-	public static final long TIMESTAMP_2 = 1674556350000L;
+	public static final long TIMESTAMP_2 = mockTimeStamp(2023, 1, 24, 18, 32, 50);
 
-	public static final long TIMESTAMP_3 = 1673556350001L;
+	public static final long TIMESTAMP_3 = mockTimeStamp(2023, 1, 13, 4, 45, 50);
 
-	public static final long TIMESTAMP_4 = 1675556350001L;
+	public static final long TIMESTAMP_4 = mockTimeStamp(2023, 2, 5, 8, 19, 10);
 
-	public static final long TIMESTAMP_5 = 1676556350001L;
+	public static final long TIMESTAMP_5 = mockTimeStamp(2023, 2, 16, 22, 5, 10);
 
-	public static final long TIMESTAMP_6 = 1676856350001L;
+	public static final long TIMESTAMP_6 = mockTimeStamp(2023, 2, 20, 9, 25, 10);
 
 	public static final String JIRA_CARD_WITH_TWO_SPRINT = "{\"startAt\":0,\"total\":5,\"issues\":[{\"key\":\"TS-1\",\"fields\":{\"assignee\":{\"displayName\":\"Zhang San\"},\"customfield_10020\":[{\"name\":\"TS Sprint 1\",\"completeDate\":\"2024-02-08T03:52:22.395Z\"},{\"name\":\"TS Sprint 2\",\"completeDate\":\"2024-02-07T04:21:14.512Z\"}]}}]}";
 
-	public static final long TIMESTAMP_7 = 1676656350001L;
+	public static final long TIMESTAMP_7 = mockTimeStamp(2023, 2, 18, 1, 52, 10);
 
-	public static final long TIMESTAMP_8 = 1676708799000L;
+	public static final long TIMESTAMP_8 = mockTimeStamp(2023, 2, 18, 16, 26, 10);
 
-	public static final long TIMESTAMP_9 = 1676808799000L;
+	public static final long TIMESTAMP_9 = mockTimeStamp(2023, 2, 19, 20, 13, 10);
 
-	public static final long TIMESTAMP_10 = 167682799000L;
+	public static final long TIMESTAMP_10 = mockTimeStamp(2023, 1, 20, 1, 33, 10);
 
-	public static final long TIMESTAMP_11 = 1676838799000L;
+	public static final long TIMESTAMP_11 = mockTimeStamp(2023, 2, 20, 5, 33, 10);
 
-	public static final long TIMESTAMP_12 = 1676846350001L;
+	public static final long TIMESTAMP_12 = mockTimeStamp(2023, 2, 20, 6, 39, 10);
 
 	public static JiraBoardConfigDTO.JiraBoardConfigDTOBuilder JIRA_BOARD_CONFIG_RESPONSE_BUILDER() {
 
@@ -824,6 +826,10 @@ public class JiraBoardConfigDTOFixture {
 				RequestJiraBoardColumnSetting.builder().name(TESTING).value(TESTING).build(),
 				RequestJiraBoardColumnSetting.builder().name(DONE).value(DONE).build(),
 				RequestJiraBoardColumnSetting.builder().name(REVIEW).value(REVIEW).build());
+	}
+
+	public static Long mockTimeStamp(int year, int month, int day, int hour, int minute, int second) {
+		return LocalDateTime.of(year, month, day, hour, minute, second).toInstant(ZoneOffset.UTC).toEpochMilli();
 	}
 
 }

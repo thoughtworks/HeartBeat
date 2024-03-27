@@ -41,6 +41,9 @@ export class MetricsStep {
   readonly boardClassificationChipsContainer: Locator;
   readonly boardClassificationSelectedChips: Locator;
   readonly boardReworkTimeSettingSingleInput: Locator;
+  readonly boardReworkTimeSettingSingleSelected: Locator;
+  readonly boardReworkTimeSettingExcludeSelect: Locator;
+  readonly boardReworkTimeSettingExcludeSelectOptions: Locator;
 
   readonly pipelineSettingSection: Locator;
   readonly pipelineOrganizationSelect: Locator;
@@ -75,6 +78,14 @@ export class MetricsStep {
     this.boardHistoricalAssigneeRadioBox = page.getByLabel('Historical assignee');
     this.boardCycleTimeSection = page.getByLabel('Cycle time settings section');
     this.boardReworkTimeSettingSingleInput = page.getByTestId('rework-single-selection-rework-to-which-state');
+    this.boardReworkTimeSettingSingleSelected = page.getByLabel('Rework to which state *');
+    this.boardReworkTimeSettingExcludeSelect = page
+      .getByTestId('rework-settings-exclude-selection')
+      .getByLabel('Exclude which states (optional)');
+    this.boardReworkTimeSettingExcludeSelectOptions = page
+      .getByLabel('Exclude which states (optional)')
+      .getByRole('button')
+      .filter({ hasText: /.+/ });
     this.boardByColumnRadioBox = this.boardCycleTimeSection.getByLabel('By Column');
     this.boardByStatusRadioBox = this.boardCycleTimeSection.getByLabel('By Status');
     this.boardCycleTimeSelectForTODO = this.boardCycleTimeSection
@@ -247,6 +258,11 @@ export class MetricsStep {
 
   async checkClassifications(classificationKeys: string[]) {
     await expect(this.boardClassificationSelectedChips).toHaveCount(classificationKeys.length);
+  }
+
+  async checkReworkSettings(reworkTimesSettings: typeof metricsStepData.reworkTimesSettings) {
+    await expect(this.boardReworkTimeSettingSingleSelected).toHaveAttribute('value', reworkTimesSettings.reworkState);
+    await expect(this.boardReworkTimeSettingExcludeSelectOptions).toHaveCount(reworkTimesSettings.excludeStates.length);
   }
 
   async waitForHiddenLoading() {
@@ -457,6 +473,24 @@ export class MetricsStep {
       .getByRole('listbox')
       .getByText(reworkSetting.reworkState as string)
       .click();
+  }
+
+  async selectExcludeReworkSettings(reworkSetting: typeof metricsStepData.reworkTimesSettings) {
+    await this.boardReworkTimeSettingExcludeSelect.click();
+    const options = this.page.getByRole('option');
+    for (const option of (await options.all()).slice(1)) {
+      const optionKey = (await option.textContent()) as string;
+      const isOptionSelected = (await option.getAttribute('aria-selected')) === 'true';
+      if (reworkSetting.excludeStates.includes(optionKey)) {
+        if (!isOptionSelected) {
+          await option.click();
+        }
+      } else {
+        if (isOptionSelected) {
+          await option.click();
+        }
+      }
+    }
   }
 
   async checkPipelineSetting(pipelineSettings: typeof metricsStepData.deployment) {

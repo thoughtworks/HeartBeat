@@ -40,6 +40,7 @@ test('Page jump for import', async ({ homePage, configStep, metricsStep, reportS
   await metricsStep.checkModifiedHeartbeatState(modifiedHbStateData);
   await metricsStep.checkCycleTimeConsiderAsBlockUnchecked();
   await metricsStep.checkClassifications(modifiedMetricsStepData.classification);
+  await metricsStep.checkReworkSettings(metricsStepData.reworkTimesSettings);
 
   await metricsStep.selectDefaultGivenPipelineSetting(modifiedMetricsStepData.deployment, false);
   await metricsStep.selectGivenPipelineCrews(modifiedMetricsStepData.pipelineCrews);
@@ -89,6 +90,8 @@ test('Page jump for create', async ({ homePage, configStep, metricsStep, reportS
   await metricsStep.selectClassifications(metricsStepData.classification);
   await metricsStep.selectDefaultGivenPipelineSetting(metricsStepData.deployment);
   await metricsStep.selectGivenPipelineCrews(metricsStepData.pipelineCrews);
+  await metricsStep.selectReworkSettings(metricsStepData.reworkTimesSettings);
+  await metricsStep.selectExcludeReworkSettings(metricsStepData.reworkTimesSettings);
 
   await metricsStep.goToPreviousStep();
   await configStep.goToMetrics();
@@ -97,17 +100,20 @@ test('Page jump for create', async ({ homePage, configStep, metricsStep, reportS
   await metricsStep.checkCrews(metricsStepData.crews);
   await metricsStep.checkBoardByColumnRadioBoxChecked();
   await metricsStep.checkClassifications(metricsStepData.classification);
+  await metricsStep.checkReworkSettings(metricsStepData.reworkTimesSettings);
 
   await metricsStep.selectCrews(modifiedMetricsStepData.crews);
   await metricsStep.selectCycleTimeSettingsType(modifiedMetricsStepData.cycleTime.type);
   await metricsStep.selectModifiedHeartbeatState(modifiedHbStateData);
   await metricsStep.selectClassifications(modifiedMetricsStepData.classification);
-  await metricsStep.selectReworkSettings(metricsStepData.reworkTimesSettings);
+  await metricsStep.selectReworkSettings(modifiedMetricsStepData.reworkTimesSettings);
+  await metricsStep.selectExcludeReworkSettings(modifiedMetricsStepData.reworkTimesSettings);
   await metricsStep.goToReportPage();
   await reportStep.goToPreviousStep();
   await metricsStep.checkCrews(modifiedMetricsStepData.crews);
   await metricsStep.checkBoardByStatusRadioBoxChecked();
   await metricsStep.checkClassifications(modifiedMetricsStepData.classification);
+  await metricsStep.checkReworkSettings(modifiedMetricsStepData.reworkTimesSettings);
 
   await metricsStep.selectDefaultGivenPipelineSetting(modifiedMetricsStepData.deployment, false);
   await metricsStep.selectGivenPipelineCrews(modifiedMetricsStepData.pipelineCrews);

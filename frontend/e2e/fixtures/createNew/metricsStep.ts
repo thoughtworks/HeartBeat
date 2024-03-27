@@ -27,8 +27,8 @@ export const config = {
     token: process.env.E2E_TOKEN_BUILD_KITE as string,
   },
   reworkTimesSettings: {
-    excludeStates: [],
-    reworkState: 'In Dev',
+    excludeStates: [] as string[],
+    reworkState: 'In Dev' as string,
   },
   sourceControl: {
     type: 'GitHub',
@@ -132,8 +132,8 @@ export const modifiedConfig = {
     token: process.env.E2E_TOKEN_BUILD_KITE as string,
   },
   reworkTimesSettings: {
-    excludeStates: [],
-    reworkState: null,
+    excludeStates: ['Block', 'Testing'] as string[],
+    reworkState: 'To do' as string,
   },
   sourceControl: {
     type: 'GitHub',

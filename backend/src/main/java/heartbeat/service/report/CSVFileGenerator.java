@@ -415,14 +415,14 @@ public class CSVFileGenerator {
 		if (cycleTime != null)
 			rows.addAll(getRowsFromCycleTime(cycleTime));
 
+		List<Classification> classificationList = reportResponse.getClassificationList();
+		if (classificationList != null)
+			classificationList.forEach(classification -> rows.addAll(getRowsFormClassification(classification)));
+
 		Rework rework = reportResponse.getRework();
 		if (rework != null) {
 			rows.addAll(getRowFromRework(rework));
 		}
-
-		List<Classification> classificationList = reportResponse.getClassificationList();
-		if (classificationList != null)
-			classificationList.forEach(classification -> rows.addAll(getRowsFormClassification(classification)));
 
 		DeploymentFrequency deploymentFrequency = reportResponse.getDeploymentFrequency();
 		if (deploymentFrequency != null)

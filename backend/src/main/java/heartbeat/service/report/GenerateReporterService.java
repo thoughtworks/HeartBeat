@@ -1,5 +1,7 @@
 package heartbeat.service.report;
 
+import heartbeat.controller.board.dto.request.CardStepsEnum;
+import heartbeat.controller.board.dto.response.CardCollection;
 import heartbeat.controller.report.dto.request.GenerateReportRequest;
 import heartbeat.controller.report.dto.request.JiraBoardSetting;
 import heartbeat.controller.report.dto.response.ErrorInfo;
@@ -41,6 +43,7 @@ import static heartbeat.controller.report.dto.request.MetricType.BOARD;
 import static heartbeat.controller.report.dto.request.MetricType.DORA;
 import static heartbeat.service.report.scheduler.DeleteExpireCSVScheduler.EXPORT_CSV_VALIDITY_TIME;
 import static heartbeat.util.ValueUtil.getValueOrNull;
+import static java.util.Objects.isNull;
 
 @Service
 @RequiredArgsConstructor
@@ -200,17 +203,10 @@ public class GenerateReporterService {
 
 		request.getBoardMetrics().forEach(metric -> {
 			switch (metric) {
-				case "velocity" -> reportResponse.setVelocity(velocityCalculator
-					.calculateVelocity(fetchedData.getCardCollectionInfo().getRealDoneCardCollection()));
-				case "cycle time" -> reportResponse.setCycleTime(cycleTimeCalculator.calculateCycleTime(
-						fetchedData.getCardCollectionInfo().getRealDoneCardCollection(),
-						jiraBoardSetting.getBoardColumns()));
-				case "classification" -> reportResponse
-					.setClassificationList(classificationCalculator.calculate(jiraBoardSetting.getTargetFields(),
-							fetchedData.getCardCollectionInfo().getRealDoneCardCollection()));
-				case "rework times" -> reportResponse.setRework(reworkCalculator.calculateRework(
-						fetchedData.getCardCollectionInfo().getRealDoneCardCollection(),
-						request.getJiraBoardSetting().getReworkTimesSetting().getEnumReworkState()));
+				case "velocity" -> assembleVelocity(fetchedData, reportResponse);
+				case "cycle time" -> assembleCycleTime(fetchedData, reportResponse, jiraBoardSetting);
+				case "classification" -> assembleClassification(fetchedData, reportResponse, jiraBoardSetting);
+				case "rework times" -> assembleReworkInfo(request, fetchedData, reportResponse);
 				default -> {
 					// TODO
 				}
@@ -218,6 +214,33 @@ public class GenerateReporterService {
 		});
 
 		return reportResponse;
+	}
+
+	private void assembleVelocity(FetchedData fetchedData, ReportResponse reportResponse) {
+		CardCollection cardCollection = fetchedData.getCardCollectionInfo().getRealDoneCardCollection();
+		reportResponse.setVelocity(velocityCalculator.calculateVelocity(cardCollection));
+	}
+
+	private void assembleCycleTime(FetchedData fetchedData, ReportResponse reportResponse,
+			JiraBoardSetting jiraBoardSetting) {
+		reportResponse.setCycleTime(cycleTimeCalculator.calculateCycleTime(
+				fetchedData.getCardCollectionInfo().getRealDoneCardCollection(), jiraBoardSetting.getBoardColumns()));
+	}
+
+	private void assembleClassification(FetchedData fetchedData, ReportResponse reportResponse,
+			JiraBoardSetting jiraBoardSetting) {
+		reportResponse.setClassificationList(classificationCalculator.calculate(jiraBoardSetting.getTargetFields(),
+				fetchedData.getCardCollectionInfo().getRealDoneCardCollection()));
+	}
+
+	private void assembleReworkInfo(GenerateReportRequest request, FetchedData fetchedData,
+			ReportResponse reportResponse) {
+		if (isNull(request.getJiraBoardSetting().getReworkTimesSetting())) {
+			return;
+		}
+		CardCollection realDoneCardCollection = fetchedData.getCardCollectionInfo().getRealDoneCardCollection();
+		CardStepsEnum enumReworkState = request.getJiraBoardSetting().getReworkTimesSetting().getEnumReworkState();
+		reportResponse.setRework(reworkCalculator.calculateRework(realDoneCardCollection, enumReworkState));
 	}
 
 	private synchronized ReportResponse generateSourceControlReporter(GenerateReportRequest request,

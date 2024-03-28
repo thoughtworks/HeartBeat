@@ -230,7 +230,9 @@ const BoardMetrics = ({
         </StyledTitleWrapper>
         <GridContainer>
           <ReportGrid reportDetails={getBoardItems()} errorMessage={errorMessage} lastGrid={true} />
-          <ReportGrid reportDetails={getReworkBoardItem()} errorMessage={errorMessage} lastGrid={true} />
+          {!isOnlyEmptyAndDoneState && (
+            <ReportGrid reportDetails={getReworkBoardItem()} errorMessage={errorMessage} lastGrid={true} />
+          )}
         </GridContainer>
       </StyledMetricsSection>
     </>

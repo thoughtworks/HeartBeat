@@ -197,6 +197,35 @@ class GenerateReporterServiceTest {
 		}
 
 		@Test
+		void shouldSaveReportResponseWithReworkInfoWhenReworkSettingIsNullAndMetricsHasReworkTimes() {
+			GenerateReportRequest request = GenerateReportRequest.builder()
+				.considerHoliday(false)
+				.metrics(List.of("rework times"))
+				.buildKiteSetting(BuildKiteSetting.builder().build())
+				.jiraBoardSetting(JiraBoardSetting.builder().build())
+				.csvTimeStamp(TIMESTAMP)
+				.build();
+			when(asyncMetricsDataHandler.getMetricsDataCompleted(any()))
+				.thenReturn(MetricsDataCompleted.builder().build());
+			doAnswer(invocation -> null).when(asyncMetricsDataHandler)
+				.updateMetricsDataCompletedInHandler(TIMESTAMP, MetricType.BOARD);
+			when(kanbanService.fetchDataFromKanban(request)).thenReturn(FetchedData.CardCollectionInfo.builder()
+				.realDoneCardCollection(CardCollection.builder().build())
+				.build());
+
+			generateReporterService.generateBoardReport(request);
+
+			verify(asyncExceptionHandler).remove(request.getBoardReportId());
+			verify(kanbanService).fetchDataFromKanban(request);
+			verify(workDay).changeConsiderHolidayMode(false);
+			verify(asyncReportRequestHandler).putReport(eq(request.getBoardReportId()),
+					responseArgumentCaptor.capture());
+			ReportResponse response = responseArgumentCaptor.getValue();
+			assertNull(response.getRework());
+			verify(asyncMetricsDataHandler).updateMetricsDataCompletedInHandler(eq(request.getBoardReportId()), any());
+		}
+
+		@Test
 		void shouldSaveReportResponseWithoutMetricDataAndUpdateMetricCompletedWhenMetricsIsEmpty() {
 			GenerateReportRequest request = GenerateReportRequest.builder()
 				.considerHoliday(false)
@@ -727,9 +756,9 @@ class GenerateReporterServiceTest {
 			ReportResponse res = generateReporterService.getComposedReportResponse(reportId);
 
 			assertEquals(EXPORT_CSV_VALIDITY_TIME, res.getExportValidityTime());
-			assertEquals(false, res.isBoardMetricsCompleted());
-			assertEquals(true, res.isDoraMetricsCompleted());
-			assertEquals(false, res.isAllMetricsCompleted());
+			assertFalse(res.isBoardMetricsCompleted());
+			assertTrue(res.isDoraMetricsCompleted());
+			assertFalse(res.isAllMetricsCompleted());
 			assertNull(res.getReportMetricsError().getBoardMetricsError());
 		}
 
@@ -743,7 +772,7 @@ class GenerateReporterServiceTest {
 			ReportResponse res = generateReporterService.getComposedReportResponse(reportId);
 
 			assertEquals(EXPORT_CSV_VALIDITY_TIME, res.getExportValidityTime());
-			assertEquals(false, res.isAllMetricsCompleted());
+			assertFalse(res.isAllMetricsCompleted());
 			assertEquals(404, res.getReportMetricsError().getBoardMetricsError().getStatus());
 		}
 

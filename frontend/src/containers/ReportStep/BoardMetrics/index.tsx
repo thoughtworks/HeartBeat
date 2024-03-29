@@ -77,7 +77,9 @@ const BoardMetrics = ({
   const boardingMappingStates = [...new Set(cycleTimeSettings.map((item) => item.value))];
   const isOnlyEmptyAndDoneState = onlyEmptyAndDoneState(boardingMappingStates);
   const includeRework = boardMetrics.includes(REQUIRED_DATA.REWORK_TIMES);
-  const boardMetricsCompleted = boardMetrics
+  const boardMetricsCompleted = (
+    isOnlyEmptyAndDoneState ? boardMetrics.filter((metric) => metric !== REQUIRED_DATA.REWORK_TIMES) : boardMetrics
+  )
     .map((metric) => BOARD_METRICS_MAPPING[metric])
     .every((metric) => boardReport?.[metric] ?? false);
 

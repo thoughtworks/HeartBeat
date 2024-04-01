@@ -10,6 +10,7 @@ import heartbeat.client.dto.codebase.github.PipelineLeadTime;
 import heartbeat.client.dto.codebase.github.PullRequestInfo;
 import heartbeat.client.dto.pipeline.buildkite.DeployInfo;
 import heartbeat.client.dto.pipeline.buildkite.DeployTimes;
+import heartbeat.exception.BadRequestException;
 import heartbeat.exception.InternalServerErrorException;
 import heartbeat.exception.NotFoundException;
 import heartbeat.exception.PermissionDenyException;
@@ -24,12 +25,17 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CompletionException;
+
 import static heartbeat.TestFixtures.GITHUB_REPOSITORY;
 import static heartbeat.TestFixtures.GITHUB_TOKEN;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -38,11 +44,6 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.CompletionException;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -169,7 +170,7 @@ class GithubServiceTest {
 	}
 
 	@Test
-	void shouldThrowExceptionWhenGithubReturnUnExpectedException() {
+	void shouldThrowUnauthorizedExceptionGivenGithubReturnUnauthorizedExceptionWhenVerifyToken() {
 		String githubEmptyToken = GITHUB_TOKEN;
 		doThrow(new UnauthorizedException("Failed to get GitHub info_status: 401 UNAUTHORIZED, reason: ..."))
 			.when(gitHubFeignClient)
@@ -180,26 +181,38 @@ class GithubServiceTest {
 	}
 
 	@Test
-	void shouldThrowExceptionGivenGithubReturnUnExpectedExceptionWhenVerifyBranch() {
+	void shouldThrowBadRequestExceptionGivenGithubReturnUnExpectedExceptionWhenVerifyBranch() {
 		String githubEmptyToken = GITHUB_TOKEN;
 		doThrow(new UnauthorizedException("Failed to get GitHub info_status: 401 UNAUTHORIZED, reason: ..."))
 			.when(gitHubFeignClient)
 			.verifyCanReadTargetBranch("fake/repo", "main", "token " + githubEmptyToken);
 
-		var exception = assertThrows(UnauthorizedException.class,
+		var exception = assertThrows(BadRequestException.class,
 				() -> githubService.verifyCanReadTargetBranch(GITHUB_REPOSITORY, "main", githubEmptyToken));
-		assertEquals("Failed to get GitHub info_status: 401 UNAUTHORIZED, reason: ...", exception.getMessage());
+		assertEquals("Unable to read target branch: main, with token error", exception.getMessage());
 	}
 
 	@Test
-	void shouldThrowExceptionGivenGithubReturnPermissionDenyExceptionWhenVerifyBranch() {
+	void shouldThrowNotFoundExceptionGivenGithubReturnNotFoundExceptionWhenVerifyBranch() {
 		String githubEmptyToken = GITHUB_TOKEN;
 		doThrow(new NotFoundException("Failed to get GitHub info_status: 404, reason: ...")).when(gitHubFeignClient)
 			.verifyCanReadTargetBranch("fake/repo", "main", "token " + githubEmptyToken);
 
-		var exception = assertThrows(PermissionDenyException.class,
+		var exception = assertThrows(NotFoundException.class,
 				() -> githubService.verifyCanReadTargetBranch(GITHUB_REPOSITORY, "main", githubEmptyToken));
 		assertEquals("Unable to read target branch: main", exception.getMessage());
+	}
+
+	@Test
+	void shouldThrowExceptionGivenGithubReturnBaseExceptionWhenVerifyBranch() {
+		String githubEmptyToken = GITHUB_TOKEN;
+		doThrow(new InternalServerErrorException("Failed to get GitHub info_status: 500, reason: ..."))
+			.when(gitHubFeignClient)
+			.verifyCanReadTargetBranch("fake/repo", "main", "token " + githubEmptyToken);
+
+		var exception = assertThrows(InternalServerErrorException.class,
+				() -> githubService.verifyCanReadTargetBranch(GITHUB_REPOSITORY, "main", githubEmptyToken));
+		assertEquals("Failed to get GitHub info_status: 500, reason: ...", exception.getMessage());
 	}
 
 	@Test

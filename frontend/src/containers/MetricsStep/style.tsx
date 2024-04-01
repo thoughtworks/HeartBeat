@@ -56,3 +56,13 @@ export const StyledLink = styled(Link)({
   textDecoration: 'none',
   cursor: 'pointer',
 });
+
+export const StyledAlertWrapper = styled('div')({
+  display: 'flex',
+  width: '100%',
+  alignItems: 'center',
+  justifyContent: 'center',
+  height: '2.5rem',
+  position: 'absolute',
+  top: '3.5rem',
+});

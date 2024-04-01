@@ -382,7 +382,11 @@ export const SOURCE_CONTROL_GET_INFO_ERROR_CASE_TEXT_MAPPING: Record<string, str
   '403': 'Unable to read target branch, please check the token or target branch!',
 };
 
-export const SOURCE_CONTROL_BRANCH_INVALID_TEXT = 'The codebase branch marked in red is invalid!';
+export const SOURCE_CONTROL_BRANCH_INVALID_TEXT: Record<string, string> = {
+  '400': 'The codebase branch marked in red is invalid!',
+  '401': 'Can not read target branch due to unauthorized token!',
+  '404': 'The branch has been deleted!',
+};
 
 export const ALL_OPTION_META: Record<string, string> = {
   label: 'All',
@@ -408,5 +412,10 @@ export const REWORK_STEPS = {
 export const REWORK_STEPS_NAME = ['Rework to which state', 'Exclude which states'];
 
 export const DEFAULT_SPRINT_INTERVAL_OFFSET_DAYS = 13;
+
+export const GENERATE_GITHUB_TOKEN_LINK =
+  'https://github.com/au-heartbeat/Heartbeat?tab=readme-ov-file#3133-guideline-for-generating-github-token';
+export const AUTHORIZE_ORGANIZATION_LINK =
+  'https://github.com/au-heartbeat/Heartbeat?tab=readme-ov-file#3134-authorize-github-token-with-correct-organization';
 
 export const DEFAULT_MONTH_INTERVAL_DAYS = 30;

@@ -176,7 +176,11 @@ export default [
 		slug: 'spikes/tech-spikes-react-hook-form',
 		key: 'spikes/tech-spikes-react-hook-form',
 	},
-
+	{
+		text: 'Solution for chart tools',
+		slug: 'spikes/tech-spikes-chart-tools-solutions',
+		key: 'spikes/tech-spikes-chart-tools-solutions',
+	},
 	{ text: 'Biz', header: true, type: 'biz', key: 'Biz' },
 	{ text: 'Biz context', slug: 'biz/business-context', key: 'biz/business-context' },
 

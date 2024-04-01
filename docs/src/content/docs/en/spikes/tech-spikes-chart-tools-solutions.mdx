@@ -1,0 +1,52 @@
+---
+title: Spike Chart Tool
+description: Seeking Suitable Chart Components for Heartbeat
+---
+
+### Summary
+
+As our roadmap planed, Heartbeat application will show charts with the all metrics data.
+So that, the user can compare the historical data with different sprint.
+
+But now, there is no chart implementation in this project, and we need to choose a charting library to implement the design.
+
+### Context
+
+According to the new business requirements and the roadmap, there is a need to introduce a general-purpose chart library to support corresponding development needs. Based on business requirements, there are several requirements for charts:
+* Responsive support
+* Support for multiple y-axes and composite charts
+* Support for customizing tooltips
+* Support for filtering charts by clicking the legends
+
+### Scope
+
+Frontend
+
+### Current Status
+
+None chart tools
+
+### Options
+
+- [npm trend](https://npmtrends.com/@nivo/core-vs-Nivo-vs-apexcharts-vs-d3-vs-echarts-vs-recharts-vs-victory-core)
+
+|                                   |[ECharts](https://echarts.apache.org/en/index.html) | **Recharts**                                                 | **Nivo**                                                     | **Victory**                                                  |
+|-----------------------------------|-|--------------------------------------------------------------|--------------------------------------------------------------|--------------------------------------------------------------|
+| **Description**                   |A ASF open JS visualization library      | Currently the most common React lightweight chart library, supports interactive building using JSX | Heavyweight chart library supporting a wide range of chart types, allowing for custom charts | Completely custom, interactive chart library with customization options |
+| **Pros**                          |1. Pure dependencies(just depends on `zrender`), Frame independent<br /> 2. Customization for diff charts <br /> 3.Controlled by the Apache rog <br /> 4. Multiple chart types  | 1. Implemented based on D3.<br />2. Supports responsive layout and is friendly to React, with comprehensive documentation and examples.<br />3. Simple configuration, allowing mixed chart implementation through nesting, and supports custom tooltip rendering.<br/>4. Filtering charts can be achieved through custom legends.<br/>5. Basic level of extensibility, allowing for custom chart combinations to meet business needs through configuration. However<br/>6. Intuitive for developers, easy to get started with. | 1. Implemented based on D3.<br/>2. Supports responsive layout.<br/>3. Supports on-demand importing of charts.<br/>4. Offers a wide range of configurable options, supporting custom composite charts.<br/>5. Supports custom tooltips.<br/>6. Documentation is readily available, and demo code can be generated through configuration.<br/>7. Supports custom composite charts.<br/> | 1. Completely implemented based on customization and personalization for charts.<br/>2. Friendly to React, allowing chart construction using JSX nodes.<br/>3. Complete extensibility, capable of building charts entirely from scratch. |
+| **Cons**                          |1. The bundle size is bigger than others | 1.  Not support more complex combinations and customizations of charts.<br /> 2. Depends on the React framework | 1. High configuration cost.<br/>2. Manually implement legend filtering.<br />3. Manually implement custom tooltips.<br/>4. Moderate difficulty getting started. | 1. High configuration cost.<br/>2. Difficulty in getting started.<br/>3. High learning cost. |
+| **Developer experience Friendly** |HIGH                                     | HIGH                                                        | MEDIUM                                                       | LOW                                                          |
+| **Learning Curve**                |Low                                      | Low                                                         | MEDIUM                                                       | LOW                                                          |
+| **Chart Type Supported**          |Extensive                                | Common Charts                                               | Common Charts                                                | Common Charts                                                |
+| **Extensibility**                 |HIGH                                     | MEDIUM                                                      | MEDIUM                                                       | HIGH                                                         |
+| **Performance**                   |HIGH                                     | HIGH                                                        | HIGH                                                         | HIGH                                                         |
+| **Testability**                   |HIGH                                     | MEDIUM                                                      | LOW                                                          | MEDIUM                                                       |
+| **Implementation Effort**         |Low                                      | MEDIUM                                                      | HIGH                                                         | HIGH                                                         |
+| **Maintenance Effort**            |Low                                      | MEDIUM                                                      | MEDIUM                                                       | HIGH                                                         |
+| **Recommendation**                |RECOMMEND                                | CONSIDER                                                    | CONSIDER                                                     | DECLINE                                                      |
+
+
+### Decision
+
+**Choosing to use Echarts as the new charting library.**
+

@@ -11,6 +11,7 @@ import heartbeat.exception.BadRequestException;
 import heartbeat.exception.BaseException;
 import heartbeat.exception.InternalServerErrorException;
 import heartbeat.exception.NotFoundException;
+import heartbeat.exception.PermissionDenyException;
 import heartbeat.exception.UnauthorizedException;
 import heartbeat.service.source.github.model.PipelineInfoOfRepository;
 import heartbeat.util.GithubUtil;
@@ -66,6 +67,10 @@ public class GitHubService {
 		catch (NotFoundException e) {
 			log.error("Failed to call GitHub with branch: {}, error: {} ", branch, e.getMessage());
 			throw new NotFoundException(String.format("Unable to read target branch: %s", branch));
+		}
+		catch (PermissionDenyException e) {
+			log.error("Failed to call GitHub token access error, error: {} ", e.getMessage());
+			throw new UnauthorizedException("Unable to read target organization");
 		}
 		catch (UnauthorizedException e) {
 			log.error("Failed to call GitHub with token_error: {}, error: {} ", branch, e.getMessage());

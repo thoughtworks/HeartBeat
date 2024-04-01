@@ -204,7 +204,7 @@ class GithubServiceTest {
 	}
 
 	@Test
-	void shouldThrowExceptionGivenGithubReturnBaseExceptionWhenVerifyBranch() {
+	void shouldThrowInternalServerErrorExceptionGivenGithubReturnInternalServerErrorExceptionWhenVerifyBranch() {
 		String githubEmptyToken = GITHUB_TOKEN;
 		doThrow(new InternalServerErrorException("Failed to get GitHub info_status: 500, reason: ..."))
 			.when(gitHubFeignClient)
@@ -216,7 +216,7 @@ class GithubServiceTest {
 	}
 
 	@Test
-	void shouldThrowExceptionGivenGithubReturnCompletionExceptionExceptionWhenVerifyToken() {
+	void shouldThrowInternalServerErrorExceptionGivenGithubReturnCompletionExceptionWhenVerifyToken() {
 		String githubEmptyToken = GITHUB_TOKEN;
 		doThrow(new CompletionException(new Exception("UnExpected Exception"))).when(gitHubFeignClient)
 			.verifyToken("token " + githubEmptyToken);
@@ -227,7 +227,7 @@ class GithubServiceTest {
 	}
 
 	@Test
-	void shouldThrowExceptionGivenGithubReturnUnauthorizedExceptionWhenVerifyBranch() {
+	void shouldThrowInternalServerErrorExceptionGivenGithubReturnCompletionExceptionWhenVerifyBranch() {
 		String githubEmptyToken = GITHUB_TOKEN;
 		doThrow(new CompletionException(new Exception("UnExpected Exception"))).when(gitHubFeignClient)
 			.verifyCanReadTargetBranch("fake/repo", "main", "token " + githubEmptyToken);
@@ -235,6 +235,18 @@ class GithubServiceTest {
 		var exception = assertThrows(InternalServerErrorException.class,
 				() -> githubService.verifyCanReadTargetBranch(GITHUB_REPOSITORY, "main", githubEmptyToken));
 		assertEquals("Failed to call GitHub branch: main with error: UnExpected Exception", exception.getMessage());
+	}
+
+	@Test
+	void shouldThrowUnauthorizedExceptionGivenGithubReturnPermissionDenyExceptionWhenVerifyBranch() {
+		String githubEmptyToken = GITHUB_TOKEN;
+		doThrow(new PermissionDenyException("Failed to get GitHub info_status: 403 FORBIDDEN..."))
+			.when(gitHubFeignClient)
+			.verifyCanReadTargetBranch("fake/repo", "main", "token " + githubEmptyToken);
+
+		var exception = assertThrows(UnauthorizedException.class,
+				() -> githubService.verifyCanReadTargetBranch(GITHUB_REPOSITORY, "main", githubEmptyToken));
+		assertEquals("Unable to read target organization", exception.getMessage());
 	}
 
 	@Test

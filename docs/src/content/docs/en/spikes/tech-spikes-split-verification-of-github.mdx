@@ -145,7 +145,7 @@ header: "Authorization: Bearer <YOUR-TOKEN>"
     <td>hintInfo</td>
   </tr>
   <tr>
-    <td rowspan="5">400</td>
+    <td rowspan="6">400</td>
     <td>Token cannot be empty.</td>
     <td rowspan="5"></td>
   </tr>
@@ -162,14 +162,18 @@ header: "Authorization: Bearer <YOUR-TOKEN>"
     <td>Branch cannot be empty.</td>
   </tr>
   <tr>
+    <td>Unable to read target branch: main, with token error</td>
+    <td>Please reconfirm the input</td>
+  </tr>
+  <tr>
     <td>401</td>
-    <td>Failed to get GitHub info_status: 401, reason: Bad credentials</td>
+    <td>Unable to read target organization</td>
     <td>Token is incorrect</td>
   </tr>
   <tr>
-    <td>403</td>
+    <td>404</td>
     <td>Unable to read target branch</td>
-    <td>Unable to read target branch, please check the token or target branch!</td>
+    <td>Not found</td>
   </tr>
   <tr>
     <td>500</td>
@@ -208,16 +212,42 @@ alt Verification success
     deactivate GitHubService
     GitHubController --> FrontEnd: response 204
     deactivate GitHubController
-else Verification failed
+else Can‘t read target branch or repo
     GitHub --> GitHubFeignClient: 404
     GitHubFeignClient --> GitHubService: throw 404 Not Found
     deactivate GitHubFeignClient
     activate GitHubService
-    GitHubService -> RestResponseEntityExceptionHandler: throw 403 Permission Deny
+    GitHubService -> RestResponseEntityExceptionHandler: throw 404 Not Found
     deactivate GitHubService
     deactivate GitHubFeignClient
     activate RestResponseEntityExceptionHandler
-    RestResponseEntityExceptionHandler -> FrontEnd: response 403 Permission Deny: "Unable to read target repo"
+    RestResponseEntityExceptionHandler -> FrontEnd: response 404 Not Found: "Unable to read target branch"
+    deactivate RestResponseEntityExceptionHandler
+    ' deactivate GitHubService
+    ' deactivate GitHubController
+else Can‘t read target organization
+    GitHub --> GitHubFeignClient: 403
+    GitHubFeignClient --> GitHubService: throw 403 Permission Deny
+    deactivate GitHubFeignClient
+    activate GitHubService
+    GitHubService -> RestResponseEntityExceptionHandler: throw 401 Token is incorrect
+    deactivate GitHubService
+    deactivate GitHubFeignClient
+    activate RestResponseEntityExceptionHandler
+    RestResponseEntityExceptionHandler -> FrontEnd: response 401 Token is incorrect: "Unable to read target organization"
+    deactivate RestResponseEntityExceptionHandler
+    ' deactivate GitHubService
+    ' deactivate GitHubController
+else Token verification failed
+    GitHub --> GitHubFeignClient: 401
+    GitHubFeignClient --> GitHubService: throw 401 Permission Deny
+    deactivate GitHubFeignClient
+    activate GitHubService
+    GitHubService -> RestResponseEntityExceptionHandler: throw 400 Please reconfirm the input
+    deactivate GitHubService
+    deactivate GitHubFeignClient
+    activate RestResponseEntityExceptionHandler
+    RestResponseEntityExceptionHandler -> FrontEnd: response 401 Please reconfirm the input: "Unable to read target branch: main, with token error"
     deactivate RestResponseEntityExceptionHandler
     ' deactivate GitHubService
     ' deactivate GitHubController

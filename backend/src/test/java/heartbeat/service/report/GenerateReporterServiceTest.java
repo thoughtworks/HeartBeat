@@ -679,7 +679,10 @@ class GenerateReporterServiceTest {
 			ReportResponse response = responseArgumentCaptor.getValue();
 			assertEquals(1800000L, response.getExportValidityTime());
 			assertEquals(fakeLeadTimeForChange, response.getLeadTimeForChanges());
-			verify(csvFileGenerator).convertPipelineDataToCSV(eq(pipelineCSVInfos), eq(request.getCsvTimeStamp()));
+			Awaitility.await()
+				.atMost(5, TimeUnit.SECONDS)
+				.untilAsserted(() -> verify(csvFileGenerator).convertPipelineDataToCSV(pipelineCSVInfos,
+						request.getCsvTimeStamp()));
 		}
 
 		@Test

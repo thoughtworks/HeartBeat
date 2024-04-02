@@ -37,7 +37,7 @@ interface TokenAccessAlertProps {
 }
 
 export const TokenAccessAlert = ({ errorDetail }: TokenAccessAlertProps) => {
-  return errorDetail && errorDetail !== 404 ? (
+  return errorDetail && (errorDetail === 400 || errorDetail === 401) ? (
     <StyledAlert aria-label='alert for token access error' icon={<CancelIcon fontSize='inherit' />} severity='error'>
       <EllipsisText fitContent>
         <AlertTextContent errorDetail={errorDetail} />

@@ -6,6 +6,7 @@ import java.util.Objects;
 public interface DecimalUtil {
 
 	String FORMAT_2_DECIMALS = "0.00";
+
 	String FORMAT_4_DECIMALS = "0.0000";
 
 	static String formatDecimalTwo(double value) {

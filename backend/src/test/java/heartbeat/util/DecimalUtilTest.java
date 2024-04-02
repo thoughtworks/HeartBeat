@@ -1,7 +1,10 @@
 package heartbeat.util;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import java.util.ArrayList;
 
 class DecimalUtilTest {
 
@@ -96,33 +99,12 @@ class DecimalUtilTest {
 	}
 
 	@Test
-	void testFormatDecimalFour_MultipleDecimal() {
-		double value = 10.25671;
-		String expected = "10.2567";
-
-		String result = DecimalUtil.formatDecimalFour(value);
-
-		Assertions.assertEquals(expected, result);
-	}
-
-	@Test
-	void testFormatDecimalFour_NonZeroDecimal() {
-		double value = 10.25;
-		String expected = "10.2500";
-
-		String result = DecimalUtil.formatDecimalFour(value);
-
-		Assertions.assertEquals(expected, result);
-	}
-
-	@Test
-	void shouldReturnZeroWhenCallFormatDecimalFour() {
-		double value = 0.000006;
-		String expected = "0";
-
-		String result = DecimalUtil.formatDecimalFour(value);
-
-		Assertions.assertEquals(expected, result);
+	void testFormatDecimalFour_NonZeroValue() {
+		ArrayList<Pair<Double, String>> pairs = new ArrayList<>();
+		pairs.add(Pair.of(10.25671, "10.2567"));
+		pairs.add(Pair.of(10.25, "10.2500"));
+		pairs.add(Pair.of(0.000006, "0"));
+		pairs.forEach(pair -> Assertions.assertEquals(pair.getRight(), DecimalUtil.formatDecimalFour(pair.getLeft())));
 	}
 
 }

@@ -40,7 +40,6 @@ describe('test', () => {
           startDate={''}
           endDate={''}
           csvTimeStamp={1239013}
-          allDataCompleted={true}
         />
       </Provider>,
     );

@@ -1,6 +1,4 @@
 import {
-  CALENDAR,
-  DORA_METRICS,
   DORA_METRICS_MAPPING,
   METRICS_SUBTITLE,
   METRICS_TITLE,
@@ -12,46 +10,27 @@ import {
   SOURCE_CONTROL_METRICS,
 } from '@src/constants/resources';
 import { StyledMetricsSection, StyledShowMore, StyledTitleWrapper } from '@src/containers/ReportStep/DoraMetrics/style';
-import { IPipelineConfig, selectMetricsContent } from '@src/context/Metrics/metricsSlice';
 import { formatMillisecondsToHours, formatMinToHours } from '@src/utils/util';
 import { ReportTitle } from '@src/components/Common/ReportGrid/ReportTitle';
 import { ReportResponseDTO } from '@src/clients/report/dto/response';
-import { ReportRequestDTO } from '@src/clients/report/dto/request';
 import { StyledSpacing } from '@src/containers/ReportStep/style';
 import { ReportGrid } from '@src/components/Common/ReportGrid';
 import { selectConfig } from '@src/context/config/configSlice';
 import { StyledRetry } from '../BoardMetrics/BoardMetrics';
-import { Nullable } from '@src/utils/types';
 import { useAppSelector } from '@src/hooks';
-import React, { useEffect } from 'react';
-import dayjs from 'dayjs';
+import React from 'react';
 import _ from 'lodash';
 
 interface DoraMetricsProps {
-  startToRequestDoraData: (request: ReportRequestDTO) => void;
+  startToRequestDoraData: () => void;
   onShowDetail: () => void;
   doraReport?: ReportResponseDTO;
-  csvTimeStamp: number;
-  startDate: Nullable<string>;
-  endDate: Nullable<string>;
-  isBackFromDetail: boolean;
   errorMessage: string;
 }
 
-const DoraMetrics = ({
-  isBackFromDetail,
-  startToRequestDoraData,
-  onShowDetail,
-  doraReport,
-  csvTimeStamp,
-  startDate,
-  endDate,
-  errorMessage,
-}: DoraMetricsProps) => {
+const DoraMetrics = ({ startToRequestDoraData, onShowDetail, doraReport, errorMessage }: DoraMetricsProps) => {
   const configData = useAppSelector(selectConfig);
-  const { pipelineTool, sourceControl } = configData;
-  const { metrics, calendarType } = configData.basic;
-  const { pipelineCrews, deploymentFrequencySettings, leadTimeForChanges } = useAppSelector(selectMetricsContent);
+  const { metrics } = configData.basic;
   const shouldShowSourceControl = metrics.includes(REQUIRED_DATA.LEAD_TIME_FOR_CHANGES);
   const sourceControlMetricsCompleted = metrics
     .filter((metric) => SOURCE_CONTROL_METRICS.includes(metric))
@@ -61,50 +40,6 @@ const DoraMetrics = ({
     .filter((metric) => PIPELINE_METRICS.includes(metric))
     .map((metric) => DORA_METRICS_MAPPING[metric])
     .every((metric) => doraReport?.[metric] ?? false);
-
-  const getDoraReportRequestBody = (): ReportRequestDTO => {
-    const doraMetrics = metrics.filter((metric) => DORA_METRICS.includes(metric));
-
-    return {
-      metrics: doraMetrics,
-      startTime: dayjs(startDate).valueOf().toString(),
-      endTime: dayjs(endDate).valueOf().toString(),
-      considerHoliday: calendarType === CALENDAR.CHINA,
-      buildKiteSetting: {
-        pipelineCrews,
-        ...pipelineTool.config,
-        deploymentEnvList: getPipelineConfig(deploymentFrequencySettings),
-      },
-      codebaseSetting: {
-        type: sourceControl.config.type,
-        token: sourceControl.config.token,
-        leadTime: getPipelineConfig(leadTimeForChanges),
-      },
-      csvTimeStamp: csvTimeStamp,
-    };
-  };
-
-  const getPipelineConfig = (pipelineConfigs: IPipelineConfig[]) =>
-    pipelineConfigs.flatMap(({ organization, pipelineName, step, branches }) => {
-      const pipelineConfigFromPipelineList = configData.pipelineTool.verifiedResponse.pipelineList.find(
-        (pipeline) => pipeline.name === pipelineName && pipeline.orgName === organization,
-      );
-      if (pipelineConfigFromPipelineList) {
-        const { orgName, orgId, name, id, repository } = pipelineConfigFromPipelineList;
-        return [
-          {
-            orgId,
-            orgName,
-            id,
-            name,
-            step,
-            repository,
-            branches,
-          },
-        ];
-      }
-      return [];
-    });
 
   const getSourceControlItems = () => {
     const leadTimeForChanges = doraReport?.leadTimeForChanges;
@@ -205,13 +140,8 @@ const DoraMetrics = ({
   };
 
   const handleRetry = () => {
-    startToRequestDoraData(getDoraReportRequestBody());
+    startToRequestDoraData();
   };
-
-  useEffect(() => {
-    !isBackFromDetail && startToRequestDoraData(getDoraReportRequestBody());
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   return (
     <>

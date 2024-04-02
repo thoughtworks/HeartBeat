@@ -30,9 +30,6 @@ class KanbanServiceTest {
 	@Mock
 	private JiraService jiraService;
 
-	@Mock
-	private KanbanCsvService kanbanCsvService;
-
 	@Test
 	void shouldCallCsvServiceToGenerateCSVInfoWhenJiraBoardSettingIsNotNull() {
 		JiraBoardSetting mockJiraBoardSetting = KanbanFixture.MOCK_JIRA_BOARD_SETTING();
@@ -54,7 +51,6 @@ class KanbanServiceTest {
 
 		assertEquals(realDoneCardCollection, result.getRealDoneCardCollection());
 		assertEquals(nonDoneCardCollection, result.getNonDoneCardCollection());
-		verify(kanbanCsvService).generateCsvInfo(request, realDoneCardCollection, nonDoneCardCollection);
 		verify(jiraService).getStoryPointsAndCycleTimeForNonDoneCards(
 				KanbanFixture.MOCK_EXPECT_STORY_POINT_AND_CYCLE_TIME_REQUEST(), mockJiraBoardSetting.getBoardColumns(),
 				mockJiraBoardSetting.getUsers());

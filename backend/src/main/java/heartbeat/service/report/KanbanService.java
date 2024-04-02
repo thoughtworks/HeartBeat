@@ -17,12 +17,9 @@ public class KanbanService {
 
 	private final JiraService jiraService;
 
-	private final KanbanCsvService kanbanCsvService;
-
 	public FetchedData.CardCollectionInfo fetchDataFromKanban(GenerateReportRequest request) {
 		CardCollection nonDoneCardCollection = fetchNonDoneCardCollection(request);
 		CardCollection realDoneCardCollection = fetchRealDoneCardCollection(request);
-		kanbanCsvService.generateCsvInfo(request, realDoneCardCollection, nonDoneCardCollection);
 
 		return FetchedData.CardCollectionInfo.builder()
 			.realDoneCardCollection(realDoneCardCollection)

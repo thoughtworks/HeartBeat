@@ -25,11 +25,11 @@ import heartbeat.controller.board.dto.response.IssueType;
 import heartbeat.controller.board.dto.response.TargetField;
 import heartbeat.controller.report.dto.request.JiraBoardSetting;
 
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+
+import static heartbeat.tools.TimeUtils.mockTimeStamp;
 
 public class JiraBoardConfigDTOFixture {
 
@@ -826,10 +826,6 @@ public class JiraBoardConfigDTOFixture {
 				RequestJiraBoardColumnSetting.builder().name(TESTING).value(TESTING).build(),
 				RequestJiraBoardColumnSetting.builder().name(DONE).value(DONE).build(),
 				RequestJiraBoardColumnSetting.builder().name(REVIEW).value(REVIEW).build());
-	}
-
-	public static Long mockTimeStamp(int year, int month, int day, int hour, int minute, int second) {
-		return LocalDateTime.of(year, month, day, hour, minute, second).toInstant(ZoneOffset.UTC).toEpochMilli();
 	}
 
 }

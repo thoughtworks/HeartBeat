@@ -2,6 +2,7 @@ import { StyledAlert, StyledBoldText, StyledText } from '@src/containers/Metrics
 import { AUTHORIZE_ORGANIZATION_LINK, GENERATE_GITHUB_TOKEN_LINK } from '@src/constants/resources';
 import EllipsisText from '@src/components/Common/EllipsisText';
 import CancelIcon from '@mui/icons-material/Cancel';
+import { HttpStatusCode } from 'axios';
 
 interface AlertTextContentProps {
   errorDetail: number;
@@ -37,7 +38,7 @@ interface TokenAccessAlertProps {
 }
 
 export const TokenAccessAlert = ({ errorDetail }: TokenAccessAlertProps) => {
-  return errorDetail && (errorDetail === 400 || errorDetail === 401) ? (
+  return errorDetail && (errorDetail === HttpStatusCode.Unauthorized || errorDetail === HttpStatusCode.BadRequest) ? (
     <StyledAlert aria-label='alert for token access error' icon={<CancelIcon fontSize='inherit' />} severity='error'>
       <EllipsisText fitContent>
         <AlertTextContent errorDetail={errorDetail} />

@@ -85,4 +85,44 @@ class DecimalUtilTest {
 		Assertions.assertEquals(expected, result);
 	}
 
+	@Test
+	void testFormatDecimalFour_ZeroValue() {
+		double value = 0;
+		String expected = "0";
+
+		String result = DecimalUtil.formatDecimalFour(value);
+
+		Assertions.assertEquals(expected, result);
+	}
+
+	@Test
+	void testFormatDecimalFour_MultipleDecimal() {
+		double value = 10.25671;
+		String expected = "10.2567";
+
+		String result = DecimalUtil.formatDecimalFour(value);
+
+		Assertions.assertEquals(expected, result);
+	}
+
+	@Test
+	void testFormatDecimalFour_NonZeroDecimal() {
+		double value = 10.25;
+		String expected = "10.2500";
+
+		String result = DecimalUtil.formatDecimalFour(value);
+
+		Assertions.assertEquals(expected, result);
+	}
+
+	@Test
+	void shouldReturnZeroWhenCallFormatDecimalFour() {
+		double value = 0.000006;
+		String expected = "0";
+
+		String result = DecimalUtil.formatDecimalFour(value);
+
+		Assertions.assertEquals(expected, result);
+	}
+
 }

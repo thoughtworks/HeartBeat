@@ -82,7 +82,8 @@
 - [Nov 6 2023 - Release Heartbeat - 1.1.2](release-notes/20231106.md)
 - [Nov 21 2023 - Release Heartbeat - 1.1.3](release-notes/20231121.md)
 - [Dev 4 2023 - Release Heartbeat - 1.1.4](release-notes/20231204.md)
- - [Feb 29 2024 - Release Heartbeat - 1.1.5](release-notes/20240229.md)
+- [Feb 29 2024 - Release Heartbeat - 1.1.5](release-notes/20240229.md)
+- [Apr 2 2024 - Release heartbeat - 1.1.6](release-notes/20240402.md)
 
 # 1 About Heartbeat
 
@@ -90,16 +91,18 @@ Heartbeat is a tool for tracking project delivery metrics that can help you get 
 
 State of DevOps Report is launching in 2019. In this webinar, The 4 key metrics research team and Google Cloud share key metrics to measure DevOps performance, measure the effectiveness of development and delivery practices. They searching about six years, developed four metrics that provide a high-level systems view of software delivery and performance.
 
-**Here are the four Key metrics:**
+**Below are the 8 metrics supported by heartbeat:**
 
-1.  Deployment Frequency (DF)
-2.  Lead Time for changes (LTC)
-3.  Mean Time To Recover (MTTR)
-4.  Change Failure Rate (CFR)
 
-In Heartbeat tool, we also have some other metrics, like: Velocity, Cycle Time and Classification. So we can collect DF, LTC, CFR, Velocity, Cycle Time and Classification.
+1.  [Velocity](#341-velocity)
+2.  [Cycle time](#341-velocity)
+3.  [Classification](#343-classification)
+4.  [Rework](#344-rework)
+5.  [Deployment Frequency](#345-deployment-frequency) 
+6.  [Lead Time for changes](#346-lead-time-for-changes-data)
+7.  [Change Failure Rate](#347-dev-change-failure-rate)
+8.  [Mean Time To Recover](#348-dev-mean-time-to-recovery)
 
-For MTTR meter, specifically, if the pipeline stay in failed status during the selected period, the unfixed part will not be included for MTTR calculation.
 
 # 2 Support tools
 
@@ -347,14 +350,16 @@ _Image 3-24，Classification Report_
 
 ### 3.4.4 Rework
 
-It will show the rework data of board on your selection on `Rework times settins` in metrics page (image 3-21).
-
-If "to do" is selected in the "Rework to which column", we will count the number of times the subsequent options in the options are reworked back to the "to do" state.
-
 - Definition for ‘Rework': cards roll back from a later state to a previous state, for example, one card move from 'testing' state to 'in dev' state, which means this card is reworked.
 - Formula for 'Total rework times': the total number of rework times in all done cards
 - Formula for 'Total rework cards': the total number of rework cards in all done cards
 - Formula for 'Rework cards ratio': total rework cards/throughput
+
+It will show the rework data of board on your selection on `Rework times settins` in metrics page (image 3-21).
+
+If "to do" is selected in the "Rework to which column", we will count the number of times the subsequent options in the options are reworked back to the "to do" state.
+
+
   
 ![Image 3-25](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/rework-setting-image/rework-detail.png)\
 _Image 3-25，Rework Report_

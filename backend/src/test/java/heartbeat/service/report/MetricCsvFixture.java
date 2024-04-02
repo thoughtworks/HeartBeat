@@ -24,7 +24,105 @@ import heartbeat.controller.report.dto.response.AvgLeadTimeForChanges;
 import java.math.BigDecimal;
 import java.util.List;
 
+import static heartbeat.controller.board.dto.request.CardStepsEnum.TODO;
+import static heartbeat.service.report.scheduler.DeleteExpireCSVScheduler.EXPORT_CSV_VALIDITY_TIME;
+
 public class MetricCsvFixture {
+
+	public static ReportResponse MOCK_COMPOSED_REPORT_RESPONSE() {
+		return ReportResponse.builder()
+			.velocity(Velocity.builder().velocityForCards(2).velocityForSP(7).build())
+			.classificationList(List.of(Classification.builder().fieldName("Issue Type").build()))
+			.cycleTime(CycleTime.builder()
+				.totalTimeForCards(29.26)
+				.averageCycleTimePerCard(9.75)
+				.averageCycleTimePerSP(4.18)
+				.build())
+			.rework(Rework.builder()
+				.totalReworkCards(1)
+				.reworkCardsRatio(1.0)
+				.reworkState(TODO.getValue())
+				.fromInDev(1)
+				.build())
+			.exportValidityTime(EXPORT_CSV_VALIDITY_TIME)
+			.deploymentFrequency(DeploymentFrequency.builder()
+				.avgDeploymentFrequency(
+						AvgDeploymentFrequency.builder().name("Average").deploymentFrequency(0.67F).build())
+				.build())
+			.devChangeFailureRate(DevChangeFailureRate.builder()
+				.avgDevChangeFailureRate(AvgDevChangeFailureRate.builder()
+					.name("Average")
+					.totalTimes(12)
+					.totalFailedTimes(0)
+					.failureRate(0.0F)
+					.build())
+				.build())
+			.devMeanTimeToRecovery(DevMeanTimeToRecovery.builder()
+				.avgDevMeanTimeToRecovery(
+						AvgDevMeanTimeToRecovery.builder().timeToRecovery(BigDecimal.valueOf(0)).build())
+				.build())
+			.leadTimeForChanges(LeadTimeForChanges.builder()
+				.avgLeadTimeForChanges(AvgLeadTimeForChanges.builder()
+					.name("Average")
+					.prLeadTime(0.0)
+					.pipelineLeadTime(3.0949999999999998)
+					.totalDelayTime(3.0949999999999998)
+					.build())
+				.build())
+			.build();
+	}
+
+	public static ReportResponse MOCK_BOARD_REPORT_RESPONSE() {
+		return ReportResponse.builder()
+			.velocity(Velocity.builder().velocityForCards(2).velocityForSP(7).build())
+			.classificationList(List.of(Classification.builder().fieldName("Issue Type").build()))
+			.cycleTime(CycleTime.builder()
+				.totalTimeForCards(29.26)
+				.averageCycleTimePerCard(9.75)
+				.averageCycleTimePerSP(4.18)
+				.build())
+			.rework(Rework.builder()
+				.totalReworkCards(1)
+				.reworkCardsRatio(1.0)
+				.reworkState(TODO.getValue())
+				.fromInDev(1)
+				.build())
+			.build();
+	}
+
+	public static ReportResponse MOCK_PIPELINE_REPORT_RESPONSE() {
+		return ReportResponse.builder()
+			.deploymentFrequency(DeploymentFrequency.builder()
+				.avgDeploymentFrequency(
+						AvgDeploymentFrequency.builder().name("Average").deploymentFrequency(0.67F).build())
+				.build())
+			.devChangeFailureRate(DevChangeFailureRate.builder()
+				.avgDevChangeFailureRate(AvgDevChangeFailureRate.builder()
+					.name("Average")
+					.totalTimes(12)
+					.totalFailedTimes(0)
+					.failureRate(0.0F)
+					.build())
+				.build())
+			.devMeanTimeToRecovery(DevMeanTimeToRecovery.builder()
+				.avgDevMeanTimeToRecovery(
+						AvgDevMeanTimeToRecovery.builder().timeToRecovery(BigDecimal.valueOf(0)).build())
+				.build())
+			.build();
+	}
+
+	public static ReportResponse MOCK_SOURCE_CONTROL_REPORT_RESPONSE() {
+		return ReportResponse.builder()
+			.leadTimeForChanges(LeadTimeForChanges.builder()
+				.avgLeadTimeForChanges(AvgLeadTimeForChanges.builder()
+					.name("Average")
+					.prLeadTime(0.0)
+					.pipelineLeadTime(3.0949999999999998)
+					.totalDelayTime(3.0949999999999998)
+					.build())
+				.build())
+			.build();
+	}
 
 	public static ReportResponse MOCK_METRIC_CSV_DATA() {
 		return ReportResponse.builder()

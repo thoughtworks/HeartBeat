@@ -1,6 +1,7 @@
 import { CSVReportRequestDTO, ReportRequestDTO } from '@src/clients/report/dto/request';
 import { ReportResponseDTO } from '@src/clients/report/dto/response';
 import { SOURCE_CONTROL_TYPES } from '@src/constants/resources';
+import { METRIC_TYPES } from '@src/constants/commons';
 
 export const PROJECT_NAME = 'Heartbeat';
 export const PROJECT_DESCRIPTION =
@@ -23,6 +24,8 @@ export const PREVIOUS = 'Previous';
 export const SAVE = 'Save';
 
 export const SHOW_MORE = 'show more >';
+
+export const RETRY = 'retry';
 
 export const BACK = 'Back';
 
@@ -216,6 +219,7 @@ export const MOCK_GENERATE_REPORT_REQUEST_PARAMS: ReportRequestDTO = {
       excludedStates: [],
     },
   },
+  metricTypes: [METRIC_TYPES.BOARD, METRIC_TYPES.DORA],
 };
 
 export const IMPORTED_NEW_CONFIG_FIXTURE = {
@@ -517,6 +521,7 @@ export const MOCK_REPORT_RESPONSE: ReportResponseDTO = {
   exportValidityTime: 1800000,
   boardMetricsCompleted: true,
   doraMetricsCompleted: true,
+  overallMetricsCompleted: true,
   allMetricsCompleted: true,
   reportMetricsError,
 };
@@ -538,6 +543,7 @@ export const EMPTY_REPORT_VALUES: ReportResponseDTO = {
   exportValidityTime: null,
   boardMetricsCompleted: false,
   doraMetricsCompleted: false,
+  overallMetricsCompleted: false,
   allMetricsCompleted: false,
   reportMetricsError,
 };

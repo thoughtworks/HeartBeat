@@ -29,6 +29,8 @@ public class GenerateReportRequest {
 
 	private List<String> metrics;
 
+	private List<MetricType> metricTypes;
+
 	private JiraBoardSetting jiraBoardSetting;
 
 	private BuildKiteSetting buildKiteSetting;
@@ -79,11 +81,6 @@ public class GenerateReportRequest {
 	@JsonIgnore
 	public String getBoardReportId() {
 		return IdUtil.getBoardReportId(this.csvTimeStamp);
-	}
-
-	@JsonIgnore
-	public String getDoraReportId() {
-		return IdUtil.getDoraReportId(this.csvTimeStamp);
 	}
 
 	@JsonIgnore

@@ -81,6 +81,7 @@ export class ReportClient extends HttpClient {
     exportValidityTime: null,
     boardMetricsCompleted: false,
     doraMetricsCompleted: false,
+    overallMetricsCompleted: false,
     allMetricsCompleted: false,
   };
 

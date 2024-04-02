@@ -190,7 +190,7 @@ export class TranslationStatusBuilder {
 					// @ts-expect-error enTranslation.length is defined in one case
 					const isIncomplete = enTranslation.length
 						? module.filter((k: { labelIsTranslated: boolean }) => k.labelIsTranslated).length !==
-							(enTranslation as typeof navTranslations).length
+						  (enTranslation as typeof navTranslations).length
 						: !this.equalKeys(module, enTranslation as NestedRecord);
 
 					const data = await this.getGitHistory(subpath);
@@ -212,7 +212,7 @@ export class TranslationStatusBuilder {
 									page,
 									type: 'commits',
 									query: data ? `?since=${data.lastMajorCommitDate}` : '',
-								}),
+							  }),
 					};
 				}
 
@@ -526,14 +526,14 @@ export class TranslationStatusBuilder {
 								? `(${this.renderLink(
 										content.translations[lang].githubUrl,
 										'outdated translation'
-									)}, ${this.renderLink(
+								  )}, ${this.renderLink(
 										content.translations[lang].sourceHistoryUrl!,
 										'source change history'
-									)})`
+								  )})`
 								: `(${this.renderLink(
 										content.translations[lang].githubUrl,
 										'incomplete translation'
-									)})`) +
+								  )})`) +
 							`</li>`
 					)
 				);
@@ -552,7 +552,7 @@ export class TranslationStatusBuilder {
 										`https://github.com/${this.githubRepo}/blob/main/old-translations/${lang}/${content.subpath}`,
 										`View\xa0old\xa0translation`,
 										'create-button'
-									)} &nbsp; `
+								  )} &nbsp; `
 								: '') +
 							this.renderCreatePageButton(lang, content.subpath) +
 							`</li>`

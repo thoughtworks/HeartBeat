@@ -12,6 +12,7 @@ import {
   MOCK_REPORT_RESPONSE,
   PREVIOUS,
   REQUIRED_DATA_LIST,
+  RETRY,
   SAVE,
   SHOW_MORE,
 } from '../../fixtures';
@@ -53,12 +54,11 @@ jest.mock('@src/hooks/useExportCsvEffect', () => ({
 
 jest.mock('@src/hooks/useGenerateReportEffect', () => ({
   useGenerateReportEffect: jest.fn().mockReturnValue({
-    startToRequestBoardData: jest.fn(),
+    startToRequestData: jest.fn(),
     startToRequestDoraData: jest.fn(),
     stopPollingReports: jest.fn(),
     isServerError: false,
     errorMessage: '',
-    allDataCompleted: true,
   }),
 }));
 
@@ -83,8 +83,7 @@ describe('Report Step', () => {
     resetReportHook();
   });
   const resetReportHook = async () => {
-    reportHook.current.startToRequestBoardData = jest.fn();
-    reportHook.current.startToRequestDoraData = jest.fn();
+    reportHook.current.startToRequestData = jest.fn();
     reportHook.current.stopPollingReports = jest.fn();
     reportHook.current.reportData = { ...MOCK_REPORT_RESPONSE, exportValidityTime: 30 };
   };
@@ -544,6 +543,28 @@ describe('Report Step', () => {
       expect(addNotification).toBeCalledWith({
         message: MESSAGE.FAILED_TO_REQUEST,
         type: 'error',
+      });
+    });
+
+    it('should retry startToRequestData when click the retry button in Board Metrics', async () => {
+      reportHook.current.generalError4Report = error;
+      setup(REQUIRED_DATA_LIST);
+
+      await userEvent.click(screen.getAllByText(RETRY)[0]);
+
+      await waitFor(() => {
+        expect(useGenerateReportEffect().startToRequestData).toHaveBeenCalledTimes(2);
+      });
+    });
+
+    it('should retry startToRequestData when click the retry button in Dora Metrics', async () => {
+      reportHook.current.generalError4Report = error;
+      setup(REQUIRED_DATA_LIST);
+
+      await userEvent.click(screen.getAllByText(RETRY)[1]);
+
+      await waitFor(() => {
+        expect(useGenerateReportEffect().startToRequestData).toHaveBeenCalledTimes(2);
       });
     });
   });

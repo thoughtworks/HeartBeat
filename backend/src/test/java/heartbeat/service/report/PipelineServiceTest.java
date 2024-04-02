@@ -73,7 +73,7 @@ public class PipelineServiceTest {
 				.metrics(new ArrayList<>())
 				.codebaseSetting(CodebaseSetting.builder().token(MOCK_TOKEN).build())
 				.build();
-			FetchedData.BuildKiteData result = pipelineService.fetchGithubData(request);
+			FetchedData.BuildKiteData result = pipelineService.fetchGitHubData(request);
 
 			assertEquals(0, result.getBuildInfosList().size());
 			verify(buildKiteService, never()).countDeployTimes(any(), any(), any(), any());
@@ -86,7 +86,7 @@ public class PipelineServiceTest {
 				.buildKiteSetting(BuildKiteSetting.builder().deploymentEnvList(new ArrayList<>()).build())
 				.metrics(new ArrayList<>())
 				.build();
-			FetchedData.BuildKiteData result = pipelineService.fetchGithubData(request);
+			FetchedData.BuildKiteData result = pipelineService.fetchGitHubData(request);
 
 			assertEquals(0, result.getPipelineLeadTimes().size());
 			verify(gitHubService, never()).fetchPipelinesLeadTime(any(), any(), any());
@@ -114,7 +114,7 @@ public class PipelineServiceTest {
 			when(gitHubService.fetchPipelinesLeadTime(any(), any(), eq(MOCK_TOKEN)))
 				.thenReturn(List.of(PipelineLeadTime.builder().build()));
 
-			FetchedData.BuildKiteData result = pipelineService.fetchGithubData(request);
+			FetchedData.BuildKiteData result = pipelineService.fetchGitHubData(request);
 
 			assertEquals(1, result.getPipelineLeadTimes().size());
 			assertEquals(2, result.getBuildInfosList().size());
@@ -146,7 +146,7 @@ public class PipelineServiceTest {
 			when(gitHubService.fetchPipelinesLeadTime(any(), any(), eq(MOCK_TOKEN)))
 				.thenReturn(List.of(PipelineLeadTime.builder().build()));
 
-			pipelineService.fetchGithubData(request);
+			pipelineService.fetchGitHubData(request);
 
 			verify(gitHubService).fetchPipelinesLeadTime(any(), roadMapArgumentCaptor.capture(), any());
 			assertEquals("repo2", roadMapArgumentCaptor.getValue().get("env1"));
@@ -181,7 +181,7 @@ public class PipelineServiceTest {
 			when(gitHubService.fetchPipelinesLeadTime(any(), any(), eq(MOCK_TOKEN)))
 				.thenReturn(List.of(PipelineLeadTime.builder().build()));
 
-			FetchedData.BuildKiteData result = pipelineService.fetchGithubData(request);
+			FetchedData.BuildKiteData result = pipelineService.fetchGitHubData(request);
 
 			assertEquals(1, result.getPipelineLeadTimes().size());
 			assertEquals(1, result.getBuildInfosList().size());

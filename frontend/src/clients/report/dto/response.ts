@@ -11,8 +11,9 @@ export interface ReportResponseDTO {
   leadTimeForChanges: Nullable<LeadTimeForChangesResponse>;
   devChangeFailureRate: Nullable<DevChangeFailureRateResponse>;
   exportValidityTime: Nullable<number>;
-  boardMetricsCompleted: boolean;
-  doraMetricsCompleted: boolean;
+  boardMetricsCompleted: boolean | null;
+  doraMetricsCompleted: boolean | null;
+  overallMetricsCompleted: boolean;
   allMetricsCompleted: boolean;
   reportMetricsError: AllErrorResponse;
   [key: string]: unknown;

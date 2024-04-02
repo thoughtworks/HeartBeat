@@ -117,65 +117,75 @@ group check if metricCsv can be generated
 loop until (metricTypes list final element)
     
     alt metricsType is Board
-        group async process board related metrics
+        group thread 1: async process board related metrics
             Backend -> Jira: get Jira raw data，put this thread into thread list
             activate Backend
             activate Jira
             Jira --> Backend: Jira raw 
             deactivate Jira
             Backend -> Backend: calculate metrics for velocity, cycle time and classification
-            Backend -> Backend: generate board report csv
-            deactivate Backend
+            Backend -> Backend: generate board report json
             note left
-                update response.boardMetricsCompleted as true
                 board metrics are ready for display
-                board csv is ready for download
             end note
+            group thread 2: async process to generate board data csv
+              Backend -> Backend: generate board data csv
+              note left
+                update response.boardMetricsCompleted as true
+                board csv is ready for download
+              end note
+            end
+            deactivate Backend
         end
-        
-        
     else metricsType is Dora
-        group async process pipeline and sourcecontrol related metrics
+        group thread 3: async process pipeline and sourcecontrol related metrics
             Backend -> Buildkite: get Buildkite raw data, put this thread into thread list
             activate Backend
             activate Buildkite
             Buildkite --> Backend: Buildkite raw data
             deactivate Buildkite
             Backend -> Backend: calculate metrics for deployment frequency, change failure rate and mean time to recovery
+            Backend -> Backend: generate pipline report json
             note left
                 pipeline metrics are ready for display
             end note
             opt if lead time for change required
                 Backend -> Github: get Github raw data
                 activate  Github
-                Github --> Backend: Github raw data
+                Github --> Backend: GitHub raw data
                 deactivate Github
                 Backend -> Backend: calculate metrics for lead time for change
+                Backend -> Backend: generate GitHub report json
                 note left
                     LTFC is ready for display
                 end note
             end
-            Backend -> Backend: generate pipeline report csv with github data if required
-            note left
-                update response.doraMetricsCompleted as true
-                pipeline report is ready for download
-            end note
+            group thread 4: async process to generate dora csv
+                Backend -> Backend: generate pipeline data csv with github data if required
+              note left
+                  update response.doraMetricsCompleted as true
+                  pipeline report is ready for download
+              end note
+            end
             deactivate Backend
         end
     end
+   end
      
-     Backend --> Backend: wait for threadList element all execute completed
-     Backend --> Backend: generate metricCsv
-     note left
-     update allMetricsCompleted as true and write it on the file
-     end note
-end 
+  group async process to generate metric csv
+       Backend --> Backend: wait for thread 1 and thread 3 are all execute completed
+       Backend --> Backend: generate metric csv
+       note left
+          all metric csv is ready for download and update overallMetricsCompleted as true
+       end note
+  end
     deactivate Backend
 end 
 
-loop until (response code is 201 and body.allMetricsCompleted==true) or (response code is 5xx) 
+loop until (response code is 201 and body.allMetricsCompleted==true) or (response code is 5xx)
     Frontend -> Backend: Polling the report
     activate Backend
+    Backend --> Backend: allMetricsCompleted == (boardMetricsCompleted is null || boardMetricsCompleted) && (doraMetricsCompleted is null || doraMetricsCompleted) && overallMetricsCompleted
     alt report is not ready
         Backend --> Frontend: response 200
     else report is ready

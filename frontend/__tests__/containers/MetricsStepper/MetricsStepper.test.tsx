@@ -95,7 +95,7 @@ jest.mock('@src/utils/util', () => ({
 
 jest.mock('@src/hooks/useGenerateReportEffect', () => ({
   useGenerateReportEffect: jest.fn().mockReturnValue({
-    startToRequestBoardData: jest.fn(),
+    startToRequestData: jest.fn(),
     startToRequestDoraData: jest.fn(),
     stopPollingReports: jest.fn(),
     isServerError: false,
@@ -289,7 +289,6 @@ describe('MetricsStepper', () => {
     });
 
     await userEvent.click(screen.getByText(NEXT));
-
     expect(screen.getByText(REPORT)).toHaveStyle(`color:${stepperColor}`);
   });
 

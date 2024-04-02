@@ -33,11 +33,13 @@ public class ReportResponse {
 
 	private Long exportValidityTime;
 
-	private boolean boardMetricsCompleted;
+	private Boolean boardMetricsCompleted;
 
-	private boolean doraMetricsCompleted;
+	private Boolean doraMetricsCompleted;
 
-	private boolean allMetricsCompleted;
+	private Boolean overallMetricsCompleted;
+
+	private Boolean allMetricsCompleted;
 
 	public ReportResponse(Long exportValidityTime) {
 		this.exportValidityTime = exportValidityTime;

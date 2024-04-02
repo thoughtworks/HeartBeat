@@ -40,13 +40,9 @@ describe('Report Card', () => {
     return render(
       <Provider store={store}>
         <DoraMetrics
-          isBackFromDetail={false}
-          startDate={''}
-          endDate={''}
           startToRequestDoraData={mockHandleRetry}
           onShowDetail={onShowDetail}
           doraReport={mockData}
-          csvTimeStamp={1705014731}
           errorMessage={''}
         />
       </Provider>,

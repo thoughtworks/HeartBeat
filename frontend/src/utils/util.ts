@@ -96,6 +96,10 @@ export const formatMillisecondsToHours = (duration: number) => {
   return dayjs.duration(duration, 'milliseconds').asHours();
 };
 
+export const formatDateToTimestampString = (date: string) => {
+  return dayjs(date).valueOf().toString();
+};
+
 export const formatDuplicatedNameWithSuffix = (data: ITargetFieldType[]) => {
   const nameSumMap = new Map<string, number>();
   const nameCountMap = new Map<string, number>();

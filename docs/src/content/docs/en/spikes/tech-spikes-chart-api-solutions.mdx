@@ -1,0 +1,42 @@
+---
+title: Spike Chart API
+description: Seeking Suitable Chart API Solution
+---
+
+### Summary
+
+As our roadmap planed, Heartbeat application will show charts with the all metrics data.
+So that, the user can compare the historical data with different sprint.
+
+We need to choose a charting backend and frontend API refactor solution to implement the design.
+
+### Context
+
+According to the new business requirements and the roadmap, there are some points for charting API refactor.
+
+* Support metrics page frontend transfer more date info and call backend API
+* Support report page frontend transfer more date info and call backend API
+
+### Options
+
+- Metrics 
+
+<img src="https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/charting-refactor-image/charting-metrics-api.png" width="80%" />
+
+As shown in the image, we want to refactor the frontend and backend solutions for metrics page. About `board info`, `pipelines info`,
+`pipelines step` API, we can transfer date information merged into a list. When frontend call backend API, backend invoke relevant service 
+to handle information, and input the response to frontend.
+
+The response sent by the backend here will be in the form of a list, but not a combination.
+ Because the data received by the metrics interface here will be sent as parameters to the backend in subsequent report interfaces.
+
+- Report
+
+<img src="https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/charting-refactor-image/charting-reports-api.png" width="60%" />
+
+As shown in the image, we want to refactor the frontend and backend solutions for report page. About `reports board`, `reports dora`,
+`reports poll {reportId}` API, we can transfer date info time and time again. Due to the logic of the report page,
+ we are unable to merge the date list and transfer it to the backend, which may result in errors that cannot be loaded separately.
+ 
+Specific `reportId` need to be accompanied by additional identifiers in the responses sent,
+ such as information related to the selected time, to distinguish time periods

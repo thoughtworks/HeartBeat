@@ -43,6 +43,8 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -482,8 +484,8 @@ public class CSVFileGenerator {
 		List<String[]> rows = new ArrayList<>();
 		rows.add(new String[] { REWORK_FIELD, "Total rework times", String.valueOf(rework.getTotalReworkTimes()) });
 		rows.add(new String[] { REWORK_FIELD, "Total rework cards", String.valueOf(rework.getTotalReworkCards()) });
-		rows.add(new String[] { REWORK_FIELD, "Rework cards ratio(Total rework cards/Throughput)",
-				String.valueOf(DecimalUtil.formatDecimalTwo(rework.getReworkCardsRatio() * 100)) });
+		rows.add(new String[] { REWORK_FIELD, "Rework cards ratio(Total rework cards/Throughput)", String
+			.valueOf(BigDecimal.valueOf(rework.getReworkCardsRatio() * 100).setScale(2, RoundingMode.HALF_UP)) });
 		return rows;
 	}
 
@@ -570,7 +572,7 @@ public class CSVFileGenerator {
 			.getDevChangeFailureRateOfPipelines();
 		devChangeFailureRateOfPipelines.forEach(pipeline -> rows.add(new String[] { "Dev change failure rate",
 				pipeline.getName() + " / " + extractPipelineStep(pipeline.getStep()) + " / Dev change failure rate",
-				DecimalUtil.formatDecimalTwo(pipeline.getFailureRate() * 100) }));
+				DecimalUtil.formatDecimalFour(pipeline.getFailureRate()) }));
 
 		AvgDevChangeFailureRate avgDevChangeFailureRate = devChangeFailureRate.getAvgDevChangeFailureRate();
 		if (devChangeFailureRateOfPipelines.size() > 1)

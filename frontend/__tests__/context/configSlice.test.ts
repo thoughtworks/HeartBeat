@@ -13,10 +13,12 @@ import initialConfigState from '../initialConfigState';
 
 const MockBasicState = {
   projectName: 'Test Project',
-  dateRange: {
-    startDate: new Date(),
-    endDate: new Date(),
-  },
+  dateRange: [
+    {
+      startDate: new Date(),
+      endDate: new Date(),
+    },
+  ],
   metrics: ['Velocity', 'Cycle time'],
 };
 describe('config reducer', () => {
@@ -25,7 +27,7 @@ describe('config reducer', () => {
 
     expect(config.projectName).toEqual('');
     expect(config.calendarType).toEqual(REGULAR_CALENDAR);
-    expect(config.dateRange).toEqual({ startDate: null, endDate: null });
+    expect(config.dateRange).toEqual([{ startDate: null, endDate: null }]);
   });
 
   it('should update project name when change project name input', () => {
@@ -42,10 +44,10 @@ describe('config reducer', () => {
 
   it('should update date range when change date', () => {
     const today = new Date().getMilliseconds();
-    const config = configReducer(initialConfigState, updateDateRange({ startDate: today, endDate: '' })).basic;
+    const config = configReducer(initialConfigState, updateDateRange([{ startDate: today, endDate: '' }])).basic;
 
-    expect(config.dateRange.startDate).toEqual(today);
-    expect(config.dateRange.endDate).toEqual('');
+    expect(config.dateRange[0].startDate).toEqual(today);
+    expect(config.dateRange[0].endDate).toEqual('');
   });
 
   it('should isProjectCreated is false when import file', () => {
@@ -121,5 +123,75 @@ describe('config reducer', () => {
   it('should return empty given steps not exists in pipelineList', () => {
     const store = setupStore();
     expect(selectSteps(store.getState(), 'mockOrgName', 'mockName')).toEqual([]);
+  });
+
+  it('should initial with first 6 ranges given imported ranges is more than 6', () => {
+    const initialState = {
+      ...initialConfigState,
+      isProjectCreated: true,
+    };
+    const mockDateRange = [
+      {
+        startDate: '2024-01-15T00:00:00.000+08:00',
+        endDate: '2024-01-16T00:00:00.000+08:00',
+      },
+      {
+        startDate: '2024-01-17T00:00:00.000+08:00',
+        endDate: '2024-01-18T00:00:00.000+08:00',
+      },
+      {
+        startDate: '2024-01-20T00:00:00.000+08:00',
+        endDate: '2024-01-21T00:00:00.000+08:00',
+      },
+      {
+        startDate: '2024-01-22T00:00:00.000+08:00',
+        endDate: '2024-01-24T00:00:00.000+08:00',
+      },
+      {
+        startDate: '2024-02-01T00:00:00.000+08:00',
+        endDate: '2024-02-03T00:00:00.000+08:00',
+      },
+      {
+        startDate: '2024-02-10T00:00:00.000+08:00',
+        endDate: '2024-02-15T00:00:00.000+08:00',
+      },
+      {
+        startDate: '2024-03-15T00:00:00.000+08:00',
+        endDate: '2024-03-16T00:00:00.000+08:00',
+      },
+    ];
+    const action = {
+      type: 'config/updateBasicConfigState',
+      payload: {
+        ...MockBasicState,
+        dateRange: mockDateRange,
+      },
+    };
+
+    const config = configReducer(initialState, action);
+
+    expect(config.basic.dateRange.length).toEqual(6);
+  });
+
+  it('should be compatible with old version date range', () => {
+    const initialState = {
+      ...initialConfigState,
+      isProjectCreated: true,
+    };
+    const mockDateRange = {
+      startDate: '2024-01-15T00:00:00.000+08:00',
+      endDate: '2024-01-16T00:00:00.000+08:00',
+    };
+    const action = {
+      type: 'config/updateBasicConfigState',
+      payload: {
+        ...MockBasicState,
+        dateRange: mockDateRange,
+      },
+    };
+
+    const config = configReducer(initialState, action);
+
+    expect(config.basic.dateRange[0]).toEqual(mockDateRange);
   });
 });

@@ -7,8 +7,8 @@ import {
 } from '@src/context/config/configSlice';
 import { CollectionDateLabel, ProjectNameInput, StyledFormControlLabel } from './style';
 import { RequiredMetrics } from '@src/containers/ConfigStep/BasicInfo/RequiredMetrics';
+import { DateRangePickerSection } from '@src/containers/ConfigStep/DateRangePicker';
 import { WarningNotification } from '@src/components/Common/WarningNotification';
-import { DateRangePicker } from '@src/containers/ConfigStep/DateRangePicker';
 import { ConfigSectionContainer } from '@src/components/Common/ConfigForms';
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch';
 import { ConfigSelectionTitle } from '@src/containers/MetricsStep/style';
@@ -54,7 +54,7 @@ const BasicInfo = () => {
           <StyledFormControlLabel value={CALENDAR.REGULAR} control={<Radio />} label={CALENDAR.REGULAR} />
           <StyledFormControlLabel value={CALENDAR.CHINA} control={<Radio />} label={CALENDAR.CHINA} />
         </RadioGroup>
-        <DateRangePicker />
+        <DateRangePickerSection />
         <RequiredMetrics />
       </ConfigSectionContainer>
     </>

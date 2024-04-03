@@ -8,11 +8,11 @@ import PresentationForErrorCases from '@src/components/Metrics/MetricsStep/Deplo
 import { useMetricsStepValidationCheckContext } from '@src/hooks/useMetricsStepValidationCheckContext';
 import { deleteMetricsPipelineFormMeta, getErrorDetail } from '@src/context/meta/metaSlice';
 import { useGetPipelineToolInfoEffect } from '@src/hooks/useGetPipelineToolInfoEffect';
-import { MetricsSettingAddButton } from '@src/components/Common/MetricsSettingButton';
 import { MetricsSettingTitle } from '@src/components/Common/MetricsSettingTitle';
 import { TokenAccessAlert } from '@src/containers/MetricsStep/TokenAccessAlert';
 import { StyledAlertWrapper } from '@src/containers/MetricsStep/style';
 import { selectPipelineCrews } from '@src/context/config/configSlice';
+import { AddButton } from '@src/components/Common/AddButtonOneLine';
 import { PipelineMetricSelection } from './PipelineMetricSelection';
 import { PIPELINE_SETTING_TYPES } from '@src/constants/resources';
 import { useAppDispatch, useAppSelector } from '@src/hooks';
@@ -67,7 +67,7 @@ export const DeploymentFrequencySettings = () => {
               )}
             />
           ))}
-          <MetricsSettingAddButton onAddPipeline={handleAddPipeline} />
+          <AddButton onClick={handleAddPipeline} text={'New Pipeline'} />
           {!isEmpty(pipelineCrews) && (
             <Crews
               options={pipelineCrews}

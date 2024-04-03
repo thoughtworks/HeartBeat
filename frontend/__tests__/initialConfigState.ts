@@ -7,10 +7,12 @@ const initialConfigState: BasicConfigState = {
   basic: {
     projectName: '',
     calendarType: REGULAR_CALENDAR,
-    dateRange: {
-      startDate: null,
-      endDate: null,
-    },
+    dateRange: [
+      {
+        startDate: null,
+        endDate: null,
+      },
+    ],
     metrics: [],
   },
   board: {

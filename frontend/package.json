@@ -50,7 +50,7 @@
     "@mui/icons-material": "^5.15.14",
     "@mui/material": "^5.15.14",
     "@mui/x-date-pickers": "^7.0.0",
-    "@reduxjs/toolkit": "^2.0.0",
+    "@reduxjs/toolkit": "^2.2.2",
     "axios": "^1.6.8",
     "dayjs": "^1.11.10",
     "lodash": "^4.17.21",

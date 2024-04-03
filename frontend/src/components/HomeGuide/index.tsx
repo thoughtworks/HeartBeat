@@ -23,12 +23,8 @@ export const HomeGuide = () => {
 
   const isValidImportedConfig = (config: NewFileConfig) => {
     try {
-      const {
-        projectName,
-        metrics,
-        dateRange: { startDate, endDate },
-      } = config;
-      return projectName || startDate || endDate || metrics.length > 0;
+      const { projectName, metrics, dateRange } = config;
+      return projectName || dateRange.length > 0 || metrics.length > 0;
     } catch {
       return false;
     }

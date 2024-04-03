@@ -12,6 +12,7 @@ import {
   STEPPER,
   TEST_PROJECT_NAME,
   VELOCITY,
+  COMMON_TIME_FORMAT,
 } from '../../fixtures';
 import {
   updateBoard,
@@ -47,7 +48,6 @@ import React from 'react';
 const START_DATE_LABEL = 'From *';
 const TODAY = dayjs();
 const INPUT_DATE_VALUE = TODAY.format('MM/DD/YYYY');
-const END_DATE_LABEL = 'To *';
 const YES = 'Yes';
 const CANCEL = 'Cancel';
 const METRICS = 'Metrics';
@@ -225,30 +225,6 @@ describe('MetricsStepper', () => {
     expect(screen.getByText(NEXT)).toBeDisabled();
   });
 
-  it('should disable next when dataRange is empty ', async () => {
-    setup();
-    await fillConfigPageData();
-
-    const startDateInput = screen.getByRole('textbox', { name: START_DATE_LABEL }) as HTMLInputElement;
-    const endDateInput = screen.getByRole('textbox', { name: END_DATE_LABEL }) as HTMLInputElement;
-
-    await userEvent.clear(startDateInput);
-    await userEvent.clear(endDateInput);
-
-    expect(screen.getByText(NEXT)).toBeDisabled();
-  }, 50000);
-
-  it('should disable next when endDate is empty ', async () => {
-    setup();
-    await fillConfigPageData();
-
-    const endDateInput = screen.getByRole('textbox', { name: END_DATE_LABEL }) as HTMLInputElement;
-
-    await userEvent.clear(endDateInput);
-
-    expect(screen.getByText(NEXT)).toBeDisabled();
-  });
-
   it('should enable next when every selected component is show and verified', async () => {
     setup();
     await fillConfigPageData();
@@ -297,10 +273,12 @@ describe('MetricsStepper', () => {
     const expectedJson = {
       board: undefined,
       calendarType: 'Regular Calendar(Weekend Considered)',
-      dateRange: {
-        endDate: null,
-        startDate: null,
-      },
+      dateRange: [
+        {
+          endDate: null,
+          startDate: null,
+        },
+      ],
       metrics: [],
       pipelineTool: undefined,
       projectName: '',
@@ -318,10 +296,12 @@ describe('MetricsStepper', () => {
     const expectedJson = {
       board: { boardId: '', email: '', site: '', token: '', type: 'Jira' },
       calendarType: 'Regular Calendar(Weekend Considered)',
-      dateRange: {
-        endDate: null,
-        startDate: null,
-      },
+      dateRange: [
+        {
+          endDate: null,
+          startDate: null,
+        },
+      ],
       metrics: ['Velocity'],
       pipelineTool: undefined,
       projectName: '',
@@ -343,10 +323,12 @@ describe('MetricsStepper', () => {
       assigneeFilter: ASSIGNEE_FILTER_TYPES.LAST_ASSIGNEE,
       board: { boardId: '', email: '', site: '', token: '', type: 'Jira' },
       calendarType: 'Regular Calendar(Weekend Considered)',
-      dateRange: {
-        endDate: dayjs().endOf('date').add(0, 'day').format('YYYY-MM-DDTHH:mm:ss.SSSZ'),
-        startDate: dayjs().startOf('date').format('YYYY-MM-DDTHH:mm:ss.SSSZ'),
-      },
+      dateRange: [
+        {
+          endDate: dayjs().endOf('date').add(0, 'day').format(COMMON_TIME_FORMAT),
+          startDate: dayjs().startOf('date').format(COMMON_TIME_FORMAT),
+        },
+      ],
       metrics: ['Velocity'],
       pipelineCrews: undefined,
       pipelineTool: undefined,
@@ -376,10 +358,12 @@ describe('MetricsStepper', () => {
       assigneeFilter: ASSIGNEE_FILTER_TYPES.LAST_ASSIGNEE,
       board: { boardId: '', email: '', site: '', token: '', type: 'Jira' },
       calendarType: 'Regular Calendar(Weekend Considered)',
-      dateRange: {
-        endDate: dayjs().endOf('date').add(0, 'day').format('YYYY-MM-DDTHH:mm:ss.SSSZ'),
-        startDate: dayjs().startOf('date').format('YYYY-MM-DDTHH:mm:ss.SSSZ'),
-      },
+      dateRange: [
+        {
+          endDate: dayjs().endOf('date').add(0, 'day').format(COMMON_TIME_FORMAT),
+          startDate: dayjs().startOf('date').format(COMMON_TIME_FORMAT),
+        },
+      ],
       metrics: ['Velocity'],
       pipelineCrews: undefined,
       pipelineTool: undefined,

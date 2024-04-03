@@ -225,10 +225,12 @@ export const MOCK_GENERATE_REPORT_REQUEST_PARAMS: ReportRequestDTO = {
 export const IMPORTED_NEW_CONFIG_FIXTURE = {
   projectName: 'ConfigFileForImporting',
   metrics: ['Velocity', 'Cycle time', 'Classification', 'Lead time for changes'],
-  dateRange: {
-    startDate: '2023-03-16T00:00:00.000+08:00',
-    endDate: '2023-03-30T23:59:59.999+08:00',
-  },
+  dateRange: [
+    {
+      startDate: '2023-03-16T00:00:00.000+08:00',
+      endDate: '2023-03-30T23:59:59.999+08:00',
+    },
+  ],
   calendarType: 'Calendar with Chinese Holiday',
   board: {
     type: 'Jira',
@@ -270,8 +272,8 @@ export const IMPORTED_NEW_CONFIG_FIXTURE = {
 export const MOCK_EXPORT_CSV_REQUEST_PARAMS: CSVReportRequestDTO = {
   csvTimeStamp: 1613664000000,
   dataType: 'pipeline',
-  startDate: IMPORTED_NEW_CONFIG_FIXTURE.dateRange.startDate,
-  endDate: IMPORTED_NEW_CONFIG_FIXTURE.dateRange.endDate,
+  startDate: IMPORTED_NEW_CONFIG_FIXTURE.dateRange[0].startDate,
+  endDate: IMPORTED_NEW_CONFIG_FIXTURE.dateRange[0].endDate,
 };
 
 export const MOCK_IMPORT_FILE = {
@@ -554,8 +556,7 @@ export const CONFIG_PAGE_VERIFY_IMPORT_ERROR_MESSAGE =
 export const BASIC_IMPORTED_OLD_CONFIG_FIXTURE = {
   projectName: 'ConfigFileForImporting',
   metrics: ['Velocity', 'Cycle time', 'Classification', 'Lead time for changes'],
-  startDate: '2023-03-16T00:00:00.000+08:00',
-  endDate: '2023-03-30T23:59:59.999+08:00',
+  dateRange: [{ startDate: '2023-03-16T00:00:00.000+08:00', endDate: '2023-03-30T23:59:59.999+08:00' }],
   board: {
     type: 'Classic Jira',
     verifyToken: 'mockVerifyToken',
@@ -662,3 +663,10 @@ export const REWORK_DIALOG_NOTE = {
   EXCLUDE_NOTE:
     'The selectable states in the "Exclude which states(optional)" drop-down list are all states after the state selected in "rework to which state".',
 };
+
+export const TIME_RANGE_ERROR_MESSAGE = {
+  START_DATE_INVALID_TEXT: 'Start date is invalid',
+  END_DATE_INVALID_TEXT: 'End date is invalid',
+};
+
+export const COMMON_TIME_FORMAT = 'YYYY-MM-DDTHH:mm:ss.SSSZ';

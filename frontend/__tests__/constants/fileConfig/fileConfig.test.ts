@@ -10,10 +10,12 @@ import { convertToNewFileConfig } from '@src/constants/fileConfig';
 describe('#fileConfig', () => {
   const BASIC_NEW_CONFIG = {
     projectName: 'ConfigFileForImporting',
-    dateRange: {
-      startDate: '2023-03-16T00:00:00.000+08:00',
-      endDate: '2023-03-30T23:59:59.999+08:00',
-    },
+    dateRange: [
+      {
+        startDate: '2023-03-16T00:00:00.000+08:00',
+        endDate: '2023-03-30T23:59:59.999+08:00',
+      },
+    ],
     metrics: ['Velocity', 'Cycle time', 'Classification', 'Lead time for changes'],
     board: {
       type: 'Classic Jira',

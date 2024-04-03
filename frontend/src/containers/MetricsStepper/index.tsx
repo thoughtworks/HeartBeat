@@ -127,7 +127,7 @@ const MetricsStepper = () => {
         { isShow: isShowSourceControl, isValid: isSourceControlVerified },
       ];
       const activeNextButtonValidityOptions = nextButtonValidityOptions.filter(({ isShow }) => isShow);
-      projectName && dateRange.startDate && dateRange.endDate && metrics.length
+      projectName && dateRange && dateRange.length && metrics.length
         ? setIsDisableNextButton(!activeNextButtonValidityOptions.every(({ isValid }) => isValid))
         : setIsDisableNextButton(true);
     }

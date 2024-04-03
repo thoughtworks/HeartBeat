@@ -4,8 +4,10 @@ import { IReworkConfig } from '@src/context/Metrics/metricsSlice';
 export interface OldFileConfig {
   projectName: string;
   metrics: string[];
-  startDate: string;
-  endDate: string;
+  dateRange: {
+    startDate: string;
+    endDate: string;
+  }[];
   considerHoliday: boolean;
   board?: {
     type?: string;
@@ -59,7 +61,7 @@ export interface NewFileConfig {
   dateRange: {
     startDate: string;
     endDate: string;
-  };
+  }[];
   calendarType: string;
   metrics: string[];
   board?: {
@@ -111,8 +113,7 @@ export const convertToNewFileConfig = (fileConfig: OldFileConfig | NewFileConfig
     const {
       projectName,
       metrics,
-      startDate,
-      endDate,
+      dateRange,
       considerHoliday,
       board,
       pipelineTool,
@@ -128,7 +129,7 @@ export const convertToNewFileConfig = (fileConfig: OldFileConfig | NewFileConfig
     } = fileConfig;
     return {
       projectName,
-      dateRange: { startDate, endDate },
+      dateRange,
       calendarType: considerHoliday ? CALENDAR.CHINA : CALENDAR.REGULAR,
       metrics,
       board: {

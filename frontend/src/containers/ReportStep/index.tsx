@@ -75,13 +75,12 @@ const ReportStep = ({ handleSave }: ReportStepProps) => {
     leadTimeForChanges,
   } = useAppSelector(selectMetricsContent);
 
-  const startDate = configData.basic.dateRange.startDate ?? '';
-  const endDate = configData.basic.dateRange.endDate ?? '';
+  const startDate = configData.basic.dateRange[0]?.startDate ?? '';
+  const endDate = configData.basic.dateRange[0]?.endDate ?? '';
   const { metrics, calendarType } = configData.basic;
   const boardingMappingStates = [...new Set(cycleTimeSettings.map((item) => item.value))];
   const isOnlyEmptyAndDoneState = onlyEmptyAndDoneState(boardingMappingStates);
   const includeRework = metrics.includes(REQUIRED_DATA.REWORK_TIMES);
-
   const shouldShowBoardMetrics = useAppSelector(isSelectBoardMetrics);
   const shouldShowDoraMetrics = useAppSelector(isSelectDoraMetrics);
   const onlySelectClassification = useAppSelector(isOnlySelectClassification);

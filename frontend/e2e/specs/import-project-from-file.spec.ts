@@ -1,5 +1,7 @@
 import { BOARD_METRICS_RESULT, FLAG_AS_BLOCK_PROJECT_BOARD_METRICS_RESULT } from '../fixtures/createNew/reportResult';
 import { importMultipleDoneProjectFromFile } from '../fixtures/importFile/multiple-done-config-file';
+import { cycleTimeByStatusFixture } from '../fixtures/cycleTimeByStatus/cycleTimeByStatusFixture';
+import { config as metricsStepData } from '../fixtures/createNew/metricsStep';
 import { ProjectCreationType } from 'e2e/pages/metrics/ReportStep';
 import { test } from '../fixtures/testWithExtendFixtures';
 import { clearTempDir } from 'e2e/utils/clearTempDir';
@@ -10,6 +12,10 @@ test.beforeAll(async () => {
 
 test('Import project from file', async ({ homePage, configStep, metricsStep, reportStep }) => {
   const hbStateData = importMultipleDoneProjectFromFile.cycleTime.jiraColumns.map(
+    (jiraToHBSingleMap) => Object.values(jiraToHBSingleMap)[0],
+  );
+
+  const hbStateDataEmptyByStatus = cycleTimeByStatusFixture.cycleTime.jiraColumns.map(
     (jiraToHBSingleMap) => Object.values(jiraToHBSingleMap)[0],
   );
 
@@ -25,7 +31,20 @@ test('Import project from file', async ({ homePage, configStep, metricsStep, rep
   await metricsStep.checkCrewsAreChanged(importMultipleDoneProjectFromFile.crews);
   await metricsStep.checkLastAssigneeCrewFilterChecked();
   await metricsStep.checkCycleTimeSettingIsByColumn();
-  await metricsStep.checkHeartbeatStateIsSet(hbStateData);
+  await metricsStep.checkHeartbeatStateIsSet(hbStateData, true);
+
+  await metricsStep.selectCycleTimeSettingsType(cycleTimeByStatusFixture.cycleTime.type);
+  await metricsStep.checkHeartbeatStateIsSet(hbStateDataEmptyByStatus, false);
+  await metricsStep.selectHeartbeatState(hbStateData, false);
+  await metricsStep.checkHeartbeatStateIsSet(hbStateData, false);
+
+  await metricsStep.selectCycleTimeSettingsType(importMultipleDoneProjectFromFile.cycleTime.type);
+  await metricsStep.checkHeartbeatStateIsSet(hbStateDataEmptyByStatus, true);
+  await metricsStep.selectHeartbeatState(hbStateData, true);
+  await metricsStep.checkHeartbeatStateIsSet(hbStateData, true);
+
+  await metricsStep.selectReworkSettings(metricsStepData.reworkTimesSettings);
+
   await metricsStep.checkClassifications(importMultipleDoneProjectFromFile.classification);
   await metricsStep.checkPipelineConfigurationAreChanged(importMultipleDoneProjectFromFile.deployment);
 

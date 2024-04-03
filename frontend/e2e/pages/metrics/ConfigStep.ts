@@ -5,10 +5,11 @@ import { expect, Locator, Page } from '@playwright/test';
 import { Dayjs } from 'dayjs';
 
 interface IBoardData {
+  type: string;
   boardId: string;
   email: string;
   site: string;
-  token: string;
+  token: string | undefined;
 }
 
 interface IPipelineToolData {
@@ -33,6 +34,7 @@ export class ConfigStep {
   readonly toDateInputValueSelect: (toDay: Dayjs) => Locator;
   readonly requireDataButton: Locator;
   readonly velocityCheckbox: Locator;
+  readonly cycleTimeCheckbox: Locator;
   readonly classificationCheckbox: Locator;
   readonly requiredDataErrorMessage: Locator;
   readonly previousButton: Locator;
@@ -89,6 +91,7 @@ export class ConfigStep {
 
     this.requireDataButton = page.getByRole('button', { name: 'Required Data' });
     this.velocityCheckbox = page.getByRole('option', { name: 'Velocity' }).getByRole('checkbox');
+    this.cycleTimeCheckbox = page.getByRole('option', { name: 'Cycle Time' }).getByRole('checkbox');
     this.classificationCheckbox = page.getByRole('option', { name: 'Classification' }).getByRole('checkbox');
     this.requiredDataErrorMessage = page.getByText('Metrics is required');
     this.previousButton = page.getByRole('button', { name: 'Previous' });
@@ -214,6 +217,14 @@ export class ConfigStep {
     await this.page.keyboard.press('Escape');
   }
 
+  async selectBoardMetricsOnly() {
+    await this.requiredMetricsLabel.click();
+    await this.velocityCheckbox.click();
+    await this.classificationCheckbox.click();
+    await this.cycleTimeCheckbox.click();
+    await this.page.keyboard.press('Escape');
+  }
+
   async checkBoardFormVisible() {
     await expect(this.boardContainer).toBeVisible();
     await expect(this.boardTypeSelect).toBeVisible();
@@ -239,7 +250,7 @@ export class ConfigStep {
     await this.boardIdInput.fill(boardId);
     await this.boardEmailInput.fill(email);
     await this.boardSiteInput.fill(site);
-    await this.boardTokenInput.fill(token);
+    await this.boardTokenInput.fill(token!);
   }
 
   async fillAndverifyBoardConfig(boardData: IBoardData) {

@@ -44,3 +44,30 @@ export const checkDownloadReport = async (page: Page, downloadButton: Locator, s
     expect(localCsv).toStrictEqual(downloadCsv);
   });
 };
+
+export const checkDownloadReportCycleTimeByStatus = async (
+  page: Page,
+  downloadButton: Locator,
+  savedFileName: string,
+) => {
+  await downloadFileAndCheck(page, downloadButton, savedFileName, async (fileDataString) => {
+    expect(fileDataString.length).toBeGreaterThan(0);
+    let localCsvFile = fs.readFileSync(path.resolve(__dirname, '../fixtures/cycleTimeByStatus/metricDataByStatus.csv'));
+    switch (savedFileName) {
+      case 'metricReport.csv':
+        localCsvFile = fs.readFileSync(path.resolve(__dirname, '../fixtures/cycleTimeByStatus/metricDataByStatus.csv'));
+        break;
+      case 'boardReport.csv':
+        localCsvFile = fs.readFileSync(path.resolve(__dirname, '../fixtures/cycleTimeByStatus/boardDataByStatus.csv'));
+        break;
+      case 'pipelineReport.csv':
+        localCsvFile = fs.readFileSync(
+          path.resolve(__dirname, '../fixtures/cycleTimeByStatus/pipelineDataByStatus.csv'),
+        );
+        break;
+    }
+    const localCsv = parse(localCsvFile);
+    const downloadCsv = parse(fileDataString);
+    expect(localCsv).toStrictEqual(downloadCsv);
+  });
+};

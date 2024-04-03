@@ -23,10 +23,14 @@ export class MetricsStep {
   readonly boardByColumnRadioBox: Locator;
   readonly boardByStatusRadioBox: Locator;
   readonly boardCycleTimeSelectForTODO: Locator;
+  readonly boardCycleTimeSelectForTO_DO_BYSTATUS: Locator;
   readonly boardCycleTimeSelectForDoing: Locator;
+  readonly boardCycleTimeSelectForInProgress: Locator;
+  readonly boardCycleTimeSelectForAnalysis: Locator;
   readonly boardCycleTimeSelectForBlocked: Locator;
   readonly boardCycleTimeSelectForReview: Locator;
   readonly boardCycleTimeSelectForREADY: Locator;
+  readonly boardCycleTimeSelectForWAITFORTESTING: Locator;
   readonly boardCycleTimeSelectForTesting: Locator;
   readonly boardCycleTimeSelectForDone: Locator;
   readonly boardCycleTimeInputForTODO: Locator;
@@ -91,8 +95,17 @@ export class MetricsStep {
     this.boardCycleTimeSelectForTODO = this.boardCycleTimeSection
       .getByLabel('Cycle time select for TODO')
       .getByLabel('Open');
+    this.boardCycleTimeSelectForTO_DO_BYSTATUS = this.boardCycleTimeSection
+      .getByLabel('Cycle time select for TO DO')
+      .getByLabel('Open');
     this.boardCycleTimeSelectForDoing = this.boardCycleTimeSection
       .getByLabel('Cycle time select for Doing')
+      .getByLabel('Open');
+    this.boardCycleTimeSelectForInProgress = this.boardCycleTimeSection
+      .getByLabel('Cycle time select for IN PROGRESS')
+      .getByLabel('Open');
+    this.boardCycleTimeSelectForAnalysis = this.boardCycleTimeSection
+      .getByLabel('Cycle time select for ANALYSIS')
       .getByLabel('Open');
     this.boardCycleTimeSelectForBlocked = this.boardCycleTimeSection
       .getByLabel('Cycle time select for Blocked')
@@ -102,6 +115,9 @@ export class MetricsStep {
       .getByLabel('Open');
     this.boardCycleTimeSelectForREADY = this.boardCycleTimeSection
       .getByLabel('Cycle time select for READY FOR TESTING')
+      .getByLabel('Open');
+    this.boardCycleTimeSelectForWAITFORTESTING = this.boardCycleTimeSection
+      .getByLabel('Cycle time select for WAIT FOR TEST')
       .getByLabel('Open');
     this.boardCycleTimeSelectForTesting = this.boardCycleTimeSection
       .getByLabel('Cycle time select for Testing')
@@ -196,6 +212,18 @@ export class MetricsStep {
 
   async checkCycleTimeSettingIsByColumn() {
     await expect(this.boardByColumnRadioBox).toBeChecked();
+  }
+
+  async checkCycleTimeSettingIsByStatus() {
+    await expect(this.boardByStatusRadioBox).toBeChecked();
+  }
+
+  async clickCycleTimeSettingByColumn() {
+    await this.boardByColumnRadioBox.click();
+  }
+
+  async clickCycleTimeSettingByStatus() {
+    await this.boardByStatusRadioBox.click();
   }
 
   async selectCrews(crews: string[]) {
@@ -301,20 +329,54 @@ export class MetricsStep {
     await expect(this.boardCycleTimeInputForDone).toHaveAttribute('value', doneOption);
   }
 
-  async selectHeartbeatState([
-    todoOption,
-    doingOption,
-    blockOption,
-    reviewOption,
-    forReadyOption,
-    testingOption,
-    doneOption,
-  ]: string[]) {
+  async selectHeartbeatState(
+    [todoOption, doingOption, blockOption, reviewOption, forReadyOption, testingOption, doneOption]: string[],
+    isByColumn: boolean,
+  ) {
     await this.boardCycleTimeSelectForTODO.click();
     await this.page.getByRole('option', { name: todoOption }).click();
 
     await this.boardCycleTimeSelectForDoing.click();
     await this.page.getByRole('option', { name: doingOption }).click();
+
+    await this.boardCycleTimeSelectForBlocked.click();
+    await this.page.getByRole('option', { name: blockOption }).click();
+
+    await this.boardCycleTimeSelectForReview.click();
+    await this.page.getByRole('option', { name: reviewOption }).click();
+
+    if (isByColumn) {
+      await this.boardCycleTimeSelectForREADY.click();
+      await this.page.getByRole('option', { name: forReadyOption }).click();
+    } else {
+      await this.boardCycleTimeSelectForWAITFORTESTING.click();
+      await this.page.getByRole('option', { name: forReadyOption }).click();
+    }
+
+    await this.boardCycleTimeSelectForTesting.click();
+    await this.page.getByRole('option', { name: testingOption, exact: true }).click();
+
+    await this.boardCycleTimeSelectForDone.click();
+    await this.page.getByRole('option', { name: doneOption }).click();
+  }
+
+  async selectHeartbeatStateByStatus(
+    [todoOption, doingOption, blockOption, reviewOption, forReadyOption, testingOption, doneOption]: string[],
+    isByColumn: boolean,
+  ) {
+    await this.boardCycleTimeSelectForTO_DO_BYSTATUS.click();
+    await this.page.getByRole('option', { name: todoOption }).click();
+
+    await this.boardCycleTimeSelectForDoing.click();
+    await this.page.getByRole('option', { name: doingOption }).click();
+
+    if (!isByColumn) {
+      await this.boardCycleTimeSelectForInProgress.click();
+      await this.page.getByRole('option', { name: doingOption }).click();
+
+      await this.boardCycleTimeSelectForAnalysis.click();
+      await this.page.getByRole('option', { name: doingOption }).click();
+    }
 
     await this.boardCycleTimeSelectForBlocked.click();
     await this.page.getByRole('option', { name: blockOption }).click();
@@ -332,15 +394,10 @@ export class MetricsStep {
     await this.page.getByRole('option', { name: doneOption }).click();
   }
 
-  async checkHeartbeatStateIsSet([
-    todoOption,
-    doingOption,
-    blockOption,
-    reviewOption,
-    forReadyOption,
-    testingOption,
-    doneOption,
-  ]: string[]) {
+  async checkHeartbeatStateIsSet(
+    [todoOption, doingOption, blockOption, reviewOption, forReadyOption, testingOption, doneOption]: string[],
+    isByColumn: boolean,
+  ) {
     await expect(this.boardCycleTimeSection.getByLabel('Cycle time select for TODO').getByRole('combobox')).toHaveValue(
       todoOption,
     );
@@ -353,9 +410,10 @@ export class MetricsStep {
     await expect(
       this.boardCycleTimeSection.getByLabel('Cycle time select for Review').getByRole('combobox'),
     ).toHaveValue(reviewOption);
-    await expect(
-      this.boardCycleTimeSection.getByLabel('Cycle time select for READY FOR TESTING').getByRole('combobox'),
-    ).toHaveValue(forReadyOption);
+    if (isByColumn)
+      await expect(
+        this.boardCycleTimeSection.getByLabel('Cycle time select for READY FOR TESTING').getByRole('combobox'),
+      ).toHaveValue(forReadyOption);
     await expect(
       this.boardCycleTimeSection.getByLabel('Cycle time select for Testing').getByRole('combobox'),
     ).toHaveValue(testingOption);
@@ -395,7 +453,7 @@ export class MetricsStep {
 
   async selectPipelineName(pipelineName: string) {
     await this.pipelineNameSelect.click();
-    const targetNameOption = this.page.getByRole('option', { name: pipelineName });
+    const targetNameOption = this.page.getByRole('option', { name: pipelineName }).first();
     await expect(targetNameOption).toBeVisible();
     await targetNameOption.click();
     await expect(this.loadings).toBeHidden();

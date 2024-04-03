@@ -1,3 +1,4 @@
+import { cycleTimeByStatusFixture } from '../fixtures/cycleTimeByStatus/cycleTimeByStatusFixture';
 import { BOARD_METRICS_RESULT, DORA_METRICS_RESULT } from '../fixtures/createNew/reportResult';
 import { config as metricsStepData } from '../fixtures/createNew/metricsStep';
 import { config as configStepData } from '../fixtures/createNew/configStep';
@@ -16,6 +17,9 @@ test('Create a new project', async ({ homePage, configStep, metricsStep, reportS
     endDate: format(configStepData.dateRange.endDate),
   };
   const hbStateData = metricsStepData.cycleTime.jiraColumns.map(
+    (jiraToHBSingleMap) => Object.values(jiraToHBSingleMap)[0],
+  );
+  const hbStateDataEmptyByStatus = cycleTimeByStatusFixture.cycleTime.jiraColumns.map(
     (jiraToHBSingleMap) => Object.values(jiraToHBSingleMap)[0],
   );
 
@@ -50,8 +54,19 @@ test('Create a new project', async ({ homePage, configStep, metricsStep, reportS
   await metricsStep.checkCycleTimeSettingIsByColumn();
   await metricsStep.waitForHiddenLoading();
   await metricsStep.selectCrews(metricsStepData.crews);
+
   await metricsStep.selectCycleTimeSettingsType(metricsStepData.cycleTime.type);
-  await metricsStep.selectHeartbeatState(hbStateData);
+  await metricsStep.checkHeartbeatStateIsSet(hbStateDataEmptyByStatus, true);
+
+  await metricsStep.selectCycleTimeSettingsType(cycleTimeByStatusFixture.cycleTime.type);
+  await metricsStep.checkHeartbeatStateIsSet(hbStateDataEmptyByStatus, false);
+  await metricsStep.selectHeartbeatState(hbStateData, false);
+  await metricsStep.checkHeartbeatStateIsSet(hbStateData, false);
+
+  await metricsStep.selectCycleTimeSettingsType(metricsStepData.cycleTime.type);
+  await metricsStep.selectHeartbeatState(hbStateData, true);
+  await metricsStep.checkHeartbeatStateIsSet(hbStateData, true);
+
   await metricsStep.selectClassifications(metricsStepData.classification);
   await metricsStep.selectDefaultGivenPipelineSetting(metricsStepData.deployment);
   await metricsStep.selectGivenPipelineCrews(metricsStepData.pipelineCrews);

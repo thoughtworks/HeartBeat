@@ -86,7 +86,7 @@ test('Page jump for create', async ({ homePage, configStep, metricsStep, reportS
   await metricsStep.waitForHiddenLoading();
   await metricsStep.selectCrews(metricsStepData.crews);
   await metricsStep.selectCycleTimeSettingsType(metricsStepData.cycleTime.type);
-  await metricsStep.selectHeartbeatState(hbStateData);
+  await metricsStep.selectHeartbeatState(hbStateData, true);
   await metricsStep.selectClassifications(metricsStepData.classification);
   await metricsStep.selectDefaultGivenPipelineSetting(metricsStepData.deployment);
   await metricsStep.selectGivenPipelineCrews(metricsStepData.pipelineCrews);

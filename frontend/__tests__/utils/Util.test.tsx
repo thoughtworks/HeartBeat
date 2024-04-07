@@ -1,19 +1,21 @@
 import {
+  convertCycleTimeSettings,
   exportToJsonFile,
   filterAndMapCycleTimeSettings,
   findCaseInsensitiveType,
+  formatDuplicatedNameWithSuffix,
   formatMillisecondsToHours,
   formatMinToHours,
+  getDisabledOptions,
   getJiraBoardToken,
   getRealDoneStatus,
-  transformToCleanedBuildKiteEmoji,
-  formatDuplicatedNameWithSuffix,
-  getDisabledOptions,
+  getSortedAndDeduplicationBoardingMapping,
   sortDisabledOptions,
+  transformToCleanedBuildKiteEmoji,
 } from '@src/utils/util';
 import { CleanedBuildKiteEmoji, OriginBuildKiteEmoji } from '@src/constants/emojis/emoji';
-import { CYCLE_TIME_SETTINGS_TYPES } from '@src/constants/resources';
-import { IPipelineConfig } from '@src/context/Metrics/metricsSlice';
+import { CYCLE_TIME_SETTINGS_TYPES, METRICS_CONSTANTS } from '@src/constants/resources';
+import { ICycleTimeSetting, IPipelineConfig } from '@src/context/Metrics/metricsSlice';
 import { EMPTY_STRING } from '@src/constants/commons';
 import { PIPELINE_TOOL_TYPES } from '../fixtures';
 
@@ -267,6 +269,135 @@ describe('formatDuplicatedNameWithSuffix function', () => {
       { flag: true, key: 'custom_field10060', name: `${duplicatedName}-1` },
       { flag: false, key: 'custom_field10061', name: `${duplicatedName}-2` },
     ];
+    expect(result).toStrictEqual(expectResult);
+  });
+});
+
+describe('getSortedAndDeduplicationBoardingMapping function', () => {
+  it('should sorted and deduplication boarding mapping', () => {
+    const boardingMapping: ICycleTimeSetting[] = [
+      METRICS_CONSTANTS.cycleTimeEmptyStr,
+      METRICS_CONSTANTS.analysisValue,
+      METRICS_CONSTANTS.testingValue,
+      METRICS_CONSTANTS.doneValue,
+      METRICS_CONSTANTS.todoValue,
+      METRICS_CONSTANTS.cycleTimeEmptyStr,
+      METRICS_CONSTANTS.blockValue,
+      METRICS_CONSTANTS.inDevValue,
+      METRICS_CONSTANTS.reviewValue,
+      METRICS_CONSTANTS.waitingValue,
+      METRICS_CONSTANTS.reviewValue,
+    ].map((value) => ({
+      value: value,
+      status: '',
+      column: '',
+    }));
+    const expectResult = [
+      METRICS_CONSTANTS.cycleTimeEmptyStr,
+      METRICS_CONSTANTS.todoValue,
+      METRICS_CONSTANTS.analysisValue,
+      METRICS_CONSTANTS.inDevValue,
+      METRICS_CONSTANTS.blockValue,
+      METRICS_CONSTANTS.reviewValue,
+      METRICS_CONSTANTS.waitingValue,
+      METRICS_CONSTANTS.testingValue,
+      METRICS_CONSTANTS.doneValue,
+    ];
+    const result = getSortedAndDeduplicationBoardingMapping(boardingMapping);
+    expect(result).toStrictEqual(expectResult);
+  });
+});
+
+describe('convertCycleTimeSettings function', () => {
+  const mockCycleTime = [
+    {
+      column: 'TODO',
+      status: 'TODO',
+      value: 'To do',
+    },
+    {
+      column: 'Doing',
+      status: 'DOING',
+      value: 'In Dev',
+    },
+    {
+      column: 'Blocked',
+      status: 'BLOCKED',
+      value: 'Block',
+    },
+    {
+      column: 'Review',
+      status: 'REVIEW',
+      value: 'Review',
+    },
+    {
+      column: 'READY FOR TESTING',
+      status: 'WAIT FOR TEST',
+      value: 'Waiting for testing',
+    },
+    {
+      column: 'Testing',
+      status: 'TESTING',
+      value: 'Testing',
+    },
+    {
+      column: 'Done',
+      status: 'DONE',
+      value: '',
+    },
+  ];
+  it('convert cycle time settings correctly by status', () => {
+    const expectResult = [
+      {
+        TODO: 'To do',
+      },
+      {
+        DOING: 'In Dev',
+      },
+      {
+        BLOCKED: 'Block',
+      },
+      {
+        REVIEW: 'Review',
+      },
+      {
+        'WAIT FOR TEST': 'Waiting for testing',
+      },
+      {
+        TESTING: 'Testing',
+      },
+      {
+        DONE: '',
+      },
+    ];
+    const result = convertCycleTimeSettings(CYCLE_TIME_SETTINGS_TYPES.BY_STATUS, mockCycleTime);
+    expect(result).toStrictEqual(expectResult);
+  });
+  it('convert cycle time settings correctly by column', () => {
+    const expectResult = [
+      {
+        TODO: 'To do',
+      },
+      {
+        Doing: 'In Dev',
+      },
+      {
+        Blocked: 'Block',
+      },
+      {
+        Review: 'Review',
+      },
+      {
+        'READY FOR TESTING': 'Waiting for testing',
+      },
+      {
+        Testing: 'Testing',
+      },
+      {
+        Done: '----',
+      },
+    ];
+    const result = convertCycleTimeSettings(CYCLE_TIME_SETTINGS_TYPES.BY_COLUMN, mockCycleTime);
     expect(result).toStrictEqual(expectResult);
   });
 });

@@ -3,35 +3,31 @@ import {
   updateReworkTimesSettings,
   selectCycleTimeSettings,
 } from '@src/context/Metrics/metricsSlice';
+import { getSortedAndDeduplicationBoardingMapping, onlyEmptyAndDoneState } from '@src/utils/util';
 import { ReworkDialog } from '@src/containers/MetricsStep/ReworkSettings/ReworkDialog';
 import { MetricsSettingTitle } from '@src/components/Common/MetricsSettingTitle';
-import { METRICS_CONSTANTS, REWORK_TIME_LIST } from '@src/constants/resources';
 import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined';
 import MultiAutoComplete from '@src/components/Common/MultiAutoComplete';
 import { ReworkHeaderWrapper, ReworkSettingsWrapper } from './style';
 import { StyledLink } from '@src/containers/MetricsStep/style';
+import { METRICS_CONSTANTS } from '@src/constants/resources';
 import { useAppDispatch, useAppSelector } from '@src/hooks';
-import { onlyEmptyAndDoneState } from '@src/utils/util';
 import { SingleSelection } from './SingleSelection';
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 
 function ReworkSettings() {
   const [isShowDialog, setIsShowDialog] = useState(false);
   const reworkTimesSettings = useAppSelector(selectReworkTimesSettings);
   const cycleTimeSettings = useAppSelector(selectCycleTimeSettings);
   const dispatch = useAppDispatch();
-  const boardingMappingStatus = useMemo(() => {
-    return [...new Set(cycleTimeSettings.map((item) => item.value))];
-  }, [cycleTimeSettings]);
-
+  const boardingMappingStatus = getSortedAndDeduplicationBoardingMapping(cycleTimeSettings);
   const boardingMappingHasDoneStatus = boardingMappingStatus.includes(METRICS_CONSTANTS.doneValue);
   const allStateIsEmpty = boardingMappingStatus.every((value) => value === METRICS_CONSTANTS.cycleTimeEmptyStr);
   const isOnlyEmptyAndDoneState = onlyEmptyAndDoneState(boardingMappingStatus);
-  const singleOptions = boardingMappingStatus
-    .filter((item) => item !== METRICS_CONSTANTS.doneValue && item !== METRICS_CONSTANTS.cycleTimeEmptyStr)
-    .sort((a, b) => {
-      return REWORK_TIME_LIST.indexOf(a) - REWORK_TIME_LIST.indexOf(b);
-    });
+
+  const singleOptions = boardingMappingStatus.filter(
+    (item) => item !== METRICS_CONSTANTS.doneValue && item !== METRICS_CONSTANTS.cycleTimeEmptyStr,
+  );
 
   const multiOptions = reworkTimesSettings.reworkState
     ? [

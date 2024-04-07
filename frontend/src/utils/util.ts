@@ -1,5 +1,5 @@
+import { CYCLE_TIME_LIST, CYCLE_TIME_SETTINGS_TYPES, METRICS_CONSTANTS } from '@src/constants/resources';
 import { CleanedBuildKiteEmoji, OriginBuildKiteEmoji } from '@src/constants/emojis/emoji';
-import { CYCLE_TIME_SETTINGS_TYPES, METRICS_CONSTANTS } from '@src/constants/resources';
 import { ICycleTimeSetting, IPipelineConfig } from '@src/context/Metrics/metricsSlice';
 import { ITargetFieldType } from '@src/components/Common/MultiAutoComplete/styles';
 import { DATE_FORMAT_TEMPLATE } from '@src/constants/template';
@@ -122,7 +122,29 @@ export const formatDuplicatedNameWithSuffix = (data: ITargetFieldType[]) => {
   });
 };
 
+export const getSortedAndDeduplicationBoardingMapping = (boardMapping: ICycleTimeSetting[]) => {
+  return [...new Set(boardMapping.map((item) => item.value))].sort((a, b) => {
+    return CYCLE_TIME_LIST.indexOf(a) - CYCLE_TIME_LIST.indexOf(b);
+  });
+};
+
 export const onlyEmptyAndDoneState = (boardingMappingStates: string[]) =>
   isEqual(boardingMappingStates, [METRICS_CONSTANTS.doneValue]) ||
   isEqual(boardingMappingStates, [METRICS_CONSTANTS.cycleTimeEmptyStr, METRICS_CONSTANTS.doneValue]) ||
   isEqual(boardingMappingStates, [METRICS_CONSTANTS.doneValue, METRICS_CONSTANTS.cycleTimeEmptyStr]);
+
+export function convertCycleTimeSettings(
+  cycleTimeSettingsType: CYCLE_TIME_SETTINGS_TYPES,
+  cycleTimeSettings: ICycleTimeSetting[],
+) {
+  if (cycleTimeSettingsType === CYCLE_TIME_SETTINGS_TYPES.BY_COLUMN) {
+    return ([...new Set(cycleTimeSettings.map(({ column }: ICycleTimeSetting) => column))] as string[]).map(
+      (uniqueColumn) => ({
+        [uniqueColumn]:
+          cycleTimeSettings.find(({ column }: ICycleTimeSetting) => column === uniqueColumn)?.value ||
+          METRICS_CONSTANTS.cycleTimeEmptyStr,
+      }),
+    );
+  }
+  return cycleTimeSettings?.map(({ status, value }: ICycleTimeSetting) => ({ [status]: value }));
+}

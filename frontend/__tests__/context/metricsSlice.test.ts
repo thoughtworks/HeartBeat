@@ -2,39 +2,39 @@ import saveMetricsSettingReducer, {
   addADeploymentFrequencySetting,
   deleteADeploymentFrequencySetting,
   initDeploymentFrequencySettings,
-  updateCycleTimeSettings,
+  resetMetricData,
   saveDoneColumn,
+  savePipelineCrews,
   saveTargetFields,
   saveUsers,
-  selectDeploymentFrequencySettings,
-  selectOrganizationWarningMessage,
-  selectPipelineNameWarningMessage,
-  selectStepWarningMessage,
-  updateDeploymentFrequencySettings,
-  updateMetricsImportedData,
-  updateMetricsState,
-  updatePipelineSettings,
-  updatePipelineStep,
-  updateTreatFlagCardAsBlock,
-  updateAssigneeFilter,
-  resetMetricData,
-  savePipelineCrews,
-  setCycleTimeSettingsType,
-  updateShouldGetPipelineConfig,
-  updateShouldGetBoardConfig,
-  updateAdvancedSettings,
-  updateReworkTimesSettings,
-  selectShouldGetBoardConfig,
-  selectShouldGetPipelineConfig,
   selectAdvancedSettings,
   selectAssigneeFilter,
   selectClassificationWarningMessage,
   selectCycleTimeSettings,
   selectCycleTimeWarningMessage,
+  selectDeploymentFrequencySettings,
   selectMetricsContent,
+  selectOrganizationWarningMessage,
+  selectPipelineNameWarningMessage,
   selectRealDoneWarningMessage,
   selectReworkTimesSettings,
+  selectShouldGetBoardConfig,
+  selectShouldGetPipelineConfig,
+  selectStepWarningMessage,
   selectTreatFlagCardAsBlock,
+  setCycleTimeSettingsType,
+  updateAdvancedSettings,
+  updateAssigneeFilter,
+  updateCycleTimeSettings,
+  updateDeploymentFrequencySettings,
+  updateMetricsImportedData,
+  updateMetricsState,
+  updatePipelineSettings,
+  updatePipelineStep,
+  updateReworkTimesSettings,
+  updateShouldGetBoardConfig,
+  updateShouldGetPipelineConfig,
+  updateTreatFlagCardAsBlock,
 } from '@src/context/Metrics/metricsSlice';
 import {
   CLASSIFICATION_WARNING_MESSAGE,
@@ -81,6 +81,7 @@ const initState = {
   realDoneWarningMessage: null,
   deploymentWarningMessage: [],
   leadTimeWarningMessage: [],
+  firstTimeRoadMetricData: true,
 };
 
 const mockJiraResponse = {
@@ -1033,6 +1034,120 @@ describe('saveMetricsSetting reducer', () => {
 
     expect(savedMetricsSetting.cycleTimeWarningMessage).toEqual(
       'The column of ToDo is a deleted column, which means this column existed the time you saved config, but was deleted. Please confirm!',
+    );
+  });
+
+  describe('should update metrics when reload metric page', () => {
+    it.each([{ isProjectCreated: false }, { isProjectCreated: true }])(
+      'should update classification correctly when reload metrics page',
+      (mockData) => {
+        const savedMetricsSetting = saveMetricsSettingReducer(
+          {
+            ...initState,
+            firstTimeRoadMetricData: false,
+            targetFields: [
+              { key: 'issuetype', name: 'Issue Type', flag: false },
+              { key: 'parent', name: 'Parent', flag: true },
+            ],
+          },
+          updateMetricsState({
+            ...mockJiraResponse,
+            ...mockData,
+            targetFields: [
+              {
+                key: 'parent',
+                name: 'Parent',
+                flag: false,
+              },
+              {
+                key: 'customfield_10061',
+                name: 'Story testing',
+                flag: false,
+              },
+            ],
+          }),
+        );
+        expect(savedMetricsSetting.targetFields).toEqual([
+          { key: 'parent', name: 'Parent', flag: true },
+          { key: 'customfield_10061', name: 'Story testing', flag: false },
+        ]);
+      },
+    );
+
+    it.each([{ isProjectCreated: true }, { isProjectCreated: false }])(
+      'should update board crews user correctly when reload metrics page',
+      (mockData) => {
+        const savedMetricsSetting = saveMetricsSettingReducer(
+          {
+            ...initState,
+            firstTimeRoadMetricData: false,
+            users: ['User A', 'User B', 'C'],
+          },
+          updateMetricsState({ ...mockJiraResponse, ...mockData }),
+        );
+        expect(savedMetricsSetting.users).toEqual(['User A', 'User B']);
+      },
+    );
+
+    it.each([CYCLE_TIME_SETTINGS_TYPES.BY_COLUMN, CYCLE_TIME_SETTINGS_TYPES.BY_STATUS])(
+      'should update cycle time settings correctly when reload metrics page',
+      (cycleTimeSettingsType) => {
+        const savedMetricsSetting = saveMetricsSettingReducer(
+          {
+            ...initState,
+            firstTimeRoadMetricData: false,
+            cycleTimeSettingsType,
+            cycleTimeSettings: [
+              {
+                column: 'TODO',
+                status: 'TODO',
+                value: 'To do',
+              },
+              {
+                column: 'Doing',
+                status: 'DOING',
+                value: 'In Dev',
+              },
+              {
+                column: 'Blocked',
+                status: 'BLOCKED',
+                value: 'Block',
+              },
+            ],
+          },
+          updateMetricsState({
+            ...mockJiraResponse,
+            jiraColumns: [
+              {
+                key: 'To Do',
+                value: {
+                  name: 'TODO',
+                  statuses: ['TODO'],
+                },
+              },
+              {
+                key: 'In Progress',
+                value: {
+                  name: 'Doing',
+                  statuses: ['DOING'],
+                },
+              },
+            ],
+          }),
+        );
+        expect(savedMetricsSetting.cycleTimeSettings).toEqual([
+          {
+            column: 'TODO',
+            status: 'TODO',
+            value: 'To do',
+          },
+          {
+            column: 'Doing',
+            status: 'DOING',
+            value: 'In Dev',
+          },
+        ]);
+      },
     );
   });
 

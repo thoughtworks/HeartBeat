@@ -13,6 +13,7 @@ import {
   updateMetricsState,
   selectShouldGetBoardConfig,
   updateShouldGetBoardConfig,
+  updateFirstTimeRoadMetricsBoardData,
 } from '@src/context/Metrics/metricsSlice';
 import {
   MetricSelectionHeader,
@@ -75,6 +76,7 @@ const MetricsStep = () => {
           dispatch(updateJiraVerifyResponse(res.data));
           dispatch(updateMetricsState(merge(res.data, { isProjectCreated: isProjectCreated })));
           dispatch(updateShouldGetBoardConfig(false));
+          dispatch(updateFirstTimeRoadMetricsBoardData(false));
         }
       }),
     // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -30,17 +30,16 @@ import {
   StyledStepper,
 } from './style';
 import {
-  ICycleTimeSetting,
-  savedMetricsSettingState,
+  ISavedMetricsSettingState,
   selectCycleTimeSettings,
   selectMetricsContent,
 } from '@src/context/Metrics/metricsSlice';
 import { backStep, nextStep, selectStepNumber, updateTimeStamp } from '@src/context/stepper/StepperSlice';
 import { useMetricsStepValidationCheckContext } from '@src/hooks/useMetricsStepValidationCheckContext';
+import { convertCycleTimeSettings, exportToJsonFile, onlyEmptyAndDoneState } from '@src/utils/util';
 import { COMMON_BUTTONS, METRICS_STEPS, STEPS } from '@src/constants/commons';
 import { ConfirmDialog } from '@src/containers/MetricsStepper/ConfirmDialog';
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch';
-import { exportToJsonFile, onlyEmptyAndDoneState } from '@src/utils/util';
 import { lazy, Suspense, useEffect, useMemo, useState } from 'react';
 import { getFormMeta } from '@src/context/meta/metaSlice';
 import SaveAltIcon from '@mui/icons-material/SaveAlt';
@@ -176,7 +175,7 @@ const MetricsStepper = () => {
     onlyIncludeReworkMetrics,
   ]);
 
-  const filterMetricsConfig = (metricsConfig: savedMetricsSettingState) => {
+  const filterMetricsConfig = (metricsConfig: ISavedMetricsSettingState) => {
     return Object.fromEntries(
       Object.entries(metricsConfig).filter(([, value]) => {
         /* istanbul ignore next */
@@ -230,16 +229,7 @@ const MetricsStepper = () => {
       cycleTime: cycleTimeSettings
         ? {
             type: cycleTimeSettingsType,
-            jiraColumns:
-              cycleTimeSettingsType === CYCLE_TIME_SETTINGS_TYPES.BY_COLUMN
-                ? ([...new Set(cycleTimeSettings.map(({ column }: ICycleTimeSetting) => column))] as string[]).map(
-                    (uniqueColumn) => ({
-                      [uniqueColumn]:
-                        cycleTimeSettings.find(({ column }: ICycleTimeSetting) => column === uniqueColumn)?.value ||
-                        METRICS_CONSTANTS.cycleTimeEmptyStr,
-                    }),
-                  )
-                : cycleTimeSettings?.map(({ status, value }: ICycleTimeSetting) => ({ [status]: value })),
+            jiraColumns: convertCycleTimeSettings(cycleTimeSettingsType, cycleTimeSettings),
             treatFlagCardAsBlock,
           }
         : undefined,

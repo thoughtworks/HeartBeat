@@ -1,6 +1,5 @@
 import {
   initDeploymentFrequencySettings,
-  saveUsers,
   updateShouldGetBoardConfig,
   updateShouldGetPipelineConfig,
 } from '@src/context/Metrics/metricsSlice';
@@ -133,7 +132,6 @@ describe('DateRangePickerSection', () => {
       expect(updateShouldGetBoardConfig).toHaveBeenCalledWith(true);
       expect(updateShouldGetPipelineConfig).toHaveBeenCalledWith(true);
       expect(initDeploymentFrequencySettings).toHaveBeenCalled();
-      expect(saveUsers).toHaveBeenCalledWith([]);
     });
 
     it('should dispatch update configuration when change endDate', async () => {
@@ -145,7 +143,6 @@ describe('DateRangePickerSection', () => {
       expect(updateShouldGetBoardConfig).toHaveBeenCalledWith(true);
       expect(updateShouldGetPipelineConfig).toHaveBeenCalledWith(true);
       expect(initDeploymentFrequencySettings).toHaveBeenCalled();
-      expect(saveUsers).toHaveBeenCalledWith([]);
     });
   });
 

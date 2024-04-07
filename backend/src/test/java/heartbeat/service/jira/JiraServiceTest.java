@@ -127,6 +127,8 @@ class JiraServiceTest {
 
 	public static final String SITE_ATLASSIAN_NET = "https://site.atlassian.net";
 
+	public static final String INVALID_SITE_ATLASSIAN_NET = "https://unknown.atlassian.net";
+
 	private final BoardType boardTypeJira = BoardType.fromStyle("next-gen");
 
 	private final BoardType boardTypeClassicJira = BoardType.fromStyle("classic");
@@ -512,6 +514,20 @@ class JiraServiceTest {
 
 		Throwable thrown = catchThrowable(() -> jiraService.verify(boardTypeJira, boardVerifyRequestParam));
 		assertThat(thrown).isInstanceOf(RuntimeException.class).hasMessageContaining("boardId is incorrect");
+	}
+
+	@Test
+	void shouldCallJiraFeignClientBoardAndThrowNotFoundWhenVerifyJiraBoardSite() {
+		URI baseUrl = URI.create(INVALID_SITE_ATLASSIAN_NET);
+		String token = "token";
+		BoardVerifyRequestParam boardVerifyRequestParam = BOARD_VERIFY_REQUEST_BUILDER().build();
+
+		when(urlGenerator.getUri(any())).thenReturn(URI.create(INVALID_SITE_ATLASSIAN_NET));
+		doThrow(new NotFoundException("site is incorrect")).when(jiraFeignClient).getDashboard(baseUrl, token);
+
+		Throwable thrown = catchThrowable(() -> jiraService.verify(boardTypeJira, boardVerifyRequestParam));
+		assertThat(thrown).isInstanceOf(RuntimeException.class).hasMessageContaining("site is incorrect");
+
 	}
 
 	@Test

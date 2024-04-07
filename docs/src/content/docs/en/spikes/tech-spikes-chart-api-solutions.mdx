@@ -41,19 +41,21 @@ dateRange: [
 skin rose
 title Charting API - Metrics page
 
-participant FrontEnd
-participant Backend
+:Frontend separate the date list in order to send the request to backend;
 
-group call backend API
-    FrontEnd -> FrontEnd: separate the date list in order to send the request
-    loop send request and get response as usual
-        FrontEnd -> Backend: fetch information as usual
-        activate Backend
-        FrontEnd <-- Backend: return response as usual
-        deactivate Backend
-    end loop
-    FrontEnd -> FrontEnd: combined data
-end
+fork
+  :fetch parameters as usual (dateRange[0]);
+  :get response as usual (dateRange[0]);
+fork again
+  :fetch parameters as usual (dateRange[1]);
+  :get response as usual (dateRange[1]);
+fork again
+  :fetch parameters as usual (dateRange[N]);
+  :get response as usual (dateRange[N]);
+end fork
+:combined all data;
+
+stop
 @enduml
 ```
 
@@ -74,19 +76,21 @@ The APIs for the metrics page that we do not need to modify are as follows:
 skin rose
 title Charting API - Report page
 
-participant FrontEnd
-participant Backend
+:Frontend separate the date list in order to send the request to backend;
 
-group call backend API
-    FrontEnd -> FrontEnd: separate the date list in order to send the request
-    loop send request and get response as usual
-        FrontEnd -> Backend: fetch information as usual
-        activate Backend
-        FrontEnd <-- Backend: return response as usual
-        deactivate Backend
-    end loop
-    FrontEnd -> FrontEnd: combined data and chart
-end
+fork
+  :fetch parameters as usual (dateRange[0]);
+  :get response as usual (dateRange[0]);
+fork again
+  :fetch parameters as usual (dateRange[1]);
+  :get response as usual (dateRange[1]);
+fork again
+  :fetch parameters as usual (dateRange[N]);
+  :get response as usual (dateRange[N]);
+end fork
+:combined data for charting;
+
+stop
 @enduml
 ```
 
@@ -94,18 +98,15 @@ As shown in the image, we want to refactor the frontend and backend solutions fo
 `reports poll {reportId}` API, we can transfer date info time and time again. Due to the logic of the report page.
 Then we accept all responses from the backend and combine the data for charting.
  
- The APIs for the report page that we do not need to modify are as follows:
- - POST /reports
- 
-Specific `reportId` need to be accompanied by additional identifiers in the responses sent,
- such as information related to the selected time, to distinguish time periods
-
+The APIs for the report page that we do not need to modify are as follows:
+- POST /reports
 - GET /reports/`{reportId}`
 - GET /reports/metric/`{reportId}`
 - GET /reports/board/`{reportId}`
 - GET /reports/pipeline/`{reportId}`
 
-About chart information:
+
+Corresponding information about chart information and response:
 
 - velocity: 
 ```json

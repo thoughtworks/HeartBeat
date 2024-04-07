@@ -77,7 +77,7 @@ test('Page jump for create', async ({ homePage, configStep, metricsStep, reportS
   await configStep.selectRegularCalendar(configStepData.calendarType);
   await configStep.typeInDateRange(dateRange);
   await configStep.selectAllRequiredMetrics();
-  await configStep.fillAndverifyBoardConfig(configStepData.board);
+  await configStep.fillAndVerifyBoardConfig(configStepData.board);
   await configStep.fillAndVerifyPipelineToolForm(configStepData.pipelineTool);
   await configStep.fillAndVerifySourceControlForm(configStepData.sourceControl);
   await configStep.goToMetrics();

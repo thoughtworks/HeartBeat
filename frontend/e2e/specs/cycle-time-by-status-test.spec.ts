@@ -20,7 +20,7 @@ test('Create a new project with cycle time by status', async ({ homePage, config
   await configStep.typeInDateRange(dateRange);
   await configStep.selectBoardMetricsOnly();
   await configStep.checkBoardFormVisible();
-  await configStep.fillAndverifyBoardConfig(cycleTimeByStatusFixture.board);
+  await configStep.fillAndVerifyBoardConfig(cycleTimeByStatusFixture.board);
   await configStep.validateNextButtonClickable();
   await configStep.goToMetrics();
 
@@ -58,7 +58,7 @@ test('Create a new project with cycle time by status', async ({ homePage, config
   await configStep.typeInDateRange(dateRange);
   await configStep.selectBoardMetricsOnly();
   await configStep.checkBoardFormVisible();
-  await configStep.fillAndverifyBoardConfig(cycleTimeByColumnFixture.board);
+  await configStep.fillAndVerifyBoardConfig(cycleTimeByColumnFixture.board);
   await configStep.validateNextButtonClickable();
   await configStep.goToMetrics();
 

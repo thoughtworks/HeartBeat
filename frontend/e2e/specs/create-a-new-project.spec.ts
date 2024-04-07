@@ -36,9 +36,9 @@ test('Create a new project', async ({ homePage, configStep, metricsStep, reportS
   await configStep.checkBoardFormVisible();
   await configStep.checkPipelineToolFormVisible();
   await configStep.checkSourceControlFormVisible();
-  await configStep.fillAndverifyBoardConfig(configStepData.board);
+  await configStep.fillAndVerifyBoardConfig(configStepData.board);
   await configStep.resetBoardConfig();
-  await configStep.fillAndverifyBoardConfig(configStepData.board);
+  await configStep.fillAndVerifyBoardConfig(configStepData.board);
   await configStep.fillAndVerifyPipelineToolForm(configStepData.pipelineTool);
   await configStep.fillAndVerifySourceControlForm(configStepData.sourceControl);
   await configStep.saveConfigStepAsJSONThenVerifyDownloadFile(configStepData);

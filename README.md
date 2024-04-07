@@ -27,7 +27,7 @@
         - [3.1.3.3 Guideline for generating GitHub token](#3133-guideline-for-generating-github-token)
         - [3.1.3.4 Authorize GitHub token with correct organization](#3134-authorize-github-token-with-correct-organization)
     - [3.2 Config Metrics data](#32-config-metrics-data)
-      - [3.2.1 Config Crews/Cycle Time](#321-config-crewscycle-time)
+      - [3.2.1 Config Crews/Board Mappings](#321-config-crewsboard-mappings)
       - [3.2.2 Setting Classification](#322-setting-classification)
       - [3.2.3 Rework times Setting](#323-rework-times-setting)
       - [3.2.4 Setting advanced Setting](#324-setting-advanced-setting)
@@ -213,10 +213,10 @@ _Image 3-8, authorize GitHub token with correct organization_
 
 After inputting the details info, users need to click the `Verify` button to verify if can access to these tool. Once verified, they could click the `Next` button go to next page -- Config Metrics page(Image 3-5，Image 3-6，Image 3-7)
 
-#### 3.2.1 Config Crews/Cycle Time
+#### 3.2.1 Config Crews/Board Mappings
 
 ![Image 3-9](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/readme/5.png)\
-_Image 3-9, Crews/Cycle Time config_
+_Image 3-9, Crews/Board Mappings config_
 
 **Crew Settings:** You could select your team members from a list get from board source. The list will include the assignees for those tickets that finished in the time period selected in the last step.
 
@@ -234,52 +234,57 @@ _Image 3-9, Crews/Cycle Time config_
 | Done                | It means the tickets are already done. Cycle time doesn't include this time.                                                           |
 | --                  | If you don't need to map, you can select --                                                                                            |
 
+**By Status**: user can click the toggle selected button to choose the mapping relationship by column or by status. It support multiple status map in to one column, just as the picture shows the TODO and INPROGRESS board  status can be mapped to different heartbeat states.
+
+![Image 3-10](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/readme/16.png)\
+_Image 3-10，By Status_
+
 #### 3.2.2 Setting Classification
 
-![Image 3-10](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/readme/6.png)\
-_Image 3-10，Classification Settings_
+![Image 3-11](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/readme/6.png)\
+_Image 3-11，Classification Settings_
 
 In classification settings, it will list all Context fields for your jira board. Users can select anyone to get the data for them. And according to your selection, in the export page, you will see the classification report to provide more insight with your board data.
 
 #### 3.2.3 Rework times Setting
-![Image 3-11](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/rework-setting-image/rework-times-settings.png)\
-_Image 3-11，Rework times Settings_
+![Image 3-12](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/rework-setting-image/rework-times-settings.png)\
+_Image 3-12，Rework times Settings_
 
 In Rework times settings, it contains Rework to which state Input and Exclude which states(optional) Input. The options in the Rework to which state Input are all from Board mappings, the options are ordered, and when an option is selected, the rework information of the option and all subsequent options will be counted in the report page and export file. The Exclude which states(optional) Input can help you exclude certain subsequent options (image 3-7).
 
 #### 3.2.4 Setting advanced Setting
 
-![Image 3-12](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/advanced-setting-image/advance-settings.png)\
-_Image 3-12，advanced Settings_
+![Image 3-13](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/advanced-setting-image/advance-settings.png)\
+_Image 3-13，advanced Settings_
 
 In advanced settings, it contains story points Input and Flagged Input. Users can input story points and Flagged custom-field on their own when the jira board has permission restriction . And according to these input, in the export page, user can get correct story points and block days
 
 how to find the story points and Flagged custom-field?
 
-![Image 3-13](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/advanced-setting-image/devtool-network.png)\
-_Image 3-13，devTool-network-part_
+![Image 3-14](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/advanced-setting-image/devtool-network.png)\
+_Image 3-14，devTool-network-part_
 
-![Image 3-14](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/advanced-setting-image/card-history.png)\
-_Image 3-14，card-history_
+![Image 3-15](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/advanced-setting-image/card-history.png)\
+_Image 3-15，card-history_
 
-![Image 3-15](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/advanced-setting-image/find-custom-field-api.png)\
-_Image 3-15，find-custom-field-api_
+![Image 3-16](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/advanced-setting-image/find-custom-field-api.png)\
+_Image 3-16，find-custom-field-api_
 
-![Image 3-16](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/advanced-setting-image/story-point-custom-field.png)\
-_Image 3-16，story-point-custom-field_
+![Image 3-17](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/advanced-setting-image/story-point-custom-field.png)\
+_Image 3-17，story-point-custom-field_
 
-![Image 3-17](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/advanced-setting-image/flagged-custom-field.png)\
-_Image 3-17，flagged-custom-field_
+![Image 3-18](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/advanced-setting-image/flagged-custom-field.png)\
+_Image 3-18，flagged-custom-field_
 
 1. user need to go to the jira board and click one card , then open dev tool switch to network part. 
 2. then click card's history part. 
 3. at that time, user can see one api call which headers request URL is https://xxx.atlassian.net/rest/gira/1/ . 
-4. then go to review part, find fieldDisplayName which show Flagged and story point estimate and get the fieldId as the custom-field that user need to input in advanced settings. from image 3-12 and 3-13 we can find that  flagged custom field is customfield_10021, story points custom field is customfield_10016. 
+4. then go to review part, find fieldDisplayName which show Flagged and story point estimate and get the fieldId as the custom-field that user need to input in advanced settings. from image 3-13 and 3-14 we can find that  flagged custom field is customfield_10021, story points custom field is customfield_10016. 
 
 #### 3.2.5 Pipeline configuration
 
-![Image 3-18](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/readme/7.png)\
-_Image 3-18，Settings for Pipeline_
+![Image 3-19](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/readme/7.png)\
+_Image 3-19，Settings for Pipeline_
 
 They are sharing the similar settings which you need to specify the pipeline step so that Heartbeat will know in which pipeline and step, team consider it as deploy to PROD. So that we could use it to calculate metrics.
 
@@ -293,29 +298,29 @@ They are sharing the similar settings which you need to specify the pipeline ste
 
 ### 3.3.1 Export Config Json File
 
-When user first use this tool, need to create a project, and do some config. To avoid the user entering configuration information repeatedly every time, we provide a “Save” button in the config and metrics pages. In config page, click the save button, it will save all items in config page in a Json file. If you click the save button in the metrics page, it will save all items in config and metrics settings in a Json file. Here is the json file (Image 3-15)。Note: Below screenshot just contains a part of data.
+When user first use this tool, need to create a project, and do some config. To avoid the user entering configuration information repeatedly every time, we provide a “Save” button in the config and metrics pages. In config page, click the save button, it will save all items in config page in a Json file. If you click the save button in the metrics page, it will save all items in config and metrics settings in a Json file. Here is the json file (Image 3-16)。Note: Below screenshot just contains a part of data.
 
-![Image 3-19](https://user-images.githubusercontent.com/995849/89784710-b4c41180-db4b-11ea-9bc4-db14ce98ef69.png)\
-_Image 3-19, Config Json file_
+![Image 3-20](https://user-images.githubusercontent.com/995849/89784710-b4c41180-db4b-11ea-9bc4-db14ce98ef69.png)\
+_Image 3-20, Config Json file_
 
 ### 3.3.2 Import Config Json File
 
-When user already saved config file before, then you don’t need to create a new project. In the home page, can click Import Project from File button(Image 3-1) to select the config file. If your config file is too old, and the tool already have some new feature change, then if you import the config file, it will get some warning info(Image 3-16). You need to re-select some info, then go to the next page.
+When user already saved config file before, then you don’t need to create a new project. In the home page, can click Import Project from File button(Image 3-1) to select the config file. If your config file is too old, and the tool already have some new feature change, then if you import the config file, it will get some warning info(Image 3-17). You need to re-select some info, then go to the next page.
 
-![Image 3-20](https://user-images.githubusercontent.com/995849/89784267-f902e200-db4a-11ea-9d0b-a8ab29a8819e.png)\
-_Image 3-20, Warning message_
+![Image 3-21](https://user-images.githubusercontent.com/995849/89784267-f902e200-db4a-11ea-9d0b-a8ab29a8819e.png)\
+_Image 3-21, Warning message_
 
 ## 3.4 Generate Metrics report
 
 After setup and configuration, then it will generate the heartbeat dashboard.
-![Image 3-21](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/readme/8.png)
-_Image 3-21, Report page_
+![Image 3-22](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/readme/8.png)
+_Image 3-22, Report page_
 
 You could find the drill down from `show more >` link from dashboard.
 
 ### 3.4.1 Velocity
 
-In Velocity Report, it will list the corresponding data by Story Point and the number of story tickets. (image 3-18)
+In Velocity Report, it will list the corresponding data by Story Point and the number of story tickets. (image 3-19)
 - `Velocity` : includes how many story points and cards we have completed within selected time period.
 - Definition for 'Velocity(Story Point)‘: how many story point we have completed within selected time period.
 - Formula for 'Velocity(Story Point): sum of story points for done cards in selected time period
@@ -323,8 +328,8 @@ In Velocity Report, it will list the corresponding data by Story Point and the n
 - Formula for 'Throughput(Cards Count): sum of cards count for done cards in selected time period
   
 
-![Image 3-22](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/readme/9.png)\
-_Image 3-22，Velocity Report_
+![Image 3-23](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/readme/9.png)\
+_Image 3-23，Velocity Report_
 
 ### 3.4.2 Cycle Time
 
@@ -335,8 +340,8 @@ The calculation process data and final result of Cycle Time are calculated by ro
 - Definition for ‘Average Cycle Time(Days/Card)’: how many days does it take on average to complete a card?
 - Formula for ‘Average Cycle Time(Days/Card)’: sum of cycle time for done cards/done cards count
 
-![Image 3-23](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/readme/10.png)\
-_Image 3-23，Cycle Time Report_
+![Image 3-24](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/readme/10.png)\
+_Image 3-24，Cycle Time Report_
 
 ### 3.4.3 Classification
 
@@ -345,8 +350,8 @@ The percentage value represent the count of that type tickets vs total count of 
 - `Classification`: provide different dimensions to view how much efforts team spent within selected time period.
 - for example: spike cards account for 17.65% of the total completed cards
 
-![Image 3-24](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/readme/11.png)\
-_Image 3-24，Classification Report_
+![Image 3-25](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/readme/11.png)\
+_Image 3-25，Classification Report_
 
 ### 3.4.4 Rework
 
@@ -361,16 +366,16 @@ If "to do" is selected in the "Rework to which column", we will count the number
 
 
   
-![Image 3-25](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/rework-setting-image/rework-detail.png)\
-_Image 3-25，Rework Report_
+![Image 3-26](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/rework-setting-image/rework-detail.png)\
+_Image 3-26，Rework Report_
 
 ### 3.4.5 Deployment Frequency
 - Definition for ‘Deployment Frequency': this metrics records how often you deploy code to production on a daily basis.
 - Formula for ‘Deployment Frequency': the umber of build for（Status = passed & Valid = true）/working days
-![Image 3-26](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/export/export-pipline-data.png)\
-_Image 3-26，export pipline data_
-![Image 3-27](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/readme/12.png)\
-_Image 3-27，Deployment Frequency Report_
+![Image 3-27](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/export/export-pipline-data.png)\
+_Image 3-27，export pipline data_
+![Image 3-28](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/readme/12.png)\
+_Image 3-28，Deployment Frequency Report_
 
 ### 3.4.6 Lead time for changes Data
 - Definition for ‘Lead time for changes': this metrics records the time from first code commit to code successfully running in production.
@@ -383,26 +388,26 @@ _Image 3-27，Deployment Frequency Report_
 -- if PR merge is null: Pipeline lead time = Deployment Completed Time - PR created time
 -- if no PR merge: Pipeline lead time = 0
 
-![Image 3-28](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/readme/13.png)\
-_Image 3-28，Lead time for changes Report_
+![Image 3-29](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/readme/13.png)\
+_Image 3-29，Lead time for changes Report_
 
 ### 3.4.7 Dev Change Failure Rate
 - Definition for ‘Dev Change Failure Rate': this metrics is different from the official definition of change failure rate, in heartbeat, we definite this metrics based on development，which is the percentage of failed pipelines in the total pipelines, and you chan select different pipeline as your final step,and this value is lower means failed pipeline is fewer.
 - Formula for ‘Dev Change Failure Rate': the number of build for (Status = failed)/the number of build for [（Status = passed & Valid = true）+ the number of build for (status=failed)]
 
-![Image 3-29](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/readme/14.png)\
-_Image 3-29，Change Failure Rate Report_
+![Image 3-30](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/readme/14.png)\
+_Image 3-30，Change Failure Rate Report_
 
 ### 3.4.8 Dev Mean time to recovery
 - Definition for ‘Dev Mean time to recovery': this metrics alse defined based on development, it records how long it generally takes to restore when pipeline failed, and If this value is less than 8 hours, it means ‘red does not last overnight’, which means our repair speed is relatively good.
 - Formula for ‘Dev Mean time to recovery': sum[he time difference from the first fail to the first pass for deployment completed time]/ the number of repairs
 
-![Image 3-30](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/readme/15.png)\
-_Image 3-30，mean time to recovery 
+![Image 3-31](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/readme/15.png)\
+_Image 3-31，mean time to recovery 
 
 ## 3.5 Export original data
 
-After generating the report, you can export the original data for your board and pipeline (Image 3-17). Users can click the “Export board data” or “Export pipeline data” button to export the original data.
+After generating the report, you can export the original data for your board and pipeline (Image 3-18). Users can click the “Export board data” or “Export pipeline data” button to export the original data.
 
 ### 3.5.1 Export board data
 
@@ -410,14 +415,14 @@ It will export a csv file for board data
 
 #### 3.5.1.1 Done card exporting
 
-Export the all done tickets during the time period(Image 3-17)
+Export the all done tickets during the time period(Image 3-18)
 
 #### 3.5.1.1 Undone card exporting
 
-Export the latest updated 50 non-done tickets in your current active board. And it will order by heartbeat state and then last status change date(Image 3-27)
+Export the latest updated 50 non-done tickets in your current active board. And it will order by heartbeat state and then last status change date(Image 3-28)
 
-![Image 3-31](https://user-images.githubusercontent.com/995849/89784291-01f3b380-db4b-11ea-8f5a-d475e80014fb.png)\
-_Image 3-31，Exported Board Data_
+![Image 3-32](https://user-images.githubusercontent.com/995849/89784291-01f3b380-db4b-11ea-8f5a-d475e80014fb.png)\
+_Image 3-32，Exported Board Data_
 
 **All columns for Jira board:**
 |Column name |Description|
@@ -448,10 +453,10 @@ _Image 3-31，Exported Board Data_
 |Rework: from {subsequent status} | The number of rework times |
 ### 3.5.2 Export pipeline data
 
-It will export a csv file for pipeline data (image 3-28).
+It will export a csv file for pipeline data (image 3-29).
 
-![Image 3-32](https://user-images.githubusercontent.com/995849/89784293-0324e080-db4b-11ea-975d-6609024aac49.png)\
-_Image 3-32，Exported Pipeline Data_
+![Image 3-33](https://user-images.githubusercontent.com/995849/89784293-0324e080-db4b-11ea-975d-6609024aac49.png)\
+_Image 3-33，Exported Pipeline Data_
 
 **All columns for pipeline data:**
 |Column name |Description|

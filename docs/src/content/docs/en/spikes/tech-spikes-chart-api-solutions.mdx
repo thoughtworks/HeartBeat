@@ -14,29 +14,172 @@ We need to choose a charting backend and frontend API refactor solution to imple
 
 According to the new business requirements and the roadmap, there are some points for charting API refactor.
 
-* Support metrics page frontend transfer more date info and call backend API
-* Support report page frontend transfer more date info and call backend API
+* Support metrics page frontend transfer more date list and call backend API
+* Support report page frontend transfer more date list and call backend API
 
 ### Options
 
-- Metrics 
+#### Metrics page 
 
-<img src="https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/charting-refactor-image/charting-metrics-api.png" width="80%" />
+FrontEnd can get the date list and separate it in order to send the request.
+
+```json
+dateRange: [
+  {
+    "startDate": "2024-02-01T00:00:00.000+08:00",
+    "endDate": "2024-02-14T23:59:59.999+08:00"
+  },
+  {
+      "startDate": "2024-02-15T00:00:00.000+08:00",
+      "endDate": "2024-02-29T23:59:59.999+08:00"
+    },
+],
+```
+
+```plantuml
+@startuml Charting API refactor
+skin rose
+title Charting API - Metrics page
+
+participant FrontEnd
+participant Backend
+
+group call backend API
+    FrontEnd -> FrontEnd: separate the date list in order to send the request
+    loop send request and get response as usual
+        FrontEnd -> Backend: fetch information as usual
+        activate Backend
+        FrontEnd <-- Backend: return response as usual
+        deactivate Backend
+    end loop
+    FrontEnd -> FrontEnd: combined data
+end
+@enduml
+```
 
 As shown in the image, we want to refactor the frontend and backend solutions for metrics page. About `board info`, `pipelines info`,
-`pipelines step` API, we can transfer date information merged into a list. When frontend call backend API, backend invoke relevant service 
-to handle information, and input the response to frontend.
+`pipelines step` API, we can transfer multiple stage date list params by multiple times call for backend.
+When the frontend calls the backend API in parallel multiple times, backend invoke original service to handle logic and return response.
+Then we accept all responses from the backend and combine the data for parallel processing of data.
 
-The response sent by the backend here will be in the form of a list, but not a combination.
- Because the data received by the metrics interface here will be sent as parameters to the backend in subsequent report interfaces.
+The APIs for the metrics page that we do not need to modify are as follows: 
+- POST /boards/`{boardType}`/info
+- POST /pipelines/`{pipelineType}`/info
+- POST /pipelines/`{pipelineType}`/`{organizationId}`/pipelines/`{buildId}`/steps
 
-- Report
+#### Report page
 
-<img src="https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/charting-refactor-image/charting-reports-api.png" width="60%" />
+```plantuml
+@startuml Charting API refactor
+skin rose
+title Charting API - Report page
+
+participant FrontEnd
+participant Backend
+
+group call backend API
+    FrontEnd -> FrontEnd: separate the date list in order to send the request
+    loop send request and get response as usual
+        FrontEnd -> Backend: fetch information as usual
+        activate Backend
+        FrontEnd <-- Backend: return response as usual
+        deactivate Backend
+    end loop
+    FrontEnd -> FrontEnd: combined data and chart
+end
+@enduml
+```
 
 As shown in the image, we want to refactor the frontend and backend solutions for report page. About `reports board`, `reports dora`,
-`reports poll {reportId}` API, we can transfer date info time and time again. Due to the logic of the report page,
- we are unable to merge the date list and transfer it to the backend, which may result in errors that cannot be loaded separately.
+`reports poll {reportId}` API, we can transfer date info time and time again. Due to the logic of the report page.
+Then we accept all responses from the backend and combine the data for charting.
+ 
+ The APIs for the report page that we do not need to modify are as follows:
+ - POST /reports
  
 Specific `reportId` need to be accompanied by additional identifiers in the responses sent,
  such as information related to the selected time, to distinguish time periods
+
+- GET /reports/`{reportId}`
+- GET /reports/metric/`{reportId}`
+- GET /reports/board/`{reportId}`
+- GET /reports/pipeline/`{reportId}`
+
+About chart information:
+
+- velocity: 
+```json
+"velocity": {
+  "velocityForSP": 30.0,
+  "velocityForCards": 22
+}
+```
+
+- Average Cycle Time:
+```json
+"cycleTime": {
+  "averageCycleTimePerCard": 4.03,
+  "averageCycleTimePerSP": 2.96
+}
+```
+
+- Cycle Time Allocation 
+```json
+// Total cycle time
+"cycleTime": {
+  "totalTimeForCards": 88.67
+}
+
+// Total development time
+{
+  "optionalItemName": "In Dev",
+  "averageTimeForSP": 1.66,
+  "averageTimeForCards": 2.26,
+  "totalTime": 49.67
+},
+
+// Block time
+{
+  "optionalItemName": "Block",
+  "averageTimeForSP": 0.28,
+  "averageTimeForCards": 0.38,
+  "totalTime": 8.3
+},
+
+// Review time
+{
+  "optionalItemName": "Review",
+  "averageTimeForSP": 0.26,
+  "averageTimeForCards": 0.35,
+  "totalTime": 7.69
+},
+
+// Wait for testing time
+{
+  "optionalItemName": "Waiting for testing",
+  "averageTimeForSP": 0.4,
+  "averageTimeForCards": 0.54,
+  "totalTime": 11.96
+},
+
+// Testing time
+{
+  "optionalItemName": "Testing",
+  "averageTimeForSP": 0.37,
+  "averageTimeForCards": 0.5,
+  "totalTime": 11.05
+}
+
+```
+
+- Rework
+```json
+"rework": {
+  // Total rework times
+  "totalReworkTimes": 2,
+  // Total rework cards
+  "totalReworkCards": 2,
+  // Total cards ratio
+  "reworkCardsRatio": 0.6667
+},
+```

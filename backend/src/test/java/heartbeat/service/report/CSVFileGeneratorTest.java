@@ -485,8 +485,8 @@ class CSVFileGeneratorTest {
 						"Lead time for changes","Average / PR Lead Time","0"
 						"Lead time for changes","Average / Pipeline Lead Time","0.05"
 						"Lead time for changes","Average / Total Lead Time","0.05"
-						"Dev change failure rate","Heartbeat / Deploy prod / Dev change failure rate","0"
-						"Dev change failure rate","Heartbeat / Check Frontend License / Dev change failure rate","0"
+						"Dev change failure rate","Heartbeat / Deploy prod / Dev change failure rate","0.0000"
+						"Dev change failure rate","Heartbeat / Check Frontend License / Dev change failure rate","0.0000"
 						"Dev change failure rate","Average / Dev change failure rate","0"
 						"Dev mean time to recovery","Heartbeat / Deploy prod / Dev mean time to recovery","0"
 						"Dev mean time to recovery","Heartbeat / Check Frontend License / Dev mean time to recovery","0"
@@ -529,12 +529,12 @@ class CSVFileGeneratorTest {
 				"Group","Metrics","Value"
 				"Rework","Total rework times","3"
 				"Rework","Total rework cards","3"
-				"Rework","Rework cards ratio(Total rework cards/Throughput)","99.00"
+				"Rework","Rework cards ratio(Total rework cards/Throughput)","0.9900"
 				"Deployment frequency","Heartbeat / Deploy prod / Deployment frequency(Deployments/Day)","0.78"
 				"Lead time for changes","Heartbeat / Deploy prod / PR Lead Time","0"
 				"Lead time for changes","Heartbeat / Deploy prod / Pipeline Lead Time","0.02"
 				"Lead time for changes","Heartbeat / Deploy prod / Total Lead Time","0.02"
-				"Dev change failure rate","Heartbeat / Deploy prod / Dev change failure rate","0"
+				"Dev change failure rate","Heartbeat / Deploy prod / Dev change failure rate","0.0000"
 				"Dev mean time to recovery","Heartbeat / Deploy prod / Dev mean time to recovery","0\"""");
 
 		String fileName = CSVFileNameEnum.BOARD.getValue() + "-" + mockTimeStamp + ".csv";

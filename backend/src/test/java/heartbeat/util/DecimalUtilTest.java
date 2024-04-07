@@ -91,7 +91,7 @@ class DecimalUtilTest {
 	@Test
 	void testFormatDecimalFour_ZeroValue() {
 		double value = 0;
-		String expected = "0";
+		String expected = "0.0000";
 
 		String result = DecimalUtil.formatDecimalFour(value);
 
@@ -101,7 +101,7 @@ class DecimalUtilTest {
 	@Test
 	void testFormatDecimalFour_NonZeroValue() {
 		List<Pair<Double, String>> value = List.of(Pair.of(10.25671, "10.2567"), Pair.of(10.25, "10.2500"),
-				Pair.of(0.000006, "0"));
+				Pair.of(0.000006, "0.0000"));
 
 		List<String> result = List.of(DecimalUtil.formatDecimalFour(value.get(0).getLeft()),
 				DecimalUtil.formatDecimalFour(value.get(1).getLeft()),

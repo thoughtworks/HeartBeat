@@ -51,7 +51,7 @@
 "Classifications","Assignee / Yunsong Yang","11.11"
 "Rework","Total rework times","11"
 "Rework","Total rework cards","6"
-"Rework","Rework cards ratio(Total rework cards/Throughput)","66.67"
+"Rework","Rework cards ratio(Total rework cards/Throughput)","0.6667"
 "Deployment frequency","Heartbeat / Deploy prod / Deployment frequency(Deployments/Day)","6.60"
 "Lead time for changes","Heartbeat / Deploy prod / PR Lead Time","6.12"
 "Lead time for changes","Heartbeat / Deploy prod / Pipeline Lead Time","0.50"

@@ -22,9 +22,7 @@ public interface DecimalUtil {
 	}
 
 	static String formatDecimalFour(double value) {
-		DecimalFormat decimalFormat = new DecimalFormat(FORMAT_4_DECIMALS);
-
-		return Objects.equals(decimalFormat.format(value), "0.0000") ? "0" : decimalFormat.format(value);
+		return new DecimalFormat(FORMAT_4_DECIMALS).format(value);
 	}
 
 }

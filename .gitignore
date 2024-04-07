@@ -51,3 +51,4 @@ volume
 csv
 
 gitleaks-report.json
+*.sbom.spdx.json

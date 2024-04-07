@@ -91,10 +91,23 @@ jobs:
           tags: |
             ghcr.io/${{ env.LOWCASE_REPO_NAME }}_backend:${{ env.TAG_NAME }}
             ghcr.io/${{ env.LOWCASE_REPO_NAME }}_backend:latest
-  release:
+
+  build-sbom:
     runs-on: ubuntu-latest
     needs:
       - build_and_push_image
+    steps:
+      - uses: actions/checkout@v4
+      - uses: anchore/sbom-action@v0
+        with:
+          path: ./
+          artifact-name: ${{ env.REPO_NAME }}.${{ env.TAG_NAME }}.sbom.spdx.json
+      - uses: anchore/sbom-action/publish-sbom@v0
+
+  release:
+    runs-on: ubuntu-latest
+    needs:
+      - build-sbom
     steps:
       - uses: actions/checkout@v4
       - name: Download frontend artifact

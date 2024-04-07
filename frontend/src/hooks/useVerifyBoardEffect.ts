@@ -41,6 +41,7 @@ const ERROR_INFO = {
 const VALIDATOR = {
   EMAIL: (value: string) => REGEX.EMAIL.test(value),
   TOKEN: (value: string) => REGEX.BOARD_TOKEN.test(value),
+  BOARD_ID: (value: string) => REGEX.BOARD_ID.test(value),
 };
 
 export const KEYS = {
@@ -79,7 +80,10 @@ export const useVerifyBoardEffect = (): useVerifyBoardStateInterface => {
     {
       key: KEYS.BOARD_ID,
       value: boardFields.boardId,
-      validatedError: '',
+      validateRule: VALIDATOR.BOARD_ID,
+      validatedError: boardFields.boardId
+        ? getValidatedError(KEYS.BOARD_ID, boardFields.boardId, VALIDATOR.BOARD_ID)
+        : '',
       verifiedError: '',
       col: 1,
     },

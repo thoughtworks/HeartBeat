@@ -27,16 +27,16 @@ export const downloadFileAndCheck = async (
 export const checkDownloadReport = async (page: Page, downloadButton: Locator, savedFileName: string) => {
   await downloadFileAndCheck(page, downloadButton, savedFileName, async (fileDataString) => {
     expect(fileDataString.length).toBeGreaterThan(0);
-    let localCsvFile = fs.readFileSync(path.resolve(__dirname, '../fixtures/importFile/metricData.csv'));
+    let localCsvFile = fs.readFileSync(path.resolve(__dirname, '../fixtures/import-file/metric-data.csv'));
     switch (savedFileName) {
       case 'metricReport.csv':
-        localCsvFile = fs.readFileSync(path.resolve(__dirname, '../fixtures/importFile/metricData.csv'));
+        localCsvFile = fs.readFileSync(path.resolve(__dirname, '../fixtures/import-file/metric-data.csv'));
         break;
       case 'boardReport.csv':
-        localCsvFile = fs.readFileSync(path.resolve(__dirname, '../fixtures/importFile/boardData.csv'));
+        localCsvFile = fs.readFileSync(path.resolve(__dirname, '../fixtures/import-file/board-data.csv'));
         break;
       case 'pipelineReport.csv':
-        localCsvFile = fs.readFileSync(path.resolve(__dirname, '../fixtures/importFile/pipelineData.csv'));
+        localCsvFile = fs.readFileSync(path.resolve(__dirname, '../fixtures/import-file/pipeline-data.csv'));
         break;
     }
     const localCsv = parse(localCsvFile);
@@ -52,17 +52,23 @@ export const checkDownloadReportCycleTimeByStatus = async (
 ) => {
   await downloadFileAndCheck(page, downloadButton, savedFileName, async (fileDataString) => {
     expect(fileDataString.length).toBeGreaterThan(0);
-    let localCsvFile = fs.readFileSync(path.resolve(__dirname, '../fixtures/cycleTimeByStatus/metricDataByStatus.csv'));
+    let localCsvFile = fs.readFileSync(
+      path.resolve(__dirname, '../fixtures/cycle-time-by-status/metric-data-by-status.csv'),
+    );
     switch (savedFileName) {
       case 'metricReport.csv':
-        localCsvFile = fs.readFileSync(path.resolve(__dirname, '../fixtures/cycleTimeByStatus/metricDataByStatus.csv'));
+        localCsvFile = fs.readFileSync(
+          path.resolve(__dirname, '../fixtures/cycle-time-by-status/metric-data-by-status.csv'),
+        );
         break;
       case 'boardReport.csv':
-        localCsvFile = fs.readFileSync(path.resolve(__dirname, '../fixtures/cycleTimeByStatus/boardDataByStatus.csv'));
+        localCsvFile = fs.readFileSync(
+          path.resolve(__dirname, '../fixtures/cycle-time-by-status/board-data-by-status.csv'),
+        );
         break;
       case 'pipelineReport.csv':
         localCsvFile = fs.readFileSync(
-          path.resolve(__dirname, '../fixtures/cycleTimeByStatus/pipelineDataByStatus.csv'),
+          path.resolve(__dirname, '../fixtures/cycleTimeByStatus/pipeline-data-by-status.csv'),
         );
         break;
     }

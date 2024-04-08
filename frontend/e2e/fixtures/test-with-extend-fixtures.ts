@@ -1,6 +1,6 @@
-import { MetricsStep } from '../pages/metrics/MetricsStep';
-import { ConfigStep } from '../pages/metrics/ConfigStep';
-import { ReportStep } from '../pages/metrics/ReportStep';
+import { MetricsStep } from '../pages/metrics/metrics-step';
+import { ConfigStep } from '../pages/metrics/config-step';
+import { ReportStep } from '../pages/metrics/report-step';
 import { test as base } from '@playwright/test';
 import { HomePage } from '../pages/Home';
 

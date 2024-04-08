@@ -1,8 +1,8 @@
-import { BOARD_METRICS_RESULT } from '../../fixtures/cycleTimeByStatus/cycleTimeByStatusReportResult';
-import { cycleTimeByStatusFixture } from '../../fixtures/cycleTimeByStatus/cycleTimeByStatusFixture';
-import { cycleTimeByColumnFixture } from '../../fixtures/cycleTimeByStatus/cycleTimeByColumnFixture';
-import { test } from '../../fixtures/testWithExtendFixtures';
-import { format } from '../../utils/dateTime';
+import { BOARD_METRICS_RESULT } from '../../fixtures/cycle-time-by-status/cycle-time-by-status-report-result';
+import { cycleTimeByStatusFixture } from '../../fixtures/cycle-time-by-status/cycle-time-by-status-fixture';
+import { cycleTimeByColumnFixture } from '../../fixtures/cycle-time-by-status/cycle-time-by-column-fixture';
+import { test } from '../../fixtures/test-with-extend-fixtures';
+import { format } from '../../utils/date-time';
 
 test('Create a new project with cycle time by status', async ({ homePage, configStep, metricsStep, reportStep }) => {
   const dateRange = {

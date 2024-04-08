@@ -119,7 +119,7 @@ export class ReportStep {
       throw Error('The board detail type is not correct, please give a correct one.');
     }
     await downloadFileAndCheck(this.page, this.exportPipelineDataButton, 'pipelineData.csv', async (fileDataString) => {
-      const localCsvFile = fs.readFileSync(path.resolve(__dirname, '../../fixtures/createNew/pipelineData.csv'));
+      const localCsvFile = fs.readFileSync(path.resolve(__dirname, '../../fixtures/create-new/pipeline-data.csv'));
       const localCsv = parse(localCsvFile);
       const downloadCsv = parse(fileDataString);
 
@@ -335,7 +335,7 @@ export class ReportStep {
     }
 
     await downloadFileAndCheck(this.page, this.exportBoardData, 'boardData.csv', async (fileDataString) => {
-      const localCsvFile = fs.readFileSync(path.resolve(__dirname, '../../fixtures/createNew/boardData.csv'));
+      const localCsvFile = fs.readFileSync(path.resolve(__dirname, '../../fixtures/create-new/board-data.csv'));
       const localCsv = parse(localCsvFile, { to: csvCompareLines });
       const downloadCsv = parse(fileDataString, { to: csvCompareLines });
 
@@ -362,7 +362,7 @@ export class ReportStep {
 
   async checkMetricDownloadData() {
     await downloadFileAndCheck(this.page, this.exportMetricData, 'metricData.csv', async (fileDataString) => {
-      const localCsvFile = fs.readFileSync(path.resolve(__dirname, '../../fixtures/createNew/metricData.csv'));
+      const localCsvFile = fs.readFileSync(path.resolve(__dirname, '../../fixtures/create-new/metric-data.csv'));
       const localCsv = parse(localCsvFile);
       const downloadCsv = parse(fileDataString);
 
@@ -377,7 +377,7 @@ export class ReportStep {
       'metricDataByStatusDownload.csv',
       async (fileDataString) => {
         const localCsvFile = fs.readFileSync(
-          path.resolve(__dirname, '../../fixtures/cycleTimeByStatus/metricDataByStatus.csv'),
+          path.resolve(__dirname, '../../fixtures/cycle-time-by-status/metric-data-by-status.csv'),
         );
         const localCsv = parse(localCsvFile);
         const downloadCsv = parse(fileDataString);
@@ -394,7 +394,7 @@ export class ReportStep {
       'metricDataByColumnDownload.csv',
       async (fileDataString) => {
         const localCsvFile = fs.readFileSync(
-          path.resolve(__dirname, '../../fixtures/cycleTimeByStatus/metricDataByStatus.csv'),
+          path.resolve(__dirname, '../../fixtures/cycle-time-by-status/metric-data-by-status.csv'),
         );
         const localCsv = parse(localCsvFile);
         const downloadCsv = parse(fileDataString);

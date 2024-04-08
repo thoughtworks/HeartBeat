@@ -1,13 +1,13 @@
 import {
   BOARD_METRICS_RESULT,
   FLAG_AS_BLOCK_PROJECT_BOARD_METRICS_RESULT,
-} from '../../fixtures/createNew/reportResult';
-import { importMultipleDoneProjectFromFile } from '../../fixtures/importFile/multiple-done-config-file';
-import { cycleTimeByStatusFixture } from '../../fixtures/cycleTimeByStatus/cycleTimeByStatusFixture';
-import { config as metricsStepData } from '../../fixtures/createNew/metricsStep';
-import { ProjectCreationType } from '../../pages/metrics/ReportStep';
-import { test } from '../../fixtures/testWithExtendFixtures';
-import { clearTempDir } from '../../utils/clearTempDir';
+} from '../../fixtures/create-new/report-result';
+import { cycleTimeByStatusFixture } from '../../fixtures/cycle-time-by-status/cycle-time-by-status-fixture';
+import { importMultipleDoneProjectFromFile } from '../../fixtures/import-file/multiple-done-config-file';
+import { config as metricsStepData } from '../../fixtures/create-new/metrics-step';
+import { ProjectCreationType } from 'e2e/pages/metrics/report-step';
+import { test } from '../../fixtures/test-with-extend-fixtures';
+import { clearTempDir } from 'e2e/utils/clear-temp-dir';
 
 test.beforeAll(async () => {
   await clearTempDir();

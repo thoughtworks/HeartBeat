@@ -1,4 +1,4 @@
-import { config as metricsStepData } from '../../fixtures/createNew/metricsStep';
+import { config as metricsStepData } from '../../fixtures/create-new/metrics-step';
 import { METRICS_STEP_SAVING_FILENAME } from '../../fixtures';
 import { downloadFileAndCheck } from '../../utils/download';
 import { expect, Locator, Page } from '@playwright/test';

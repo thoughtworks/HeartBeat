@@ -1,11 +1,11 @@
-import { cycleTimeByStatusFixture } from '../fixtures/cycleTimeByStatus/cycleTimeByStatusFixture';
-import { BOARD_METRICS_RESULT, DORA_METRICS_RESULT } from '../fixtures/createNew/reportResult';
-import { config as metricsStepData } from '../fixtures/createNew/metricsStep';
-import { config as configStepData } from '../fixtures/createNew/configStep';
-import { ProjectCreationType } from 'e2e/pages/metrics/ReportStep';
-import { test } from '../fixtures/testWithExtendFixtures';
-import { clearTempDir } from 'e2e/utils/clearTempDir';
-import { format } from 'e2e/utils/dateTime';
+import { cycleTimeByStatusFixture } from '../../fixtures/cycleTimeByStatus/cycleTimeByStatusFixture';
+import { BOARD_METRICS_RESULT, DORA_METRICS_RESULT } from '../../fixtures/createNew/reportResult';
+import { config as metricsStepData } from '../../fixtures/createNew/metricsStep';
+import { config as configStepData } from '../../fixtures/createNew/configStep';
+import { ProjectCreationType } from '../../pages/metrics/ReportStep';
+import { test } from '../../fixtures/testWithExtendFixtures';
+import { clearTempDir } from '../../utils/clearTempDir';
+import { format } from '../../utils/dateTime';
 
 test.beforeAll(async () => {
   await clearTempDir();

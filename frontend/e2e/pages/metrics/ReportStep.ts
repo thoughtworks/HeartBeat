@@ -16,6 +16,9 @@ export class ReportStep {
   readonly averageCycleTimeForSP: Locator;
   readonly averageCycleTimeForCard: Locator;
   readonly boardMetricRework: Locator;
+  readonly boardMetricsDetailVelocityPart: Locator;
+  readonly boardMetricsDetailCycleTimePart: Locator;
+  readonly boardMetricsDetaiClassificationPart: Locator;
   readonly prLeadTime: Locator;
   readonly pipelineLeadTime: Locator;
   readonly totalLeadTime: Locator;
@@ -44,6 +47,9 @@ export class ReportStep {
     this.averageCycleTimeForSP = this.page.locator('[data-test-id="Cycle Time"] [data-test-id="report-section"]');
     this.averageCycleTimeForCard = this.page.locator('[data-test-id="Cycle Time"] [data-test-id="report-section"]');
     this.boardMetricRework = this.page.locator('[data-test-id="Rework"] [data-test-id="report-section"]');
+    this.boardMetricsDetailVelocityPart = this.page.locator('[data-test-id="Velocity"]');
+    this.boardMetricsDetailCycleTimePart = this.page.locator('[data-test-id="Cycle Time"]');
+    this.boardMetricsDetaiClassificationPart = this.page.locator('[data-test-id="Classification"]');
 
     this.prLeadTime = this.page.locator('[data-test-id="Lead Time For Changes"] [data-test-id="report-section"]');
     this.pipelineLeadTime = this.page.locator('[data-test-id="Lead Time For Changes"] [data-test-id="report-section"]');
@@ -72,6 +78,10 @@ export class ReportStep {
   }
   combineStrings(arr: string[]): string {
     return arr.join('');
+  }
+
+  async clickShowMoreLink() {
+    await this.showMoreLinks.click();
   }
 
   async goToPreviousStep() {
@@ -253,6 +263,64 @@ export class ReportStep {
     await expect(this.reworkRows.filter({ hasText: 'Rework cards ratio' }).getByRole('cell').nth(1)).toContainText(
       '66.67% (rework cards/throughput)',
     );
+  }
+
+  async checkOnlyVelocityPartVisible() {
+    await expect(this.boardMetricsDetailVelocityPart).toBeVisible();
+    await expect(this.boardMetricsDetailCycleTimePart).toBeHidden();
+    await expect(this.boardMetricsDetaiClassificationPart).toBeHidden();
+  }
+
+  async checkOnlyCycleTimePartVisible() {
+    await expect(this.boardMetricsDetailVelocityPart).toBeHidden();
+    await expect(this.boardMetricsDetailCycleTimePart).toBeVisible();
+    await expect(this.boardMetricsDetaiClassificationPart).toBeHidden();
+  }
+
+  async checkOnlyClassificationPartVisible() {
+    await expect(this.boardMetricsDetailVelocityPart).toBeHidden();
+    await expect(this.boardMetricsDetailCycleTimePart).toBeHidden();
+    await expect(this.boardMetricsDetaiClassificationPart).toBeVisible();
+  }
+
+  async checkOnlyLeadTimeForChangesPartVisible() {
+    await expect(this.totalLeadTime).toBeVisible();
+    await expect(this.deploymentFrequency).toBeHidden();
+    await expect(this.failureRate).toBeHidden();
+    await expect(this.devMeanTimeToRecovery).toBeHidden();
+  }
+
+  async checkOnlyDeploymentFrequencyPartVisible() {
+    await expect(this.totalLeadTime).toBeHidden();
+    await expect(this.deploymentFrequency).toBeVisible();
+    await expect(this.failureRate).toBeHidden();
+    await expect(this.devMeanTimeToRecovery).toBeHidden();
+  }
+
+  async checkOnlyChangeFailureRatePartVisible() {
+    await expect(this.totalLeadTime).toBeHidden();
+    await expect(this.deploymentFrequency).toBeHidden();
+    await expect(this.failureRate).toBeVisible();
+    await expect(this.devMeanTimeToRecovery).toBeHidden();
+  }
+
+  async checkOnlyMeanTimeToRecoveryPartVisible() {
+    await expect(this.totalLeadTime).toBeHidden();
+    await expect(this.deploymentFrequency).toBeHidden();
+    await expect(this.failureRate).toBeHidden();
+    await expect(this.devMeanTimeToRecovery).toBeVisible();
+  }
+
+  async checkExportMetricDataButtonClickable() {
+    await expect(this.exportMetricData).toBeEnabled();
+  }
+
+  async checkExportBoardDataButtonClickable() {
+    await expect(this.exportBoardData).toBeEnabled();
+  }
+
+  async checkExportPipelineDataButtonClickable() {
+    await expect(this.exportPipelineDataButton).toBeEnabled();
   }
 
   async checkBoardMetricsDetails(boardDetailType: ProjectCreationType, csvCompareLines: number) {

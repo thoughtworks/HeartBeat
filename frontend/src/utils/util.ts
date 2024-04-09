@@ -3,6 +3,7 @@ import { CleanedBuildKiteEmoji, OriginBuildKiteEmoji } from '@src/constants/emoj
 import { ICycleTimeSetting, IPipelineConfig } from '@src/context/Metrics/metricsSlice';
 import { ITargetFieldType } from '@src/components/Common/MultiAutoComplete/styles';
 import { DATE_FORMAT_TEMPLATE } from '@src/constants/template';
+import { TDateRange } from '@src/context/config/configSlice';
 import { includes, isEqual, sortBy } from 'lodash';
 import duration from 'dayjs/plugin/duration';
 import dayjs from 'dayjs';
@@ -98,6 +99,13 @@ export const formatMillisecondsToHours = (duration: number) => {
 
 export const formatDateToTimestampString = (date: string) => {
   return dayjs(date).valueOf().toString();
+};
+
+export const sortDateRanges = (dateRanges: TDateRange, descending = true) => {
+  const result = [...dateRanges].sort((a, b) => {
+    return dayjs(b.startDate as string).diff(dayjs(a.startDate as string));
+  });
+  return descending ? result : result.reverse();
 };
 
 export const formatDuplicatedNameWithSuffix = (data: ITargetFieldType[]) => {

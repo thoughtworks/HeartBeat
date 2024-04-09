@@ -35,9 +35,11 @@ import { useAppSelector, useAppDispatch } from '@src/hooks';
 import { Crews } from '@src/containers/MetricsStep/Crews';
 import { useCallback, useLayoutEffect } from 'react';
 import { Loading } from '@src/components/Loading';
+import { sortDateRanges } from '@src/utils/util';
 import ReworkSettings from './ReworkSettings';
 import { Advance } from './Advance/Advance';
 import isEmpty from 'lodash/isEmpty';
+import { theme } from '@src/theme';
 import merge from 'lodash/merge';
 import dayjs from 'dayjs';
 
@@ -50,8 +52,9 @@ const MetricsStep = () => {
   const jiraColumns = useAppSelector(selectJiraColumns);
   const targetFields = useAppSelector(selectMetricsContent).targetFields;
   const { cycleTimeSettings, cycleTimeSettingsType } = useAppSelector(selectMetricsContent);
-  const dateRange = useAppSelector(selectDateRange);
-  const { startDate, endDate } = dateRange[0];
+  const dateRanges = useAppSelector(selectDateRange);
+  const descendingSortedDateRanges = sortDateRanges(dateRanges);
+  const { startDate, endDate } = descendingSortedDateRanges[0];
   const isShowCrewsAndRealDone =
     requiredData.includes(REQUIRED_DATA.VELOCITY) ||
     requiredData.includes(REQUIRED_DATA.CYCLE_TIME) ||
@@ -94,7 +97,11 @@ const MetricsStep = () => {
     <>
       {startDate && endDate && (
         <MetricSelectionHeader>
-          <DateRangeViewer startDate={startDate} endDate={endDate} />
+          <DateRangeViewer
+            dateRanges={descendingSortedDateRanges}
+            expandColor={theme.palette.text.disabled}
+            expandBackgroundColor={theme.palette.secondary.dark}
+          />
         </MetricSelectionHeader>
       )}
 

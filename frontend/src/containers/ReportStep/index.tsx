@@ -5,6 +5,7 @@ import {
   getJiraBoardToken,
   getRealDoneStatus,
   onlyEmptyAndDoneState,
+  sortDateRanges,
 } from '@src/utils/util';
 import {
   isOnlySelectClassification,
@@ -75,6 +76,7 @@ const ReportStep = ({ handleSave }: ReportStepProps) => {
     leadTimeForChanges,
   } = useAppSelector(selectMetricsContent);
 
+  const descendingDateRanges = sortDateRanges(configData.basic.dateRange);
   const startDate = configData.basic.dateRange[0]?.startDate ?? '';
   const endDate = configData.basic.dateRange[0]?.endDate ?? '';
   const { metrics, calendarType } = configData.basic;
@@ -402,7 +404,7 @@ const ReportStep = ({ handleSave }: ReportStepProps) => {
     <>
       {startDate && endDate && (
         <StyledCalendarWrapper data-testid={'calendarWrapper'} isSummaryPage={isSummaryPage}>
-          <DateRangeViewer startDate={startDate} endDate={endDate} />
+          <DateRangeViewer dateRanges={descendingDateRanges} />
         </StyledCalendarWrapper>
       )}
       {isSummaryPage

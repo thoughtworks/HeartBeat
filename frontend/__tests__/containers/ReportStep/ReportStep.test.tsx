@@ -17,6 +17,7 @@ import {
   SHOW_MORE,
 } from '../../fixtures';
 import {
+  TDateRange,
   updateDateRange,
   updateJiraVerifyResponse,
   updateMetrics,
@@ -88,7 +89,7 @@ describe('Report Step', () => {
     reportHook.current.reportData = { ...MOCK_REPORT_RESPONSE, exportValidityTime: 30 };
   };
   const handleSaveMock = jest.fn();
-  const setup = (params: string[], dateRange?: { startDate: string; endDate: string }) => {
+  const setup = (params: string[], dateRange?: TDateRange) => {
     store = setupStore();
     dateRange && store.dispatch(updateDateRange(dateRange));
     store.dispatch(

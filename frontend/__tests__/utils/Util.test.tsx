@@ -10,6 +10,7 @@ import {
   getJiraBoardToken,
   getRealDoneStatus,
   getSortedAndDeduplicationBoardingMapping,
+  sortDateRanges,
   sortDisabledOptions,
   transformToCleanedBuildKiteEmoji,
 } from '@src/utils/util';
@@ -386,5 +387,45 @@ describe('convertCycleTimeSettings function', () => {
     ];
     const result = convertCycleTimeSettings(CYCLE_TIME_SETTINGS_TYPES.BY_COLUMN, mockCycleTime);
     expect(result).toStrictEqual(expectResult);
+  });
+});
+
+describe('sortDateRanges function', () => {
+  const dateRanges = [
+    {
+      startDate: '2024-03-19T00:00:00.000+08:00',
+      endDate: '2024-03-21T23:59:59.999+08:00',
+    },
+    {
+      startDate: '2024-02-01T00:00:00.000+08:00',
+      endDate: '2024-02-14T23:59:59.999+08:00',
+    },
+    {
+      startDate: '2024-04-01T00:00:00.000+08:00',
+      endDate: '2024-04-08T23:59:59.999+08:00',
+    },
+  ];
+  const expectResult = [
+    {
+      startDate: '2024-04-01T00:00:00.000+08:00',
+      endDate: '2024-04-08T23:59:59.999+08:00',
+    },
+    {
+      startDate: '2024-03-19T00:00:00.000+08:00',
+      endDate: '2024-03-21T23:59:59.999+08:00',
+    },
+    {
+      startDate: '2024-02-01T00:00:00.000+08:00',
+      endDate: '2024-02-14T23:59:59.999+08:00',
+    },
+  ];
+  it('should descend dateRanges', () => {
+    const sortedDateRanges = sortDateRanges(dateRanges);
+    expect(sortedDateRanges).toStrictEqual(expectResult);
+  });
+
+  it('should ascend dateRanges', () => {
+    const sortedDateRanges = sortDateRanges(dateRanges, false);
+    expect(sortedDateRanges).toStrictEqual(expectResult.reverse());
   });
 });

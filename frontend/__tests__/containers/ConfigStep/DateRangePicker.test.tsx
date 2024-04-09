@@ -192,6 +192,26 @@ describe('DateRangePickerSection', () => {
 
       expect(currentRanges).toHaveLength(1);
     });
+
+    it('should dispatch update configuration when remove the range', async () => {
+      setup();
+
+      const addButton = screen.getByLabelText('Button for adding date range');
+      await userEvent.click(addButton);
+      const ranges = screen.getAllByLabelText('Range picker row');
+
+      expect(ranges).toHaveLength(2);
+
+      const firstRemoveButton = within(ranges[0]).queryByRole('button', { name: 'Remove' }) as HTMLButtonElement;
+      await userEvent.click(firstRemoveButton);
+      const currentRanges = screen.getAllByLabelText('Range picker row');
+
+      expect(currentRanges).toHaveLength(1);
+
+      expect(updateShouldGetBoardConfig).toHaveBeenCalledWith(true);
+      expect(updateShouldGetPipelineConfig).toHaveBeenCalledWith(true);
+      expect(initDeploymentFrequencySettings).toHaveBeenCalled();
+    });
   });
 
   describe('Multiple ranges date interactions', () => {

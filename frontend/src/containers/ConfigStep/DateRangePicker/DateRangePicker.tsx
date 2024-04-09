@@ -44,11 +44,11 @@ export const DateRangePicker = ({ startDate, endDate, index }: IRangePickerProps
   const shouldStartDateDisableDate = isDateDisabled.bind(null, dateRangeGroupExcludeSelf);
   const shouldEndDateDisableDate = isDateDisabled.bind(null, dateRangeGroupExcludeSelf);
 
-  const dispatchUpdateConfig = () => {
+  const dispatchUpdateConfig = useCallback(() => {
     dispatch(updateShouldGetBoardConfig(true));
     dispatch(updateShouldGetPipelineConfig(true));
     dispatch(initDeploymentFrequencySettings());
-  };
+  }, [dispatch]);
 
   const changeStartDate = (value: Nullable<Dayjs>) => {
     let daysAddToEndDate = DEFAULT_SPRINT_INTERVAL_OFFSET_DAYS;
@@ -101,7 +101,8 @@ export const DateRangePicker = ({ startDate, endDate, index }: IRangePickerProps
   const removeSelfHandler = useCallback(() => {
     const newDateRangeGroup = dateRangeGroup.filter((_, idx) => idx !== index);
     dispatch(updateDateRange(newDateRangeGroup));
-  }, [dateRangeGroup, dispatch, index]);
+    dispatchUpdateConfig();
+  }, [dateRangeGroup, dispatch, index, dispatchUpdateConfig]);
 
   return (
     <StyledFeaturedRangePickerContainer>

@@ -8,9 +8,10 @@ import {
 import { pipelineToolClient, IGetPipelineToolInfoResult } from '@src/clients/pipeline/PipelineToolClient';
 import { selectShouldGetPipelineConfig, updatePipelineSettings } from '@src/context/Metrics/metricsSlice';
 import { clearMetricsPipelineFormMeta } from '@src/context/meta/metaSlice';
+import { useEffect, useState, useRef, useCallback, useMemo } from 'react';
 import { shouldMetricsLoad } from '@src/context/stepper/StepperSlice';
-import { useEffect, useState, useRef, useCallback } from 'react';
 import { useAppDispatch, useAppSelector } from '@src/hooks';
+import { sortDateRanges } from '@src/utils/util';
 
 export interface IUseVerifyPipeLineToolStateInterface {
   result: IGetPipelineToolInfoResult;
@@ -32,6 +33,7 @@ export const useGetPipelineToolInfoEffect = (): IUseVerifyPipeLineToolStateInter
   const isProjectCreated = useAppSelector(selectIsProjectCreated);
   const restoredPipelineTool = useAppSelector(selectPipelineTool);
   const dateRange = useAppSelector(selectDateRange);
+  const sortedDateRanges = useMemo(() => sortDateRanges(dateRange), [dateRange]);
   const shouldLoad = useAppSelector(shouldMetricsLoad);
   const shouldGetPipelineConfig = useAppSelector(selectShouldGetPipelineConfig);
 
@@ -39,8 +41,8 @@ export const useGetPipelineToolInfoEffect = (): IUseVerifyPipeLineToolStateInter
     const params = {
       type: restoredPipelineTool.type,
       token: restoredPipelineTool.token,
-      startTime: dateRange[0]?.startDate,
-      endTime: dateRange[0]?.endDate,
+      startTime: sortedDateRanges[0]?.startDate,
+      endTime: sortedDateRanges[0]?.endDate,
     };
     setIsLoading(true);
     try {
@@ -55,9 +57,9 @@ export const useGetPipelineToolInfoEffect = (): IUseVerifyPipeLineToolStateInter
     dispatch,
     isProjectCreated,
     pipelineToolVerified,
-    dateRange,
     restoredPipelineTool.type,
     restoredPipelineTool.token,
+    sortedDateRanges,
   ]);
 
   useEffect(() => {

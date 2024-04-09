@@ -12,8 +12,8 @@ import {
   REWORK_TIMES,
   VELOCITY,
 } from '../../fixtures';
-import { act, fireEvent, render, waitFor, within, screen } from '@testing-library/react';
 import { MetricsTypeCheckbox } from '@src/containers/ConfigStep/MetricsTypeCheckbox';
+import { render, waitFor, within, screen } from '@testing-library/react';
 import { SELECTED_VALUE_SEPARATOR } from '@src/constants/commons';
 import BasicInfo from '@src/containers/ConfigStep/BasicInfo';
 import { setupStore } from '../../utils/setupStoreUtil';
@@ -59,12 +59,8 @@ describe('MetricsTypeCheckbox', () => {
     const { getByRole, getByText } = setup();
     await userEvent.click(screen.getByRole('combobox', { name: REQUIRED_DATA }));
     const listBox = within(getByRole('listbox'));
-    await act(async () => {
-      await userEvent.click(listBox.getByRole('option', { name: VELOCITY }));
-    });
-    await act(async () => {
-      await userEvent.click(listBox.getByRole('option', { name: CYCLE_TIME }));
-    });
+    await userEvent.click(listBox.getByRole('option', { name: VELOCITY }));
+    await userEvent.click(listBox.getByRole('option', { name: CYCLE_TIME }));
 
     expect(getByText([VELOCITY, CYCLE_TIME].join(SELECTED_VALUE_SEPARATOR))).toBeInTheDocument();
   });
@@ -72,13 +68,9 @@ describe('MetricsTypeCheckbox', () => {
   it('should show all selections when all option are select', async () => {
     const { getByRole, getByText } = setup();
     const displayedDataList = REQUIRED_DATA_LIST.slice(1);
-    await act(async () => {
-      await userEvent.click(getByRole('combobox', { name: REQUIRED_DATA }));
-    });
+    await userEvent.click(getByRole('combobox', { name: REQUIRED_DATA }));
     const listBox = within(getByRole('listbox'));
-    await act(async () => {
-      await userEvent.click(listBox.getByRole('option', { name: ALL }));
-    });
+    await userEvent.click(listBox.getByRole('option', { name: ALL }));
 
     expect(within(listBox.getByRole('option', { name: ALL })).getByTestId('CheckBoxIcon')).toBeTruthy();
     expect(getByText(displayedDataList.join(SELECTED_VALUE_SEPARATOR))).toBeInTheDocument();
@@ -88,16 +80,10 @@ describe('MetricsTypeCheckbox', () => {
     const { getByRole, getByText } = setup();
     const displayedDataList = REQUIRED_DATA_LIST.slice(1);
 
-    await act(async () => {
-      await userEvent.click(getByRole('combobox', { name: REQUIRED_DATA }));
-    });
+    await userEvent.click(getByRole('combobox', { name: REQUIRED_DATA }));
     const listBox = within(getByRole('listbox'));
-    await act(async () => {
-      await userEvent.click(listBox.getByRole('option', { name: VELOCITY }));
-    });
-    await act(async () => {
-      await userEvent.click(listBox.getByRole('option', { name: ALL }));
-    });
+    await userEvent.click(listBox.getByRole('option', { name: VELOCITY }));
+    await userEvent.click(listBox.getByRole('option', { name: ALL }));
 
     expect(within(listBox.getByRole('option', { name: ALL })).getByTestId('CheckBoxIcon')).toBeTruthy();
     expect(getByText(displayedDataList.join(SELECTED_VALUE_SEPARATOR))).toBeInTheDocument();
@@ -105,9 +91,7 @@ describe('MetricsTypeCheckbox', () => {
 
   it('should be checked of All selected option when click any other options', async () => {
     const { getByRole } = setup();
-    await act(async () => {
-      await userEvent.click(getByRole('combobox', { name: REQUIRED_DATA }));
-    });
+    await userEvent.click(getByRole('combobox', { name: REQUIRED_DATA }));
 
     const listBox = within(getByRole('listbox'));
     const optionsToClick = [
@@ -120,7 +104,7 @@ describe('MetricsTypeCheckbox', () => {
       listBox.getByRole('option', { name: DEV_CHANGE_FAILURE_RATE }),
       listBox.getByRole('option', { name: DEV_MEAN_TIME_TO_RECOVERY }),
     ];
-    await Promise.all(optionsToClick.map((opt) => fireEvent.click(opt)));
+    await Promise.all(optionsToClick.map((opt) => userEvent.click(opt)));
 
     expect(within(listBox.getByRole('option', { name: ALL })).getByTestId('CheckBoxIcon')).toBeTruthy();
   });
@@ -129,17 +113,11 @@ describe('MetricsTypeCheckbox', () => {
     const { getByRole, getByText } = setup();
     const displayedDataList = REQUIRED_DATA_LIST.slice(1, REQUIRED_DATA_LIST.length - 1);
 
-    await act(async () => {
-      await userEvent.click(getByRole('combobox', { name: REQUIRED_DATA }));
-    });
+    await userEvent.click(getByRole('combobox', { name: REQUIRED_DATA }));
 
     const listBox = within(getByRole('listbox'));
-    await act(async () => {
-      await userEvent.click(listBox.getByRole('option', { name: ALL }));
-    });
-    await act(async () => {
-      await userEvent.click(listBox.getByRole('option', { name: DEV_MEAN_TIME_TO_RECOVERY }));
-    });
+    await userEvent.click(listBox.getByRole('option', { name: ALL }));
+    await userEvent.click(listBox.getByRole('option', { name: DEV_MEAN_TIME_TO_RECOVERY }));
 
     expect(listBox.getByRole('option', { name: DEV_MEAN_TIME_TO_RECOVERY })).toHaveAttribute('aria-selected', 'false');
     expect(within(listBox.getByRole('option', { name: ALL })).getByTestId('CheckBoxOutlineBlankIcon')).toBeTruthy();
@@ -160,51 +138,31 @@ describe('MetricsTypeCheckbox', () => {
   it('should show error message when require data is null', async () => {
     const { getByRole, getByText } = setup();
 
-    await act(async () => {
-      await userEvent.click(getByRole('combobox', { name: REQUIRED_DATA }));
-    });
+    await userEvent.click(getByRole('combobox', { name: REQUIRED_DATA }));
     const listBox = within(getByRole('listbox'));
-    await act(async () => {
-      await userEvent.click(listBox.getByRole('option', { name: VELOCITY }));
-    });
-    await act(async () => {
-      await userEvent.click(listBox.getByRole('option', { name: VELOCITY }));
-    });
-    await act(async () => {
-      await userEvent.click(getByRole('listbox', { name: REQUIRED_DATA }));
-    });
+    await userEvent.click(listBox.getByRole('option', { name: VELOCITY }));
+    await userEvent.click(listBox.getByRole('option', { name: VELOCITY }));
+    await userEvent.click(getByRole('listbox', { name: REQUIRED_DATA }));
 
-    const errorMessage = getByText('Metrics is required');
-    expect(errorMessage).toBeInTheDocument();
+    expect(getByText(/Metrics is required/i)).toBeInTheDocument();
   });
 
   it('should show board component when click MetricsTypeCheckbox selection velocity ', async () => {
-    const { getByRole, getAllByText } = setup();
-    await act(async () => {
-      await userEvent.click(getByRole('combobox', { name: REQUIRED_DATA }));
-    });
-    const listBox = within(getByRole('listbox'));
-    await act(async () => {
-      await userEvent.click(listBox.getByRole('option', { name: VELOCITY }));
-    });
-
-    expect(getAllByText(CONFIG_TITLE.BOARD)[0]).toBeInTheDocument();
+    setup();
+    await userEvent.click(screen.getByRole('combobox', { name: REQUIRED_DATA }));
+    const listBox = within(screen.getByRole('listbox'));
+    await userEvent.click(listBox.getByRole('option', { name: VELOCITY }));
+    expect(screen.getAllByText(CONFIG_TITLE.BOARD)[0]).toBeInTheDocument();
   });
 
   it('should hidden board component when MetricsTypeCheckbox select is null given MetricsTypeCheckbox select is velocity ', async () => {
-    const { getByRole, queryByText } = setup();
+    setup();
 
-    await act(async () => {
-      await userEvent.click(getByRole('combobox', { name: REQUIRED_DATA }));
-    });
-    const requireDateSelection = within(getByRole('listbox'));
-    await act(async () => {
-      await userEvent.click(requireDateSelection.getByRole('option', { name: VELOCITY }));
-    });
-    await act(async () => {
-      await userEvent.click(requireDateSelection.getByRole('option', { name: VELOCITY }));
-    });
+    await userEvent.click(screen.getByRole('combobox', { name: REQUIRED_DATA }));
+    const requireDateSelection = within(screen.getByRole('listbox'));
+    await userEvent.click(requireDateSelection.getByRole('option', { name: VELOCITY }));
+    await userEvent.click(requireDateSelection.getByRole('option', { name: VELOCITY }));
 
-    expect(queryByText(CONFIG_TITLE.BOARD)).not.toBeInTheDocument();
+    expect(screen.queryByText(CONFIG_TITLE.BOARD)).not.toBeInTheDocument();
   });
 });

@@ -1,11 +1,9 @@
 import {
   BASE_PAGE_ROUTE,
-  BOARD_TYPES,
   CONFIRM_DIALOG_DESCRIPTION,
   DEFAULT_REWORK_SETTINGS,
   MOCK_REPORT_URL,
   NEXT,
-  PIPELINE_TOOL_TYPES,
   PREVIOUS,
   PROJECT_NAME_LABEL,
   SAVE,
@@ -15,15 +13,6 @@ import {
   COMMON_TIME_FORMAT,
 } from '../../fixtures';
 import {
-  updateBoard,
-  updateBoardVerifyState,
-  updateMetrics,
-  updatePipelineTool,
-  updatePipelineToolVerifyState,
-  updateSourceControl,
-  updateSourceControlVerifyState,
-} from '@src/context/config/configSlice';
-import {
   updateCycleTimeSettings,
   saveDoneColumn,
   saveTargetFields,
@@ -31,8 +20,14 @@ import {
   updateDeploymentFrequencySettings,
   updateTreatFlagCardAsBlock,
 } from '@src/context/Metrics/metricsSlice';
-import { ASSIGNEE_FILTER_TYPES, SOURCE_CONTROL_TYPES } from '@src/constants/resources';
-import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import {
+  updateBoardVerifyState,
+  updateMetrics,
+  updatePipelineToolVerifyState,
+  updateSourceControlVerifyState,
+} from '@src/context/config/configSlice';
+import { act, render, screen, waitFor } from '@testing-library/react';
+import { ASSIGNEE_FILTER_TYPES } from '@src/constants/resources';
 import MetricsStepper from '@src/containers/MetricsStepper';
 import { setupStore } from '../../utils/setupStoreUtil';
 import userEvent from '@testing-library/user-event';
@@ -111,9 +106,9 @@ Object.defineProperty(window, 'location', { value: mockLocation });
 let store = setupStore();
 const fillConfigPageData = async () => {
   const projectNameInput = await screen.findByRole('textbox', { name: PROJECT_NAME_LABEL });
-  fireEvent.change(projectNameInput, { target: { value: TEST_PROJECT_NAME } });
+  await userEvent.type(projectNameInput, TEST_PROJECT_NAME);
   const startDateInput = (await screen.findByRole('textbox', { name: START_DATE_LABEL })) as HTMLInputElement;
-  fireEvent.change(startDateInput, { target: { value: INPUT_DATE_VALUE } });
+  await userEvent.type(startDateInput, INPUT_DATE_VALUE);
 
   act(() => {
     store.dispatch(updateMetrics([VELOCITY]));
@@ -246,7 +241,7 @@ describe('MetricsStepper', () => {
     setup();
 
     await fillConfigPageData();
-    fireEvent.click(screen.getByText(NEXT));
+    await userEvent.click(screen.getByText(NEXT));
 
     expect(screen.getByText(METRICS)).toHaveStyle(`color:${stepperColor}`);
   });
@@ -407,24 +402,4 @@ describe('MetricsStepper', () => {
       expect(exportToJsonFile).toHaveBeenCalledWith(expectedFileName, expectedJson);
     });
   }, 25000);
-
-  it('should clean the config information that is hidden when click next button', async () => {
-    setup();
-
-    await fillConfigPageData();
-    await userEvent.click(screen.getByText(NEXT));
-
-    expect(updateBoard).not.toHaveBeenCalledWith({
-      type: BOARD_TYPES.JIRA,
-      boardId: '',
-      email: '',
-      projectKey: '',
-      site: '',
-      token: '',
-      startTime: 0,
-      endTime: 0,
-    });
-    expect(updateSourceControl).toHaveBeenCalledWith({ type: SOURCE_CONTROL_TYPES.GITHUB, token: '' });
-    expect(updatePipelineTool).toHaveBeenCalledWith({ type: PIPELINE_TOOL_TYPES.BUILD_KITE, token: '' });
-  }, 50000);
 });

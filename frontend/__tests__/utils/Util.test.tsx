@@ -143,23 +143,10 @@ describe('findCaseInsensitiveType function', () => {
     expect(value).toBe(PIPELINE_TOOL_TYPES.BUILD_KITE);
   });
 
-  it('Should return "GoCD" when passing a type given case sensitive input GoCD', () => {
-    const selectedValue = 'GoCD';
-    const value = findCaseInsensitiveType(Object.values(PIPELINE_TOOL_TYPES), selectedValue);
-    expect(value).toBe(PIPELINE_TOOL_TYPES.GO_CD);
-  });
-
-  it('Should return "GoCD" when passing a type given case insensitive input Gocd', () => {
-    const selectedValue = 'Gocd';
-    const value = findCaseInsensitiveType(Object.values(PIPELINE_TOOL_TYPES), selectedValue);
-    expect(value).toBe(PIPELINE_TOOL_TYPES.GO_CD);
-  });
-
   it('Should return "_BuildKite" when passing a type given the value mismatches with PIPELINE_TOOL_TYPES', () => {
     const selectedValue = '_BuildKite';
     const value = findCaseInsensitiveType(Object.values(PIPELINE_TOOL_TYPES), selectedValue);
     expect(value).not.toBe(PIPELINE_TOOL_TYPES.BUILD_KITE);
-    expect(value).not.toBe(PIPELINE_TOOL_TYPES.GO_CD);
     expect(value).toBe(selectedValue);
   });
 

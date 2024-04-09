@@ -79,15 +79,6 @@ export const PipelineTool = () => {
     );
   };
 
-  const onSelectUpdate = (value: string) => {
-    const newFields = fields.map(({ key }, index) => ({
-      key,
-      value: index === FIELD_KEY.TYPE ? value : EMPTY_STRING,
-      validatedError: '',
-    }));
-    handleUpdate(newFields);
-  };
-
   const getNewFields = (value: string) =>
     fields.map((field, index) =>
       index === FIELD_KEY.TOKEN
@@ -146,7 +137,6 @@ export const PipelineTool = () => {
             labelId='pipelineTool-type-checkbox-label'
             aria-label='Pipeline Tool type select'
             value={fields[FIELD_KEY.TYPE].value}
-            onChange={(e) => onSelectUpdate(e.target.value)}
           >
             {Object.values(PIPELINE_TOOL_TYPES).map((toolType) => (
               <MenuItem key={toolType} value={toolType}>

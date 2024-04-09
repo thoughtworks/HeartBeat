@@ -123,7 +123,6 @@ export const BOARD_TYPES = {
 
 export const PIPELINE_TOOL_TYPES = {
   BUILD_KITE: 'BuildKite',
-  GO_CD: 'GoCD',
 };
 
 export enum SOURCE_CONTROL_TYPES {

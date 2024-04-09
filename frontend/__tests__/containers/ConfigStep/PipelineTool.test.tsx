@@ -11,8 +11,8 @@ import {
   FAKE_PIPELINE_TOKEN,
   REVERIFY,
 } from '../../fixtures';
-import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { pipelineToolClient } from '@src/clients/pipeline/PipelineToolClient';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import { PipelineTool } from '@src/containers/ConfigStep/PipelineTool';
 import { AXIOS_REQUEST_ERROR_CODE } from '@src/constants/resources';
 import { setupStore } from '../../utils/setupStoreUtil';
@@ -55,45 +55,24 @@ describe('PipelineTool', () => {
   });
 
   it('should show pipelineTool title and fields when render pipelineTool component ', () => {
-    const { getByLabelText, getAllByText } = setup();
+    setup();
 
     PIPELINE_TOOL_FIELDS.map((field) => {
-      expect(getByLabelText(`${field} *`)).toBeInTheDocument();
+      expect(screen.getByLabelText(`${field} *`)).toBeInTheDocument();
     });
 
-    expect(getAllByText(CONFIG_TITLE.PIPELINE_TOOL)[0]).toBeInTheDocument();
+    expect(screen.getAllByText(CONFIG_TITLE.PIPELINE_TOOL)[0]).toBeInTheDocument();
   });
 
   it('should show default value buildKite when init pipelineTool component', () => {
-    const { getByText, queryByText } = setup();
-    const pipelineToolType = getByText(PIPELINE_TOOL_TYPES.BUILD_KITE);
+    setup();
+    const pipelineToolType = screen.getByText(PIPELINE_TOOL_TYPES.BUILD_KITE);
 
     expect(pipelineToolType).toBeInTheDocument();
-
-    const option = queryByText(PIPELINE_TOOL_TYPES.GO_CD);
-
-    expect(option).not.toBeInTheDocument();
-  });
-
-  it('should clear other fields information when change pipelineTool Field selection', async () => {
-    const { getByText, getByLabelText } = setup();
-    const tokenInput = within(screen.getByTestId('pipelineToolTextField')).getByLabelText(
-      'input Token',
-    ) as HTMLInputElement;
-
-    await fillPipelineToolFieldsInformation();
-    await userEvent.click(screen.getByRole('combobox', { name: 'Pipeline Tool' }));
-
-    const requireDateSelection = within(getByLabelText('Pipeline Tool type select'));
-    await userEvent.click(requireDateSelection.getByText(PIPELINE_TOOL_TYPES.BUILD_KITE));
-
-    await userEvent.click(getByText(PIPELINE_TOOL_TYPES.GO_CD));
-
-    expect(tokenInput.value).toEqual('');
   });
 
   it('should clear all fields information when click reset button', async () => {
-    const { getByText, queryByRole } = setup();
+    setup();
     const tokenInput = within(screen.getByTestId('pipelineToolTextField')).getByLabelText(
       'input Token',
     ) as HTMLInputElement;
@@ -104,45 +83,45 @@ describe('PipelineTool', () => {
     await userEvent.click(screen.getByRole('button', { name: RESET }));
 
     expect(tokenInput.value).toEqual('');
-    expect(getByText(PIPELINE_TOOL_TYPES.BUILD_KITE)).toBeInTheDocument();
-    expect(queryByRole('button', { name: RESET })).not.toBeInTheDocument();
-    expect(queryByRole('button', { name: VERIFY })).toBeDisabled();
+    expect(screen.getByText(PIPELINE_TOOL_TYPES.BUILD_KITE)).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: RESET })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: VERIFY })).toBeDisabled();
   });
 
   it('should hidden timeout alert when click reset button', async () => {
-    const { getByTestId, queryByTestId } = setup();
+    setup();
     await fillPipelineToolFieldsInformation();
     pipelineToolClient.verify = jest.fn().mockResolvedValue({ code: AXIOS_REQUEST_ERROR_CODE.TIMEOUT });
 
     await userEvent.click(screen.getByText(VERIFY));
 
-    expect(getByTestId('timeoutAlert')).toBeInTheDocument();
+    expect(screen.getByTestId('timeoutAlert')).toBeInTheDocument();
 
     await userEvent.click(screen.getByRole('button', { name: RESET }));
 
-    expect(queryByTestId('timeoutAlert')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('timeoutAlert')).not.toBeInTheDocument();
   });
 
   it('should hidden timeout alert when the error type of api call becomes other', async () => {
-    const { getByTestId, queryByTestId } = setup();
+    setup();
     await fillPipelineToolFieldsInformation();
     pipelineToolClient.verify = jest.fn().mockResolvedValue({ code: AXIOS_REQUEST_ERROR_CODE.TIMEOUT });
 
     await userEvent.click(screen.getByText(VERIFY));
 
-    expect(getByTestId('timeoutAlert')).toBeInTheDocument();
+    expect(screen.getByTestId('timeoutAlert')).toBeInTheDocument();
 
     pipelineToolClient.verify = jest.fn().mockResolvedValue({ code: HttpStatusCode.Unauthorized });
 
     await userEvent.click(screen.getByText(REVERIFY));
 
-    expect(queryByTestId('timeoutAlert')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('timeoutAlert')).not.toBeInTheDocument();
   });
 
   it('should show detail options when click pipelineTool fields', async () => {
-    const { getByRole } = setup();
+    setup();
     await userEvent.click(screen.getByRole('combobox', { name: 'Pipeline Tool' }));
-    const listBox = within(getByRole('listbox'));
+    const listBox = within(screen.getByRole('listbox'));
     const options = listBox.getAllByRole('option');
     const optionValue = options.map((li) => li.getAttribute('data-value'));
 
@@ -150,8 +129,8 @@ describe('PipelineTool', () => {
   });
 
   it('should enabled verify button when all fields checked correctly given disable verify button', async () => {
-    const { getByRole } = setup();
-    const verifyButton = getByRole('button', { name: VERIFY });
+    setup();
+    const verifyButton = screen.getByRole('button', { name: VERIFY });
 
     expect(verifyButton).toBeDisabled();
 
@@ -161,7 +140,7 @@ describe('PipelineTool', () => {
   });
 
   it('should show error message and error style when token is empty', async () => {
-    const { getByText } = setup();
+    setup();
     await fillPipelineToolFieldsInformation();
     const mockInfo = 'mockToken';
     const tokenInput = within(screen.getByTestId('pipelineToolTextField')).getByLabelText(
@@ -170,8 +149,8 @@ describe('PipelineTool', () => {
     await userEvent.type(tokenInput, mockInfo);
     await userEvent.clear(tokenInput);
 
-    expect(getByText(TOKEN_ERROR_MESSAGE[1])).toBeVisible();
-    expect(getByText(TOKEN_ERROR_MESSAGE[1])).toHaveStyle(ERROR_MESSAGE_COLOR);
+    expect(screen.getByText(TOKEN_ERROR_MESSAGE[1])).toBeVisible();
+    expect(screen.getByText(TOKEN_ERROR_MESSAGE[1])).toHaveStyle(ERROR_MESSAGE_COLOR);
   });
 
   it('should not show error message when field does not trigger any event given an empty value', () => {
@@ -180,17 +159,17 @@ describe('PipelineTool', () => {
     expect(screen.queryByText(TOKEN_ERROR_MESSAGE[1])).not.toBeInTheDocument();
   });
 
-  it('should show error message when focus on field given an empty value', () => {
+  it('should show error message when focus on field given an empty value', async () => {
     setup();
 
-    fireEvent.focus(screen.getByLabelText('input Token'));
+    await userEvent.click(screen.getByLabelText('input Token'));
 
     expect(screen.getByText(TOKEN_ERROR_MESSAGE[1])).toBeInTheDocument();
     expect(screen.getByText(TOKEN_ERROR_MESSAGE[1])).toHaveStyle(ERROR_MESSAGE_COLOR);
   });
 
   it('should show error message and error style when token is invalid', async () => {
-    const { getByText } = setup();
+    setup();
     const mockInfo = 'mockToken';
     const tokenInput = within(screen.getByTestId('pipelineToolTextField')).getByLabelText(
       'input Token',
@@ -199,37 +178,39 @@ describe('PipelineTool', () => {
 
     expect(tokenInput.value).toEqual(mockInfo);
 
-    expect(getByText(TOKEN_ERROR_MESSAGE[0])).toBeInTheDocument();
-    expect(getByText(TOKEN_ERROR_MESSAGE[0])).toHaveStyle(ERROR_MESSAGE_COLOR);
+    expect(screen.getByText(TOKEN_ERROR_MESSAGE[0])).toBeInTheDocument();
+    expect(screen.getByText(TOKEN_ERROR_MESSAGE[0])).toHaveStyle(ERROR_MESSAGE_COLOR);
   });
 
   it('should show reset button and verified button when verify succeed ', async () => {
-    const { getByText } = setup();
+    setup();
     await fillPipelineToolFieldsInformation();
 
     await userEvent.click(screen.getByText(VERIFY));
     expect(screen.getByText(RESET)).toBeVisible();
 
     await waitFor(() => {
-      expect(getByText(VERIFIED)).toBeTruthy();
+      expect(screen.getByText(VERIFIED)).toBeTruthy();
     });
   });
 
   it('should called verifyPipelineTool method once when click verify button', async () => {
-    const { getByText } = setup();
+    setup();
     await fillPipelineToolFieldsInformation();
     await userEvent.click(screen.getByRole('button', { name: VERIFY }));
 
-    expect(getByText('Verified')).toBeInTheDocument();
+    expect(screen.getByText('Verified')).toBeInTheDocument();
   });
 
   it('should check loading animation when click verify button', async () => {
-    const { getByRole, container } = setup();
+    server.use(
+      rest.post(MOCK_PIPELINE_VERIFY_URL, (_, res, ctx) => res(ctx.delay(300), ctx.status(HttpStatusCode.Ok))),
+    );
+    const { container } = setup();
     await fillPipelineToolFieldsInformation();
-    fireEvent.click(getByRole('button', { name: VERIFY }));
-    await waitFor(() => {
-      expect(container.getElementsByTagName('span')[0].getAttribute('role')).toEqual('progressbar');
-    });
+    await userEvent.click(screen.getByRole('button', { name: VERIFY }));
+
+    expect(container.getElementsByTagName('span')[0].getAttribute('role')).toEqual('progressbar');
   });
 
   it('should check error text appear when pipelineTool verify response status is 401', async () => {

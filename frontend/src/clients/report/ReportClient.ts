@@ -83,6 +83,7 @@ export class ReportClient extends HttpClient {
     doraMetricsCompleted: false,
     overallMetricsCompleted: false,
     allMetricsCompleted: false,
+    isSuccessfulCreateCsvFile: false,
   };
 
   retrieveByUrl = async (params: ReportRequestDTO, url: string) => {

@@ -102,7 +102,7 @@ public class GenerateReporterService {
 			asyncExceptionHandler.put(boardReportId, e);
 			if (List.of(401, 403, 404).contains(e.getStatus()))
 				asyncMetricsDataHandler.updateMetricsDataCompletedInHandler(
-						IdUtil.getDataCompletedPrefix(request.getCsvTimeStamp()), BOARD);
+						IdUtil.getDataCompletedPrefix(request.getCsvTimeStamp()), BOARD, false);
 
 		}
 	}
@@ -145,7 +145,7 @@ public class GenerateReporterService {
 			asyncExceptionHandler.put(pipelineReportId, e);
 			if (List.of(401, 403, 404).contains(e.getStatus()))
 				asyncMetricsDataHandler.updateMetricsDataCompletedInHandler(
-						IdUtil.getDataCompletedPrefix(request.getCsvTimeStamp()), DORA);
+						IdUtil.getDataCompletedPrefix(request.getCsvTimeStamp()), DORA, false);
 		}
 	}
 
@@ -167,7 +167,7 @@ public class GenerateReporterService {
 			asyncExceptionHandler.put(sourceControlReportId, e);
 			if (List.of(401, 403, 404).contains(e.getStatus()))
 				asyncMetricsDataHandler.updateMetricsDataCompletedInHandler(
-						IdUtil.getDataCompletedPrefix(request.getCsvTimeStamp()), DORA);
+						IdUtil.getDataCompletedPrefix(request.getCsvTimeStamp()), DORA, false);
 		}
 	}
 
@@ -226,7 +226,7 @@ public class GenerateReporterService {
 		kanbanCsvService.generateCsvInfo(request, fetchedData.getCardCollectionInfo().getRealDoneCardCollection(),
 				fetchedData.getCardCollectionInfo().getNonDoneCardCollection());
 		asyncMetricsDataHandler
-			.updateMetricsDataCompletedInHandler(IdUtil.getDataCompletedPrefix(request.getCsvTimeStamp()), BOARD);
+			.updateMetricsDataCompletedInHandler(IdUtil.getDataCompletedPrefix(request.getCsvTimeStamp()), BOARD, true);
 	}
 
 	private void assembleVelocity(FetchedData fetchedData, ReportResponse reportResponse) {
@@ -303,7 +303,7 @@ public class GenerateReporterService {
 
 		csvFileGenerator.convertPipelineDataToCSV(pipelineData, request.getCsvTimeStamp());
 		asyncMetricsDataHandler
-			.updateMetricsDataCompletedInHandler(IdUtil.getDataCompletedPrefix(request.getCsvTimeStamp()), DORA);
+			.updateMetricsDataCompletedInHandler(IdUtil.getDataCompletedPrefix(request.getCsvTimeStamp()), DORA, true);
 	}
 
 	public void generateCSVForMetric(ReportResponse reportContent, String csvTimeStamp) {
@@ -395,6 +395,7 @@ public class GenerateReporterService {
 			.doraMetricsCompleted(reportReadyStatus.doraMetricsCompleted())
 			.overallMetricsCompleted(reportReadyStatus.overallMetricCompleted())
 			.allMetricsCompleted(reportReadyStatus.allMetricsCompleted())
+			.isSuccessfulCreateCsvFile(reportReadyStatus.isSuccessfulCreateCsvFile())
 			.reportMetricsError(reportMetricsError)
 			.build();
 	}

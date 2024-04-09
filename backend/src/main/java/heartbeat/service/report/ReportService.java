@@ -94,6 +94,7 @@ public class ReportService {
 				.boardMetricsCompleted(metricTypes.contains(BOARD) ? Boolean.FALSE : initializeBoardMetricsCompleted)
 				.doraMetricsCompleted(metricTypes.contains(DORA) ? Boolean.FALSE : initializeDoraMetricsCompleted)
 				.overallMetricCompleted(Boolean.FALSE)
+				.isSuccessfulCreateCsvFile(Boolean.FALSE)
 				.build());
 	}
 

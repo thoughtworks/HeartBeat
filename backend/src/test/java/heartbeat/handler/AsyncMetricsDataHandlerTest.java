@@ -142,7 +142,8 @@ class AsyncMetricsDataHandlerTest {
 			String currentTime = Long.toString(currentTimeMillis);
 
 			GenerateReportException exception = assertThrows(GenerateReportException.class,
-					() -> asyncMetricsDataHandler.updateMetricsDataCompletedInHandler(currentTime, MetricType.BOARD));
+					() -> asyncMetricsDataHandler.updateMetricsDataCompletedInHandler(currentTime, MetricType.BOARD,
+							false));
 
 			assertEquals("Failed to update metrics data completed through this timestamp.", exception.getMessage());
 		}
@@ -156,7 +157,7 @@ class AsyncMetricsDataHandlerTest {
 				.build();
 			asyncMetricsDataHandler.putMetricsDataCompleted(currentTime, metricsDataCompleted);
 
-			asyncMetricsDataHandler.updateMetricsDataCompletedInHandler(currentTime, MetricType.BOARD);
+			asyncMetricsDataHandler.updateMetricsDataCompletedInHandler(currentTime, MetricType.BOARD, true);
 
 			MetricsDataCompleted completed = asyncMetricsDataHandler.getMetricsDataCompleted(currentTime);
 			assertTrue(completed.boardMetricsCompleted());
@@ -173,10 +174,29 @@ class AsyncMetricsDataHandlerTest {
 				.build();
 			asyncMetricsDataHandler.putMetricsDataCompleted(currentTime, metricsDataCompleted);
 
-			asyncMetricsDataHandler.updateMetricsDataCompletedInHandler(currentTime, MetricType.DORA);
+			asyncMetricsDataHandler.updateMetricsDataCompletedInHandler(currentTime, MetricType.DORA, true);
 
 			MetricsDataCompleted completed = asyncMetricsDataHandler.getMetricsDataCompleted(currentTime);
 			assertTrue(completed.doraMetricsCompleted());
+			Files.deleteIfExists(Path.of(APP_OUTPUT_METRICS + "/" + currentTime));
+			assertNull(asyncMetricsDataHandler.getMetricsDataCompleted(currentTime));
+		}
+
+		@Test
+		void shouldUpdateDoraMetricDataWhenMetricIsDoraAndCreateCsvFileUnsuccessfully() throws IOException {
+			long currentTimeMillis = System.currentTimeMillis();
+			String currentTime = Long.toString(currentTimeMillis);
+			MetricsDataCompleted metricsDataCompleted = MetricsDataCompleted.builder()
+				.doraMetricsCompleted(false)
+				.isSuccessfulCreateCsvFile(false)
+				.build();
+			asyncMetricsDataHandler.putMetricsDataCompleted(currentTime, metricsDataCompleted);
+
+			asyncMetricsDataHandler.updateMetricsDataCompletedInHandler(currentTime, MetricType.DORA, false);
+
+			MetricsDataCompleted completed = asyncMetricsDataHandler.getMetricsDataCompleted(currentTime);
+			assertTrue(completed.doraMetricsCompleted());
+			assertFalse(completed.isSuccessfulCreateCsvFile());
 			Files.deleteIfExists(Path.of(APP_OUTPUT_METRICS + "/" + currentTime));
 			assertNull(asyncMetricsDataHandler.getMetricsDataCompleted(currentTime));
 		}

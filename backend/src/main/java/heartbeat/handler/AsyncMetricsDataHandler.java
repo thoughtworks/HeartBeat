@@ -40,11 +40,15 @@ public class AsyncMetricsDataHandler extends AsyncDataBaseHandler {
 	}
 
 	@Synchronized
-	public void updateMetricsDataCompletedInHandler(String metricDataFileId, MetricType metricType) {
+	public void updateMetricsDataCompletedInHandler(String metricDataFileId, MetricType metricType,
+			boolean isCreateCsvSuccess) {
 		MetricsDataCompleted previousMetricsCompleted = getMetricsDataCompleted(metricDataFileId);
 		if (previousMetricsCompleted == null) {
 			log.error(GENERATE_REPORT_ERROR);
 			throw new GenerateReportException(GENERATE_REPORT_ERROR);
+		}
+		if (isCreateCsvSuccess) {
+			previousMetricsCompleted.setIsSuccessfulCreateCsvFile(true);
 		}
 		switch (metricType) {
 			case BOARD -> previousMetricsCompleted.setBoardMetricsCompleted(true);

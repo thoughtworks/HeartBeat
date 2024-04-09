@@ -41,6 +41,8 @@ public class ReportResponse {
 
 	private Boolean allMetricsCompleted;
 
+	private Boolean isSuccessfulCreateCsvFile;
+
 	public ReportResponse(Long exportValidityTime) {
 		this.exportValidityTime = exportValidityTime;
 	}

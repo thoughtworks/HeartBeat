@@ -68,6 +68,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doNothing;
@@ -173,7 +174,7 @@ class GenerateReporterServiceTest {
 				.thenReturn(MetricsDataCompleted.builder().build());
 			doAnswer(invocation -> null).when(asyncMetricsDataHandler)
 				.updateMetricsDataCompletedInHandler(IdUtil.getDataCompletedPrefix(request.getCsvTimeStamp()),
-						MetricType.BOARD);
+						MetricType.BOARD, true);
 			when(kanbanService.fetchDataFromKanban(request)).thenReturn(FetchedData.CardCollectionInfo.builder()
 				.realDoneCardCollection(CardCollection.builder().build())
 				.build());
@@ -215,7 +216,7 @@ class GenerateReporterServiceTest {
 			when(asyncMetricsDataHandler.getMetricsDataCompleted(any()))
 				.thenReturn(MetricsDataCompleted.builder().build());
 			doAnswer(invocation -> null).when(asyncMetricsDataHandler)
-				.updateMetricsDataCompletedInHandler(TIMESTAMP, MetricType.BOARD);
+				.updateMetricsDataCompletedInHandler(TIMESTAMP, MetricType.BOARD, true);
 			when(kanbanService.fetchDataFromKanban(request)).thenReturn(FetchedData.CardCollectionInfo.builder()
 				.realDoneCardCollection(CardCollection.builder().build())
 				.build());
@@ -243,7 +244,7 @@ class GenerateReporterServiceTest {
 				.thenReturn(MetricsDataCompleted.builder().build());
 			doAnswer(invocation -> null).when(asyncMetricsDataHandler)
 				.updateMetricsDataCompletedInHandler(IdUtil.getDataCompletedPrefix(request.getCsvTimeStamp()),
-						MetricType.BOARD);
+						MetricType.BOARD, true);
 			generateReporterService.generateBoardReport(request);
 
 			verify(kanbanService, never()).fetchDataFromKanban(eq(request));
@@ -270,7 +271,7 @@ class GenerateReporterServiceTest {
 				.thenReturn(MetricsDataCompleted.builder().build());
 			doAnswer(invocation -> null).when(asyncMetricsDataHandler)
 				.updateMetricsDataCompletedInHandler(IdUtil.getDataCompletedPrefix(request.getCsvTimeStamp()),
-						MetricType.BOARD);
+						MetricType.BOARD, true);
 
 			generateReporterService.generateBoardReport(request);
 
@@ -296,7 +297,7 @@ class GenerateReporterServiceTest {
 				.thenReturn(MetricsDataCompleted.builder().build());
 			doAnswer(invocation -> null).when(asyncMetricsDataHandler)
 				.updateMetricsDataCompletedInHandler(IdUtil.getDataCompletedPrefix(request.getCsvTimeStamp()),
-						MetricType.BOARD);
+						MetricType.BOARD, true);
 			when(velocityCalculator.calculateVelocity(any()))
 				.thenReturn(Velocity.builder().velocityForSP(10).velocityForCards(20).build());
 			when(kanbanService.fetchDataFromKanban(request)).thenReturn(FetchedData.CardCollectionInfo.builder()
@@ -329,7 +330,7 @@ class GenerateReporterServiceTest {
 			when(asyncMetricsDataHandler.getMetricsDataCompleted(any()))
 				.thenReturn(MetricsDataCompleted.builder().boardMetricsCompleted(true).build());
 			doAnswer(invocation -> null).when(asyncMetricsDataHandler)
-				.updateMetricsDataCompletedInHandler(TIMESTAMP, MetricType.BOARD);
+				.updateMetricsDataCompletedInHandler(TIMESTAMP, MetricType.BOARD, true);
 			when(cycleTimeCalculator.calculateCycleTime(any(), any())).thenReturn(CycleTime.builder()
 				.averageCycleTimePerSP(10)
 				.totalTimeForCards(15)
@@ -366,7 +367,7 @@ class GenerateReporterServiceTest {
 				.thenReturn(MetricsDataCompleted.builder().build());
 			doAnswer(invocation -> null).when(asyncMetricsDataHandler)
 				.updateMetricsDataCompletedInHandler(IdUtil.getDataCompletedPrefix(request.getCsvTimeStamp()),
-						MetricType.BOARD);
+						MetricType.BOARD, true);
 			List<Classification> classifications = List.of(Classification.builder().build());
 			when(classificationCalculator.calculate(any(), any())).thenReturn(classifications);
 			when(kanbanService.fetchDataFromKanban(request)).thenReturn(FetchedData.CardCollectionInfo.builder()
@@ -399,7 +400,7 @@ class GenerateReporterServiceTest {
 				.thenReturn(MetricsDataCompleted.builder().build());
 			doAnswer(invocation -> null).when(asyncMetricsDataHandler)
 				.updateMetricsDataCompletedInHandler(IdUtil.getDataCompletedPrefix(request.getCsvTimeStamp()),
-						MetricType.BOARD);
+						MetricType.BOARD, true);
 
 			generateReporterService.generateBoardReport(request);
 
@@ -430,7 +431,7 @@ class GenerateReporterServiceTest {
 				.thenReturn(Rework.builder().totalReworkCards(2).build());
 			doAnswer(invocation -> null).when(asyncMetricsDataHandler)
 				.updateMetricsDataCompletedInHandler(IdUtil.getDataCompletedPrefix(request.getCsvTimeStamp()),
-						MetricType.BOARD);
+						MetricType.BOARD, true);
 
 			generateReporterService.generateBoardReport(request);
 			verify(asyncReportRequestHandler).putReport(any(), responseArgumentCaptor.capture());
@@ -456,7 +457,7 @@ class GenerateReporterServiceTest {
 			when(asyncMetricsDataHandler.getMetricsDataCompleted(any()))
 				.thenReturn(MetricsDataCompleted.builder().doraMetricsCompleted(false).build());
 			doAnswer(invocation -> null).when(asyncMetricsDataHandler)
-				.updateMetricsDataCompletedInHandler(TIMESTAMP, MetricType.DORA);
+				.updateMetricsDataCompletedInHandler(TIMESTAMP, MetricType.DORA, true);
 			List<PipelineCSVInfo> pipelineCSVInfos = List.of();
 			when(pipelineService.generateCSVForPipelineWithCodebase(any(), any(), any(), any(), any()))
 				.thenReturn(pipelineCSVInfos);
@@ -483,7 +484,7 @@ class GenerateReporterServiceTest {
 			when(asyncMetricsDataHandler.getMetricsDataCompleted(any()))
 				.thenReturn(MetricsDataCompleted.builder().doraMetricsCompleted(true).build());
 			doAnswer(invocation -> null).when(asyncMetricsDataHandler)
-				.updateMetricsDataCompletedInHandler(TIMESTAMP, MetricType.DORA);
+				.updateMetricsDataCompletedInHandler(TIMESTAMP, MetricType.DORA, true);
 			List<PipelineCSVInfo> pipelineCSVInfos = List.of();
 			when(pipelineService.generateCSVForPipelineWithCodebase(any(), any(), any(), any(), any()))
 				.thenReturn(pipelineCSVInfos);
@@ -512,7 +513,7 @@ class GenerateReporterServiceTest {
 			when(asyncMetricsDataHandler.getMetricsDataCompleted(any()))
 				.thenReturn(MetricsDataCompleted.builder().doraMetricsCompleted(true).build());
 			doAnswer(invocation -> null).when(asyncMetricsDataHandler)
-				.updateMetricsDataCompletedInHandler(TIMESTAMP, MetricType.DORA);
+				.updateMetricsDataCompletedInHandler(TIMESTAMP, MetricType.DORA, true);
 			List<PipelineCSVInfo> pipelineCSVInfos = List.of();
 			when(pipelineService.generateCSVForPipelineWithCodebase(any(), any(), any(), any(), any()))
 				.thenReturn(pipelineCSVInfos);
@@ -545,7 +546,7 @@ class GenerateReporterServiceTest {
 			when(asyncMetricsDataHandler.getMetricsDataCompleted(any()))
 				.thenReturn(MetricsDataCompleted.builder().doraMetricsCompleted(false).build());
 			doAnswer(invocation -> null).when(asyncMetricsDataHandler)
-				.updateMetricsDataCompletedInHandler(TIMESTAMP, MetricType.DORA);
+				.updateMetricsDataCompletedInHandler(TIMESTAMP, MetricType.DORA, true);
 			List<PipelineCSVInfo> pipelineCSVInfos = List.of();
 			when(pipelineService.generateCSVForPipelineWithCodebase(any(), any(), any(), any(), any()))
 				.thenReturn(pipelineCSVInfos);
@@ -591,7 +592,7 @@ class GenerateReporterServiceTest {
 			when(asyncMetricsDataHandler.getMetricsDataCompleted(any()))
 				.thenReturn(MetricsDataCompleted.builder().doraMetricsCompleted(true).build());
 			doAnswer(invocation -> null).when(asyncMetricsDataHandler)
-				.updateMetricsDataCompletedInHandler(TIMESTAMP, MetricType.DORA);
+				.updateMetricsDataCompletedInHandler(TIMESTAMP, MetricType.DORA, false);
 			List<PipelineCSVInfo> pipelineCSVInfos = List.of();
 			when(pipelineService.generateCSVForPipelineWithCodebase(any(), any(), any(), any(), any()))
 				.thenReturn(pipelineCSVInfos);
@@ -603,8 +604,7 @@ class GenerateReporterServiceTest {
 
 			verify(asyncExceptionHandler).put(eq(request.getPipelineReportId()), any());
 
-			verify(asyncMetricsDataHandler, times(1)).updateMetricsDataCompletedInHandler(
-					eq(IdUtil.getDataCompletedPrefix(request.getCsvTimeStamp())), any());
+			verify(asyncMetricsDataHandler, times(1)).updateMetricsDataCompletedInHandler(any(), any(), anyBoolean());
 		}
 
 		@Test
@@ -621,7 +621,7 @@ class GenerateReporterServiceTest {
 			when(asyncMetricsDataHandler.getMetricsDataCompleted(any()))
 				.thenReturn(MetricsDataCompleted.builder().doraMetricsCompleted(false).build());
 			doAnswer(invocation -> null).when(asyncMetricsDataHandler)
-				.updateMetricsDataCompletedInHandler(TIMESTAMP, MetricType.DORA);
+				.updateMetricsDataCompletedInHandler(TIMESTAMP, MetricType.DORA, true);
 			List<PipelineCSVInfo> pipelineCSVInfos = List.of();
 			when(pipelineService.generateCSVForPipelineWithCodebase(any(), any(), any(), any(), any()))
 				.thenReturn(pipelineCSVInfos);
@@ -660,7 +660,7 @@ class GenerateReporterServiceTest {
 			when(asyncMetricsDataHandler.getMetricsDataCompleted(any()))
 				.thenReturn(MetricsDataCompleted.builder().doraMetricsCompleted(false).build());
 			doAnswer(invocation -> null).when(asyncMetricsDataHandler)
-				.updateMetricsDataCompletedInHandler(TIMESTAMP, MetricType.DORA);
+				.updateMetricsDataCompletedInHandler(TIMESTAMP, MetricType.DORA, true);
 			List<PipelineCSVInfo> pipelineCSVInfos = List.of();
 			when(pipelineService.generateCSVForPipelineWithCodebase(any(), any(), any(), any(), any()))
 				.thenReturn(pipelineCSVInfos);
@@ -699,7 +699,7 @@ class GenerateReporterServiceTest {
 			when(asyncMetricsDataHandler.getMetricsDataCompleted(any()))
 				.thenReturn(MetricsDataCompleted.builder().doraMetricsCompleted(true).build());
 			doAnswer(invocation -> null).when(asyncMetricsDataHandler)
-				.updateMetricsDataCompletedInHandler(TIMESTAMP, MetricType.DORA);
+				.updateMetricsDataCompletedInHandler(TIMESTAMP, MetricType.DORA, true);
 			List<PipelineCSVInfo> pipelineCSVInfos = List.of();
 			when(pipelineService.generateCSVForPipelineWithCodebase(any(), any(), any(), any(), any()))
 				.thenReturn(pipelineCSVInfos);
@@ -710,8 +710,7 @@ class GenerateReporterServiceTest {
 			generateReporterService.generateDoraReport(request);
 
 			verify(asyncExceptionHandler).put(eq(request.getSourceControlReportId()), any());
-			verify(asyncMetricsDataHandler, times(1)).updateMetricsDataCompletedInHandler(
-					eq(IdUtil.getDataCompletedPrefix(request.getCsvTimeStamp())), any());
+			verify(asyncMetricsDataHandler, times(1)).updateMetricsDataCompletedInHandler(any(), any(), anyBoolean());
 		}
 
 	}

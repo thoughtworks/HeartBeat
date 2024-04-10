@@ -194,6 +194,8 @@ _Image 3-5, create Jira token_
 |PipelineTool| The pipeline tool you team use, currently heartbeat only support buildkite|
 |Token|Generate buildkite token with below link, https://buildkite.com/user/api-access-tokens|
 ##### 3.1.3.2 Guideline for generating Buildkite token
+Select organization for you pipeline
+![Image 3-6](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/guideline-for-generating-token/generate-buildkite-token-org.png)
 Choose "Read Builds","Read Organizations" and "Read Pipelines".
 ![Image 3-6](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/guideline-for-generating-token/generate-buildkite-token.png)
 _Image 3-6, generate Buildkite token_
@@ -204,6 +206,9 @@ _Image 3-6, generate Buildkite token_
 |SourceControl|The source control tool you team use, currently heartbeat only support Github|
 |Token|Generate Github token with below link(classic one), https://github.com/settings/tokens|
 ##### 3.1.3.3 Guideline for generating GitHub token
+Generate new token (classic)
+![Image 3-7](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/guideline-for-generating-token/generate-github-token-entry.png)
+Select repo from scopes
 ![Image 3-7](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/guideline-for-generating-token/generate-github-token.png)
 _Image 3-7, generate classic GitHub token_
 ##### 3.1.3.4 Authorize GitHub token with correct organization

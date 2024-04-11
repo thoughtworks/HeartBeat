@@ -383,15 +383,15 @@ _Image 3-27，export pipline data_
 _Image 3-28，Deployment Frequency Report_
 
 ### 3.4.6 Lead time for changes Data
-- Definition for ‘Lead time for changes': this metrics records the time from first code commit to code successfully running in production.
 - Formula for ‘PR lead time':
--- if PR merge not null: PR lead time = PR merged time - code committed time
--- if PR merge is null: PR lead time = PR created time - code committed time
--- if no PR merge: PR lead time = 0
+  - if PR exist : PR lead time = PR merged time - first code committed time
+  - if no PR: PR lead time = 0
+
 - Formula for ‘Pipeline lead time':
--- if PR merge not null: Pipeline lead time = Deployment Completed Time - PR merged time
--- if PR merge is null: Pipeline lead time = Deployment Completed Time - PR created time
--- if no PR merge: Pipeline lead time = 0
+  - if PR exist: Pipeline leadtime = Job Complete Time - PR merged time
+  - if no PR: Pipeline lead time = Job Complete Time - Job Start Time
+
+
 
 ![Image 3-29](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/readme/13.png)\
 _Image 3-29，Lead time for changes Report_

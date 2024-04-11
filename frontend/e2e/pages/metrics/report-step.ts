@@ -18,7 +18,8 @@ export class ReportStep {
   readonly boardMetricRework: Locator;
   readonly boardMetricsDetailVelocityPart: Locator;
   readonly boardMetricsDetailCycleTimePart: Locator;
-  readonly boardMetricsDetaiClassificationPart: Locator;
+  readonly boardMetricsDetailClassificationPart: Locator;
+  readonly boardMetricsDetailReworkTimesPart: Locator;
   readonly prLeadTime: Locator;
   readonly pipelineLeadTime: Locator;
   readonly totalLeadTime: Locator;
@@ -49,7 +50,8 @@ export class ReportStep {
     this.boardMetricRework = this.page.locator('[data-test-id="Rework"] [data-test-id="report-section"]');
     this.boardMetricsDetailVelocityPart = this.page.locator('[data-test-id="Velocity"]');
     this.boardMetricsDetailCycleTimePart = this.page.locator('[data-test-id="Cycle Time"]');
-    this.boardMetricsDetaiClassificationPart = this.page.locator('[data-test-id="Classification"]');
+    this.boardMetricsDetailClassificationPart = this.page.locator('[data-test-id="Classification"]');
+    this.boardMetricsDetailReworkTimesPart = this.page.locator('[data-test-id="Rework"]');
 
     this.prLeadTime = this.page.locator('[data-test-id="Lead Time For Changes"] [data-test-id="report-section"]');
     this.pipelineLeadTime = this.page.locator('[data-test-id="Lead Time For Changes"] [data-test-id="report-section"]');
@@ -268,19 +270,29 @@ export class ReportStep {
   async checkOnlyVelocityPartVisible() {
     await expect(this.boardMetricsDetailVelocityPart).toBeVisible();
     await expect(this.boardMetricsDetailCycleTimePart).toBeHidden();
-    await expect(this.boardMetricsDetaiClassificationPart).toBeHidden();
+    await expect(this.boardMetricsDetailClassificationPart).toBeHidden();
+    await expect(this.boardMetricsDetailReworkTimesPart).toBeHidden();
   }
 
   async checkOnlyCycleTimePartVisible() {
     await expect(this.boardMetricsDetailVelocityPart).toBeHidden();
     await expect(this.boardMetricsDetailCycleTimePart).toBeVisible();
-    await expect(this.boardMetricsDetaiClassificationPart).toBeHidden();
+    await expect(this.boardMetricsDetailClassificationPart).toBeHidden();
+    await expect(this.boardMetricsDetailReworkTimesPart).toBeHidden();
   }
 
   async checkOnlyClassificationPartVisible() {
     await expect(this.boardMetricsDetailVelocityPart).toBeHidden();
     await expect(this.boardMetricsDetailCycleTimePart).toBeHidden();
-    await expect(this.boardMetricsDetaiClassificationPart).toBeVisible();
+    await expect(this.boardMetricsDetailClassificationPart).toBeVisible();
+    await expect(this.boardMetricsDetailReworkTimesPart).toBeHidden();
+  }
+
+  async checkOnlyReworkTimesPartVisible() {
+    await expect(this.boardMetricsDetailVelocityPart).toBeHidden();
+    await expect(this.boardMetricsDetailCycleTimePart).toBeHidden();
+    await expect(this.boardMetricsDetailClassificationPart).toBeHidden();
+    await expect(this.boardMetricsDetailReworkTimesPart).toBeVisible();
   }
 
   async checkOnlyLeadTimeForChangesPartVisible() {

@@ -89,9 +89,9 @@
 
 Heartbeat is a tool for tracking project delivery metrics that can help you get a better understanding of delivery performance. This product allows you easily get all aspects of source data faster and more accurate to analyze team delivery performance which enables delivery teams and team leaders focusing on driving continuous improvement and enhancing team productivity and efficiency.
 
-State of DevOps Report is launching in 2019. In this webinar, The 4 key metrics research team and Google Cloud share key metrics to measure DevOps performance, measure the effectiveness of development and delivery practices. They searching about six years, developed four metrics that provide a high-level systems view of software delivery and performance.
+State of DevOps Report is launching in 2019. In this webinar, The 4 key metrics research team and Google Cloud share key metrics to measure DevOps performance, measure the effectiveness of development and delivery practices. They searching about six years, developed four metrics that provide a high-level systems view of software delivery and performance. Based on that, Heartbeat introduce below metrics as below.
 
-**Below are the 8 metrics supported by heartbeat:**
+**8 metrics supported by heartbeat:**
 
 
 1.  [Velocity](#341-velocity)
@@ -100,8 +100,8 @@ State of DevOps Report is launching in 2019. In this webinar, The 4 key metrics 
 4.  [Rework](#344-rework)
 5.  [Deployment Frequency](#345-deployment-frequency) 
 6.  [Lead Time for changes](#346-lead-time-for-changes-data)
-7.  [Change Failure Rate](#347-dev-change-failure-rate)
-8.  [Mean Time To Recover](#348-dev-mean-time-to-recovery)
+7.  [Dev Change Failure Rate](#347-dev-change-failure-rate)
+8.  [Dev Mean Time To Recovery](#348-dev-mean-time-to-recovery)
 
 
 # 2 Support tools
@@ -161,16 +161,16 @@ Because all metrics data from different tools that your projects use. Need to ha
 
 According to your selected required data, you need to input account settings for the respective data source. Below is the mapping between your selected data to data source.
 
-| Required Data         | Datasource     |
-| --------------------- | -------------- |
-| Velocity              | Board          |
-| Cycle time            | Board          |
-| Classification        | Board          |
-| Rework times          | Board          |
-| Lead time for changes | Repo，Pipeline |
-| Deployment frequency  | Pipeline       |
-| Change failure rate   | Pipeline       |
-| Mean time to recovery | Pipeline       |
+| Required Data             | Datasource     |
+|---------------------------| -------------- |
+| Velocity                  | Board          |
+| Cycle time                | Board          |
+| Classification            | Board          |
+| Rework times              | Board          |
+| Lead time for changes     | Repo，Pipeline |
+| Deployment frequency      | Pipeline       |
+| Dev change failure rate   | Pipeline       |
+| Dev mean time to recovery | Pipeline       |
 
 ![Image 3-4](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/readme/4.png)\
 Image 3-4，Project config
@@ -383,15 +383,15 @@ _Image 3-27，export pipline data_
 _Image 3-28，Deployment Frequency Report_
 
 ### 3.4.6 Lead time for changes Data
-- Definition for ‘Lead time for changes': this metrics records the time from first code commit to code successfully running in production.
 - Formula for ‘PR lead time':
--- if PR merge not null: PR lead time = PR merged time - code committed time
--- if PR merge is null: PR lead time = PR created time - code committed time
--- if no PR merge: PR lead time = 0
+  - if PR exist : PR lead time = PR merged time - first code committed time
+  - if no PR or revert PR: PR lead time = 0
+
 - Formula for ‘Pipeline lead time':
--- if PR merge not null: Pipeline lead time = Deployment Completed Time - PR merged time
--- if PR merge is null: Pipeline lead time = Deployment Completed Time - PR created time
--- if no PR merge: Pipeline lead time = 0
+  - if PR exist: Pipeline lead time = Job Complete Time - PR merged time
+  - if no PR: Pipeline lead time = Job Complete Time - Job Start Time
+
+
 
 ![Image 3-29](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/readme/13.png)\
 _Image 3-29，Lead time for changes Report_
@@ -401,10 +401,10 @@ _Image 3-29，Lead time for changes Report_
 - Formula for ‘Dev Change Failure Rate': the number of build for (Status = failed)/the number of build for [（Status = passed & Valid = true）+ the number of build for (status=failed)]
 
 ![Image 3-30](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/readme/14.png)\
-_Image 3-30，Change Failure Rate Report_
+_Image 3-30，Dev Change Failure Rate Report_
 
 ### 3.4.8 Dev Mean time to recovery
-- Definition for ‘Dev Mean time to recovery': this metrics alse defined based on development, it records how long it generally takes to restore when pipeline failed, and If this value is less than 8 hours, it means ‘red does not last overnight’, which means our repair speed is relatively good.
+- Definition for ‘Dev Mean time to recovery': this metrics is also different from the official definition of Mean time to recovery. This metrics comes from pipeline, and it records how long it generally takes to restore when pipeline failed, and If this value is less than 8 hours, it means ‘red does not last overnight’, which means our repair speed is relatively good.
 - Formula for ‘Dev Mean time to recovery': sum[he time difference from the first fail to the first pass for deployment completed time]/ the number of repairs
 
 ![Image 3-31](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/readme/15.png)\

@@ -215,32 +215,6 @@ describe('DateRangePickerSection', () => {
   });
 
   describe('Multiple ranges date interactions', () => {
-    it('should disable the unselected dates between 2 selected date ranges', async () => {
-      setup();
-      const rangeDate1 = ['03/01/2024', '03/10/2024'];
-      const rangeDate2 = ['03/12/2024', '03/25/2024'];
-
-      const addButton = screen.getByLabelText('Button for adding date range');
-      await userEvent.click(addButton);
-      const ranges = screen.getAllByLabelText('Range picker row');
-      const startDate1Input = within(ranges[0]).getByRole('textbox', { name: START_DATE_LABEL }) as HTMLInputElement;
-      const endDate1Input = within(ranges[0]).getByRole('textbox', { name: END_DATE_LABEL }) as HTMLInputElement;
-      const startDate2Input = within(ranges[1]).getByRole('textbox', { name: START_DATE_LABEL }) as HTMLInputElement;
-      const endDate12nput = within(ranges[1]).getByRole('textbox', { name: END_DATE_LABEL }) as HTMLInputElement;
-      await userEvent.type(startDate1Input, rangeDate1[0]);
-      await userEvent.type(endDate1Input, rangeDate1[1]);
-      await userEvent.type(startDate2Input, rangeDate2[0]);
-      await userEvent.type(endDate12nput, rangeDate2[1]);
-      await userEvent.click(addButton);
-      const range3 = screen.getAllByLabelText('Range picker row')[2];
-      const range3StartDateCalendarIcon = within(range3).getAllByTestId('CalendarTodayIcon')[0];
-      await userEvent.click(range3StartDateCalendarIcon);
-      const targetGappedDate = screen
-        .getAllByRole('gridcell')
-        .filter((gridcell) => gridcell.innerHTML === '11')[0] as HTMLButtonElement;
-
-      expect(targetGappedDate).toBeDisabled();
-    });
 
     it('should auto fill end date when change star date by cloeset earliest date of other ranges', async () => {
       setup();

@@ -162,7 +162,7 @@ buildkite_e2e_deployed_check() {
 github_actions_passed_check() {
 
   MAX_ATTEMPTS="${MAX_ATTEMPTS:-80}"
-  SLEEP_DURATION_SECONDS="${SLEEP_DURATION_SECONDS:-60}"
+  SLEEP_DURATION_SECONDS="${SLEEP_DURATION_SECONDS:-30}"
   BRANCH="${BRANCH:-"main"}"
   GITHUB_TOKEN="${GITHUB_TOKEN:-empty GitHub token}"
   COMMIT_SHA="${COMMIT_SHA:-empty commit sha}"

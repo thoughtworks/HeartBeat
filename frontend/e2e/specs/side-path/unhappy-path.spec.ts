@@ -11,6 +11,21 @@ test.beforeAll(async () => {
   await clearTempDir();
 });
 
+test('Error UI should be pipeline with no org config when pipeline token without org', async ({
+  homePage,
+  configStep,
+  metricsStep,
+}) => {
+  await homePage.goto();
+
+  await homePage.importProjectFromFile('../fixtures/input-files/pipeline-no-org-config-file.json');
+  await configStep.verifyAllConfig();
+  await configStep.goToMetrics();
+  await metricsStep.waitForShown();
+
+  await metricsStep.checkErrorMessageForPipelineSettings();
+});
+
 test('unhappy path when import file', async ({ homePage, configStep, metricsStep, reportStep }) => {
   const dateRange = {
     startDate: format(modifiedCorrectProjectFromFile.dateRange.startDate),

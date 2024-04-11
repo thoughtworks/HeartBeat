@@ -477,6 +477,7 @@ jobs:
           E2E_TOKEN_JIRA: ${{ secrets.E2E_TOKEN_JIRA }}
           E2E_TOKEN_BUILD_KITE: ${{ secrets.E2E_TOKEN_BUILD_KITE }}
           E2E_TOKEN_GITHUB: ${{ secrets.E2E_TOKEN_GITHUB }}
+          E2E_TOKEN_PIPELINE_NO_ORG_CONFIG_BUILDKITE: ${{ secrets.E2E_TOKEN_PIPELINE_NO_ORG_CONFIG_BUILDKITE }}
         shell: bash {0}
         run: ./ops/check.sh e2e
       - uses: actions/upload-artifact@v4

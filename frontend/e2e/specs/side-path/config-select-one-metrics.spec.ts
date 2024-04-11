@@ -121,44 +121,6 @@ test('Only select classification metrics on config page', async ({ homePage, con
   await reportStep.checkOnlyClassificationPartVisible();
 });
 
-test('Only select rework times metrics on config page', async ({ homePage, configStep, metricsStep, reportStep }) => {
-  const dateRange = {
-    startDate: format(configStepData.dateRange[0].startDate),
-    endDate: format(configStepData.dateRange[0].endDate),
-  };
-  const hbStateData = metricsStepData.cycleTime.jiraColumns.map(
-    (jiraToHBSingleMap) => Object.values(jiraToHBSingleMap)[0],
-  );
-
-  await homePage.goto();
-  await homePage.createANewProject();
-  await configStep.waitForShown();
-  await configStep.typeInProjectName(configStepData.projectName);
-  await configStep.selectRegularCalendar(configStepData.calendarType);
-  await configStep.typeInDateRange(dateRange);
-  await configStep.selectReworkTimesRequiredMetrics();
-  await configStep.checkBoardFormVisible();
-  await configStep.checkPipelineToolFormInvisible();
-  await configStep.checkSourceControlFormInvisible();
-  await configStep.fillAndVerifyBoardConfig(configStepData.board);
-  await configStep.validateNextButtonClickable();
-  await configStep.goToMetrics();
-
-  await metricsStep.checkBoardConfigurationVisible();
-  await metricsStep.checkPipelineConfigurationInvisible();
-  await metricsStep.checkClassificationSettingInvisible();
-  await metricsStep.selectCrews(metricsStepData.crews);
-  await metricsStep.selectCycleTimeSettingsType(metricsStepData.cycleTime.type);
-  await metricsStep.selectHeartbeatState(hbStateData, true);
-  await metricsStep.selectReworkSettings(metricsStepData.reworkTimesSettings);
-  await metricsStep.goToReportPage();
-
-  await reportStep.confirmGeneratedReport();
-  await reportStep.checkExportBoardDataButtonClickable();
-  await reportStep.clickShowMoreLink();
-  await reportStep.checkOnlyReworkTimesPartVisible();
-});
-
 test('Only select lead time for changes metrics on config page', async ({
   homePage,
   configStep,

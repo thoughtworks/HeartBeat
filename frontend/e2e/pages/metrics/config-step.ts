@@ -47,7 +47,6 @@ export class ConfigStep {
   readonly requiredMetricsVelocityOption: Locator;
   readonly requiredMetricsCycleTimeOption: Locator;
   readonly requiredMetricsClassificationOption: Locator;
-  readonly requiredMetricsReworkTimesOption: Locator;
   readonly requiredMetricsLeadTimeForChangesOption: Locator;
   readonly requiredMetricsDeploymentFrequencyOption: Locator;
   readonly requiredMetricsChangeFailureRateOption: Locator;
@@ -116,7 +115,6 @@ export class ConfigStep {
     this.requiredMetricsVelocityOption = page.getByRole('option', { name: 'Velocity' });
     this.requiredMetricsCycleTimeOption = page.getByRole('option', { name: 'Cycle time' });
     this.requiredMetricsClassificationOption = page.getByRole('option', { name: 'Classification' });
-    this.requiredMetricsReworkTimesOption = page.getByRole('option', { name: 'Rework times' });
     this.requiredMetricsLeadTimeForChangesOption = page.getByRole('option', { name: 'Lead time for changes' });
     this.requiredMetricsDeploymentFrequencyOption = page.getByRole('option', { name: 'Deployment frequency' });
     this.requiredMetricsChangeFailureRateOption = page.getByRole('option', { name: 'Change failure rate' });
@@ -274,12 +272,6 @@ export class ConfigStep {
   async selectClassificationRequiredMetrics() {
     await this.requiredMetricsLabel.click();
     await this.requiredMetricsClassificationOption.click();
-    await this.page.keyboard.press('Escape');
-  }
-
-  async selectReworkTimesRequiredMetrics() {
-    await this.requiredMetricsLabel.click();
-    await this.requiredMetricsReworkTimesOption.click();
     await this.page.keyboard.press('Escape');
   }
 

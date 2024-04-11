@@ -264,7 +264,6 @@ dot_star_check() {
 e2e_container_check() {
   docker build -t "heartbeat_e2e:latest" ./ -f ./ops/infra/Dockerfile.e2e
 
-  set +e
   local result
   docker run \
     --name hb_e2e_runner \
@@ -273,10 +272,10 @@ e2e_container_check() {
     -e "E2E_TOKEN_BUILD_KITE=${E2E_TOKEN_BUILD_KITE:-}" \
     -e "E2E_TOKEN_GITHUB=${E2E_TOKEN_GITHUB:-}" \
     -e "CI=${CI:-}" \
+    -e "E2E_TOKEN_PIPELINE_NO_ORG_CONFIG_BUILDKITE=${E2E_TOKEN_PIPELINE_NO_ORG_CONFIG_BUILDKITE:-}" \
     heartbeat_e2e:latest \
     pnpm run e2e:major-ci
   result=$?
-  set -e
 
   docker cp hb_e2e_runner:/app/e2e/reports ./e2e-reports
   docker rm hb_e2e_runner

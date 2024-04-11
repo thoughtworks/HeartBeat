@@ -215,7 +215,6 @@ describe('DateRangePickerSection', () => {
   });
 
   describe('Multiple ranges date interactions', () => {
-
     it('should auto fill end date when change star date by cloeset earliest date of other ranges', async () => {
       setup();
       const rangeDate1 = ['03/12/2024', '03/25/2024'];

@@ -292,16 +292,6 @@ function resetReworkTimeSettingWhenMappingModified(preJiraColumnsValue: string[]
   };
 }
 
-function initTreatFlagCardAsBlock(
-  preTreatFlagCardAsBlock: boolean,
-  preHasBlockState: boolean,
-  state: ISavedMetricsSettingState,
-) {
-  if (!preTreatFlagCardAsBlock && preHasBlockState && !existBlockState(state.cycleTimeSettings)) {
-    state.treatFlagCardAsBlock = false;
-  }
-}
-
 export const metricsSlice = createSlice({
   name: 'metrics',
   initialState,
@@ -459,7 +449,6 @@ export const metricsSlice = createSlice({
             ? getCycleTimeSettingsByColumn(state, jiraColumns)
             : getCycleTimeSettingsByStatus(state, jiraColumns);
       }
-      // initTreatFlagCardAsBlock(preTreatFlagCardAsBlock, preHasBlockColumn, state);
       resetReworkTimeSettingWhenMappingModified(preJiraColumnsValue, state);
 
       if (!isProjectCreated && importedDoneStatus.length > 0) {

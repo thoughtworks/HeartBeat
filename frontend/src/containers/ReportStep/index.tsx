@@ -57,7 +57,7 @@ const ReportStep = ({ handleSave }: ReportStepProps) => {
 
   const [exportValidityTimeMin, setExportValidityTimeMin] = useState<number | undefined | null>(undefined);
   const [pageType, setPageType] = useState<string>(REPORT_PAGE_TYPE.SUMMARY);
-  const [isSuccessfulCreateCsvFile, setIsSuccessfulCreateCsvFile] = useState<boolean>(false);
+  const [isCsvFileGeneratedAtEnd, setIsCsvFileGeneratedAtEnd] = useState<boolean>(false);
   const [notifications4SummaryPage, setNotifications4SummaryPage] = useState<Omit<Notification, 'id'>[]>([]);
 
   const configData = useAppSelector(selectConfig);
@@ -210,16 +210,16 @@ const ReportStep = ({ handleSave }: ReportStepProps) => {
 
   useLayoutEffect(() => {
     exportValidityTimeMin &&
-      isSuccessfulCreateCsvFile &&
+      isCsvFileGeneratedAtEnd &&
       dispatch(
         addNotification({
           message: MESSAGE.EXPIRE_INFORMATION(exportValidityTimeMin),
         }),
       );
-  }, [dispatch, exportValidityTimeMin, isSuccessfulCreateCsvFile]);
+  }, [dispatch, exportValidityTimeMin, isCsvFileGeneratedAtEnd]);
 
   useLayoutEffect(() => {
-    if (exportValidityTimeMin && isSuccessfulCreateCsvFile) {
+    if (exportValidityTimeMin && isCsvFileGeneratedAtEnd) {
       const startTime = Date.now();
       const timer = setInterval(() => {
         const currentTime = Date.now();
@@ -241,7 +241,7 @@ const ReportStep = ({ handleSave }: ReportStepProps) => {
         clearInterval(timer);
       };
     }
-  }, [dispatch, exportValidityTimeMin, isSuccessfulCreateCsvFile]);
+  }, [dispatch, exportValidityTimeMin, isCsvFileGeneratedAtEnd]);
 
   useLayoutEffect(() => {
     dispatch(closeAllNotifications());
@@ -249,7 +249,7 @@ const ReportStep = ({ handleSave }: ReportStepProps) => {
 
   useEffect(() => {
     setExportValidityTimeMin(reportData?.exportValidityTime);
-    reportData && setIsSuccessfulCreateCsvFile(reportData.isSuccessfulCreateCsvFile);
+    reportData && setIsCsvFileGeneratedAtEnd(reportData.allMetricsCompleted && reportData.isSuccessfulCreateCsvFile);
   }, [dispatch, reportData]);
 
   useEffect(() => {

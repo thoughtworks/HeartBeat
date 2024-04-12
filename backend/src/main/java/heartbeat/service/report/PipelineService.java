@@ -1,5 +1,6 @@
 package heartbeat.service.report;
 
+import heartbeat.client.dto.codebase.github.Author;
 import heartbeat.client.dto.codebase.github.CommitInfo;
 import heartbeat.client.dto.codebase.github.LeadTime;
 import heartbeat.client.dto.codebase.github.PipelineLeadTime;
@@ -56,7 +57,7 @@ public class PipelineService {
 		String endTime = request.getEndTime();
 		FetchedData.BuildKiteData result = new FetchedData.BuildKiteData();
 
-		request.getBuildKiteSetting().getDeploymentEnvList().stream().forEach(deploymentEnvironment -> {
+		request.getBuildKiteSetting().getDeploymentEnvList().forEach(deploymentEnvironment -> {
 			List<BuildKiteBuildInfo> buildKiteBuildInfo = getBuildKiteBuildInfo(startTime, endTime,
 					deploymentEnvironment, request.getBuildKiteSetting().getToken(),
 					request.getBuildKiteSetting().getPipelineCrews());
@@ -97,12 +98,15 @@ public class PipelineService {
 			BuildKiteBuildInfo buildInfo, List<String> pipelineSteps) {
 		DeployInfo deployInfo = buildKiteService.mapToDeployInfo(buildInfo, pipelineSteps, REQUIRED_STATES, startTime,
 				endTime);
-		CommitInfo commitInfo = null;
 		if (Objects.nonNull(codebaseSetting) && StringUtils.hasLength(codebaseSetting.getToken())
-				&& Objects.nonNull(deployInfo.getCommitId())) {
-			commitInfo = gitHubService.fetchCommitInfo(deployInfo.getCommitId(),
+				&& Objects.nonNull(deployInfo.getCommitId()) && Objects.isNull(buildInfo.getAuthor())) {
+			CommitInfo commitInfo = gitHubService.fetchCommitInfo(deployInfo.getCommitId(),
 					GithubUtil.getGithubUrlFullName(deploymentEnvironment.getRepository()), codebaseSetting.getToken());
+			Author author = commitInfo.getCommit().getAuthor();
+			buildInfo
+				.setAuthor(BuildKiteBuildInfo.Author.builder().name(author.getName()).email(author.getEmail()).build());
 		}
+
 		return PipelineCSVInfo.builder()
 			.organizationName(deploymentEnvironment.getOrgName())
 			.pipeLineName(deploymentEnvironment.getName())
@@ -111,7 +115,6 @@ public class PipelineService {
 			.piplineStatus(buildInfo.getState())
 			.buildInfo(buildInfo)
 			.deployInfo(deployInfo)
-			.commitInfo(commitInfo)
 			.leadTimeInfo(new LeadTimeInfo(filterLeadTime(buildKiteData, deploymentEnvironment, deployInfo)))
 			.build();
 	}

@@ -25,7 +25,18 @@ public class LeadTime {
 
 	private long jobFinishTime;
 
+	private long jobStartTime;
+
+	@Nullable
+	private Long noPRCommitTime;
+
+	@Nullable
+	private Long firstCommitTime;
+
 	private long pipelineCreateTime;
+
+	@Nullable
+	private Boolean isRevert;
 
 	@Nullable
 	private Long prLeadTime;

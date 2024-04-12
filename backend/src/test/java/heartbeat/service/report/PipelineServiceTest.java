@@ -1,5 +1,7 @@
 package heartbeat.service.report;
 
+import heartbeat.client.dto.codebase.github.Author;
+import heartbeat.client.dto.codebase.github.Commit;
 import heartbeat.client.dto.codebase.github.CommitInfo;
 import heartbeat.client.dto.codebase.github.LeadTime;
 import heartbeat.client.dto.codebase.github.PipelineLeadTime;
@@ -430,7 +432,9 @@ public class PipelineServiceTest {
 		@Test
 		void shouldGenerateValueHasCommit() {
 			List<BuildKiteBuildInfo> kiteBuildInfos = List.of(BuildKiteBuildInfo.builder().commit("commit").build());
-			CommitInfo fakeCommitInfo = CommitInfo.builder().build();
+			CommitInfo fakeCommitInfo = CommitInfo.builder()
+				.commit(Commit.builder().author(Author.builder().name("xxxx").build()).build())
+				.build();
 			when(buildKiteService.getPipelineStepNames(eq(kiteBuildInfos))).thenReturn(List.of("check"));
 			when(buildKiteService.getStepsBeforeEndStep(any(), any())).thenReturn(List.of("check"));
 			when(buildKiteService.getBuildKiteJob(any(), any(), any(), eq(MOCK_START_TIME), eq(MOCK_END_TIME)))
@@ -449,7 +453,7 @@ public class PipelineServiceTest {
 			assertEquals(1, result.size());
 			PipelineCSVInfo pipelineCSVInfo = result.get(0);
 			assertEquals("env-name", pipelineCSVInfo.getPipeLineName());
-			assertEquals(fakeCommitInfo, pipelineCSVInfo.getCommitInfo());
+			assertEquals("xxxx", pipelineCSVInfo.getBuildInfo().getAuthor().getName());
 			assertEquals(fakeDeploy, pipelineCSVInfo.getDeployInfo());
 			verify(buildKiteService, times(1)).getPipelineStepNames(any());
 			verify(buildKiteService, times(1)).getBuildKiteJob(any(), any(), any(), any(), any());
@@ -458,7 +462,9 @@ public class PipelineServiceTest {
 		@Test
 		void shouldGenerateValueWithLeadTimeWhenLeadTimeExisting() {
 			List<BuildKiteBuildInfo> kiteBuildInfos = List.of(BuildKiteBuildInfo.builder().commit("commit").build());
-			CommitInfo fakeCommitInfo = CommitInfo.builder().build();
+			CommitInfo fakeCommitInfo = CommitInfo.builder()
+				.commit(Commit.builder().author(Author.builder().name("xxxx").build()).build())
+				.build();
 			when(buildKiteService.getPipelineStepNames(eq(kiteBuildInfos))).thenReturn(List.of("check"));
 			when(buildKiteService.getStepsBeforeEndStep(any(), any())).thenReturn(List.of("check"));
 			when(buildKiteService.getBuildKiteJob(any(), any(), any(), eq(MOCK_START_TIME), eq(MOCK_END_TIME)))
@@ -481,7 +487,7 @@ public class PipelineServiceTest {
 			assertEquals(1, result.size());
 			PipelineCSVInfo pipelineCSVInfo = result.get(0);
 			assertEquals("env-name", pipelineCSVInfo.getPipeLineName());
-			assertEquals(fakeCommitInfo, pipelineCSVInfo.getCommitInfo());
+			assertEquals("xxxx", pipelineCSVInfo.getBuildInfo().getAuthor().getName());
 			assertEquals(fakeDeploy, pipelineCSVInfo.getDeployInfo());
 			verify(buildKiteService, times(1)).getPipelineStepNames(any());
 			verify(buildKiteService, times(1)).getBuildKiteJob(any(), any(), any(), any(), any());
@@ -490,7 +496,9 @@ public class PipelineServiceTest {
 		@Test
 		void shouldGenerateValueWithOrganizationWhenDeployHasOrganization() {
 			List<BuildKiteBuildInfo> kiteBuildInfos = List.of(BuildKiteBuildInfo.builder().commit("commit").build());
-			CommitInfo fakeCommitInfo = CommitInfo.builder().build();
+			CommitInfo fakeCommitInfo = CommitInfo.builder()
+				.commit(Commit.builder().author(Author.builder().name("xxxx").build()).build())
+				.build();
 			when(buildKiteService.getPipelineStepNames(eq(kiteBuildInfos))).thenReturn(List.of("check"));
 			when(buildKiteService.getStepsBeforeEndStep(any(), any())).thenReturn(List.of("check"));
 			when(buildKiteService.getBuildKiteJob(any(), any(), any(), eq(MOCK_START_TIME), eq(MOCK_END_TIME)))
@@ -517,7 +525,44 @@ public class PipelineServiceTest {
 			assertEquals(1, result.size());
 			PipelineCSVInfo pipelineCSVInfo = result.get(0);
 			assertEquals("Thoughtworks-Heartbeat", pipelineCSVInfo.getOrganizationName());
-			assertEquals(fakeCommitInfo, pipelineCSVInfo.getCommitInfo());
+			assertEquals("xxxx", pipelineCSVInfo.getBuildInfo().getAuthor().getName());
+			assertEquals(fakeDeploy, pipelineCSVInfo.getDeployInfo());
+			verify(buildKiteService, times(1)).getPipelineStepNames(any());
+			verify(buildKiteService, times(1)).getBuildKiteJob(any(), any(), any(), any(), any());
+		}
+
+		@Test
+		void shouldGenerateValueWhenBuildKiteDataAuthorIsNotNull() {
+			List<BuildKiteBuildInfo> kiteBuildInfos = List.of(BuildKiteBuildInfo.builder()
+				.commit("commit")
+				.author(BuildKiteBuildInfo.Author.builder().name("xxxx").build())
+				.build());
+			when(buildKiteService.getPipelineStepNames(kiteBuildInfos)).thenReturn(List.of("check"));
+			when(buildKiteService.getStepsBeforeEndStep(any(), any())).thenReturn(List.of("check"));
+			when(buildKiteService.getBuildKiteJob(any(), any(), any(), eq(MOCK_START_TIME), eq(MOCK_END_TIME)))
+				.thenReturn(BuildKiteJob.builder().build());
+			DeployInfo fakeDeploy = DeployInfo.builder().commitId("commitId").jobName("test").build();
+			when(buildKiteService.mapToDeployInfo(any(), any(), any(), any(), any())).thenReturn(fakeDeploy);
+
+			List<PipelineCSVInfo> result = pipelineService.generateCSVForPipelineWithCodebase(
+					CodebaseSetting.builder().token("token").build(), MOCK_START_TIME, MOCK_END_TIME,
+					FetchedData.BuildKiteData.builder()
+						.pipelineLeadTimes(List.of(PipelineLeadTime.builder()
+							.leadTimes(List.of(LeadTime.builder().commitId("commitId").build()))
+							.pipelineName("env-name")
+							.build()))
+						.buildInfosList(List.of(Map.entry("env1", kiteBuildInfos)))
+						.build(),
+					List.of(DeploymentEnvironment.builder()
+						.id("env1")
+						.name("env-name")
+						.orgName("Thoughtworks-Heartbeat")
+						.build()));
+
+			assertEquals(1, result.size());
+			PipelineCSVInfo pipelineCSVInfo = result.get(0);
+			assertEquals("Thoughtworks-Heartbeat", pipelineCSVInfo.getOrganizationName());
+			assertEquals("xxxx", pipelineCSVInfo.getBuildInfo().getAuthor().getName());
 			assertEquals(fakeDeploy, pipelineCSVInfo.getDeployInfo());
 			verify(buildKiteService, times(1)).getPipelineStepNames(any());
 			verify(buildKiteService, times(1)).getBuildKiteJob(any(), any(), any(), any(), any());

@@ -217,7 +217,7 @@ describe('MetricsStep', () => {
 
       await userEvent.click(doneSelectTrigger as HTMLInputElement);
 
-      const noneOption = within(screen.getByRole('presentation')).getByText('----');
+      const noneOption = within(screen.getAllByRole('presentation')[1]).getByText('----');
       await userEvent.click(noneOption);
 
       expect(realDoneSettingSection).toHaveTextContent(SELECT_CONSIDER_AS_DONE_MESSAGE);

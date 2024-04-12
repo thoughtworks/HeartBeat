@@ -61,6 +61,7 @@ const initState = {
   classification: [],
   treatFlagCardAsBlock: true,
   assigneeFilter: ASSIGNEE_FILTER_TYPES.LAST_ASSIGNEE,
+  displayFlagCardDropWarning: true,
   importedData: {
     importedCrews: [],
     importedAssigneeFilter: ASSIGNEE_FILTER_TYPES.LAST_ASSIGNEE,
@@ -304,6 +305,32 @@ describe('saveMetricsSetting reducer', () => {
     expect(savedMetricsSetting.doneColumn).toEqual(['DONE']);
   });
 
+  it('should not be able to show conflict warning and check the flag card as block', () => {
+    const mockUpdateMetricsStateArguments = {
+      ...mockJiraResponse,
+      isProjectCreated: true,
+    };
+    const savedMetricsSetting = saveMetricsSettingReducer(
+      {
+        ...initState,
+        cycleTimeSettingsType: CYCLE_TIME_SETTINGS_TYPES.BY_STATUS,
+        importedData: {
+          ...initState.importedData,
+          importedCrews: ['User B', 'User C'],
+          importedClassification: ['issuetype'],
+          importedCycleTime: {
+            importedCycleTimeSettings: [{ DOING: 'Doing' }, { TESTING: 'Testing' }, { DONE: 'Done' }],
+            importedTreatFlagCardAsBlock: false,
+          },
+          importedDoneStatus: ['DONE'],
+        },
+      },
+      updateMetricsState(mockUpdateMetricsStateArguments),
+    );
+    expect(savedMetricsSetting.displayFlagCardDropWarning).toEqual(false);
+    expect(savedMetricsSetting.treatFlagCardAsBlock).toEqual(true);
+  });
+
   it('should update metricsState given cycleTimeSettingsType is by status', () => {
     const mockUpdateMetricsStateArguments = {
       ...mockJiraResponse,
@@ -336,6 +363,7 @@ describe('saveMetricsSetting reducer', () => {
       { column: 'Testing', status: 'TESTING', value: 'Testing' },
     ]);
     expect(savedMetricsSetting.doneColumn).toEqual(['DONE']);
+    expect(savedMetricsSetting.displayFlagCardDropWarning).toEqual(true);
   });
 
   it('should update metricsState given its value changed given isProjectCreated is false and selectedDoneColumns and cycleTimeSettingsType is byStatus', () => {

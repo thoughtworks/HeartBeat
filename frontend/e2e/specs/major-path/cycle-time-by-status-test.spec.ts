@@ -27,7 +27,6 @@ test('Create a new project with cycle time by status', async ({ homePage, config
   await metricsStep.waitForShown();
   await metricsStep.validateNextButtonNotClickable();
   await metricsStep.checkLastAssigneeCrewFilterChecked();
-  await metricsStep.checkCycleTimeConsiderCheckboxChecked();
   await metricsStep.checkCycleTimeSettingIsByColumn();
   await metricsStep.waitForHiddenLoading();
   await metricsStep.selectCrews(cycleTimeByStatusFixture.crews);
@@ -65,7 +64,6 @@ test('Create a new project with cycle time by status', async ({ homePage, config
   await metricsStep.waitForShown();
   await metricsStep.validateNextButtonNotClickable();
   await metricsStep.checkLastAssigneeCrewFilterChecked();
-  await metricsStep.checkCycleTimeConsiderCheckboxChecked();
   await metricsStep.checkCycleTimeSettingIsByColumn();
   await metricsStep.waitForHiddenLoading();
   await metricsStep.selectCrews(cycleTimeByColumnFixture.crews);

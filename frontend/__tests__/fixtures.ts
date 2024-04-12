@@ -467,7 +467,6 @@ export const MOCK_REPORT_RESPONSE: ReportResponseDTO = {
     fromAnalysis: null,
     fromInDev: null,
     fromBlock: 111,
-    fromFlag: null,
     fromReview: 111,
     fromWaitingForTesting: 111,
     fromTesting: null,

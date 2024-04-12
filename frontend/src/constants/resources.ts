@@ -218,7 +218,6 @@ export const REWORK_TIME_MAPPING = {
   fromAnalysis: 'analysis',
   fromInDev: 'in dev',
   fromBlock: 'block',
-  fromFlag: 'flag',
   fromReview: 'review',
   fromWaitingForTesting: 'waiting for testing',
   fromTesting: 'testing',
@@ -231,7 +230,6 @@ export const REWORK_BOARD_STATUS: string[] = [
   REWORK_TIME_MAPPING.fromAnalysis,
   REWORK_TIME_MAPPING.fromInDev,
   REWORK_TIME_MAPPING.fromBlock,
-  REWORK_TIME_MAPPING.fromFlag,
   REWORK_TIME_MAPPING.fromWaitingForTesting,
   REWORK_TIME_MAPPING.fromTesting,
   REWORK_TIME_MAPPING.fromReview,
@@ -268,6 +266,7 @@ export const MESSAGE = {
   HOME_VERIFY_IMPORT_WARNING: 'The content of the imported JSON file is empty. Please confirm carefully',
   CONFIG_PAGE_VERIFY_IMPORT_ERROR: 'Imported data is not perfectly matched. Please review carefully before going next!',
   CLASSIFICATION_WARNING: 'Some classifications in import data might be removed.',
+  FLAG_CARD_DROPPED_WARNING: 'Please note: ’consider the “Flag” as “Block” ‘ has been dropped!',
   REAL_DONE_WARNING: 'Some selected doneStatus in import data might be removed',
   ORGANIZATION_WARNING: 'This organization in import data might be removed',
   PIPELINE_NAME_WARNING: 'This Pipeline in import data might be removed',
@@ -427,3 +426,5 @@ export const REMOVE_BUTTON_TEXT = 'Remove';
 export const MAX_TIME_RANGE_AMOUNT = 6;
 export const START_DATE_INVALID_TEXT = 'Start date is invalid';
 export const END_DATE_INVALID_TEXT = 'End date is invalid';
+
+export const BLOCK_COLUMN_NAME = ['BLOCKED', 'BLOCK'];

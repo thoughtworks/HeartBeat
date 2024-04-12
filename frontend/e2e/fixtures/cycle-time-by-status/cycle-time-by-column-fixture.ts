@@ -60,7 +60,7 @@ export const cycleTimeByColumnFixture = {
         Done: 'Done',
       },
     ],
-    treatFlagCardAsBlock: true,
+    treatFlagCardAsBlock: false,
   },
   doneStatus: ['DONE'],
   classification: [

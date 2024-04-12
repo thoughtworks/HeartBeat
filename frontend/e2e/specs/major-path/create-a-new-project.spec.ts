@@ -1,3 +1,5 @@
+import { configWithoutBlockColumn as metricsStepWithoutBlockColumnData } from '../../fixtures/create-new/metrics-step';
+import { configWithoutBlockColumn as configWithoutBlockColumnData } from '../../fixtures/create-new/config-step';
 import { cycleTimeByStatusFixture } from '../../fixtures/cycle-time-by-status/cycle-time-by-status-fixture';
 import { BOARD_METRICS_RESULT, DORA_METRICS_RESULT } from '../../fixtures/create-new/report-result';
 import { config as metricsStepData } from '../../fixtures/create-new/metrics-step';
@@ -50,7 +52,6 @@ test('Create a new project', async ({ homePage, configStep, metricsStep, reportS
   await metricsStep.checkBoardConfigurationVisible();
   await metricsStep.checkPipelineConfigurationVisible();
   await metricsStep.checkLastAssigneeCrewFilterChecked();
-  await metricsStep.checkCycleTimeConsiderCheckboxChecked();
   await metricsStep.checkCycleTimeSettingIsByColumn();
   await metricsStep.waitForHiddenLoading();
   await metricsStep.selectCrews(metricsStepData.crews);
@@ -96,4 +97,47 @@ test('Create a new project', async ({ homePage, configStep, metricsStep, reportS
   );
   await reportStep.checkDoraMetricsDetails(ProjectCreationType.CREATE_A_NEW_PROJECT);
   await reportStep.checkMetricDownloadData();
+});
+
+test('Create a new project without block column in boarding mapping', async ({
+  homePage,
+  configStep,
+  metricsStep,
+  reportStep,
+}) => {
+  const dateRange = {
+    startDate: format(configWithoutBlockColumnData.dateRange[0].startDate),
+    endDate: format(configWithoutBlockColumnData.dateRange[0].endDate),
+  };
+
+  await homePage.goto();
+  await homePage.createANewProject();
+  await configStep.waitForShown();
+  await configStep.typeInProjectName(configWithoutBlockColumnData.projectName);
+  await configStep.selectRegularCalendar(configWithoutBlockColumnData.calendarType);
+  await configStep.typeInDateRange(dateRange);
+  await configStep.selectReworkTimesRequiredMetrics();
+  await configStep.checkBoardFormVisible();
+  await configStep.checkPipelineToolFormInvisible();
+  await configStep.checkSourceControlFormInvisible();
+  await configStep.fillAndVerifyBoardConfig(configWithoutBlockColumnData.board);
+  await configStep.validateNextButtonClickable();
+  await configStep.goToMetrics();
+
+  await metricsStep.checkBoardConfigurationVisible();
+  await metricsStep.checkPipelineConfigurationInvisible();
+  await metricsStep.checkClassificationSettingInvisible();
+  await metricsStep.selectCrews(metricsStepWithoutBlockColumnData.crews);
+  await metricsStep.selectCycleTimeSettingsType(metricsStepWithoutBlockColumnData.cycleTime.type);
+  await metricsStep.checkCycleTimeConsiderCheckboxChecked();
+  await metricsStep.selectHeartbeatStateWithoutBlock(
+    metricsStepWithoutBlockColumnData.cycleTime.jiraColumns.map(
+      (jiraToHBSingleMap) => Object.values(jiraToHBSingleMap)[0],
+    ),
+  );
+  await metricsStep.selectReworkSettings(metricsStepWithoutBlockColumnData.reworkTimesSettings);
+
+  await metricsStep.goToReportPage();
+  await reportStep.confirmGeneratedReport();
+  await reportStep.checkBoardDownloadDataWithoutBlock('../../fixtures/create-new/board-data-without-block-column.csv');
 });

@@ -1166,7 +1166,7 @@ class JiraServiceTest {
 		when(jiraFeignClient.getJiraCardHistoryByCount(any(), any(), anyInt(), anyInt(), any()))
 			.thenReturn(CARD_HISTORY_MULTI_RESPONSE_BUILDER().build());
 		when(boardUtil.getCycleTimeInfos(any(), any(), any())).thenReturn(CYCLE_TIME_INFO_LIST());
-		when(boardUtil.getOriginCycleTimeInfos(any())).thenReturn(CYCLE_TIME_INFO_LIST());
+		when(boardUtil.getOriginCycleTimeInfos(any(), any())).thenReturn(CYCLE_TIME_INFO_LIST());
 
 		CardCollection doneCards = jiraService.getStoryPointsAndCycleTimeAndReworkInfoForDoneCards(
 				storyPointsAndCycleTimeRequest, jiraBoardSetting.getBoardColumns(), List.of("Zhang San"), "");

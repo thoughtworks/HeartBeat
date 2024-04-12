@@ -12,8 +12,8 @@ export const BOARD_METRICS_RESULT = {
 export const FLAG_AS_BLOCK_PROJECT_BOARD_METRICS_RESULT = {
   Velocity: '7.5',
   Throughput: '5',
-  AverageCycleTime4SP: '0.50',
-  AverageCycleTime4Card: '0.75',
+  AverageCycleTime4SP: '0.55',
+  AverageCycleTime4Card: '0.83',
   totalReworkTimes: '3',
   totalReworkCards: '3',
   reworkCardsRatio: '0.6000',

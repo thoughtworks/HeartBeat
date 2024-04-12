@@ -25,20 +25,24 @@ export class MetricsStep {
   readonly boardByColumnRadioBox: Locator;
   readonly boardByStatusRadioBox: Locator;
   readonly boardCycleTimeSelectForTODO: Locator;
-  readonly boardCycleTimeSelectForTO_DO_BYSTATUS: Locator;
+  readonly boardCycleTimeSelectForTO_DO: Locator;
   readonly boardCycleTimeSelectForDoing: Locator;
+  readonly boardCycleTimeSelectForIN_DEV: Locator;
   readonly boardCycleTimeSelectForInProgress: Locator;
   readonly boardCycleTimeSelectForAnalysis: Locator;
   readonly boardCycleTimeSelectForBlocked: Locator;
   readonly boardCycleTimeSelectForReview: Locator;
   readonly boardCycleTimeSelectForREADY: Locator;
   readonly boardCycleTimeSelectForWAITFORTESTING: Locator;
+  readonly boardCycleTimeSelectForWAIT_FOR_TESTING: Locator;
   readonly boardCycleTimeSelectForTesting: Locator;
+  readonly boardCycleTimeSelectForTESTING: Locator;
   readonly boardCycleTimeSelectForDone: Locator;
   readonly boardCycleTimeInputForTODO: Locator;
   readonly boardCycleTimeInputForDoing: Locator;
   readonly boardCycleTimeInputForBlocked: Locator;
   readonly boardCycleTimeInputForReview: Locator;
+  readonly boardCycleTimeInputForREVIEW: Locator;
   readonly boardCycleTimeInputForREADY: Locator;
   readonly boardCycleTimeInputForTesting: Locator;
   readonly boardCycleTimeInputForDone: Locator;
@@ -102,11 +106,14 @@ export class MetricsStep {
     this.boardCycleTimeSelectForTODO = this.boardCycleTimeSection
       .getByLabel('Cycle time select for TODO')
       .getByLabel('Open');
-    this.boardCycleTimeSelectForTO_DO_BYSTATUS = this.boardCycleTimeSection
+    this.boardCycleTimeSelectForTO_DO = this.boardCycleTimeSection
       .getByLabel('Cycle time select for TO DO')
       .getByLabel('Open');
     this.boardCycleTimeSelectForDoing = this.boardCycleTimeSection
       .getByLabel('Cycle time select for Doing')
+      .getByLabel('Open');
+    this.boardCycleTimeSelectForIN_DEV = this.boardCycleTimeSection
+      .getByLabel('Cycle time select for IN DEV')
       .getByLabel('Open');
     this.boardCycleTimeSelectForInProgress = this.boardCycleTimeSection
       .getByLabel('Cycle time select for IN PROGRESS')
@@ -126,8 +133,14 @@ export class MetricsStep {
     this.boardCycleTimeSelectForWAITFORTESTING = this.boardCycleTimeSection
       .getByLabel('Cycle time select for WAIT FOR TEST')
       .getByLabel('Open');
+    this.boardCycleTimeSelectForWAIT_FOR_TESTING = this.boardCycleTimeSection
+      .getByLabel('Cycle time select for WAITING FOR TESTING')
+      .getByLabel('Open');
     this.boardCycleTimeSelectForTesting = this.boardCycleTimeSection
       .getByLabel('Cycle time select for Testing')
+      .getByLabel('Open');
+    this.boardCycleTimeSelectForTESTING = this.boardCycleTimeSection
+      .getByLabel('Cycle time select for TESTING')
       .getByLabel('Open');
     this.boardCycleTimeSelectForDone = this.boardCycleTimeSection
       .getByLabel('Cycle time select for Done')
@@ -143,6 +156,9 @@ export class MetricsStep {
       .getByRole('combobox');
     this.boardCycleTimeInputForReview = this.boardCycleTimeSection
       .getByLabel('Cycle time select for Review')
+      .getByRole('combobox');
+    this.boardCycleTimeInputForREVIEW = this.boardCycleTimeSection
+      .getByLabel('Cycle time select for REVIEW')
       .getByRole('combobox');
     this.boardCycleTimeInputForREADY = this.boardCycleTimeSection
       .getByLabel('Cycle time select for WAIT FOR TEST')
@@ -398,7 +414,7 @@ export class MetricsStep {
     [todoOption, doingOption, blockOption, reviewOption, forReadyOption, testingOption, doneOption]: string[],
     isByColumn: boolean,
   ) {
-    await this.boardCycleTimeSelectForTO_DO_BYSTATUS.click();
+    await this.boardCycleTimeSelectForTO_DO.click();
     await this.page.getByRole('option', { name: todoOption }).click();
 
     await this.boardCycleTimeSelectForDoing.click();
@@ -423,6 +439,20 @@ export class MetricsStep {
 
     await this.boardCycleTimeSelectForTesting.click();
     await this.page.getByRole('option', { name: testingOption, exact: true }).click();
+
+    await this.boardCycleTimeSelectForDone.click();
+    await this.page.getByRole('option', { name: doneOption }).click();
+  }
+
+  async selectHeartbeatStateWithoutBlock([todoOption, inDevOption, waitForTestingOption, doneOption]: string[]) {
+    await this.boardCycleTimeSelectForTO_DO.click();
+    await this.page.getByRole('option', { name: todoOption }).click();
+
+    await this.boardCycleTimeSelectForIN_DEV.click();
+    await this.page.getByRole('option', { name: inDevOption }).click();
+
+    await this.boardCycleTimeSelectForWAIT_FOR_TESTING.click();
+    await this.page.getByRole('option', { name: waitForTestingOption }).click();
 
     await this.boardCycleTimeSelectForDone.click();
     await this.page.getByRole('option', { name: doneOption }).click();

@@ -31,7 +31,6 @@ export class ReportClient extends HttpClient {
       reworkState: 'Done',
       fromAnalysis: 0,
       fromInDev: 0,
-      fromFlag: 0,
       fromBlock: 0,
       fromWaitingForTesting: 0,
       fromTesting: 0,

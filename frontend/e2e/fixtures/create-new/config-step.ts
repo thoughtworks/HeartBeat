@@ -33,3 +33,22 @@ export const config = {
     token: process.env.E2E_TOKEN_GITHUB as string,
   },
 };
+
+export const configWithoutBlockColumn = {
+  projectName: 'Heartbeat Metrics',
+  dateRange: [
+    {
+      startDate: '2024-04-07T00:00:00.000+08:00',
+      endDate: '2024-04-08T23:59:59.999+08:00',
+    },
+  ],
+  calendarType: 'Calendar with Chinese Holiday',
+  metrics: ['Cycle time'],
+  board: {
+    type: 'Jira',
+    boardId: '33',
+    email: 'heartbeatuser2023@gmail.com',
+    site: 'dorametrics',
+    token: process.env.E2E_TOKEN_JIRA as string,
+  },
+};

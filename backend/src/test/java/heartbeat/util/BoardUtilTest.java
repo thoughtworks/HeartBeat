@@ -81,7 +81,7 @@ class BoardUtilTest {
 	}
 
 	@Test
-	void calculateOriginCycleTimeOfColumn() {
+	void shouldCalculateOriginCycleTimeGivenTreatFlagCardAsBlockIsTrue() {
 		List<StatusChangedItem> statusChangedItems = StatusChangedItemsListAndCycleTimeInfosListFixture
 			.STATUS_CHANGED_ITEMS_LIST_OF_ORIGIN();
 		List<CycleTimeInfo> statusChangedItemsExpect = StatusChangedItemsListAndCycleTimeInfosListFixture
@@ -89,8 +89,22 @@ class BoardUtilTest {
 
 		when(workDay.calculateWorkDaysBy24Hours(anyLong(), anyLong()))
 			.thenReturn(StatusChangedItemsListAndCycleTimeInfosListFixture.EXPECT_DAYS);
-		List<CycleTimeInfo> result = boardUtil.getOriginCycleTimeInfos(statusChangedItems);
+
+		List<CycleTimeInfo> result = boardUtil.getOriginCycleTimeInfos(statusChangedItems, Boolean.TRUE);
 		Assertions.assertEquals(statusChangedItemsExpect, result);
+	}
+
+	@Test
+	void shouldCalculateOriginCycleTimeGivenTreatFlagCardAsBlockIsFalse() {
+		List<StatusChangedItem> statusChangedItems = StatusChangedItemsListAndCycleTimeInfosListFixture
+			.STATUS_CHANGED_ITEMS_LIST_OF_ORIGIN();
+		List<CycleTimeInfo> statusChangedItemsWithoutFlagExpect = StatusChangedItemsListAndCycleTimeInfosListFixture
+			.CYCLE_TIME_INFOS_LIST_OF_ORIGIN_WITHOUT_FLAG();
+
+		when(workDay.calculateWorkDaysBy24Hours(anyLong(), anyLong()))
+			.thenReturn(StatusChangedItemsListAndCycleTimeInfosListFixture.EXPECT_DAYS);
+		List<CycleTimeInfo> result = boardUtil.getOriginCycleTimeInfos(statusChangedItems, Boolean.FALSE);
+		Assertions.assertEquals(statusChangedItemsWithoutFlagExpect, result);
 	}
 
 }

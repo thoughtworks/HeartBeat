@@ -1,5 +1,5 @@
-"Issue key","Summary","Issue Type","Status","Status Date","Story Points","assignee","Reporter","Project Key","Project Name","Priority","Parent Summary","Sprint","Labels","Cycle Time","story point","Flagged","Story point estimate","Design","Cycle Time / Story Points","Analysis Days","In Dev Days","Waiting Days","Testing Days","Block Days","Review Days","OriginCycleTime: TO DO","OriginCycleTime: IN PROGRESS","OriginCycleTime: REVIEW","OriginCycleTime: FLAG","OriginCycleTime: ANALYSIS","OriginCycleTime: READY FOR TESTING","OriginCycleTime: DOING"
-"ST-5","card5","Task","done","2024-03-29","3.0","Junbo Dai","heartbeat user","ST","status-test","Medium",,,"","1.17","","","3.0","","0.39","0","1.12","0","0","0","0.05","0.78","1.12","0.05","0","0","0","0"
-"ST-6","card6","Task","done","2024-03-29","2.0","Chao Wang","heartbeat user","ST","status-test","Medium",,,"","0.98","","","2.0","","0.49","0","0.93","0.05","0","0","0","0.78","0","0","0","0.93","0.05","0"
-"ST-4","card4","Task","done","2024-03-29","2.0","heartbeat user","heartbeat user","ST","status-test","Medium",,,"","0.99","","","2.0","","0.49","0","0.99","0","0","0","0","0.78","0","0","0","0","0","0.99"
-,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Issue key,Summary,Issue Type,Status,Status Date,Story Points,assignee,Reporter,Project Key,Project Name,Priority,Parent Summary,Sprint,Labels,Cycle Time,story point,Flagged,Story point estimate,Design,Cycle Time / Story Points,Analysis Days,In Dev Days,Waiting Days,Testing Days,Block Days,Review Days,OriginCycleTime: TO DO,OriginCycleTime: IN PROGRESS,OriginCycleTime: REVIEW,OriginCycleTime: ANALYSIS,OriginCycleTime: READY FOR TESTING,OriginCycleTime: DOING
+ST-5,card5,Task,done,2024-03-29,3.0,Junbo Dai,heartbeat user,ST,status-test,Medium,,,"",1.17,"","",3.0,"",0.39,0,1.12,0,0,0,0.05,0.78,1.12,0.05,0,0,0
+ST-6,card6,Task,done,2024-03-29,2.0,Chao Wang,heartbeat user,ST,status-test,Medium,,,"",0.98,"","",2.0,"",0.49,0,0.93,0.05,0,0,0,0.78,0,0,0.93,0.05,0
+ST-4,card4,Task,done,2024-03-29,2.0,heartbeat user,heartbeat user,ST,status-test,Medium,,,"",0.99,"","",2.0,"",0.49,0,0.99,0,0,0,0,0.78,0,0,0,0,0.99
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,

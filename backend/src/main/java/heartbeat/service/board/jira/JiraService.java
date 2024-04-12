@@ -844,7 +844,8 @@ public class JiraService {
 				keyFlagged);
 		List<CycleTimeInfo> cycleTimeInfos = boardUtil.getCycleTimeInfos(statusChangedArray, realDoneStatus,
 				treatFlagCardAsBlock);
-		List<CycleTimeInfo> originCycleTimeInfos = boardUtil.getOriginCycleTimeInfos(statusChangedArray);
+		List<CycleTimeInfo> originCycleTimeInfos = boardUtil.getOriginCycleTimeInfos(statusChangedArray,
+				treatFlagCardAsBlock);
 
 		return CycleTimeInfoDTO.builder()
 			.cycleTimeInfos(cycleTimeInfos)

@@ -171,7 +171,7 @@ export const EXPECTED_REPORT_VALUES = {
       ],
     },
     {
-      id: 5,
+      id: 4,
       name: (
         <React.Fragment>
           From <BoldText>review</BoldText> to<BoldText> in dev</BoldText>
@@ -185,7 +185,7 @@ export const EXPECTED_REPORT_VALUES = {
       ],
     },
     {
-      id: 6,
+      id: 5,
       name: (
         <React.Fragment>
           From <BoldText>waiting for testing</BoldText> to<BoldText> in dev</BoldText>
@@ -199,7 +199,7 @@ export const EXPECTED_REPORT_VALUES = {
       ],
     },
     {
-      id: 8,
+      id: 7,
       name: (
         <React.Fragment>
           From <BoldText>done</BoldText> to<BoldText> in dev</BoldText>
@@ -213,7 +213,7 @@ export const EXPECTED_REPORT_VALUES = {
       ],
     },
     {
-      id: 9,
+      id: 8,
       name: <React.Fragment>Total rework cards</React.Fragment>,
       valueList: [
         {
@@ -223,7 +223,7 @@ export const EXPECTED_REPORT_VALUES = {
       ],
     },
     {
-      id: 10,
+      id: 9,
       name: <React.Fragment>Rework cards ratio</React.Fragment>,
       valueList: [
         {

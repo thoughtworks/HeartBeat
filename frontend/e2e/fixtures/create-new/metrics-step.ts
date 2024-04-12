@@ -73,7 +73,7 @@ export const config = {
         Done: 'Done',
       },
     ],
-    treatFlagCardAsBlock: true,
+    treatFlagCardAsBlock: false,
   },
   doneStatus: ['DONE'],
   classification: [
@@ -176,4 +176,26 @@ export const modifiedConfig = {
       branches: ['main', 'gh-pages'],
     },
   ],
+};
+
+export const configWithoutBlockColumn = {
+  crews: ['Shiqi Yuan'],
+  cycleTime: {
+    type: 'byColumn',
+    jiraColumns: [
+      {
+        'TO DO': 'To do',
+      },
+      {
+        'IN DEV': 'In Dev',
+      },
+      {
+        'WAITING FOR TESTING': 'Waiting for testing',
+      },
+      {
+        Done: 'Done',
+      },
+    ],
+  },
+  reworkTimesSettings: { excludeStates: [], reworkState: 'In Dev' },
 };

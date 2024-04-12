@@ -1,6 +1,5 @@
 import { BOARD_TYPES, AXIOS_REQUEST_ERROR_CODE, MESSAGE, UNKNOWN_ERROR_TITLE } from '@src/constants/resources';
 import { selectBoard, updateBoard, updateBoardVerifyState } from '@src/context/config/configSlice';
-import { updateTreatFlagCardAsBlock } from '@src/context/Metrics/metricsSlice';
 import { findCaseInsensitiveType, getJiraBoardToken } from '@src/utils/util';
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch';
 import { DEFAULT_HELPER_TEXT, EMPTY_STRING } from '@src/constants/commons';
@@ -187,7 +186,6 @@ export const useVerifyBoardEffect = (): useVerifyBoardStateInterface => {
 
   const verifyJira = async () => {
     setIsLoading(true);
-    dispatch(updateTreatFlagCardAsBlock(true));
     const boardInfo = getBoardInfo(fields) as BoardRequestDTO;
     try {
       const res: { response: Record<string, string> } = await boardClient.getVerifyBoard({

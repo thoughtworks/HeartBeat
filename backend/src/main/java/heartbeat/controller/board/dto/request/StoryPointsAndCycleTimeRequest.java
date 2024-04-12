@@ -36,4 +36,6 @@ public class StoryPointsAndCycleTimeRequest {
 
 	private boolean treatFlagCardAsBlock;
 
+	private ReworkTimesSetting reworkTimesSetting;
+
 }

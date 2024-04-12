@@ -1,25 +1,4 @@
 import {
-  selectConfig,
-  selectMetrics,
-  selectPipelineList,
-  updateBoard,
-  updateBoardVerifyState,
-  updatePipelineTool,
-  updatePipelineToolVerifyState,
-  updateSourceControl,
-  updateSourceControlVerifyState,
-} from '@src/context/config/configSlice';
-import {
-  BOARD_TYPES,
-  CYCLE_TIME_SETTINGS_TYPES,
-  DONE,
-  METRICS_CONSTANTS,
-  PIPELINE_TOOL_TYPES,
-  REQUIRED_DATA,
-  SOURCE_CONTROL_TYPES,
-  TIPS,
-} from '@src/constants/resources';
-import {
   BackButton,
   ButtonContainer,
   MetricsStepperContent,
@@ -30,20 +9,21 @@ import {
   StyledStepper,
 } from './style';
 import {
-  ICycleTimeSetting,
-  savedMetricsSettingState,
+  ISavedMetricsSettingState,
   selectCycleTimeSettings,
   selectMetricsContent,
 } from '@src/context/Metrics/metricsSlice';
+import { CYCLE_TIME_SETTINGS_TYPES, DONE, METRICS_CONSTANTS, REQUIRED_DATA, TIPS } from '@src/constants/resources';
 import { backStep, nextStep, selectStepNumber, updateTimeStamp } from '@src/context/stepper/StepperSlice';
 import { useMetricsStepValidationCheckContext } from '@src/hooks/useMetricsStepValidationCheckContext';
+import { convertCycleTimeSettings, exportToJsonFile, onlyEmptyAndDoneState } from '@src/utils/util';
+import { selectConfig, selectMetrics, selectPipelineList } from '@src/context/config/configSlice';
 import { COMMON_BUTTONS, METRICS_STEPS, STEPS } from '@src/constants/commons';
 import { ConfirmDialog } from '@src/containers/MetricsStepper/ConfirmDialog';
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch';
 import { lazy, Suspense, useEffect, useMemo, useState } from 'react';
 import { getFormMeta } from '@src/context/meta/metaSlice';
 import SaveAltIcon from '@mui/icons-material/SaveAlt';
-import { exportToJsonFile } from '@src/utils/util';
 import { useNavigate } from 'react-router-dom';
 import { ROUTE } from '@src/constants/router';
 import { Tooltip } from '@mui/material';
@@ -73,10 +53,18 @@ const MetricsStepper = () => {
   const { isShow: isShowBoard, isVerified: isBoardVerified } = config.board;
   const { isShow: isShowPipeline, isVerified: isPipelineToolVerified } = config.pipelineTool;
   const { isShow: isShowSourceControl, isVerified: isSourceControlVerified } = config.sourceControl;
-  const isShowCycleTimeSettings = requiredData.includes(REQUIRED_DATA.CYCLE_TIME);
+  const isShowCycleTimeSettings =
+    requiredData.includes(REQUIRED_DATA.CYCLE_TIME) ||
+    requiredData.includes(REQUIRED_DATA.CLASSIFICATION) ||
+    requiredData.includes(REQUIRED_DATA.VELOCITY);
   const isCycleTimeSettingsVerified = cycleTimeSettings.some((e) => e.value === DONE);
+  const boardingMappingStatus = [...new Set(cycleTimeSettings.map((item) => item.value))];
+  const isOnlyEmptyAndDoneState = onlyEmptyAndDoneState(boardingMappingStatus);
+  const onlyIncludeReworkMetrics = requiredData.includes(REQUIRED_DATA.REWORK_TIMES) && requiredData.length === 1;
   const isShowClassificationSetting = requiredData.includes(REQUIRED_DATA.CLASSIFICATION);
+  const isShowReworkSettings = requiredData.includes(REQUIRED_DATA.REWORK_TIMES);
   const isClassificationSettingVerified = metricsConfig.targetFields.some((item) => item.flag);
+  const isReworkStateSelected = !!metricsConfig.importedData.reworkTimesSettings.reworkState;
   const { metrics, projectName, dateRange } = config.basic;
 
   const isShowRealDone =
@@ -85,8 +73,9 @@ const MetricsStepper = () => {
     metricsConfig.cycleTimeSettings.filter(({ value }) => value === METRICS_CONSTANTS.doneValue).length > 1;
   const isShowDeploymentFrequency =
     requiredData.includes(REQUIRED_DATA.DEPLOYMENT_FREQUENCY) ||
-    requiredData.includes(REQUIRED_DATA.CHANGE_FAILURE_RATE) ||
-    requiredData.includes(REQUIRED_DATA.MEAN_TIME_TO_RECOVERY);
+    requiredData.includes(REQUIRED_DATA.DEV_CHANGE_FAILURE_RATE) ||
+    requiredData.includes(REQUIRED_DATA.LEAD_TIME_FOR_CHANGES) ||
+    requiredData.includes(REQUIRED_DATA.DEV_MEAN_TIME_TO_RECOVERY);
   const isCrewsSettingValid = metricsConfig.users.length > 0;
   const isRealDoneValid = metricsConfig.doneColumn.length > 0;
 
@@ -118,7 +107,7 @@ const MetricsStepper = () => {
         { isShow: isShowSourceControl, isValid: isSourceControlVerified },
       ];
       const activeNextButtonValidityOptions = nextButtonValidityOptions.filter(({ isShow }) => isShow);
-      projectName && dateRange.startDate && dateRange.endDate && metrics.length
+      projectName && dateRange && dateRange.length && metrics.length
         ? setIsDisableNextButton(!activeNextButtonValidityOptions.every(({ isValid }) => isValid))
         : setIsDisableNextButton(true);
     }
@@ -130,6 +119,10 @@ const MetricsStepper = () => {
         { isShow: isShowDeploymentFrequency, isValid: isDeploymentFrequencyValid },
         { isShow: isShowCycleTimeSettings, isValid: isCycleTimeSettingsVerified },
         { isShow: isShowClassificationSetting, isValid: isClassificationSettingVerified },
+        {
+          isShow: isShowReworkSettings,
+          isValid: isReworkStateSelected || (isOnlyEmptyAndDoneState && !onlyIncludeReworkMetrics),
+        },
       ];
       const activeNextButtonValidityOptions = nextButtonValidityOptions.filter(({ isShow }) => isShow);
       activeNextButtonValidityOptions.every(({ isValid }) => isValid)
@@ -157,9 +150,13 @@ const MetricsStepper = () => {
     isCycleTimeSettingsVerified,
     isShowClassificationSetting,
     isClassificationSettingVerified,
+    isReworkStateSelected,
+    isShowReworkSettings,
+    isOnlyEmptyAndDoneState,
+    onlyIncludeReworkMetrics,
   ]);
 
-  const filterMetricsConfig = (metricsConfig: savedMetricsSettingState) => {
+  const filterMetricsConfig = (metricsConfig: ISavedMetricsSettingState) => {
     return Object.fromEntries(
       Object.entries(metricsConfig).filter(([, value]) => {
         /* istanbul ignore next */
@@ -213,16 +210,7 @@ const MetricsStepper = () => {
       cycleTime: cycleTimeSettings
         ? {
             type: cycleTimeSettingsType,
-            jiraColumns:
-              cycleTimeSettingsType === CYCLE_TIME_SETTINGS_TYPES.BY_COLUMN
-                ? ([...new Set(cycleTimeSettings.map(({ column }: ICycleTimeSetting) => column))] as string[]).map(
-                    (uniqueColumn) => ({
-                      [uniqueColumn]:
-                        cycleTimeSettings.find(({ column }: ICycleTimeSetting) => column === uniqueColumn)?.value ||
-                        METRICS_CONSTANTS.cycleTimeEmptyStr,
-                    }),
-                  )
-                : cycleTimeSettings?.map(({ status, value }: ICycleTimeSetting) => ({ [status]: value })),
+            jiraColumns: convertCycleTimeSettings(cycleTimeSettingsType, cycleTimeSettings),
             treatFlagCardAsBlock,
           }
         : undefined,
@@ -233,6 +221,7 @@ const MetricsStepper = () => {
       advancedSettings: importedData.importedAdvancedSettings,
       deployment: deploymentFrequencySettings,
       leadTime: leadTimeForChanges,
+      reworkTimesSettings: importedData.reworkTimesSettings,
     };
     const jsonData = activeStep === METRICS_STEPS.CONFIG ? configData : { ...configData, ...metricsData };
     exportToJsonFile('config', jsonData);
@@ -241,11 +230,6 @@ const MetricsStepper = () => {
   const handleNext = () => {
     if (activeStep === METRICS_STEPS.METRICS) {
       dispatch(updateTimeStamp(new Date().getTime()));
-    }
-    if (activeStep === METRICS_STEPS.CONFIG) {
-      cleanBoardState();
-      cleanPipelineToolConfiguration();
-      cleanSourceControlState();
     }
     dispatch(nextStep());
   };
@@ -263,35 +247,6 @@ const MetricsStepper = () => {
 
   const CancelDialog = () => {
     setIsDialogShowing(false);
-  };
-
-  const cleanPipelineToolConfiguration = () => {
-    !isShowPipeline && dispatch(updatePipelineTool({ type: PIPELINE_TOOL_TYPES.BUILD_KITE, token: '' }));
-    isShowPipeline
-      ? dispatch(updatePipelineToolVerifyState(isPipelineToolVerified))
-      : dispatch(updatePipelineToolVerifyState(false));
-  };
-
-  const cleanSourceControlState = () => {
-    !isShowSourceControl && dispatch(updateSourceControl({ type: SOURCE_CONTROL_TYPES.GITHUB, token: '' }));
-    isShowSourceControl
-      ? dispatch(updateSourceControlVerifyState(isSourceControlVerified))
-      : dispatch(updateSourceControlVerifyState(false));
-  };
-
-  const cleanBoardState = () => {
-    !isShowBoard &&
-      dispatch(
-        updateBoard({
-          type: BOARD_TYPES.JIRA,
-          boardId: '',
-          email: '',
-          projectKey: '',
-          site: '',
-          token: '',
-        }),
-      );
-    isShowBoard ? dispatch(updateBoardVerifyState(isBoardVerified)) : dispatch(updateBoardVerifyState(false));
   };
 
   return (

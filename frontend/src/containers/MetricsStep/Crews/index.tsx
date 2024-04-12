@@ -1,10 +1,10 @@
-import { saveUsers, selectMetricsContent, savePipelineCrews } from '@src/context/Metrics/metricsSlice';
+import { savePipelineCrews, saveUsers, selectMetricsContent } from '@src/context/Metrics/metricsSlice';
 import { AssigneeFilter } from '@src/containers/MetricsStep/Crews/AssigneeFilter';
 import { MetricsSettingTitle } from '@src/components/Common/MetricsSettingTitle';
 import MultiAutoComplete from '@src/components/Common/MultiAutoComplete';
 import { WarningMessage } from '@src/containers/MetricsStep/Crews/style';
-import React, { useEffect, useState, useMemo } from 'react';
 import { useAppDispatch } from '@src/hooks/useAppDispatch';
+import React, { useEffect, useState } from 'react';
 import { FormHelperText } from '@mui/material';
 import { useAppSelector } from '@src/hooks';
 
@@ -18,19 +18,14 @@ interface crewsProps {
 export const Crews = ({ options, title, label, type = 'board' }: crewsProps) => {
   const isBoardCrews = type === 'board';
   const dispatch = useAppDispatch();
-
-  const [isEmptyCrewData, setIsEmptyCrewData] = useState<boolean>(false);
   const { users, pipelineCrews } = useAppSelector(selectMetricsContent);
-  const [selectedCrews, setSelectedCrews] = useState<string[]>([]);
+  const [selectedCrews, setSelectedCrews] = useState<string[]>(isBoardCrews ? users : pipelineCrews);
   const isAllSelected = options.length > 0 && selectedCrews.length === options.length;
-
-  useMemo(() => {
-    setSelectedCrews(isBoardCrews ? users : pipelineCrews);
-  }, [users, isBoardCrews, pipelineCrews]);
+  const isEmptyCrewData = selectedCrews.length === 0;
 
   useEffect(() => {
-    setIsEmptyCrewData(selectedCrews.length === 0);
-  }, [selectedCrews]);
+    setSelectedCrews(isBoardCrews ? users : pipelineCrews);
+  }, [users, isBoardCrews, pipelineCrews]);
 
   const handleCrewChange = (_: React.SyntheticEvent, value: string[]) => {
     if (value[value.length - 1] === 'All') {

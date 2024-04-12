@@ -26,6 +26,21 @@ export class ReportClient extends HttpClient {
         },
       ],
     },
+    rework: {
+      totalReworkTimes: 0,
+      reworkState: 'Done',
+      fromAnalysis: 0,
+      fromInDev: 0,
+      fromFlag: 0,
+      fromBlock: 0,
+      fromWaitingForTesting: 0,
+      fromTesting: 0,
+      fromReview: 0,
+      fromDone: 0,
+      totalReworkCards: 0,
+      throughput: 1,
+      reworkCardsRatio: 0,
+    },
     classificationList: [
       {
         fieldName: '',
@@ -48,25 +63,27 @@ export class ReportClient extends HttpClient {
         totalDelayTime: 1,
       },
     },
-    changeFailureRate: {
-      avgChangeFailureRate: {
+    devChangeFailureRate: {
+      avgDevChangeFailureRate: {
         name: '',
         totalTimes: 0,
         totalFailedTimes: 0,
         failureRate: 0.0,
       },
-      changeFailureRateOfPipelines: [],
+      devChangeFailureRateOfPipelines: [],
     },
     reportMetricsError: {
       boardMetricsError: null,
       pipelineMetricsError: null,
       sourceControlMetricsError: null,
     },
-    meanTimeToRecovery: null,
+    devMeanTimeToRecovery: null,
     exportValidityTime: null,
     boardMetricsCompleted: false,
     doraMetricsCompleted: false,
+    overallMetricsCompleted: false,
     allMetricsCompleted: false,
+    isSuccessfulCreateCsvFile: false,
   };
 
   retrieveByUrl = async (params: ReportRequestDTO, url: string) => {

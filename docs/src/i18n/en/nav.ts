@@ -78,6 +78,11 @@ export default [
 		key: 'designs/refinement-on-generate-report',
 	},
 	{
+		text: 'Optimize generate report',
+		slug: 'designs/optimize-generate-report',
+		key: 'designs/optimize-generate-report',
+	},
+	{
 		text: 'Sequence diagrams',
 		slug: 'designs/sequence-diagrams',
 		key: 'designs/sequence-diagrams',
@@ -86,6 +91,11 @@ export default [
 		text: 'Support multiple columns',
 		slug: 'designs/support-multiple-columns',
 		key: 'designs/support-multiple-columns',
+	},
+	{
+		text: 'E2E Testing',
+		slug: 'designs/e2e-testing',
+		key: 'designs/e2e-testing',
 	},
 
 	{ text: 'Issue Solutions', header: true, type: 'tech', key: 'Issue Solutions' },
@@ -151,7 +161,31 @@ export default [
 		slug: 'spikes/tech-spikes-github-graphql-api-about-replacing-existing-rest-api',
 		key: 'spikes/tech-spikes-github-graphql-api-about-replacing-existing-rest-api',
 	},
-
+	{
+		text: 'Spike the logic of calculating card rework',
+		slug: 'spikes/tech-spikes-calculate-rework-of-board-card',
+		key: 'spikes/tech-spikes-calculate-rework-of-board-card',
+	},
+	{
+		text: 'Solution to optimize generate report',
+		slug: 'spikes/tech-spikes-export-all-metrics-button-polling-api-backend-change',
+		key: 'spikes/tech-spikes-export-all-metrics-button-polling-api-backend-change',
+	},
+	{
+		text: 'Integrate react hook form',
+		slug: 'spikes/tech-spikes-react-hook-form',
+		key: 'spikes/tech-spikes-react-hook-form',
+	},
+	{
+		text: 'Solution for chart tools',
+		slug: 'spikes/tech-spikes-chart-tools-solutions',
+		key: 'spikes/tech-spikes-chart-tools-solutions',
+	},
+	{
+		text: 'Solution for chart API',
+		slug: 'spikes/tech-spikes-chart-api-solutions',
+		key: 'spikes/tech-spikes-chart-api-solutions',
+	},
 	{ text: 'Biz', header: true, type: 'biz', key: 'Biz' },
 	{ text: 'Biz context', slug: 'biz/business-context', key: 'biz/business-context' },
 

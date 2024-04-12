@@ -6,18 +6,18 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-public class MetricsUtilTest {
+class MetricsUtilTest {
 
 	@Test
 	void shouldGetRelatedPartMetrics() {
-		List<String> kanbanMetrics = MetricsUtil.kanbanMetrics;
-		List<String> buildKiteMetrics = MetricsUtil.buildKiteMetrics;
-		List<String> codebaseMetrics = MetricsUtil.codebaseMetrics;
+		List<String> kanbanMetrics = MetricsUtil.KANBAN_METRICS.getValue();
+		List<String> buildKiteMetrics = MetricsUtil.BUILDKITE_METRICS.getValue();
+		List<String> codebaseMetrics = MetricsUtil.CODEBASE_METRICS.getValue();
 
 		List<String> expectedKanbanMetrics = List.of(MetricEnum.VELOCITY.getValue(), MetricEnum.CYCLE_TIME.getValue(),
-				MetricEnum.CLASSIFICATION.getValue());
-		List<String> expectedBuildKiteMetrics = List.of(MetricEnum.CHANGE_FAILURE_RATE.getValue(),
-				MetricEnum.DEPLOYMENT_FREQUENCY.getValue(), MetricEnum.MEAN_TIME_TO_RECOVERY.getValue());
+				MetricEnum.CLASSIFICATION.getValue(), MetricEnum.REWORK_TIMES.getValue());
+		List<String> expectedBuildKiteMetrics = List.of(MetricEnum.DEV_CHANGE_FAILURE_RATE.getValue(),
+				MetricEnum.DEPLOYMENT_FREQUENCY.getValue(), MetricEnum.DEV_MEAN_TIME_TO_RECOVERY.getValue());
 		List<String> expectedCodebaseMetrics = List.of(MetricEnum.LEAD_TIME_FOR_CHANGES.getValue());
 
 		Assertions.assertEquals(expectedKanbanMetrics, kanbanMetrics);

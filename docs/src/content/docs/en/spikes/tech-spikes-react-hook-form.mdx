@@ -1,0 +1,307 @@
+---
+title: Integrate react-hook-form
+description: use react-hook-form for form fields
+---
+
+# Integrate react-hook-form
+
+## **Background**
+
+Currently, Heartbeat lacks a form management tool, making form state management difficult.
+
+## **Expectations**
+
+Introduce a new form management tool to address the existing form state issues, enhancing the maintainability and robustness of the form section.
+
+## **Solutions**
+
+Integrate react-hook-form into the form for declaration/validation/submission.
+
+### **1. Declare and initialize a form**
+
+Declare a form instance:
+
+```jsx
+import { useForm, FormProvider } from 'react-hook-form';
+
+const methods = useForm({
+  defaultValues: {}, // Declare form fields and their initial values here
+  resolver: {}, // Used for form validation triggering, as detailed below
+  mode: 'onChange' // Trigger validation modes, usually including 'onChange' | 'onBlur' | 'onTouched'
+})
+
+```
+
+Wrap the form structure with FormProvider. The child DOM nodes contained within FormProvider constitute the scope of the form. All subsequent form operations including validation and submission will be carried out within this scope.
+
+```jsx
+<Container>
+   <FormProvider>
+      // ...form structure
+   <FormProvider>
+</Container>
+
+```
+
+Associate the useForm instance with FormProvider:
+
+```jsx
+import { useForm, FormProvider } from 'react-hook-form';
+
+const methods = useForm({
+  defaultValues: {},
+  resolver: {},
+  mode: 'onChange'
+})
+
+<Container>
+   <FormProvider {...methods}>
+      // ...form structure
+   <FormProvider>
+</Container>
+
+```
+
+With the above code, we quickly declare an empty form that doesn't contain any fields or validation conditions.
+
+### **2. Declare and initialize form fields**
+
+Declare form fields and initial values using JSON structure:
+
+```jsx
+const defaultValues = {
+  fieldA: '',
+  fieldB: 1,
+  fieldC: true,
+  fieldD: 'test@fake.com'
+}
+
+```
+
+### **3. Declare form validation rules**
+
+Validate form values using yup:
+
+```jsx
+import {object, string, number, boolean, InferType} from 'yup'
+
+const schema = object().shape({
+  filedA: string(),
+  fieldB: number().required(),
+  fieldC: boolean,
+  fieldD: string().email().required()
+})
+
+type ISchemaDataType = InferType<typeof schema>
+
+```
+
+yup comes with rich validation rules to meet basic validation requirements. For complex validation needs, yup's test method and when method can be used for more sophisticated operations.
+
+### **4. Integrate defaultValue and schema into form initialization**
+
+```jsx
+//...
+import { yupResolver } from '@hookform/resolvers/yup';
+
+const defaultValues = {
+  fieldA: '',
+  fieldB: 1,
+  fieldC: true,
+  fieldD: 'test@fake.com'
+}
+
+const schema = object().shape({
+  filedA: string(),
+  fieldB: number().required(),
+  fieldC: boolean,
+  fieldD: string().email().required()
+})
+
+type ISchemaDataType = InferType<typeof schema>
+
+const methods = useForm<ISchemaDataType>({
+  defaultValues,
+  resolver: yupResolver(schema),
+  mode: 'onChange'
+})
+
+//...
+
+```
+
+### **4. Bind form controls**
+
+There are two ways to bind form controls:
+
+1. Use the register method, which is used for generic components and can simply bind a form component to the form.
+
+```jsx
+//...
+
+  const {register} = methods
+
+  <Input {...register('fieldA')} />
+
+// ...
+
+```
+
+2. Use the Controller tag to wrap a custom component.
+
+```jsx
+//...
+
+import {Controller} from 'react-hook-form'
+
+const {control} = methods
+
+<Control name='fieldA' control={control} render={(field) => <Input {...fields}>} />
+
+```
+
+The use of register and controller each has its pros and cons. For systems with complex business scenarios, variable scenes, and higher compatibility and functionality requirements for components, it is recommended to use the controller approach to customize component behavior.
+
+### **5. Automatically track changes**
+
+Within a form scope, default → schema → component binding is performed by defining a unique name.
+
+```jsx
+const defaultValue = {
+  fieldA: '',
+  //...
+}
+
+const schema = object().shape({
+  fieldA: string()
+	//...
+})
+
+  <Input {...register('fieldA')} />
+
+  // or
+
+  <Controller name="fieldA" >
+
+```
+
+Similarly, the name can be an object access path or even an array index.
+
+```jsx
+const defaultValue = {
+  a: {
+    b: ''
+  }
+  c: [{d: ''}]
+}
+
+const schema = object().shape({
+  a: object().shape({
+    b: string()
+  }),
+  c: array().oneOf(object().shape({
+    d: string()
+  }))
+})
+
+//...
+<Input {...register('a.b')} />
+
+<Controller name='c.0.d'>
+
+```
+
+### **6. Nesting components within forms**
+
+In business scenarios, forms are usually complex and large. When splitting components, different submodules are usually split into different files.
+
+index.tsx
+
+```jsx
+import ChildA from './component/childA'
+import ChildB from './component/childB'
+// ...
+<Container>
+	<FormProvider {...methods}>
+		<ChildA />
+		<ChildB />
+   <FormProvider>
+</Container>
+
+```
+
+In such scenarios, how do we easily access the parent component scope within ChildA and ChildB components?
+
+react-hook-form provides the useFormContext syntax for accessing the nearest parent form scope.
+
+```jsx
+export const ChildA = () => {
+	const { setError, getValues } = useFormContext();
+	// do something
+}
+
+```
+
+Through this access method, we can encapsulate some custom form components around react-hook-form, and even combine a series of components into a complex business component, triggering validation and form behavior through manual onChange event.
+
+```jsx
+export const FormTextField = ({name}) => {
+	const { control } = useFormContext();
+	return <Controller
+		name={name}
+		control={control}
+		render={(field) => <TextField {...field} >} />
+}
+
+```
+
+### **7. Testing a Form**
+
+After integrating react-hook-form, for a component containing a complete FormProvider scope within a file, normal testing can be done using userEvent.
+
+```jsx
+it('should show form label when form component renders', () => {
+	render(<FormParent />)
+	expect(screen.getByText(/field a/i)).toBeInTheDocument()
+})
+
+```
+
+Verify if form validation is functioning correctly.
+
+```jsx
+it('should show form label when form component renders', async () => {
+	render(<FormParent />)
+	await userEvent.type(screen.getByLabelText(/field a/i), '#');
+	await waitFor(() => {
+		expect(screen.getByText(/invalid value/i)).toBeInTheDocument()
+	})
+})
+
+```
+
+For validating child components within the form, an additional step is required: when initializing the test instance, manually declare FormProvider and validation rules.
+
+```jsx
+it('should show text label when FormTextField is rendered', () => {
+
+const methods = useForm<ISchemaDataType>({
+  defaultValues: {
+	  fieldA: ''
+	},
+  resolver: yupResolver(schema),
+  mode: 'onChange'
+})
+	render(
+		<FormProvider {...methods}>
+			<FormChild name='fieldA' />
+		<FormProvider/>
+	)
+	expect(screen.getByText(/field a/i)).toBeInTheDocument()
+})
+
+```
+
+### **8. Conclusion**
+
+Through integrating react-hook-form, we've decoupled some of the manually written form validation logic. We also aim to unify global form behavior by using shared components, allowing developers to focus more on writing business logic itself. Please note that we are not trying to completely decouple existing redux components. On the contrary, we want to focus more clearly on how to differentiate between form/component internal states and cross-component data that needs to be persisted, making the system architecture and standards clearer.

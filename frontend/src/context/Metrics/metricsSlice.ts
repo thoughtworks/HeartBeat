@@ -1,4 +1,3 @@
-/* istanbul ignore file */
 import {
   ASSIGNEE_FILTER_TYPES,
   CYCLE_TIME_LIST,
@@ -6,6 +5,7 @@ import {
   MESSAGE,
   METRICS_CONSTANTS,
 } from '@src/constants/resources';
+import { convertCycleTimeSettings, getSortedAndDeduplicationBoardingMapping } from '@src/utils/util';
 import { pipeline } from '@src/context/config/pipelineTool/verifyResponseSlice';
 import { createSlice } from '@reduxjs/toolkit';
 import camelCase from 'lodash.camelcase';
@@ -18,6 +18,11 @@ export interface IPipelineConfig {
   pipelineName: string;
   step: string;
   branches: string[];
+}
+
+export interface IReworkConfig {
+  reworkState: string | null;
+  excludeStates: string[];
 }
 
 export interface IPipelineWarningMessageConfig {
@@ -33,7 +38,7 @@ export interface ICycleTimeSetting {
   value: string;
 }
 
-export interface savedMetricsSettingState {
+export interface ISavedMetricsSettingState {
   shouldGetBoardConfig: boolean;
   shouldGetPipeLineConfig: boolean;
   jiraColumns: { key: string; value: { name: string; statuses: string[] } }[];
@@ -47,6 +52,7 @@ export interface savedMetricsSettingState {
   leadTimeForChanges: IPipelineConfig[];
   treatFlagCardAsBlock: boolean;
   assigneeFilter: string;
+  firstTimeRoadMetricData: boolean;
   importedData: {
     importedCrews: string[];
     importedAssigneeFilter: string;
@@ -59,6 +65,7 @@ export interface savedMetricsSettingState {
     importedClassification: string[];
     importedDeployment: IPipelineConfig[];
     importedAdvancedSettings: { storyPoint: string; flag: string } | null;
+    reworkTimesSettings: IReworkConfig;
   };
   cycleTimeWarningMessage: string | null;
   classificationWarningMessage: string | null;
@@ -66,7 +73,7 @@ export interface savedMetricsSettingState {
   deploymentWarningMessage: IPipelineWarningMessageConfig[];
 }
 
-const initialState: savedMetricsSettingState = {
+const initialState: ISavedMetricsSettingState = {
   shouldGetBoardConfig: false,
   shouldGetPipeLineConfig: false,
   jiraColumns: [],
@@ -80,6 +87,7 @@ const initialState: savedMetricsSettingState = {
   leadTimeForChanges: [{ id: 0, organization: '', pipelineName: '', step: '', branches: [] }],
   treatFlagCardAsBlock: true,
   assigneeFilter: ASSIGNEE_FILTER_TYPES.LAST_ASSIGNEE,
+  firstTimeRoadMetricData: true,
   importedData: {
     importedCrews: [],
     importedAssigneeFilter: ASSIGNEE_FILTER_TYPES.LAST_ASSIGNEE,
@@ -92,6 +100,10 @@ const initialState: savedMetricsSettingState = {
     importedClassification: [],
     importedDeployment: [],
     importedAdvancedSettings: null,
+    reworkTimesSettings: {
+      reworkState: null,
+      excludeStates: [],
+    },
   },
   cycleTimeWarningMessage: null,
   classificationWarningMessage: null,
@@ -131,8 +143,21 @@ const findKeyByValues = (arrayA: { [key: string]: string }[], arrayB: string[]):
   return `The value of ${matchingKeys} in imported json is not in dropdown list now. Please select a value for it!`;
 };
 
-const setSelectUsers = (users: string[], importedCrews: string[]) =>
-  users.filter((item: string) => importedCrews?.includes(item));
+const setImportSelectUsers = (metricsState: ISavedMetricsSettingState, users: string[], importedCrews: string[]) => {
+  if (metricsState.firstTimeRoadMetricData) {
+    return users.filter((item: string) => importedCrews?.includes(item));
+  } else {
+    return users.filter((item: string) => metricsState.users?.includes(item));
+  }
+};
+
+const setCreateSelectUsers = (metricsState: ISavedMetricsSettingState, users: string[]) => {
+  if (metricsState.firstTimeRoadMetricData) {
+    return users;
+  } else {
+    return users.filter((item: string) => metricsState.users?.includes(item));
+  }
+};
 
 const setPipelineCrews = (isProjectCreated: boolean, pipelineCrews: string[], importedPipelineCrews: string[]) => {
   if (_.isEmpty(pipelineCrews)) {
@@ -145,20 +170,70 @@ const setPipelineCrews = (isProjectCreated: boolean, pipelineCrews: string[], im
 };
 
 const setSelectTargetFields = (
+  state: ISavedMetricsSettingState,
   targetFields: { name: string; key: string; flag: boolean }[],
-  importedClassification: string[],
-) =>
-  targetFields.map((item: { name: string; key: string; flag: boolean }) => ({
+  isProjectCreated: boolean,
+) => {
+  if (isProjectCreated) {
+    return setCreateSelectTargetFields(state, targetFields);
+  } else {
+    return setImportSelectTargetFields(state, targetFields);
+  }
+};
+
+const setImportSelectTargetFields = (
+  state: ISavedMetricsSettingState,
+  targetFields: { name: string; key: string; flag: boolean }[],
+) => {
+  if (state.firstTimeRoadMetricData) {
+    return targetFields.map((item: { name: string; key: string; flag: boolean }) => ({
+      ...item,
+      flag: state.importedData.importedClassification.includes(item.key),
+    }));
+  } else {
+    return getTargetFieldsIntersection(state, targetFields);
+  }
+};
+
+const setCreateSelectTargetFields = (
+  state: ISavedMetricsSettingState,
+  targetFields: {
+    name: string;
+    key: string;
+    flag: boolean;
+  }[],
+) => {
+  if (state.firstTimeRoadMetricData) {
+    return targetFields;
+  } else {
+    return getTargetFieldsIntersection(state, targetFields);
+  }
+};
+
+const getTargetFieldsIntersection = (
+  state: ISavedMetricsSettingState,
+  targetFields: {
+    name: string;
+    key: string;
+    flag: boolean;
+  }[],
+) => {
+  const selectedFields = state.targetFields.filter((value) => value.flag).map((value) => value.key);
+  return targetFields.map((item: { name: string; key: string; flag: boolean }) => ({
     ...item,
-    flag: importedClassification?.includes(item.key),
+    flag: selectedFields.includes(item.key),
   }));
+};
 
 const getCycleTimeSettingsByColumn = (
+  state: ISavedMetricsSettingState,
   jiraColumns: { key: string; value: { name: string; statuses: string[] } }[],
-  importedCycleTimeSettings: { [key: string]: string }[],
-) =>
-  jiraColumns.flatMap(({ value: { name, statuses } }) => {
-    const importItem = importedCycleTimeSettings.find((i) => Object.keys(i).includes(name));
+) => {
+  const preCycleTimeSettings = state.firstTimeRoadMetricData
+    ? state.importedData.importedCycleTime.importedCycleTimeSettings
+    : convertCycleTimeSettings(state.cycleTimeSettingsType, state.cycleTimeSettings);
+  return jiraColumns.flatMap(({ value: { name, statuses } }) => {
+    const importItem = preCycleTimeSettings.find((i) => Object.keys(i).includes(name));
     const isValidValue = importItem && CYCLE_TIME_LIST.includes(Object.values(importItem)[0]);
     return statuses.map((status) => ({
       column: name,
@@ -166,14 +241,18 @@ const getCycleTimeSettingsByColumn = (
       value: isValidValue ? (Object.values(importItem)[0] as string) : METRICS_CONSTANTS.cycleTimeEmptyStr,
     }));
   });
+};
 
 const getCycleTimeSettingsByStatus = (
+  state: ISavedMetricsSettingState,
   jiraColumns: { key: string; value: { name: string; statuses: string[] } }[],
-  importedCycleTimeSettings: { [key: string]: string }[],
-) =>
-  jiraColumns.flatMap(({ value: { name, statuses } }) =>
+) => {
+  const preCycleTimeSettings = state.firstTimeRoadMetricData
+    ? state.importedData.importedCycleTime.importedCycleTimeSettings
+    : convertCycleTimeSettings(state.cycleTimeSettingsType, state.cycleTimeSettings);
+  return jiraColumns.flatMap(({ value: { name, statuses } }) =>
     statuses.map((status) => {
-      const importItem = importedCycleTimeSettings.find((i) => Object.keys(i).includes(status));
+      const importItem = preCycleTimeSettings.find((i) => Object.keys(i).includes(status));
       const isValidValue = importItem && CYCLE_TIME_LIST.includes(Object.values(importItem)[0]);
       return {
         column: name,
@@ -182,6 +261,7 @@ const getCycleTimeSettingsByStatus = (
       };
     }),
   );
+};
 
 const getSelectedDoneStatus = (
   jiraColumns: { key: string; value: { name: string; statuses: string[] } }[],
@@ -196,6 +276,19 @@ const getSelectedDoneStatus = (
   const status = selectedDoneStatus?.length < 1 ? doneStatus : selectedDoneStatus;
   return status.filter((item: string) => importedDoneStatus.includes(item));
 };
+
+function resetReworkTimeSettingWhenMappingModified(preJiraColumnsValue: string[], state: ISavedMetricsSettingState) {
+  const boardingMapping = getSortedAndDeduplicationBoardingMapping(state.cycleTimeSettings).filter(
+    (item) => item !== METRICS_CONSTANTS.cycleTimeEmptyStr,
+  );
+  if (state.firstTimeRoadMetricData || _.isEqual(preJiraColumnsValue, boardingMapping)) {
+    return;
+  }
+  state.importedData.reworkTimesSettings = {
+    reworkState: null,
+    excludeStates: [],
+  };
+}
 
 export const metricsSlice = createSlice({
   name: 'metrics',
@@ -264,6 +357,7 @@ export const metricsSlice = createSlice({
         leadTime,
         assigneeFilter,
         pipelineCrews,
+        reworkTimesSettings,
       } = action.payload;
       state.importedData.importedCrews = crews || state.importedData.importedCrews;
       state.importedData.importedPipelineCrews = pipelineCrews || state.importedData.importedPipelineCrews;
@@ -276,16 +370,20 @@ export const metricsSlice = createSlice({
       state.importedData.importedClassification = classification || state.importedData.importedClassification;
       state.importedData.importedDeployment = deployment || leadTime || state.importedData.importedDeployment;
       state.importedData.importedAdvancedSettings = advancedSettings || state.importedData.importedAdvancedSettings;
+      state.importedData.reworkTimesSettings = reworkTimesSettings || state.importedData.reworkTimesSettings;
     },
 
     updateMetricsState: (state, action) => {
       const { targetFields, users, jiraColumns, isProjectCreated, ignoredTargetFields } = action.payload;
       const { importedCrews, importedClassification, importedCycleTime, importedDoneStatus, importedAssigneeFilter } =
         state.importedData;
-      state.users = isProjectCreated ? users : setSelectUsers(users, importedCrews);
-      state.targetFields = isProjectCreated
-        ? targetFields
-        : setSelectTargetFields(targetFields, importedClassification);
+      const preJiraColumnsValue = getSortedAndDeduplicationBoardingMapping(state.cycleTimeSettings).filter(
+        (item) => item !== METRICS_CONSTANTS.cycleTimeEmptyStr,
+      );
+      state.users = isProjectCreated
+        ? setCreateSelectUsers(state, users)
+        : setImportSelectUsers(state, users, importedCrews);
+      state.targetFields = setSelectTargetFields(state, targetFields, isProjectCreated);
 
       if (!isProjectCreated && importedCycleTime?.importedCycleTimeSettings?.length > 0) {
         const importedCycleTimeSettingsKeys = importedCycleTime.importedCycleTimeSettings.flatMap((obj) =>
@@ -338,13 +436,13 @@ export const metricsSlice = createSlice({
       } else {
         state.classificationWarningMessage = null;
       }
-
       if (jiraColumns) {
         state.cycleTimeSettings =
           state.cycleTimeSettingsType === CYCLE_TIME_SETTINGS_TYPES.BY_COLUMN
-            ? getCycleTimeSettingsByColumn(jiraColumns, importedCycleTime.importedCycleTimeSettings)
-            : getCycleTimeSettingsByStatus(jiraColumns, importedCycleTime.importedCycleTimeSettings);
+            ? getCycleTimeSettingsByColumn(state, jiraColumns)
+            : getCycleTimeSettingsByStatus(state, jiraColumns);
       }
+      resetReworkTimeSettingWhenMappingModified(preJiraColumnsValue, state);
 
       if (!isProjectCreated && importedDoneStatus.length > 0) {
         const selectedDoneStatus = getSelectedDoneStatus(jiraColumns, state.cycleTimeSettings, importedDoneStatus);
@@ -378,8 +476,9 @@ export const metricsSlice = createSlice({
         pipelineList
           .filter((pipeline: pipeline) => pipeline.orgName.toLowerCase() === organization.toLowerCase())
           .map((item: pipeline) => item.name);
-      const getValidPipelines = (pipelines: IPipelineConfig[]) =>
-        pipelines.length > 0
+      const getValidPipelines = (pipelines: IPipelineConfig[]) => {
+        const hasPipeline = pipelines.filter(({ id }) => id !== undefined).length;
+        return pipelines.length && hasPipeline
           ? pipelines.map(({ id, organization, pipelineName, step, branches }) => ({
               id,
               organization: orgNames.find((i) => (i as string).toLowerCase() === organization.toLowerCase()) || '',
@@ -388,7 +487,7 @@ export const metricsSlice = createSlice({
               branches: branches || [],
             }))
           : [{ id: 0, organization: '', pipelineName: '', step: '', branches: [] }];
-
+      };
       const createPipelineWarning = ({ id, organization, pipelineName }: IPipelineConfig) => {
         const orgWarning = orgNames.some((i) => (i as string).toLowerCase() === organization.toLowerCase())
           ? null
@@ -407,7 +506,8 @@ export const metricsSlice = createSlice({
       };
 
       const getPipelinesWarningMessage = (pipelines: IPipelineConfig[]) => {
-        if (!pipelines.length || isProjectCreated) {
+        const hasPipeline = pipelines.filter(({ id }) => id !== undefined).length;
+        if (!pipelines.length || isProjectCreated || !hasPipeline) {
           return [];
         }
         return pipelines.map((pipeline) => createPipelineWarning(pipeline));
@@ -415,6 +515,7 @@ export const metricsSlice = createSlice({
 
       const deploymentSettings =
         state.deploymentFrequencySettings.length > 0 ? state.deploymentFrequencySettings : importedDeployment;
+
       state.deploymentFrequencySettings = getValidPipelines(deploymentSettings);
       state.deploymentWarningMessage = getPipelinesWarningMessage(deploymentSettings);
     },
@@ -483,6 +584,14 @@ export const metricsSlice = createSlice({
     updateAdvancedSettings: (state, action) => {
       state.importedData.importedAdvancedSettings = action.payload;
     },
+
+    updateReworkTimesSettings: (state, action) => {
+      state.importedData.reworkTimesSettings = action.payload;
+    },
+
+    updateFirstTimeRoadMetricsBoardData: (state, action) => {
+      state.firstTimeRoadMetricData = action.payload;
+    },
   },
 });
 
@@ -507,12 +616,15 @@ export const {
   updateAdvancedSettings,
   updateShouldGetBoardConfig,
   updateShouldGetPipelineConfig,
+  updateReworkTimesSettings,
+  updateFirstTimeRoadMetricsBoardData,
 } = metricsSlice.actions;
 
 export const selectShouldGetBoardConfig = (state: RootState) => state.metrics.shouldGetBoardConfig;
 export const selectShouldGetPipelineConfig = (state: RootState) => state.metrics.shouldGetPipeLineConfig;
 
 export const selectDeploymentFrequencySettings = (state: RootState) => state.metrics.deploymentFrequencySettings;
+export const selectReworkTimesSettings = (state: RootState) => state.metrics.importedData.reworkTimesSettings;
 
 export const selectCycleTimeSettings = (state: RootState) => state.metrics.cycleTimeSettings;
 export const selectMetricsContent = (state: RootState) => state.metrics;

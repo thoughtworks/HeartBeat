@@ -6,11 +6,13 @@ import {
 } from '@src/context/Metrics/metricsSlice';
 import PresentationForErrorCases from '@src/components/Metrics/MetricsStep/DeploymentFrequencySettings/PresentationForErrorCases';
 import { useMetricsStepValidationCheckContext } from '@src/hooks/useMetricsStepValidationCheckContext';
+import { deleteMetricsPipelineFormMeta, getErrorDetail } from '@src/context/meta/metaSlice';
 import { useGetPipelineToolInfoEffect } from '@src/hooks/useGetPipelineToolInfoEffect';
-import { MetricsSettingAddButton } from '@src/components/Common/MetricsSettingButton';
 import { MetricsSettingTitle } from '@src/components/Common/MetricsSettingTitle';
-import { deleteMetricsPipelineFormMeta } from '@src/context/meta/metaSlice';
+import { TokenAccessAlert } from '@src/containers/MetricsStep/TokenAccessAlert';
+import { StyledAlertWrapper } from '@src/containers/MetricsStep/style';
 import { selectPipelineCrews } from '@src/context/config/configSlice';
+import { AddButton } from '@src/components/Common/AddButtonOneLine';
 import { PipelineMetricSelection } from './PipelineMetricSelection';
 import { PIPELINE_SETTING_TYPES } from '@src/constants/resources';
 import { useAppDispatch, useAppSelector } from '@src/hooks';
@@ -25,6 +27,7 @@ export const DeploymentFrequencySettings = () => {
   const deploymentFrequencySettings = useAppSelector(selectDeploymentFrequencySettings);
   const { getDuplicatedPipeLineIds } = useMetricsStepValidationCheckContext();
   const pipelineCrews = useAppSelector(selectPipelineCrews);
+  const errorDetail = useAppSelector(getErrorDetail) as number;
 
   const handleAddPipeline = () => {
     dispatch(addADeploymentFrequencySetting());
@@ -47,6 +50,9 @@ export const DeploymentFrequencySettings = () => {
       ) : (
         <>
           <MetricsSettingTitle title={'Pipeline settings'} />
+          <StyledAlertWrapper>
+            <TokenAccessAlert errorDetail={errorDetail} />
+          </StyledAlertWrapper>
           {deploymentFrequencySettings.map((deploymentFrequencySetting) => (
             <PipelineMetricSelection
               isInfoLoading={isLoading}
@@ -61,7 +67,7 @@ export const DeploymentFrequencySettings = () => {
               )}
             />
           ))}
-          <MetricsSettingAddButton onAddPipeline={handleAddPipeline} />
+          <AddButton onClick={handleAddPipeline} text={'New Pipeline'} />
           {!isEmpty(pipelineCrews) && (
             <Crews
               options={pipelineCrews}

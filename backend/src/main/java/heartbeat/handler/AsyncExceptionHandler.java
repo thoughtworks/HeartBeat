@@ -16,14 +16,14 @@ import static heartbeat.handler.base.FIleType.ERROR;
 public class AsyncExceptionHandler extends AsyncDataBaseHandler {
 
 	public void put(String reportId, BaseException e) {
-		createFileByType(ERROR, reportId, new Gson().toJson(e));
+		createFileByType(ERROR, reportId, new Gson().toJson(new AsyncExceptionDTO(e)));
 	}
 
-	public BaseException get(String reportId) {
+	public AsyncExceptionDTO get(String reportId) {
 		return readFileByType(ERROR, reportId, AsyncExceptionDTO.class);
 	}
 
-	public BaseException remove(String reportId) {
+	public AsyncExceptionDTO remove(String reportId) {
 		return readAndRemoveFileByType(ERROR, reportId, AsyncExceptionDTO.class);
 	}
 

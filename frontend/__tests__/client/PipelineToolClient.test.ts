@@ -122,7 +122,7 @@ describe('PipelineToolClient', () => {
 
         const result = await pipelineToolClient.getInfo(MOCK_PIPELINE_VERIFY_REQUEST_PARAMS);
 
-        expect(result.code).toEqual('HB_TIMEOUT');
+        expect(result.code).toEqual('NETWORK_TIMEOUT');
         expect(result.data).toBeUndefined();
       });
 

@@ -1,10 +1,13 @@
-import { CALENDAR } from '@src/constants/resources';
+import { CALENDAR, REWORK_TIME_LIST } from '@src/constants/resources';
+import { IReworkConfig } from '@src/context/Metrics/metricsSlice';
 
 export interface OldFileConfig {
   projectName: string;
   metrics: string[];
-  startDate: string;
-  endDate: string;
+  dateRange: {
+    startDate: string;
+    endDate: string;
+  }[];
   considerHoliday: boolean;
   board?: {
     type?: string;
@@ -35,6 +38,7 @@ export interface OldFileConfig {
   deployment?: OldConfigSetting[];
   leadTime?: OldConfigSetting[];
   pipelineCrews?: string[];
+  reworkTimesSettings?: IReworkConfig;
 }
 
 interface OldConfigSetting {
@@ -57,7 +61,7 @@ export interface NewFileConfig {
   dateRange: {
     startDate: string;
     endDate: string;
-  };
+  }[];
   calendarType: string;
   metrics: string[];
   board?: {
@@ -87,14 +91,29 @@ export interface NewFileConfig {
   deployment?: NewConfigSetting[];
   leadTime?: NewConfigSetting[];
   pipelineCrews?: string[];
+  reworkTimesSettings?: IReworkConfig;
 }
+
+const filterExcludeReworkStatus = (reworkTimesSettings: IReworkConfig | undefined) => {
+  if (!reworkTimesSettings) return;
+  const reworkState = REWORK_TIME_LIST.includes(reworkTimesSettings?.reworkState as string)
+    ? reworkTimesSettings.reworkState
+    : null;
+  const excludeStates = reworkTimesSettings?.excludeStates.filter((value) => {
+    return REWORK_TIME_LIST.includes(value);
+  });
+  return {
+    reworkState,
+    excludeStates: reworkState ? excludeStates : [],
+  };
+};
+
 export const convertToNewFileConfig = (fileConfig: OldFileConfig | NewFileConfig): NewFileConfig => {
   if ('considerHoliday' in fileConfig) {
     const {
       projectName,
       metrics,
-      startDate,
-      endDate,
+      dateRange,
       considerHoliday,
       board,
       pipelineTool,
@@ -106,10 +125,11 @@ export const convertToNewFileConfig = (fileConfig: OldFileConfig | NewFileConfig
       classifications,
       deployment,
       pipelineCrews,
+      reworkTimesSettings,
     } = fileConfig;
     return {
       projectName,
-      dateRange: { startDate, endDate },
+      dateRange,
       calendarType: considerHoliday ? CALENDAR.CHINA : CALENDAR.REGULAR,
       metrics,
       board: {
@@ -133,6 +153,7 @@ export const convertToNewFileConfig = (fileConfig: OldFileConfig | NewFileConfig
       pipelineCrews,
       cycleTime,
       doneStatus,
+      reworkTimesSettings: filterExcludeReworkStatus(reworkTimesSettings),
       classification: classifications,
       deployment: deployment?.map((item, index) => ({
         id: index,
@@ -143,5 +164,5 @@ export const convertToNewFileConfig = (fileConfig: OldFileConfig | NewFileConfig
       })),
     };
   }
-  return fileConfig;
+  return { ...fileConfig, reworkTimesSettings: filterExcludeReworkStatus(fileConfig.reworkTimesSettings) };
 };

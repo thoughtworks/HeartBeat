@@ -16,7 +16,6 @@ import java.nio.file.StandardCopyOption;
 import java.util.Objects;
 import java.util.Optional;
 
-import static heartbeat.handler.base.FIleType.METRICS_DATA_COMPLETED;
 import static heartbeat.service.report.scheduler.DeleteExpireCSVScheduler.EXPORT_CSV_VALIDITY_TIME;
 
 @Log4j2
@@ -28,7 +27,7 @@ public class AsyncDataBaseHandler {
 
 	public static final String SUFFIX_LOCK = ".lock";
 
-	public static final String FILENAME_SPLIT_PATTERN = "\\s*\\-|\\.\\s*";
+	public static final String FILENAME_SPLIT_PATTERN = "[-.]";
 
 	protected synchronized void createFileByType(FIleType fIleType, String fileId, String json) {
 		createDirToConvertData(fIleType);
@@ -95,12 +94,12 @@ public class AsyncDataBaseHandler {
 			}
 			catch (IOException | RuntimeException e) {
 				log.info("Failed remove file type: {}, file name: {}", fIleType.getType(), fileId);
-				throw new GenerateReportException("Failed remove " + fIleType.getType() + " file " + fileId);
+				throw new GenerateReportException("Failed remove " + fIleType.getType() + " file with file:" + fileId);
 			}
 		}
 		else {
 			throw new GenerateReportException(
-					"Failed remove " + fIleType.getType() + " file " + fileId + "invalid file name");
+					"Failed read and remove " + fIleType.getType() + " file with file name :" + fileId);
 		}
 	}
 
@@ -126,8 +125,7 @@ public class AsyncDataBaseHandler {
 			}
 		}
 		else {
-			throw new GenerateReportException(
-					"Failed locked " + fIleType.getType() + " file " + fileId + "invalid file name");
+			throw new GenerateReportException("Failed locked " + fIleType.getType() + " lock :" + fileId);
 		}
 	}
 
@@ -149,8 +147,7 @@ public class AsyncDataBaseHandler {
 			}
 		}
 		else {
-			throw new GenerateReportException(
-					"Failed unlocked " + fIleType.getType() + " file " + fileId + "invalid file name");
+			throw new GenerateReportException("Failed unlocked " + fIleType.getType() + " lock :" + fileId);
 		}
 	}
 

@@ -1,4 +1,5 @@
 import Button, { ButtonProps } from '@mui/material/Button';
+import { InputProps } from '@mui/material';
 import Stack from '@mui/material/Stack';
 import styled from '@emotion/styled';
 import { theme } from '@src/theme';
@@ -38,4 +39,8 @@ export const StyledStack = styled(Stack)<ButtonProps>({
 export const HomeGuideContainer = styled.div({
   height: '44rem',
   position: 'relative',
+});
+
+export const ImportFileWrapper = styled.input<InputProps>({
+  display: 'none',
 });

@@ -1,6 +1,6 @@
-import { InternalServerException } from '@src/exceptions/InternalServerException';
 import { ERROR_MESSAGE_TIME_DURATION, MOCK_GET_STEPS_PARAMS } from '../fixtures';
 import { useGetMetricsStepsEffect } from '@src/hooks/useGetMetricsStepsEffect';
+import { InternalServerError } from '@src/errors/InternalServerError';
 import { metricsClient } from '@src/clients/MetricsClient';
 import { act, renderHook } from '@testing-library/react';
 import { HttpStatusCode } from 'axios';
@@ -32,7 +32,7 @@ describe('use get steps effect', () => {
 
   it('should set error message when get steps response status 500', async () => {
     metricsClient.getSteps = jest.fn().mockImplementation(() => {
-      throw new InternalServerException('error message', HttpStatusCode.InternalServerError, 'fake description');
+      throw new InternalServerError('error message', HttpStatusCode.InternalServerError, 'fake description');
     });
     const { result } = renderHook(() => useGetMetricsStepsEffect());
 

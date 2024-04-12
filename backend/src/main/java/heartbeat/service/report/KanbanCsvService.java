@@ -11,11 +11,12 @@ import heartbeat.client.dto.board.jira.JiraCardField;
 import heartbeat.client.dto.board.jira.Status;
 import heartbeat.controller.board.dto.request.BoardRequestParam;
 import heartbeat.controller.board.dto.request.CardStepsEnum;
+import heartbeat.controller.board.dto.request.RequestJiraBoardColumnSetting;
 import heartbeat.controller.board.dto.response.CardCollection;
+import heartbeat.controller.board.dto.response.CycleTimeInfo;
 import heartbeat.controller.board.dto.response.JiraCardDTO;
 import heartbeat.controller.board.dto.response.JiraColumnDTO;
 import heartbeat.controller.board.dto.response.TargetField;
-import heartbeat.controller.board.dto.response.CycleTimeInfo;
 import heartbeat.controller.report.dto.request.GenerateReportRequest;
 import heartbeat.controller.report.dto.request.JiraBoardSetting;
 import heartbeat.controller.report.dto.response.BoardCSVConfig;
@@ -24,17 +25,24 @@ import heartbeat.service.board.jira.JiraColumnResult;
 import heartbeat.service.board.jira.JiraService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static heartbeat.controller.board.dto.request.CardStepsEnum.BLOCK;
+import static heartbeat.controller.board.dto.request.CardStepsEnum.FLAG;
+import static heartbeat.controller.board.dto.request.CardStepsEnum.reworkJudgmentMap;
 
 @Service
 @Log4j2
@@ -69,62 +77,51 @@ public class KanbanCsvService {
 				boardRequestParam.getToken());
 		JiraColumnResult jiraColumns = jiraService.getJiraColumns(boardRequestParam, baseUrl, jiraBoardConfigDTO);
 
+		List<String> reworkFromStates = null;
+		CardStepsEnum reworkState = null;
+		if (request.getJiraBoardSetting().getReworkTimesSetting() != null) {
+			reworkState = request.getJiraBoardSetting().getReworkTimesSetting().getEnumReworkState();
+			List<CardStepsEnum> reworkExcludeStates = request.getJiraBoardSetting()
+				.getReworkTimesSetting()
+				.getEnumExcludeStates();
+			Set<CardStepsEnum> mappedColumns = request.getJiraBoardSetting()
+				.getBoardColumns()
+				.stream()
+				.map(RequestJiraBoardColumnSetting::getValue)
+				.map(CardStepsEnum::fromValue)
+				.collect(Collectors.toSet());
+			if (Boolean.TRUE.equals(request.getJiraBoardSetting().getTreatFlagCardAsBlock())) {
+				mappedColumns.add(BLOCK);
+			}
+			reworkFromStates = reworkJudgmentMap.get(reworkState)
+				.stream()
+				.sorted()
+				.filter(state -> !reworkExcludeStates.contains(state))
+				.filter(mappedColumns::contains)
+				.map(CardStepsEnum::getAlias)
+				.toList();
+
+		}
 		this.generateCSVForBoard(realDoneCardCollection.getJiraCardDTOList(),
 				nonDoneCardCollection.getJiraCardDTOList(), jiraColumns.getJiraColumnResponse(),
-				jiraBoardSetting.getTargetFields(), request.getCsvTimeStamp());
+				jiraBoardSetting.getTargetFields(), request.getCsvTimeStamp(), reworkState, reworkFromStates);
 	}
 
 	private void generateCSVForBoard(List<JiraCardDTO> allDoneCards, List<JiraCardDTO> nonDoneCards,
-			List<JiraColumnDTO> jiraColumns, List<TargetField> targetFields, String csvTimeStamp) {
+			List<JiraColumnDTO> jiraColumns, List<TargetField> targetFields, String csvTimeStamp,
+			CardStepsEnum reworkState, List<String> reworkFromStates) {
 		List<JiraCardDTO> cardDTOList = new ArrayList<>();
 		List<JiraCardDTO> emptyJiraCard = List.of(JiraCardDTO.builder().build());
 
 		if (allDoneCards != null) {
-			if (allDoneCards.size() > 1) {
-				allDoneCards.sort((preCard, nextCard) -> {
-					Status preStatus = preCard.getBaseInfo().getFields().getStatus();
-					Status nextStatus = nextCard.getBaseInfo().getFields().getStatus();
-					Long preDateTimeStamp = preCard.getBaseInfo().getFields().getLastStatusChangeDate();
-					Long nextDateTimeStamp = nextCard.getBaseInfo().getFields().getLastStatusChangeDate();
-					if (Objects.isNull(preStatus) || Objects.isNull(nextStatus) || Objects.isNull(preDateTimeStamp)
-							|| Objects.isNull(nextDateTimeStamp)) {
-						return jiraColumns.size() + 1;
-					}
-					else {
-						return nextDateTimeStamp.compareTo(preDateTimeStamp);
-					}
-				});
-			}
+			sortAllDoneCardsByTime(allDoneCards, jiraColumns);
 			cardDTOList.addAll(allDoneCards);
 		}
 
 		cardDTOList.addAll(emptyJiraCard);
 
 		if (nonDoneCards != null) {
-			if (nonDoneCards.size() > 1) {
-				nonDoneCards.sort((preCard, nextCard) -> {
-					Status preStatus = preCard.getBaseInfo().getFields().getStatus();
-					Status nextStatus = nextCard.getBaseInfo().getFields().getStatus();
-					Long preDateTimeStamp = preCard.getBaseInfo().getFields().getLastStatusChangeDate();
-					Long nextDateTimeStamp = nextCard.getBaseInfo().getFields().getLastStatusChangeDate();
-					if (Objects.isNull(preStatus) || Objects.isNull(nextStatus)) {
-						return jiraColumns.size() + 1;
-					}
-					else {
-						String preCardStatusName = preStatus.getName();
-						String nextCardStatusName = nextStatus.getName();
-						int statusIndexComparison = getIndexForStatus(jiraColumns, nextCardStatusName)
-								- getIndexForStatus(jiraColumns, preCardStatusName);
-
-						if (statusIndexComparison == 0 && Objects.nonNull(preDateTimeStamp)
-								&& Objects.nonNull(nextDateTimeStamp)) {
-							return nextDateTimeStamp.compareTo(preDateTimeStamp);
-						}
-
-						return statusIndexComparison;
-					}
-				});
-			}
+			sortNonDoneCardsByStatusAndTime(nonDoneCards, jiraColumns);
 			cardDTOList.addAll(nonDoneCards);
 		}
 
@@ -154,12 +151,82 @@ public class KanbanCsvService {
 				.label("OriginCycleTime: " + column)
 				.value("cycleTimeFlat." + column)
 				.build()));
+		// rework times fields
+		List<BoardCSVConfig> reworkFields = new ArrayList<>();
+		if (reworkState != null) {
+			reworkFields.add(BoardCSVConfig.builder()
+				.label("Rework: total - " + reworkState.getAlias())
+				.value("totalReworkTimes")
+				.build());
+			reworkFields.addAll(reworkFromStates.stream()
+				.map(state -> BoardCSVConfig.builder()
+					.label("Rework: from " + state)
+					.value("reworkTimesFlat." + state)
+					.build())
+				.toList());
+		}
 
 		cardDTOList.forEach(card -> {
 			card.setCycleTimeFlat(card.buildCycleTimeFlatObject());
 			card.setTotalCycleTimeDivideStoryPoints(card.getTotalCycleTimeDivideStoryPoints());
+			card.setReworkTimesFlat(card.buildReworkTimesFlatObject());
 		});
-		csvFileGenerator.convertBoardDataToCSV(cardDTOList, allBoardFields, newExtraFields, csvTimeStamp);
+		String[][] sheet = BoardSheetGenerator.builder()
+			.csvFileGenerator(csvFileGenerator)
+			.jiraCardDTOList(cardDTOList)
+			.fields(allBoardFields)
+			.extraFields(newExtraFields)
+			.reworkFields(reworkFields)
+			.build()
+			.mergeBaseInfoAndCycleTimeSheet()
+			.mergeReworkTimesSheet()
+			.generate();
+		csvFileGenerator.writeDataToCSV(csvTimeStamp, sheet);
+	}
+
+	private void sortNonDoneCardsByStatusAndTime(List<JiraCardDTO> nonDoneCards, List<JiraColumnDTO> jiraColumns) {
+		if (nonDoneCards.size() > 1) {
+			nonDoneCards.sort((preCard, nextCard) -> {
+				Status preStatus = preCard.getBaseInfo().getFields().getStatus();
+				Status nextStatus = nextCard.getBaseInfo().getFields().getStatus();
+				Long preDateTimeStamp = preCard.getBaseInfo().getFields().getLastStatusChangeDate();
+				Long nextDateTimeStamp = nextCard.getBaseInfo().getFields().getLastStatusChangeDate();
+				if (Objects.isNull(preStatus) || Objects.isNull(nextStatus)) {
+					return jiraColumns.size() + 1;
+				}
+				else {
+					String preCardStatusName = preStatus.getName();
+					String nextCardStatusName = nextStatus.getName();
+					int statusIndexComparison = getIndexForStatus(jiraColumns, nextCardStatusName)
+							- getIndexForStatus(jiraColumns, preCardStatusName);
+
+					if (statusIndexComparison == 0 && Objects.nonNull(preDateTimeStamp)
+							&& Objects.nonNull(nextDateTimeStamp)) {
+						return nextDateTimeStamp.compareTo(preDateTimeStamp);
+					}
+
+					return statusIndexComparison;
+				}
+			});
+		}
+	}
+
+	private void sortAllDoneCardsByTime(List<JiraCardDTO> allDoneCards, List<JiraColumnDTO> jiraColumns) {
+		if (allDoneCards.size() > 1) {
+			allDoneCards.sort((preCard, nextCard) -> {
+				Status preStatus = preCard.getBaseInfo().getFields().getStatus();
+				Status nextStatus = nextCard.getBaseInfo().getFields().getStatus();
+				Long preDateTimeStamp = preCard.getBaseInfo().getFields().getLastStatusChangeDate();
+				Long nextDateTimeStamp = nextCard.getBaseInfo().getFields().getLastStatusChangeDate();
+				if (Objects.isNull(preStatus) || Objects.isNull(nextStatus) || Objects.isNull(preDateTimeStamp)
+						|| Objects.isNull(nextDateTimeStamp)) {
+					return jiraColumns.size() + 1;
+				}
+				else {
+					return nextDateTimeStamp.compareTo(preDateTimeStamp);
+				}
+			});
+		}
 	}
 
 	private List<BoardCSVConfig> insertExtraFieldsAfterCycleTime(final List<BoardCSVConfig> extraFields,
@@ -255,7 +322,7 @@ public class KanbanCsvService {
 	private List<BoardCSVConfig> getFixedBoardFields() {
 		return Arrays.stream(BoardCSVConfigEnum.values())
 			.map(field -> BoardCSVConfig.builder().label(field.getLabel()).value(field.getValue()).build())
-			.collect(Collectors.toList());
+			.toList();
 	}
 
 	private String getFieldDisplayValue(Object object) {

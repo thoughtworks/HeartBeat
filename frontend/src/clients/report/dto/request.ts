@@ -1,8 +1,6 @@
-export interface ReportRequestDTO {
-  metrics: string[];
-  startTime: string | null;
-  endTime: string | null;
-  considerHoliday: boolean;
+import { METRIC_TYPES } from '@src/constants/commons';
+
+export interface ReportRequestDTO extends IBasicReportRequestDTO {
   buildKiteSetting?: {
     type: string;
     token: string;
@@ -32,24 +30,14 @@ export interface ReportRequestDTO {
       branches: string[];
     }[];
   };
-  jiraBoardSetting?: {
-    token: string;
-    type: string;
-    site: string;
-    projectKey: string;
-    boardId: string;
-    boardColumns: { name: string; value: string }[];
-    treatFlagCardAsBlock: boolean;
-    users: string[];
-    assigneeFilter: string;
-    targetFields: { key: string; name: string; flag: boolean }[];
-    overrideFields: { key: string; name: string; flag: boolean }[];
-    doneColumn: string[];
-  };
-  csvTimeStamp?: number;
 }
 
-export interface BoardReportRequestDTO {
+interface ReworkSettingsRequest {
+  reworkState?: string | null;
+  excludedStates?: string[];
+}
+
+export interface IBasicReportRequestDTO {
   considerHoliday: boolean;
   startTime: string | null;
   endTime: string | null;
@@ -66,9 +54,11 @@ export interface BoardReportRequestDTO {
     assigneeFilter: string;
     targetFields: { key: string; name: string; flag: boolean }[];
     overrideFields: { key: string; name: string; flag: boolean }[];
+    reworkTimesSetting: ReworkSettingsRequest | null;
     doneColumn: string[];
   };
   csvTimeStamp?: number;
+  metricTypes: METRIC_TYPES[];
 }
 
 export interface CSVReportRequestDTO {

@@ -51,4 +51,8 @@ public interface JiraFeignClient {
 	@GetMapping(path = "rest/api/2/project/{projectIdOrKey}")
 	JiraBoardProject getProject(URI baseUrl, @PathVariable String projectIdOrKey, @RequestHeader String authorization);
 
+	// This api is solely used for site url checking
+	@GetMapping(path = "/rest/api/3/dashboard")
+	String getDashboard(URI baseUrl, @RequestHeader String authorization);
+
 }

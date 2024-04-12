@@ -19,4 +19,8 @@ public class CardCollection {
 
 	private List<JiraCardDTO> jiraCardDTOList;
 
+	private int reworkCardNumber;
+
+	private double reworkRatio;
+
 }

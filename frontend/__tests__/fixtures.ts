@@ -1,6 +1,7 @@
 import { CSVReportRequestDTO, ReportRequestDTO } from '@src/clients/report/dto/request';
 import { ReportResponseDTO } from '@src/clients/report/dto/response';
 import { SOURCE_CONTROL_TYPES } from '@src/constants/resources';
+import { METRIC_TYPES } from '@src/constants/commons';
 
 export const PROJECT_NAME = 'Heartbeat';
 export const PROJECT_DESCRIPTION =
@@ -14,6 +15,8 @@ export const CHINA_CALENDAR = 'Calendar with Chinese Holiday';
 
 export const NEXT = 'Next';
 
+export const CONFIRM = 'Confirm';
+
 export const LOADING = 'loading';
 
 export const PREVIOUS = 'Previous';
@@ -22,11 +25,15 @@ export const SAVE = 'Save';
 
 export const SHOW_MORE = 'show more >';
 
+export const RETRY = 'retry';
+
 export const BACK = 'Back';
 
 export const BOARD_METRICS_TITLE = 'Board Metrics';
 
 export const VERIFY = 'Verify';
+
+export const REVERIFY = 'Reverify';
 
 export const RESET = 'Reset';
 
@@ -49,19 +56,21 @@ export const REQUIRED_DATA_LIST = [
   'Velocity',
   'Cycle time',
   'Classification',
+  'Rework times',
   'Lead time for changes',
   'Deployment frequency',
-  'Change failure rate',
-  'Mean time to recovery',
+  'Dev change failure rate',
+  'Dev mean time to recovery',
 ];
 export const ALL = 'All';
 export const VELOCITY = 'Velocity';
 export const CYCLE_TIME = 'Cycle time';
 export const CLASSIFICATION = 'Classification';
+export const REWORK_TIMES = 'Rework times';
 export const LEAD_TIME_FOR_CHANGES = 'Lead time for changes';
 export const DEPLOYMENT_FREQUENCY = 'Deployment frequency';
-export const CHANGE_FAILURE_RATE = 'Change failure rate';
-export const MEAN_TIME_TO_RECOVERY = 'Mean time to recovery';
+export const DEV_CHANGE_FAILURE_RATE = 'Dev change failure rate';
+export const DEV_MEAN_TIME_TO_RECOVERY = 'Dev mean time to recovery';
 export const REQUIRED_DATA = 'Required metrics';
 export const TEST_PROJECT_NAME = 'test project Name';
 export const ERROR_MESSAGE_COLOR = 'color: #d32f2f';
@@ -76,7 +85,6 @@ export const BOARD_TYPES = {
 
 export const PIPELINE_TOOL_TYPES = {
   BUILD_KITE: 'BuildKite',
-  GO_CD: 'GoCD',
 };
 
 export enum CONFIG_TITLE {
@@ -205,16 +213,23 @@ export const MOCK_GENERATE_REPORT_REQUEST_PARAMS: ReportRequestDTO = {
     targetFields: [{ key: 'parent', name: 'Parent', flag: false }],
     doneColumn: ['Done'],
     overrideFields: [{ key: '123', name: 'Story Point', flag: true }],
+    reworkTimesSetting: {
+      reworkState: 'Done',
+      excludedStates: [],
+    },
   },
+  metricTypes: [METRIC_TYPES.BOARD, METRIC_TYPES.DORA],
 };
 
 export const IMPORTED_NEW_CONFIG_FIXTURE = {
   projectName: 'ConfigFileForImporting',
   metrics: ['Velocity', 'Cycle time', 'Classification', 'Lead time for changes'],
-  dateRange: {
-    startDate: '2023-03-16T00:00:00.000+08:00',
-    endDate: '2023-03-30T23:59:59.999+08:00',
-  },
+  dateRange: [
+    {
+      startDate: '2023-03-16T00:00:00.000+08:00',
+      endDate: '2023-03-30T23:59:59.999+08:00',
+    },
+  ],
   calendarType: 'Calendar with Chinese Holiday',
   board: {
     type: 'Jira',
@@ -247,13 +262,17 @@ export const IMPORTED_NEW_CONFIG_FIXTURE = {
       },
     ],
   },
+  reworkTimesSettings: {
+    reworkState: null,
+    excludeStates: [],
+  },
 };
 
 export const MOCK_EXPORT_CSV_REQUEST_PARAMS: CSVReportRequestDTO = {
   csvTimeStamp: 1613664000000,
   dataType: 'pipeline',
-  startDate: IMPORTED_NEW_CONFIG_FIXTURE.dateRange.startDate,
-  endDate: IMPORTED_NEW_CONFIG_FIXTURE.dateRange.endDate,
+  startDate: IMPORTED_NEW_CONFIG_FIXTURE.dateRange[0].startDate,
+  endDate: IMPORTED_NEW_CONFIG_FIXTURE.dateRange[0].endDate,
 };
 
 export const MOCK_IMPORT_FILE = {
@@ -266,10 +285,12 @@ export const MOCK_IMPORT_FILE = {
   metrics: [],
 };
 
-export const MOCK_DATE_RANGE = {
-  startDate: '2023-04-04T00:00:00+08:00',
-  endDate: '2023-04-18T00:00:00+08:00',
-};
+export const MOCK_DATE_RANGE = [
+  {
+    startDate: '2023-04-04T00:00:00+08:00',
+    endDate: '2023-04-18T00:00:00+08:00',
+  },
+];
 
 export const MOCK_JIRA_VERIFY_RESPONSE = {
   jiraColumns: [
@@ -333,7 +354,7 @@ export const MOCK_GITHUB_VERIFY_RESPONSE = {
 };
 
 export const CREWS_SETTING = 'Crew settings';
-export const CYCLE_TIME_SETTINGS = 'Cycle time settings';
+export const BOARD_MAPPING = 'Board mappings';
 export const CLASSIFICATION_SETTING = 'Classification setting';
 export const REAL_DONE = 'Real done setting';
 export const DEPLOYMENT_FREQUENCY_SETTINGS = 'Pipeline settings';
@@ -417,12 +438,12 @@ export const MOCK_REPORT_RESPONSE: ReportResponseDTO = {
       },
     ],
   },
-  meanTimeToRecovery: {
-    avgMeanTimeToRecovery: {
+  devMeanTimeToRecovery: {
+    avgDevMeanTimeToRecovery: {
       name: 'Average',
       timeToRecovery: 14396108.777777776,
     },
-    meanTimeRecoveryPipelines: [
+    devMeanTimeToRecoveryOfPipelines: [
       {
         name: 'Heartbeat',
         step: ':react: Build Frontend',
@@ -439,6 +460,21 @@ export const MOCK_REPORT_RESPONSE: ReportResponseDTO = {
         timeToRecovery: 27628149.333333332,
       },
     ],
+  },
+  rework: {
+    totalReworkTimes: 111,
+    reworkState: 'In Dev',
+    fromAnalysis: null,
+    fromInDev: null,
+    fromBlock: 111,
+    fromFlag: null,
+    fromReview: 111,
+    fromWaitingForTesting: 111,
+    fromTesting: null,
+    fromDone: 111,
+    totalReworkCards: 111,
+    reworkCardsRatio: 0.8888,
+    throughput: 1110,
   },
   leadTimeForChanges: {
     leadTimeForChangesOfPipelines: [
@@ -457,14 +493,14 @@ export const MOCK_REPORT_RESPONSE: ReportResponseDTO = {
       totalDelayTime: 5989.22,
     },
   },
-  changeFailureRate: {
-    avgChangeFailureRate: {
+  devChangeFailureRate: {
+    avgDevChangeFailureRate: {
       name: 'Average',
       totalTimes: 6,
       totalFailedTimes: 0,
       failureRate: 0.0,
     },
-    changeFailureRateOfPipelines: [
+    devChangeFailureRateOfPipelines: [
       {
         name: 'fs-platform-onboarding',
         step: ' :shipit: deploy to PROD',
@@ -488,7 +524,9 @@ export const MOCK_REPORT_RESPONSE: ReportResponseDTO = {
   exportValidityTime: 1800000,
   boardMetricsCompleted: true,
   doraMetricsCompleted: true,
+  overallMetricsCompleted: true,
   allMetricsCompleted: true,
+  isSuccessfulCreateCsvFile: true,
   reportMetricsError,
 };
 
@@ -497,162 +535,21 @@ export const MOCK_RETRIEVE_REPORT_RESPONSE = {
   interval: 10,
 };
 
-export const EXPECTED_REPORT_VALUES = {
-  velocityList: [
-    { id: 0, name: 'Velocity(Story Point)', valueList: [{ value: 20 }] },
-    { id: 1, name: 'Throughput(Cards Count)', valueList: [{ value: 14 }] },
-  ],
-  cycleTimeList: [
-    {
-      id: 0,
-      name: 'Average cycle time',
-      valueList: [
-        { value: 21.18, unit: '(Days/SP)' },
-        { value: '30.26', unit: '(Days/Card)' },
-      ],
-    },
-    {
-      id: 1,
-      name: 'Total development time / Total cycle time',
-      valueList: [{ value: '57.25%' }],
-    },
-    {
-      id: 2,
-      name: 'Average development time',
-      valueList: [
-        { value: '12.13', unit: '(Days/SP)' },
-        { value: '17.32', unit: '(Days/Card)' },
-      ],
-    },
-  ],
-  classification: [
-    {
-      id: 0,
-      name: 'FS Work Type',
-      valuesList: [{ name: 'Feature Work - Planned', value: '57.14%' }],
-    },
-  ],
-  deploymentFrequencyList: [
-    {
-      id: 0,
-      name: 'fs-platform-onboarding/ :shipit: deploy to PROD',
-      valuesList: [
-        {
-          name: 'Deployment frequency',
-          value: '0.30',
-        },
-      ],
-    },
-    {
-      id: 1,
-      name: 'Average',
-      valuesList: [
-        {
-          name: 'Deployment frequency',
-          value: '0.40',
-        },
-      ],
-    },
-  ],
-  meanTimeToRecoveryList: [
-    {
-      id: 0,
-      name: 'Heartbeat/:react: Build Frontend',
-      valuesList: [
-        {
-          name: 'Mean Time To Recovery',
-          value: '4.32',
-        },
-      ],
-    },
-    {
-      id: 1,
-      name: 'Heartbeat/:cloudformation: Deploy infra',
-      valuesList: [
-        {
-          name: 'Mean Time To Recovery',
-          value: '0.00',
-        },
-      ],
-    },
-    {
-      id: 2,
-      name: 'Heartbeat/:rocket: Run e2e',
-      valuesList: [
-        {
-          name: 'Mean Time To Recovery',
-          value: '7.67',
-        },
-      ],
-    },
-    {
-      id: 3,
-      name: 'Average',
-      valuesList: [
-        {
-          name: 'Mean Time To Recovery',
-          value: '4.00',
-        },
-      ],
-    },
-  ],
-  leadTimeForChangesList: [
-    {
-      id: 0,
-      name: 'fs-platform-payment-selector/RECORD RELEASE TO PROD',
-      valuesList: [
-        { name: PR_LEAD_TIME, value: '45.04' },
-        { name: PIPELINE_LEAD_TIME, value: '43.12' },
-        { name: TOTAL_DELAY_TIME, value: '88.17' },
-      ],
-    },
-    {
-      id: 1,
-      name: 'Average',
-      valuesList: [
-        { name: PR_LEAD_TIME, value: '60.79' },
-        { name: PIPELINE_LEAD_TIME, value: '39.03' },
-        { name: TOTAL_DELAY_TIME, value: '99.82' },
-      ],
-    },
-  ],
-  changeFailureRateList: [
-    {
-      id: 0,
-      name: 'fs-platform-onboarding/ :shipit: deploy to PROD',
-      valuesList: [
-        {
-          name: 'Failure rate',
-          value: '0.00%(0/2)',
-        },
-      ],
-    },
-    {
-      id: 1,
-      name: 'Average',
-      valuesList: [
-        {
-          name: 'Failure rate',
-          value: '0.00%(0/6)',
-        },
-      ],
-    },
-  ],
-  exportValidityTimeMin: 30,
-};
-
 export const EMPTY_REPORT_VALUES: ReportResponseDTO = {
   velocity: null,
   classificationList: null,
   cycleTime: null,
+  rework: null,
   deploymentFrequency: null,
-  changeFailureRate: null,
-  meanTimeToRecovery: null,
+  devChangeFailureRate: null,
+  devMeanTimeToRecovery: null,
   leadTimeForChanges: null,
   exportValidityTime: null,
   boardMetricsCompleted: false,
   doraMetricsCompleted: false,
+  overallMetricsCompleted: false,
   allMetricsCompleted: false,
+  isSuccessfulCreateCsvFile: false,
   reportMetricsError,
 };
 
@@ -662,8 +559,7 @@ export const CONFIG_PAGE_VERIFY_IMPORT_ERROR_MESSAGE =
 export const BASIC_IMPORTED_OLD_CONFIG_FIXTURE = {
   projectName: 'ConfigFileForImporting',
   metrics: ['Velocity', 'Cycle time', 'Classification', 'Lead time for changes'],
-  startDate: '2023-03-16T00:00:00.000+08:00',
-  endDate: '2023-03-30T23:59:59.999+08:00',
+  dateRange: [{ startDate: '2023-03-16T00:00:00.000+08:00', endDate: '2023-03-30T23:59:59.999+08:00' }],
   board: {
     type: 'Classic Jira',
     verifyToken: 'mockVerifyToken',
@@ -701,6 +597,10 @@ export const BASIC_IMPORTED_OLD_CONFIG_FIXTURE = {
       orgId: 'Thoughtworks-Heartbeat',
     },
   ],
+  reworkTimesSettings: {
+    reworkState: null,
+    excludeStates: [],
+  },
 };
 
 export const ERROR_MESSAGE_TIME_DURATION = 4000;
@@ -737,9 +637,39 @@ export const CYCLE_TIME_SETTINGS_SECTION = 'Cycle time settings section';
 export const REAL_DONE_SETTING_SECTION = 'Real done setting section';
 export const SELECT_CONSIDER_AS_DONE_MESSAGE = 'Must select which you want to consider as Done';
 export const MOCK_SOURCE_CONTROL_VERIFY_ERROR_CASE_TEXT = 'Token is incorrect!';
+export const MOCK_PIPELINE_VERIFY_UNAUTHORIZED_TEXT = 'Token is incorrect!';
+export const MOCK_PIPELINE_VERIFY_FORBIDDEN_ERROR_TEXT =
+  'Forbidden request, please change your token with correct access permission.';
 
 export const FAKE_TOKEN = 'fake-token';
 
 export const FAKE_PIPELINE_TOKEN = 'bkua_mockTokenMockTokenMockTokenMockToken1234';
 
 export const ADVANCED_SETTINGS_TITLE = 'Advanced settings';
+
+export const REWORK_SETTINGS_TITLE = 'Rework times settings';
+export const REWORK_TO_WHICH_STATE = 'Rework to which state';
+export const REWORK_EXCLUDE_WHICH_STATE = 'Exclude which states (optional)';
+
+export const DEFAULT_REWORK_SETTINGS = {
+  reworkState: null,
+  excludeStates: [],
+};
+
+export const REWORK_DIALOG_NOTE = {
+  REWORK_EXPLANATION:
+    'Rework to which state means going back to the selected state from any state after the selected state.',
+  REWORK_NOTE:
+    'The selectable states in the "rework to which state" drop-down list are the heartbeat states you matched in the board mapping.',
+  EXCLUDE_EXPLANATION:
+    'Exclude which states means going back to the 1st selected state from any state after the 1st selected state except the selected state.',
+  EXCLUDE_NOTE:
+    'The selectable states in the "Exclude which states(optional)" drop-down list are all states after the state selected in "rework to which state".',
+};
+
+export const TIME_RANGE_ERROR_MESSAGE = {
+  START_DATE_INVALID_TEXT: 'Start date is invalid',
+  END_DATE_INVALID_TEXT: 'End date is invalid',
+};
+
+export const COMMON_TIME_FORMAT = 'YYYY-MM-DDTHH:mm:ss.SSSZ';

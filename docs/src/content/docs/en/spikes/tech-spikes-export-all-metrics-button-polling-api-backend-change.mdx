@@ -1,0 +1,62 @@
+---
+title: Tech solution of all metrics export button problems for ADM-822
+description: Tech solution of all metrics export button problems for ADM-822
+---
+
+## Background
+The front-end uses the allMetricsCompleted field of the back-end polling interface to determine whether the board and dora metric have been generated to determine whether the export metric button can be clicked. The backend's field judgment logic is determined based on the boardMetricsCompleted and doraMetricsCompleted fields, and the null value in both is ignored and compared. However, the following situations may lead to incorrect judgment, resulting in incorrect button display.
+See ADM-822 to get more information.
+
+### Wrong case 1
+The user selected board and dora. When generating indicators in the last step, if an error occurs and the board or dora request is not sent, you need to retry one or both of them. If only one of the requests (such as board) is successfully executed, That will cause boardMetricsCompleted=true, doraMetricsCompleted=null, ignoring the null value comparison, causing allMetricsCompleted to be true. At this time, the export metric button can be clicked, but the expectation is that the button cannot be clicked.
+
+### original fix in backend
+The backend modification is to change the way of allMetricsCompleted field judgment and change the null value to false by default before comparison. But the following problems will occur(wrong case 2).
+
+### Wrong case 2
+The user only selects board or dora. Finally, the indicator is generated, but the export metric button cannot be clicked. The reason is that the front end still determines whether it is clickable based on the allMetricsCompleted field. For example, if only board is selected, it will result in boardMetricsCompleted=true, doraMetricsCompleted=null, allMetricsCompleted=false
+
+### Temporary fix
+Frontend: The front end does not use allMetricsCompleted to determine the button status. Instead, it depends on whether borad or dora is currently selected. Look at boardMetricsComplete and doraMetricsCompleted to determine the button status.
+Backend: code revert
+
+### Frontend legacy issues
+The original problem of ADM-822 reappears
+
+### Backend legacy issues
+The logic of the allMetricsCompleted field in the backend remains the same, and there is still the problem of wrong case 1
+There is logic to generate all metric csv in the polling interface, which will be triggered when allMetricsCompleted=true, which will cause incomplete csv to be repeatedly generated in the polling interface in wrong case 1, affecting performance.
+The allMetricsCompleted field in the backend is currently no longer used by the frontend. Consider how to handle this field.
+
+### Why can’t it be purely back-end repaired?
+The backend cannot distinguish between the above wrong case 1 and wrong case 2. The backend cannot sense whether the user has selected board and dora, or only one of board and dora.
+
+
+## Expect
+1. When the user selects either board or dora and succeeds, the export metrics button can be displayed as clickable
+2. When the user selects both board and dora, the export metrics button can be displayed as expected by ADM-822
+
+
+## Solutions
+
+### For backend
+
+#### Modify generateReport Api
+1. Previous api is POST /reports/```{metricType}```, but now need to modify as POST /reports and add new Parameter metricTypesList in requestBody.
+2. Then write the metricTypes on file.
+3. According to the metricTypes to generate boardCsv or DoraCsv then we start another thread to check if boardCsv and DoraCsv are generated. if check pass, then we can generate metricCsv.
+
+#### Modify polling Api(POST /reports/```{reportId}```)
+1. to use metricTypesFile to check if allMetricsCompleted index is true by use the combination of boardMetricsCompleted index and doraMetricsCompleted index or just one of these two index. 
+2. remove generate metricCsv file in this api logic.
+
+#### Add a new scheduled task
+1. Delete expire metricTypes file regularly.
+
+### For Frontend
+
+1. revert to previous version's logic, still use allMetricsCompleted index to decide whether the button can click or not.
+2. modify the url and requestBody of generateReport Api。
+
+
+

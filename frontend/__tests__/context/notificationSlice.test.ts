@@ -50,7 +50,7 @@ describe('notification reducer', () => {
           { id: '2', title: 'Notification', message: 'Notification Message 2' },
         ],
       },
-      closeAllNotifications,
+      closeAllNotifications(),
     );
 
     expect(stepper.notifications).toEqual([]);

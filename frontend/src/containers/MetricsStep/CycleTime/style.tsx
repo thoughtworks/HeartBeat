@@ -1,5 +1,5 @@
-import { Checkbox, Tooltip } from '@mui/material';
 import { styled } from '@mui/material/styles';
+import { Checkbox } from '@mui/material';
 
 export const FlagCardItem = styled('div')({
   display: 'flex',
@@ -27,11 +27,3 @@ export const TitleAndTooltipContainer = styled('div')({
 export const TooltipContainer = styled('div')({
   marginLeft: '0.25rem',
 });
-
-/* eslint-disable @typescript-eslint/no-explicit-any */
-export const StyledTooltip = styled(({ className, ...props }: any) => (
-  <Tooltip placement='right-start' {...props} componentsProps={{ tooltip: { className: className } }} />
-))(`
-    max-width: 31.25rem;
-    margin-top: 0.625rem;
-`);

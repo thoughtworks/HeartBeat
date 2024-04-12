@@ -40,13 +40,9 @@ describe('Report Card', () => {
     return render(
       <Provider store={store}>
         <DoraMetrics
-          isBackFromDetail={false}
-          startDate={''}
-          endDate={''}
           startToRequestDoraData={mockHandleRetry}
           onShowDetail={onShowDetail}
           doraReport={mockData}
-          csvTimeStamp={1705014731}
           errorMessage={''}
         />
       </Provider>,
@@ -57,7 +53,7 @@ describe('Report Card', () => {
     setup();
 
     expect(screen.getByText(RETRY)).toBeInTheDocument();
-    expect(screen.getByText('Failed to get Github info, status: 404')).toBeInTheDocument();
+    expect(screen.getByText('Failed to get GitHub info, status: 404')).toBeInTheDocument();
 
     await userEvent.click(screen.getByText(RETRY));
 

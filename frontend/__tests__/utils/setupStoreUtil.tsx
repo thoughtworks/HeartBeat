@@ -14,6 +14,5 @@ export const setupStore = () => {
       [metaSlice.name]: metaSlice.reducer,
       [notificationSlice.name]: notificationSlice.reducer,
     },
-    middleware: [],
   });
 };

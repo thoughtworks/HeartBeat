@@ -1,6 +1,4 @@
 import {
-  CALENDAR,
-  DORA_METRICS,
   DORA_METRICS_MAPPING,
   METRICS_SUBTITLE,
   METRICS_TITLE,
@@ -12,46 +10,27 @@ import {
   SOURCE_CONTROL_METRICS,
 } from '@src/constants/resources';
 import { StyledMetricsSection, StyledShowMore, StyledTitleWrapper } from '@src/containers/ReportStep/DoraMetrics/style';
-import { IPipelineConfig, selectMetricsContent } from '@src/context/Metrics/metricsSlice';
 import { formatMillisecondsToHours, formatMinToHours } from '@src/utils/util';
 import { ReportTitle } from '@src/components/Common/ReportGrid/ReportTitle';
 import { ReportResponseDTO } from '@src/clients/report/dto/response';
-import { ReportRequestDTO } from '@src/clients/report/dto/request';
 import { StyledSpacing } from '@src/containers/ReportStep/style';
 import { ReportGrid } from '@src/components/Common/ReportGrid';
 import { selectConfig } from '@src/context/config/configSlice';
 import { StyledRetry } from '../BoardMetrics/BoardMetrics';
-import { Nullable } from '@src/utils/types';
 import { useAppSelector } from '@src/hooks';
-import React, { useEffect } from 'react';
-import dayjs from 'dayjs';
+import React from 'react';
 import _ from 'lodash';
 
 interface DoraMetricsProps {
-  startToRequestDoraData: (request: ReportRequestDTO) => void;
+  startToRequestDoraData: () => void;
   onShowDetail: () => void;
   doraReport?: ReportResponseDTO;
-  csvTimeStamp: number;
-  startDate: Nullable<string>;
-  endDate: Nullable<string>;
-  isBackFromDetail: boolean;
   errorMessage: string;
 }
 
-const DoraMetrics = ({
-  isBackFromDetail,
-  startToRequestDoraData,
-  onShowDetail,
-  doraReport,
-  csvTimeStamp,
-  startDate,
-  endDate,
-  errorMessage,
-}: DoraMetricsProps) => {
+const DoraMetrics = ({ startToRequestDoraData, onShowDetail, doraReport, errorMessage }: DoraMetricsProps) => {
   const configData = useAppSelector(selectConfig);
-  const { pipelineTool, sourceControl } = configData;
-  const { metrics, calendarType } = configData.basic;
-  const { pipelineCrews, deploymentFrequencySettings, leadTimeForChanges } = useAppSelector(selectMetricsContent);
+  const { metrics } = configData.basic;
   const shouldShowSourceControl = metrics.includes(REQUIRED_DATA.LEAD_TIME_FOR_CHANGES);
   const sourceControlMetricsCompleted = metrics
     .filter((metric) => SOURCE_CONTROL_METRICS.includes(metric))
@@ -61,50 +40,6 @@ const DoraMetrics = ({
     .filter((metric) => PIPELINE_METRICS.includes(metric))
     .map((metric) => DORA_METRICS_MAPPING[metric])
     .every((metric) => doraReport?.[metric] ?? false);
-
-  const getDoraReportRequestBody = (): ReportRequestDTO => {
-    const doraMetrics = metrics.filter((metric) => DORA_METRICS.includes(metric));
-
-    return {
-      metrics: doraMetrics,
-      startTime: dayjs(startDate).valueOf().toString(),
-      endTime: dayjs(endDate).valueOf().toString(),
-      considerHoliday: calendarType === CALENDAR.CHINA,
-      buildKiteSetting: {
-        pipelineCrews,
-        ...pipelineTool.config,
-        deploymentEnvList: getPipelineConfig(deploymentFrequencySettings),
-      },
-      codebaseSetting: {
-        type: sourceControl.config.type,
-        token: sourceControl.config.token,
-        leadTime: getPipelineConfig(leadTimeForChanges),
-      },
-      csvTimeStamp: csvTimeStamp,
-    };
-  };
-
-  const getPipelineConfig = (pipelineConfigs: IPipelineConfig[]) =>
-    pipelineConfigs.flatMap(({ organization, pipelineName, step, branches }) => {
-      const pipelineConfigFromPipelineList = configData.pipelineTool.verifiedResponse.pipelineList.find(
-        (pipeline) => pipeline.name === pipelineName && pipeline.orgName === organization,
-      );
-      if (pipelineConfigFromPipelineList) {
-        const { orgName, orgId, name, id, repository } = pipelineConfigFromPipelineList;
-        return [
-          {
-            orgId,
-            orgName,
-            id,
-            name,
-            step,
-            repository,
-            branches,
-          },
-        ];
-      }
-      return [];
-    });
 
   const getSourceControlItems = () => {
     const leadTimeForChanges = doraReport?.leadTimeForChanges;
@@ -131,8 +66,8 @@ const DoraMetrics = ({
 
   const getPipelineItems = () => {
     const deploymentFrequency = doraReport?.deploymentFrequency;
-    const meanTimeToRecovery = doraReport?.meanTimeToRecovery;
-    const changeFailureRate = doraReport?.changeFailureRate;
+    const devMeanTimeToRecovery = doraReport?.devMeanTimeToRecovery;
+    const devChangeFailureRate = doraReport?.devChangeFailureRate;
 
     const deploymentFrequencyList = metrics.includes(REQUIRED_DATA.DEPLOYMENT_FREQUENCY)
       ? [
@@ -148,28 +83,28 @@ const DoraMetrics = ({
         ]
       : [];
 
-    const meanTimeToRecoveryList = metrics.includes(REQUIRED_DATA.MEAN_TIME_TO_RECOVERY)
+    const devMeanTimeToRecoveryList = metrics.includes(REQUIRED_DATA.DEV_MEAN_TIME_TO_RECOVERY)
       ? [
           {
-            title: METRICS_TITLE.MEAN_TIME_TO_RECOVERY,
-            items: meanTimeToRecovery && [
+            title: METRICS_TITLE.DEV_MEAN_TIME_TO_RECOVERY,
+            items: devMeanTimeToRecovery && [
               {
-                value: formatMillisecondsToHours(meanTimeToRecovery.avgMeanTimeToRecovery.timeToRecovery),
-                subtitle: METRICS_SUBTITLE.MEAN_TIME_TO_RECOVERY_HOURS,
+                value: formatMillisecondsToHours(devMeanTimeToRecovery.avgDevMeanTimeToRecovery.timeToRecovery),
+                subtitle: METRICS_SUBTITLE.DEV_MEAN_TIME_TO_RECOVERY_HOURS,
               },
             ],
           },
         ]
       : [];
 
-    const changeFailureRateList = metrics.includes(REQUIRED_DATA.CHANGE_FAILURE_RATE)
+    const devChangeFailureRateList = metrics.includes(REQUIRED_DATA.DEV_CHANGE_FAILURE_RATE)
       ? [
           {
-            title: METRICS_TITLE.CHANGE_FAILURE_RATE,
-            items: changeFailureRate && [
+            title: METRICS_TITLE.DEV_CHANGE_FAILURE_RATE,
+            items: devChangeFailureRate && [
               {
-                value: changeFailureRate.avgChangeFailureRate.failureRate * 100,
-                extraValue: `% (${changeFailureRate.avgChangeFailureRate.totalFailedTimes}/${changeFailureRate.avgChangeFailureRate.totalTimes})`,
+                value: devChangeFailureRate.avgDevChangeFailureRate.failureRate * 100,
+                extraValue: `% (${devChangeFailureRate.avgDevChangeFailureRate.totalFailedTimes}/${devChangeFailureRate.avgDevChangeFailureRate.totalTimes})`,
                 subtitle: METRICS_SUBTITLE.FAILURE_RATE,
               },
             ],
@@ -177,7 +112,7 @@ const DoraMetrics = ({
         ]
       : [];
 
-    return [...deploymentFrequencyList, ...changeFailureRateList, ...meanTimeToRecoveryList];
+    return [...deploymentFrequencyList, ...devChangeFailureRateList, ...devMeanTimeToRecoveryList];
   };
 
   const getErrorMessage4BuildKite = () =>
@@ -191,7 +126,7 @@ const DoraMetrics = ({
 
   const getErrorMessage4Github = () =>
     _.get(doraReport, ['reportMetricsError', 'sourceControlMetricsError'])
-      ? `Failed to get Github info, status: ${_.get(doraReport, [
+      ? `Failed to get GitHub info, status: ${_.get(doraReport, [
           'reportMetricsError',
           'sourceControlMetricsError',
           'status',
@@ -205,13 +140,8 @@ const DoraMetrics = ({
   };
 
   const handleRetry = () => {
-    startToRequestDoraData(getDoraReportRequestBody());
+    startToRequestDoraData();
   };
-
-  useEffect(() => {
-    !isBackFromDetail && startToRequestDoraData(getDoraReportRequestBody());
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   return (
     <>

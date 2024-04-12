@@ -7,6 +7,7 @@
 /out-tsc
 /logs
 /app
+/stubs/logs/*
 frontend/cypress/
 # Only exists if Bazel was run
 /bazel-out
@@ -51,3 +52,4 @@ volume
 csv
 
 gitleaks-report.json
+*.sbom.spdx.json

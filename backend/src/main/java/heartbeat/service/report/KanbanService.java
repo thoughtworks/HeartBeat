@@ -17,12 +17,9 @@ public class KanbanService {
 
 	private final JiraService jiraService;
 
-	private final KanbanCsvService kanbanCsvService;
-
 	public FetchedData.CardCollectionInfo fetchDataFromKanban(GenerateReportRequest request) {
 		CardCollection nonDoneCardCollection = fetchNonDoneCardCollection(request);
 		CardCollection realDoneCardCollection = fetchRealDoneCardCollection(request);
-		kanbanCsvService.generateCsvInfo(request, realDoneCardCollection, nonDoneCardCollection);
 
 		return FetchedData.CardCollectionInfo.builder()
 			.realDoneCardCollection(realDoneCardCollection)
@@ -34,7 +31,7 @@ public class KanbanService {
 		JiraBoardSetting jiraBoardSetting = request.getJiraBoardSetting();
 		StoryPointsAndCycleTimeRequest storyPointsAndCycleTimeRequest = buildStoryPointsAndCycleTimeRequest(
 				jiraBoardSetting, request.getStartTime(), request.getEndTime());
-		return jiraService.getStoryPointsAndCycleTimeForDoneCards(storyPointsAndCycleTimeRequest,
+		return jiraService.getStoryPointsAndCycleTimeAndReworkInfoForDoneCards(storyPointsAndCycleTimeRequest,
 				jiraBoardSetting.getBoardColumns(), jiraBoardSetting.getUsers(), jiraBoardSetting.getAssigneeFilter());
 	}
 
@@ -60,6 +57,7 @@ public class KanbanService {
 			.targetFields(jiraBoardSetting.getTargetFields())
 			.overrideFields(jiraBoardSetting.getOverrideFields())
 			.treatFlagCardAsBlock(jiraBoardSetting.getTreatFlagCardAsBlock())
+			.reworkTimesSetting(jiraBoardSetting.getReworkTimesSetting())
 			.build();
 	}
 

@@ -112,52 +112,22 @@ Resources:
           - Effect: Allow
             Action: sts:AssumeRoleWithWebIdentity
             Principal:
-              Federated: !If
-                - CreateOIDCProvider
-                - !Ref GithubOidc
-                - !Ref OIDCProviderArn
+              Federated: !Ref GithubOidc
             Condition:
               StringEquals:
                 token.actions.githubusercontent.com:aud: !Ref OIDCAudience
               StringLike:
-                token.actions.githubusercontent.com:sub: !Sub repo:${GitHubOrg}/${RepositoryName}:*
+                token.actions.githubusercontent.com:sub: !Sub repo:${GitHubOrg}/${RepositoryName}:ref:refs/heads/main
       Policies:
-        - PolicyName: IAMAccess
-          PolicyDocument:
-            Version: "2012-10-17"
-            Statement:
-              - Action:
-                  - iam:GetRole
-                Effect: Allow
-                Resource: "*"
         - PolicyName: GitHubAccess
           PolicyDocument:
             Version: "2012-10-17"
             Statement:
               - Action:
                   - ecr:GetAuthorizationToken
-                  - ecr:BatchCheckLayerAvailability
-                  - ecr:GetDownloadUrlForLayer
-                  - ecr:GetRepositoryPolicy
-                  - ecr:DescribeRepositories
-                  - ecr:ListImages
                   - ecr:BatchGetImage
-                  - ecr:CompleteLayerUpload
-                  - ecr:InitiateLayerUpload
-                  - ecr:PutImage
-                  - ecr:UploadLayerPart
-                  - cloudformation:CreateStack
-                  - cloudformation:CreateChangeSet
-                  - cloudformation:ListStacks
-                  - cloudformation:UpdateStack
-                  - cloudformation:DescribeStacks
-                  - cloudformation:DescribeStackResource
-                  - cloudformation:DescribeStackEvents
-                  - cloudformation:ValidateTemplate
-                  - cloudformation:DescribeChangeSet
-                  - cloudformation:ExecuteChangeSet
-                  - cloudformation:GetTemplateSummary
-                  - ec2:*
+                  - ecr:GetAuthorizationToken
+                  - ecr:GetDownloadUrlForLayer
                 Effect: Allow
                 Resource: "*"
   AWSBuildKiteStepsRole:
@@ -248,7 +218,7 @@ Resources:
             Effect: Allow
             Principal:
               AWS:
-                - "*"
+                - !Ref EC2Role
             Action:
               - ecr:GetDownloadUrlForLayer
               - ecr:BatchGetImage
@@ -287,7 +257,7 @@ Resources:
             Effect: Allow
             Principal:
               AWS:
-                - "*"
+                - !Ref EC2Role
             Action:
               - ecr:GetDownloadUrlForLayer
               - ecr:BatchGetImage
@@ -323,7 +293,6 @@ Resources:
         - !Ref EC2SSHSecurityGroup
         - !Ref EC2SSHSecurityGroupForBuildkite
         - !Ref EC2AppSecurityGroup
-        - !Ref EC2OldAppSecurityGroup
       IamInstanceProfile: !Ref EC2InstanceProfile
       KeyName: !Ref EC2KeyPair
       UserData:
@@ -456,18 +425,6 @@ Resources:
           ToPort: 22
           CidrIp: 13.214.134.0/24
 
-  EC2OldAppSecurityGroup:
-    Type: AWS::EC2::SecurityGroup
-    Properties:
-      GroupDescription: Enable access application
-      Tags:
-        - Key: "Name"
-          Value: "Old app port"
-      SecurityGroupIngress:
-        - IpProtocol: tcp
-          FromPort: 4325
-          ToPort: 4325
-          CidrIp: 0.0.0.0/0
   EC2AppSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:

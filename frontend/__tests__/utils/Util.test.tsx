@@ -1,16 +1,22 @@
 import {
+  convertCycleTimeSettings,
   exportToJsonFile,
   filterAndMapCycleTimeSettings,
   findCaseInsensitiveType,
+  formatDuplicatedNameWithSuffix,
   formatMillisecondsToHours,
   formatMinToHours,
+  getDisabledOptions,
   getJiraBoardToken,
   getRealDoneStatus,
+  getSortedAndDeduplicationBoardingMapping,
+  sortDateRanges,
+  sortDisabledOptions,
   transformToCleanedBuildKiteEmoji,
-  formatDuplicatedNameWithSuffix,
 } from '@src/utils/util';
 import { CleanedBuildKiteEmoji, OriginBuildKiteEmoji } from '@src/constants/emojis/emoji';
-import { CYCLE_TIME_SETTINGS_TYPES } from '@src/constants/resources';
+import { CYCLE_TIME_SETTINGS_TYPES, METRICS_CONSTANTS } from '@src/constants/resources';
+import { ICycleTimeSetting, IPipelineConfig } from '@src/context/Metrics/metricsSlice';
 import { EMPTY_STRING } from '@src/constants/commons';
 import { PIPELINE_TOOL_TYPES } from '../fixtures';
 
@@ -45,6 +51,71 @@ describe('transformToCleanedBuildKiteEmoji function', () => {
   });
 });
 
+describe('getDisabledOptions function', () => {
+  it('should return true when option is includes', () => {
+    const mockDeploymentFrequencySettings: IPipelineConfig[] = [
+      { id: 0, organization: '', pipelineName: 'mock 1', step: '', branches: [] },
+      { id: 1, organization: '', pipelineName: 'mock 2', step: '', branches: [] },
+    ];
+
+    const mockOption: string = 'mock 1';
+
+    const result = getDisabledOptions(mockDeploymentFrequencySettings, mockOption);
+
+    expect(result).toBeTruthy();
+  });
+
+  it('should return true when option is not includes', () => {
+    const mockDeploymentFrequencySettings: IPipelineConfig[] = [
+      { id: 0, organization: '', pipelineName: 'mock 1', step: '', branches: [] },
+      { id: 1, organization: '', pipelineName: 'mock 2', step: '', branches: [] },
+    ];
+
+    const mockOption: string = 'mock 3';
+
+    const result = getDisabledOptions(mockDeploymentFrequencySettings, mockOption);
+
+    expect(result).toBeFalsy();
+  });
+});
+
+describe('sortDisabledOptions function', () => {
+  it('should sort the mock3 is first when mock1 & mock2 is selected', () => {
+    const mockDeploymentFrequencySettings: IPipelineConfig[] = [
+      { id: 0, organization: '', pipelineName: 'mock1', step: '', branches: [] },
+      { id: 1, organization: '', pipelineName: 'mock2', step: '', branches: [] },
+    ];
+
+    const mockOptions = ['mock1', 'mock2', 'mock3'];
+
+    const result = sortDisabledOptions(mockDeploymentFrequencySettings, mockOptions);
+
+    expect(result).toEqual(['mock3', 'mock1', 'mock2']);
+  });
+
+  it('should not sort when deploymentFrequencySettings is empty', () => {
+    const mockDeploymentFrequencySettings: IPipelineConfig[] = [];
+
+    const mockOptions = ['mock1', 'mock2', 'mock3'];
+
+    const result = sortDisabledOptions(mockDeploymentFrequencySettings, mockOptions);
+
+    expect(result).toEqual(['mock1', 'mock2', 'mock3']);
+  });
+
+  it('should as is when selected option is last', () => {
+    const mockDeploymentFrequencySettings: IPipelineConfig[] = [
+      { id: 0, organization: '', pipelineName: 'mock3', step: '', branches: [] },
+    ];
+
+    const mockOptions = ['mock1', 'mock2', 'mock3'];
+
+    const result = sortDisabledOptions(mockDeploymentFrequencySettings, mockOptions);
+
+    expect(result).toEqual(['mock1', 'mock2', 'mock3']);
+  });
+});
+
 describe('getJiraToken function', () => {
   it('should return an valid string when token is not empty string', () => {
     const email = 'test@example.com';
@@ -73,23 +144,10 @@ describe('findCaseInsensitiveType function', () => {
     expect(value).toBe(PIPELINE_TOOL_TYPES.BUILD_KITE);
   });
 
-  it('Should return "GoCD" when passing a type given case sensitive input GoCD', () => {
-    const selectedValue = 'GoCD';
-    const value = findCaseInsensitiveType(Object.values(PIPELINE_TOOL_TYPES), selectedValue);
-    expect(value).toBe(PIPELINE_TOOL_TYPES.GO_CD);
-  });
-
-  it('Should return "GoCD" when passing a type given case insensitive input Gocd', () => {
-    const selectedValue = 'Gocd';
-    const value = findCaseInsensitiveType(Object.values(PIPELINE_TOOL_TYPES), selectedValue);
-    expect(value).toBe(PIPELINE_TOOL_TYPES.GO_CD);
-  });
-
   it('Should return "_BuildKite" when passing a type given the value mismatches with PIPELINE_TOOL_TYPES', () => {
     const selectedValue = '_BuildKite';
     const value = findCaseInsensitiveType(Object.values(PIPELINE_TOOL_TYPES), selectedValue);
     expect(value).not.toBe(PIPELINE_TOOL_TYPES.BUILD_KITE);
-    expect(value).not.toBe(PIPELINE_TOOL_TYPES.GO_CD);
     expect(value).toBe(selectedValue);
   });
 
@@ -200,5 +258,174 @@ describe('formatDuplicatedNameWithSuffix function', () => {
       { flag: false, key: 'custom_field10061', name: `${duplicatedName}-2` },
     ];
     expect(result).toStrictEqual(expectResult);
+  });
+});
+
+describe('getSortedAndDeduplicationBoardingMapping function', () => {
+  it('should sorted and deduplication boarding mapping', () => {
+    const boardingMapping: ICycleTimeSetting[] = [
+      METRICS_CONSTANTS.cycleTimeEmptyStr,
+      METRICS_CONSTANTS.analysisValue,
+      METRICS_CONSTANTS.testingValue,
+      METRICS_CONSTANTS.doneValue,
+      METRICS_CONSTANTS.todoValue,
+      METRICS_CONSTANTS.cycleTimeEmptyStr,
+      METRICS_CONSTANTS.blockValue,
+      METRICS_CONSTANTS.inDevValue,
+      METRICS_CONSTANTS.reviewValue,
+      METRICS_CONSTANTS.waitingValue,
+      METRICS_CONSTANTS.reviewValue,
+    ].map((value) => ({
+      value: value,
+      status: '',
+      column: '',
+    }));
+    const expectResult = [
+      METRICS_CONSTANTS.cycleTimeEmptyStr,
+      METRICS_CONSTANTS.todoValue,
+      METRICS_CONSTANTS.analysisValue,
+      METRICS_CONSTANTS.inDevValue,
+      METRICS_CONSTANTS.blockValue,
+      METRICS_CONSTANTS.reviewValue,
+      METRICS_CONSTANTS.waitingValue,
+      METRICS_CONSTANTS.testingValue,
+      METRICS_CONSTANTS.doneValue,
+    ];
+    const result = getSortedAndDeduplicationBoardingMapping(boardingMapping);
+    expect(result).toStrictEqual(expectResult);
+  });
+});
+
+describe('convertCycleTimeSettings function', () => {
+  const mockCycleTime = [
+    {
+      column: 'TODO',
+      status: 'TODO',
+      value: 'To do',
+    },
+    {
+      column: 'Doing',
+      status: 'DOING',
+      value: 'In Dev',
+    },
+    {
+      column: 'Blocked',
+      status: 'BLOCKED',
+      value: 'Block',
+    },
+    {
+      column: 'Review',
+      status: 'REVIEW',
+      value: 'Review',
+    },
+    {
+      column: 'READY FOR TESTING',
+      status: 'WAIT FOR TEST',
+      value: 'Waiting for testing',
+    },
+    {
+      column: 'Testing',
+      status: 'TESTING',
+      value: 'Testing',
+    },
+    {
+      column: 'Done',
+      status: 'DONE',
+      value: '',
+    },
+  ];
+  it('convert cycle time settings correctly by status', () => {
+    const expectResult = [
+      {
+        TODO: 'To do',
+      },
+      {
+        DOING: 'In Dev',
+      },
+      {
+        BLOCKED: 'Block',
+      },
+      {
+        REVIEW: 'Review',
+      },
+      {
+        'WAIT FOR TEST': 'Waiting for testing',
+      },
+      {
+        TESTING: 'Testing',
+      },
+      {
+        DONE: '',
+      },
+    ];
+    const result = convertCycleTimeSettings(CYCLE_TIME_SETTINGS_TYPES.BY_STATUS, mockCycleTime);
+    expect(result).toStrictEqual(expectResult);
+  });
+  it('convert cycle time settings correctly by column', () => {
+    const expectResult = [
+      {
+        TODO: 'To do',
+      },
+      {
+        Doing: 'In Dev',
+      },
+      {
+        Blocked: 'Block',
+      },
+      {
+        Review: 'Review',
+      },
+      {
+        'READY FOR TESTING': 'Waiting for testing',
+      },
+      {
+        Testing: 'Testing',
+      },
+      {
+        Done: '----',
+      },
+    ];
+    const result = convertCycleTimeSettings(CYCLE_TIME_SETTINGS_TYPES.BY_COLUMN, mockCycleTime);
+    expect(result).toStrictEqual(expectResult);
+  });
+});
+
+describe('sortDateRanges function', () => {
+  const dateRanges = [
+    {
+      startDate: '2024-03-19T00:00:00.000+08:00',
+      endDate: '2024-03-21T23:59:59.999+08:00',
+    },
+    {
+      startDate: '2024-02-01T00:00:00.000+08:00',
+      endDate: '2024-02-14T23:59:59.999+08:00',
+    },
+    {
+      startDate: '2024-04-01T00:00:00.000+08:00',
+      endDate: '2024-04-08T23:59:59.999+08:00',
+    },
+  ];
+  const expectResult = [
+    {
+      startDate: '2024-04-01T00:00:00.000+08:00',
+      endDate: '2024-04-08T23:59:59.999+08:00',
+    },
+    {
+      startDate: '2024-03-19T00:00:00.000+08:00',
+      endDate: '2024-03-21T23:59:59.999+08:00',
+    },
+    {
+      startDate: '2024-02-01T00:00:00.000+08:00',
+      endDate: '2024-02-14T23:59:59.999+08:00',
+    },
+  ];
+  it('should descend dateRanges', () => {
+    const sortedDateRanges = sortDateRanges(dateRanges);
+    expect(sortedDateRanges).toStrictEqual(expectResult);
+  });
+
+  it('should ascend dateRanges', () => {
+    const sortedDateRanges = sortDateRanges(dateRanges, false);
+    expect(sortedDateRanges).toStrictEqual(expectResult.reverse());
   });
 });

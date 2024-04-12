@@ -21,21 +21,27 @@ public class ReportResponse {
 
 	private DeploymentFrequency deploymentFrequency;
 
-	private ChangeFailureRate changeFailureRate;
+	private DevChangeFailureRate devChangeFailureRate;
 
-	private MeanTimeToRecovery meanTimeToRecovery;
+	private DevMeanTimeToRecovery devMeanTimeToRecovery;
 
 	private LeadTimeForChanges leadTimeForChanges;
 
 	private ReportMetricsError reportMetricsError;
 
+	private Rework rework;
+
 	private Long exportValidityTime;
 
-	private boolean boardMetricsCompleted;
+	private Boolean boardMetricsCompleted;
 
-	private boolean doraMetricsCompleted;
+	private Boolean doraMetricsCompleted;
 
-	private boolean allMetricsCompleted;
+	private Boolean overallMetricsCompleted;
+
+	private Boolean allMetricsCompleted;
+
+	private Boolean isSuccessfulCreateCsvFile;
 
 	public ReportResponse(Long exportValidityTime) {
 		this.exportValidityTime = exportValidityTime;

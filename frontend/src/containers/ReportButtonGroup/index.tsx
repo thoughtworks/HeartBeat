@@ -21,7 +21,6 @@ interface ReportButtonGroupProps {
   isShowExportBoardButton: boolean;
   isShowExportPipelineButton: boolean;
   isShowExportMetrics: boolean;
-  allDataCompleted: boolean;
 }
 
 export const ReportButtonGroup = ({
@@ -35,7 +34,6 @@ export const ReportButtonGroup = ({
   isShowExportMetrics,
   isShowExportBoardButton,
   isShowExportPipelineButton,
-  allDataCompleted,
 }: ReportButtonGroupProps) => {
   const { fetchExportData, isExpired } = useExportCsvEffect();
 
@@ -77,7 +75,7 @@ export const ReportButtonGroup = ({
           </BackButton>
           {isShowExportMetrics && (
             <StyledExportButton
-              disabled={!(allDataCompleted && !isReportHasError)}
+              disabled={!(reportData?.overallMetricsCompleted && !isReportHasError)}
               onClick={() => handleDownload(REPORT_TYPES.METRICS, startDate, endDate)}
             >
               {COMMON_BUTTONS.EXPORT_METRIC_DATA}

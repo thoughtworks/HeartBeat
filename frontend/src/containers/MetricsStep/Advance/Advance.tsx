@@ -1,13 +1,13 @@
-import { ItemCheckbox, StyledTooltip, TitleAndTooltipContainer, TooltipContainer } from '../CycleTime/style';
 import { selectAdvancedSettings, updateAdvancedSettings } from '@src/context/Metrics/metricsSlice';
-import { AdvancedContainer, AdvancedForm, AdvancedTitleContainer } from './style';
-import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
-import { IconButton, Link, TextField } from '@mui/material';
+import { AdvancedContainer, AdvancedForm, AdvancedTitleContainer, AdvancedWrapper } from './style';
+import { ItemCheckbox, TitleAndTooltipContainer, TooltipContainer } from '../CycleTime/style';
+import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined';
+import { StyledLink } from '@src/containers/MetricsStep/style';
 import { useAppDispatch } from '@src/hooks/useAppDispatch';
 import { Field } from '@src/hooks/useVerifyBoardEffect';
-import { TIPS } from '@src/constants/resources';
 import { useAppSelector } from '@src/hooks';
-import { useState } from 'react';
+import { TextField } from '@mui/material';
+import React, { useState } from 'react';
 
 export const Advance = () => {
   const url = 'https://github.com/au-heartbeat/Heartbeat/blob/main/README.md#323-setting-advanced-setting';
@@ -72,35 +72,33 @@ export const Advance = () => {
         <TitleAndTooltipContainer>
           <AdvancedTitleContainer>Advanced settings</AdvancedTitleContainer>
           <TooltipContainer data-test-id={'tooltip'}>
-            <StyledTooltip arrow title={TIPS.ADVANCE} placement='top-start'>
-              <IconButton aria-label='info'>
-                <InfoOutlinedIcon />
-              </IconButton>
-            </StyledTooltip>
+            <StyledLink underline='none' href={url} target='_blank' rel='noopener'>
+              <HelpOutlineOutlinedIcon fontSize='small' />
+              <span>How to setup</span>
+            </StyledLink>
           </TooltipContainer>
         </TitleAndTooltipContainer>
       </AdvancedContainer>
 
       {open && (
         <>
-          <AdvancedForm>
-            {fields.map(({ key, col, value }, index) => (
-              <TextField
-                variant='standard'
-                sx={{ gridColumn: `span ${col}` }}
-                key={index}
-                label={key}
-                value={value}
-                data-testid={key}
-                inputProps={{ 'aria-label': `input ${key}` }}
-                onChange={(e) => updateField(key, e.target.value)}
-                placeholder={'Customized filed key'}
-              />
-            ))}
-          </AdvancedForm>
-          <Link underline='none' href={url} target='_blank' rel='noopener'>
-            How to setup
-          </Link>
+          <AdvancedWrapper>
+            <AdvancedForm>
+              {fields.map(({ key, col, value }, index) => (
+                <TextField
+                  variant='standard'
+                  sx={{ gridColumn: `span ${col}` }}
+                  key={index}
+                  label={key}
+                  value={value}
+                  data-testid={key}
+                  inputProps={{ 'aria-label': `input ${key}` }}
+                  onChange={(e) => updateField(key, e.target.value)}
+                  placeholder={'Customized filed key'}
+                />
+              ))}
+            </AdvancedForm>
+          </AdvancedWrapper>
         </>
       )}
     </>

@@ -12,10 +12,12 @@ import {
   MOCK_REPORT_RESPONSE,
   PREVIOUS,
   REQUIRED_DATA_LIST,
+  RETRY,
   SAVE,
   SHOW_MORE,
 } from '../../fixtures';
 import {
+  TDateRange,
   updateDateRange,
   updateJiraVerifyResponse,
   updateMetrics,
@@ -53,12 +55,11 @@ jest.mock('@src/hooks/useExportCsvEffect', () => ({
 
 jest.mock('@src/hooks/useGenerateReportEffect', () => ({
   useGenerateReportEffect: jest.fn().mockReturnValue({
-    startToRequestBoardData: jest.fn(),
+    startToRequestData: jest.fn(),
     startToRequestDoraData: jest.fn(),
     stopPollingReports: jest.fn(),
     isServerError: false,
     errorMessage: '',
-    allDataCompleted: true,
   }),
 }));
 
@@ -83,13 +84,12 @@ describe('Report Step', () => {
     resetReportHook();
   });
   const resetReportHook = async () => {
-    reportHook.current.startToRequestBoardData = jest.fn();
-    reportHook.current.startToRequestDoraData = jest.fn();
+    reportHook.current.startToRequestData = jest.fn();
     reportHook.current.stopPollingReports = jest.fn();
     reportHook.current.reportData = { ...MOCK_REPORT_RESPONSE, exportValidityTime: 30 };
   };
   const handleSaveMock = jest.fn();
-  const setup = (params: string[], dateRange?: { startDate: string; endDate: string }) => {
+  const setup = (params: string[], dateRange?: TDateRange) => {
     store = setupStore();
     dateRange && store.dispatch(updateDateRange(dateRange));
     store.dispatch(
@@ -143,8 +143,8 @@ describe('Report Step', () => {
       expect(screen.getByText('DORA Metrics')).toBeInTheDocument();
       expect(screen.getByText('Lead Time For Changes')).toBeInTheDocument();
       expect(screen.getByText('Deployment Frequency')).toBeInTheDocument();
-      expect(screen.getByText('Change Failure Rate')).toBeInTheDocument();
-      expect(screen.getByText('Mean Time To Recovery')).toBeInTheDocument();
+      expect(screen.getByText('Dev Change Failure Rate')).toBeInTheDocument();
+      expect(screen.getByText('Dev Mean Time To Recovery')).toBeInTheDocument();
     });
 
     it('should render loading page when report data is empty', () => {
@@ -152,7 +152,7 @@ describe('Report Step', () => {
 
       setup(REQUIRED_DATA_LIST);
 
-      expect(screen.getAllByTestId('loading-page')).toHaveLength(6);
+      expect(screen.getAllByTestId('loading-page')).toHaveLength(7);
     });
 
     it('should render detail page when metrics only select classification', () => {
@@ -182,7 +182,7 @@ describe('Report Step', () => {
     });
 
     it('should render the Lead Time For Change component with correct props', () => {
-      setup([REQUIRED_DATA_LIST[4]]);
+      setup([REQUIRED_DATA_LIST[5]]);
 
       expect(screen.getByText('60.79')).toBeInTheDocument();
       expect(screen.getByText('39.03')).toBeInTheDocument();
@@ -190,20 +190,20 @@ describe('Report Step', () => {
     });
 
     it('should render the Deployment frequency component with correct props', () => {
-      setup([REQUIRED_DATA_LIST[5]]);
+      setup([REQUIRED_DATA_LIST[6]]);
 
       expect(screen.getByText('0.40')).toBeInTheDocument();
     });
 
-    it('should render the Change failure rate component with correct props', () => {
-      setup([REQUIRED_DATA_LIST[6]]);
+    it('should render the Dev change failure rate component with correct props', () => {
+      setup([REQUIRED_DATA_LIST[7]]);
 
       expect(screen.getByText('0.00')).toBeInTheDocument();
       expect(screen.getByText('% (0/6)')).toBeInTheDocument();
     });
 
-    it('should render the Mean time to recovery component with correct props', () => {
-      setup([REQUIRED_DATA_LIST[7]]);
+    it('should render the Dev mean time to recovery component with correct props', () => {
+      setup([REQUIRED_DATA_LIST[8]]);
 
       expect(screen.getByText('4.00')).toBeInTheDocument();
     });
@@ -252,7 +252,7 @@ describe('Report Step', () => {
       jest.useRealTimers();
     });
 
-    it.each([[REQUIRED_DATA_LIST[1]], [REQUIRED_DATA_LIST[4]]])(
+    it.each([[REQUIRED_DATA_LIST[2]], [REQUIRED_DATA_LIST[5]]])(
       'should render detail page when clicking show more button given metric %s',
       async (requiredData) => {
         setup([requiredData], MOCK_DATE_RANGE);
@@ -266,7 +266,7 @@ describe('Report Step', () => {
       },
     );
 
-    it.each([[REQUIRED_DATA_LIST[1]], [REQUIRED_DATA_LIST[4]]])(
+    it.each([[REQUIRED_DATA_LIST[2]], [REQUIRED_DATA_LIST[5]]])(
       'should return report page when clicking back button in Breadcrumb in detail page given metric %s',
       async (requiredData) => {
         setup([requiredData]);
@@ -286,7 +286,7 @@ describe('Report Step', () => {
       },
     );
 
-    it.each([[REQUIRED_DATA_LIST[1]], [REQUIRED_DATA_LIST[4]]])(
+    it.each([[REQUIRED_DATA_LIST[2]], [REQUIRED_DATA_LIST[5]]])(
       'should return report page when clicking previous button in detail page given metric %s',
       async (requiredData) => {
         setup([requiredData]);
@@ -318,7 +318,7 @@ describe('Report Step', () => {
       expect(exportPipelineButton).not.toBeInTheDocument();
     });
 
-    it.each([[REQUIRED_DATA_LIST[4]], [REQUIRED_DATA_LIST[5]], [REQUIRED_DATA_LIST[6]], [REQUIRED_DATA_LIST[7]]])(
+    it.each([[REQUIRED_DATA_LIST[5]], [REQUIRED_DATA_LIST[6]], [REQUIRED_DATA_LIST[7]], [REQUIRED_DATA_LIST[8]]])(
       'should show export pipeline button when selecting %s',
       (requiredData) => {
         setup([requiredData]);
@@ -348,7 +348,7 @@ describe('Report Step', () => {
 
   describe('export board data', () => {
     it('should not show export board button when not selecting board metrics', () => {
-      const { queryByText } = setup([REQUIRED_DATA_LIST[4]]);
+      const { queryByText } = setup([REQUIRED_DATA_LIST[5]]);
 
       const exportPipelineButton = queryByText(EXPORT_BOARD_DATA);
 
@@ -509,7 +509,7 @@ describe('Report Step', () => {
       setup(REQUIRED_DATA_LIST);
 
       expect(addNotification).toBeCalledWith({
-        message: MESSAGE.FAILED_TO_GET_DATA('Github'),
+        message: MESSAGE.FAILED_TO_GET_DATA('GitHub'),
         type: 'error',
       });
     });
@@ -544,6 +544,28 @@ describe('Report Step', () => {
       expect(addNotification).toBeCalledWith({
         message: MESSAGE.FAILED_TO_REQUEST,
         type: 'error',
+      });
+    });
+
+    it('should retry startToRequestData when click the retry button in Board Metrics', async () => {
+      reportHook.current.generalError4Report = error;
+      setup(REQUIRED_DATA_LIST);
+
+      await userEvent.click(screen.getAllByText(RETRY)[0]);
+
+      await waitFor(() => {
+        expect(useGenerateReportEffect().startToRequestData).toHaveBeenCalledTimes(2);
+      });
+    });
+
+    it('should retry startToRequestData when click the retry button in Dora Metrics', async () => {
+      reportHook.current.generalError4Report = error;
+      setup(REQUIRED_DATA_LIST);
+
+      await userEvent.click(screen.getAllByText(RETRY)[1]);
+
+      await waitFor(() => {
+        expect(useGenerateReportEffect().startToRequestData).toHaveBeenCalledTimes(2);
       });
     });
   });

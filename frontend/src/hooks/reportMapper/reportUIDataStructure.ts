@@ -1,6 +1,8 @@
+import { ReactNode } from 'react';
+
 export interface ReportDataWithTwoColumns {
   id: number;
-  name: string;
+  name: string | ReactNode;
   valueList: ValueWithUnits[];
 }
 

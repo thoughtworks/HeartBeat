@@ -1,6 +1,8 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "semanticCommits": true,
+  "schedule": "* 20 * * 5",
+  "timezone": "Asia/Shanghai",
   "packageRules": [
     {
       "updateTypes": ["minor", "patch", "pin", "digest"],

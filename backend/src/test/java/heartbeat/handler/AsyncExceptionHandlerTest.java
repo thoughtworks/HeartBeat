@@ -1,8 +1,8 @@
 package heartbeat.handler;
 
-import heartbeat.exception.BaseException;
 import heartbeat.exception.GenerateReportException;
 import heartbeat.exception.UnauthorizedException;
+import heartbeat.handler.base.AsyncExceptionDTO;
 import heartbeat.util.IdUtil;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.AfterAll;
@@ -58,6 +58,24 @@ class AsyncExceptionHandlerTest {
 		String expireTime = Long.toString(fileId - 1900000L);
 		String unExpireFile = IdUtil.getBoardReportId(currentTime);
 		String expireFile = IdUtil.getBoardReportId(expireTime);
+		asyncExceptionHandler.put(unExpireFile, new UnauthorizedException(""));
+		asyncExceptionHandler.put(expireFile, new UnauthorizedException(""));
+
+		asyncExceptionHandler.deleteExpireExceptionFile(fileId, new File(APP_OUTPUT_ERROR));
+
+		assertNull(asyncExceptionHandler.get(expireFile));
+		assertNotNull(asyncExceptionHandler.get(unExpireFile));
+		deleteTestFile(unExpireFile);
+		assertNull(asyncExceptionHandler.get(unExpireFile));
+	}
+
+	@Test
+	void shouldDeleteAsyncExceptionTmpFile() {
+		long fileId = System.currentTimeMillis();
+		String currentTime = Long.toString(fileId);
+		String expireTime = Long.toString(fileId - 1900000L);
+		String unExpireFile = IdUtil.getBoardReportId(currentTime) + ".tmp";
+		String expireFile = IdUtil.getBoardReportId(expireTime) + ".tmp";
 		asyncExceptionHandler.put(unExpireFile, new UnauthorizedException(""));
 		asyncExceptionHandler.put(expireFile, new UnauthorizedException(""));
 
@@ -162,7 +180,7 @@ class AsyncExceptionHandlerTest {
 		String boardReportId = IdUtil.getBoardReportId(currentTime);
 		asyncExceptionHandler.put(boardReportId, new UnauthorizedException("test"));
 
-		BaseException baseException = asyncExceptionHandler.remove(boardReportId);
+		AsyncExceptionDTO baseException = asyncExceptionHandler.remove(boardReportId);
 
 		assertEquals(HttpStatus.UNAUTHORIZED.value(), baseException.getStatus());
 		assertEquals("test", baseException.getMessage());

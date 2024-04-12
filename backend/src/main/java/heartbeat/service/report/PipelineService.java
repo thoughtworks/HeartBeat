@@ -38,7 +38,7 @@ public class PipelineService {
 
 	private final GitHubService gitHubService;
 
-	public FetchedData.BuildKiteData fetchGithubData(GenerateReportRequest request) {
+	public FetchedData.BuildKiteData fetchGitHubData(GenerateReportRequest request) {
 		FetchedData.BuildKiteData buildKiteData = fetchBuildKiteInfo(request);
 		Map<String, String> repoMap = getRepoMap(request.getBuildKiteSetting().getDeploymentEnvList());
 		List<PipelineLeadTime> pipelineLeadTimes = Collections.emptyList();

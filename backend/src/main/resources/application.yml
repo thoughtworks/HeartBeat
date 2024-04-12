@@ -29,5 +29,7 @@ springdoc:
     path: /api-docs
 
 heartbeat:
-  version: 1.1.5
+  swagger:
+    host: ${SWAGGER_HOST:http://localhost:4322}
+  version: 1.1.6
 

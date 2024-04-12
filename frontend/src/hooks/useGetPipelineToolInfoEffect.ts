@@ -7,9 +7,11 @@ import {
 } from '@src/context/config/configSlice';
 import { pipelineToolClient, IGetPipelineToolInfoResult } from '@src/clients/pipeline/PipelineToolClient';
 import { selectShouldGetPipelineConfig, updatePipelineSettings } from '@src/context/Metrics/metricsSlice';
+import { clearMetricsPipelineFormMeta } from '@src/context/meta/metaSlice';
+import { useEffect, useState, useRef, useCallback, useMemo } from 'react';
 import { shouldMetricsLoad } from '@src/context/stepper/StepperSlice';
-import { useEffect, useState, useRef, useCallback } from 'react';
 import { useAppDispatch, useAppSelector } from '@src/hooks';
+import { sortDateRanges } from '@src/utils/util';
 
 export interface IUseVerifyPipeLineToolStateInterface {
   result: IGetPipelineToolInfoResult;
@@ -31,6 +33,7 @@ export const useGetPipelineToolInfoEffect = (): IUseVerifyPipeLineToolStateInter
   const isProjectCreated = useAppSelector(selectIsProjectCreated);
   const restoredPipelineTool = useAppSelector(selectPipelineTool);
   const dateRange = useAppSelector(selectDateRange);
+  const sortedDateRanges = useMemo(() => sortDateRanges(dateRange), [dateRange]);
   const shouldLoad = useAppSelector(shouldMetricsLoad);
   const shouldGetPipelineConfig = useAppSelector(selectShouldGetPipelineConfig);
 
@@ -38,31 +41,34 @@ export const useGetPipelineToolInfoEffect = (): IUseVerifyPipeLineToolStateInter
     const params = {
       type: restoredPipelineTool.type,
       token: restoredPipelineTool.token,
-      startTime: dateRange.startDate,
-      endTime: dateRange.endDate,
+      startTime: sortedDateRanges[0]?.startDate,
+      endTime: sortedDateRanges[0]?.endDate,
     };
     setIsLoading(true);
-    const response = await pipelineToolClient.getInfo(params);
-    setInfo(response);
-    dispatch(updatePipelineToolVerifyResponse(response.data));
-    pipelineToolVerified && dispatch(updatePipelineSettings({ ...response.data, isProjectCreated }));
-    setIsLoading(false);
+    try {
+      const response = await pipelineToolClient.getInfo(params);
+      setInfo(response);
+      dispatch(updatePipelineToolVerifyResponse(response.data));
+      pipelineToolVerified && dispatch(updatePipelineSettings({ ...response.data, isProjectCreated }));
+    } finally {
+      setIsLoading(false);
+    }
   }, [
     dispatch,
     isProjectCreated,
     pipelineToolVerified,
-    dateRange.startDate,
-    dateRange.endDate,
     restoredPipelineTool.type,
     restoredPipelineTool.token,
+    sortedDateRanges,
   ]);
 
   useEffect(() => {
     if (!apiTouchedRef.current && !isLoading && shouldLoad && shouldGetPipelineConfig) {
       apiTouchedRef.current = true;
       getPipelineToolInfo();
+      dispatch(clearMetricsPipelineFormMeta());
     }
-  }, [getPipelineToolInfo, isLoading, shouldLoad, shouldGetPipelineConfig]);
+  }, [dispatch, getPipelineToolInfo, isLoading, shouldLoad, shouldGetPipelineConfig]);
 
   return {
     result: info,

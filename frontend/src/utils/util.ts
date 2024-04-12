@@ -1,8 +1,10 @@
+import { CYCLE_TIME_LIST, CYCLE_TIME_SETTINGS_TYPES, METRICS_CONSTANTS } from '@src/constants/resources';
 import { CleanedBuildKiteEmoji, OriginBuildKiteEmoji } from '@src/constants/emojis/emoji';
-import { CYCLE_TIME_SETTINGS_TYPES, METRICS_CONSTANTS } from '@src/constants/resources';
+import { ICycleTimeSetting, IPipelineConfig } from '@src/context/Metrics/metricsSlice';
 import { ITargetFieldType } from '@src/components/Common/MultiAutoComplete/styles';
-import { ICycleTimeSetting } from '@src/context/Metrics/metricsSlice';
 import { DATE_FORMAT_TEMPLATE } from '@src/constants/template';
+import { TDateRange } from '@src/context/config/configSlice';
+import { includes, isEqual, sortBy } from 'lodash';
 import duration from 'dayjs/plugin/duration';
 import dayjs from 'dayjs';
 
@@ -72,6 +74,17 @@ export const findCaseInsensitiveType = (option: string[], value: string): string
   return newValue ? newValue : value;
 };
 
+export const getDisabledOptions = (deploymentFrequencySettings: IPipelineConfig[], option: string) => {
+  return includes(
+    deploymentFrequencySettings.map((item) => item.pipelineName),
+    option,
+  );
+};
+
+export const sortDisabledOptions = (deploymentFrequencySettings: IPipelineConfig[], options: string[]) => {
+  return sortBy(options, (item: string) => getDisabledOptions(deploymentFrequencySettings, item));
+};
+
 export const formatDate = (date: Date | string) => {
   return dayjs(date).format(DATE_FORMAT_TEMPLATE);
 };
@@ -82,6 +95,17 @@ export const formatMinToHours = (duration: number) => {
 
 export const formatMillisecondsToHours = (duration: number) => {
   return dayjs.duration(duration, 'milliseconds').asHours();
+};
+
+export const formatDateToTimestampString = (date: string) => {
+  return dayjs(date).valueOf().toString();
+};
+
+export const sortDateRanges = (dateRanges: TDateRange, descending = true) => {
+  const result = [...dateRanges].sort((a, b) => {
+    return dayjs(b.startDate as string).diff(dayjs(a.startDate as string));
+  });
+  return descending ? result : result.reverse();
 };
 
 export const formatDuplicatedNameWithSuffix = (data: ITargetFieldType[]) => {
@@ -105,3 +129,30 @@ export const formatDuplicatedNameWithSuffix = (data: ITargetFieldType[]) => {
     return newItem;
   });
 };
+
+export const getSortedAndDeduplicationBoardingMapping = (boardMapping: ICycleTimeSetting[]) => {
+  return [...new Set(boardMapping.map((item) => item.value))].sort((a, b) => {
+    return CYCLE_TIME_LIST.indexOf(a) - CYCLE_TIME_LIST.indexOf(b);
+  });
+};
+
+export const onlyEmptyAndDoneState = (boardingMappingStates: string[]) =>
+  isEqual(boardingMappingStates, [METRICS_CONSTANTS.doneValue]) ||
+  isEqual(boardingMappingStates, [METRICS_CONSTANTS.cycleTimeEmptyStr, METRICS_CONSTANTS.doneValue]) ||
+  isEqual(boardingMappingStates, [METRICS_CONSTANTS.doneValue, METRICS_CONSTANTS.cycleTimeEmptyStr]);
+
+export function convertCycleTimeSettings(
+  cycleTimeSettingsType: CYCLE_TIME_SETTINGS_TYPES,
+  cycleTimeSettings: ICycleTimeSetting[],
+) {
+  if (cycleTimeSettingsType === CYCLE_TIME_SETTINGS_TYPES.BY_COLUMN) {
+    return ([...new Set(cycleTimeSettings.map(({ column }: ICycleTimeSetting) => column))] as string[]).map(
+      (uniqueColumn) => ({
+        [uniqueColumn]:
+          cycleTimeSettings.find(({ column }: ICycleTimeSetting) => column === uniqueColumn)?.value ||
+          METRICS_CONSTANTS.cycleTimeEmptyStr,
+      }),
+    );
+  }
+  return cycleTimeSettings?.map(({ status, value }: ICycleTimeSetting) => ({ [status]: value }));
+}

@@ -51,6 +51,7 @@ export const BoardDetail = withGoBack(({ data, errorMessage }: Property) => {
           errorMessage={errorMessage}
         />
       )}
+      {showSectionWith2Columns(METRICS_TITLE.REWORK, mappedData?.reworkList)}
     </>
   );
 });

@@ -15,6 +15,7 @@ export const SHOW_MORE = 'show more >';
 export const BACK = 'Back';
 export const RETRY = 'retry';
 export const DATA_LOADING_FAILED = 'Data loading failed';
+export const DEFAULT_MESSAGE = '';
 
 export const NOTIFICATION_TITLE = {
   HELP_INFORMATION: 'Help Information',
@@ -27,64 +28,88 @@ export const BOARD_METRICS_MAPPING: Record<string, string> = {
   'Cycle time': 'cycleTime',
   Velocity: 'velocity',
   Classification: 'classificationList',
+  'Rework times': 'rework',
 };
 
 export const DORA_METRICS_MAPPING: Record<string, string> = {
   'Lead time for changes': 'leadTimeForChanges',
   'Deployment frequency': 'deploymentFrequency',
-  'Change failure rate': 'changeFailureRate',
-  'Mean time to recovery': 'meanTimeToRecovery',
+  'Dev change failure rate': 'devChangeFailureRate',
+  'Dev mean time to recovery': 'devMeanTimeToRecovery',
 };
 
 export enum REQUIRED_DATA {
   VELOCITY = 'Velocity',
   CYCLE_TIME = 'Cycle time',
   CLASSIFICATION = 'Classification',
+  REWORK_TIMES = 'Rework times',
   LEAD_TIME_FOR_CHANGES = 'Lead time for changes',
   DEPLOYMENT_FREQUENCY = 'Deployment frequency',
-  CHANGE_FAILURE_RATE = 'Change failure rate',
-  MEAN_TIME_TO_RECOVERY = 'Mean time to recovery',
+  DEV_CHANGE_FAILURE_RATE = 'Dev change failure rate',
+  DEV_MEAN_TIME_TO_RECOVERY = 'Dev mean time to recovery',
 }
+
+export const IMPORT_METRICS_MAPPING: Record<string, string> = {
+  Velocity: 'Velocity',
+  'Cycle time': 'Cycle time',
+  Classification: 'Classification',
+  'Rework times': 'Rework times',
+  'Lead time for changes': 'Lead time for changes',
+  'Deployment frequency': 'Deployment frequency',
+  'Dev change failure rate': 'Dev change failure rate',
+  'Dev mean time to recovery': 'Dev mean time to recovery',
+  'Change failure rate': 'Dev change failure rate',
+  'Mean time to recovery': 'Dev mean time to recovery',
+};
 
 export enum METRICS_TITLE {
   VELOCITY = 'Velocity',
   CYCLE_TIME = 'Cycle Time',
   CLASSIFICATION = 'Classification',
+  REWORK = 'Rework',
   LEAD_TIME_FOR_CHANGES = 'Lead Time For Changes',
   DEPLOYMENT_FREQUENCY = 'Deployment Frequency',
-  CHANGE_FAILURE_RATE = 'Change Failure Rate',
-  MEAN_TIME_TO_RECOVERY = 'Mean Time To Recovery',
+  DEV_CHANGE_FAILURE_RATE = 'Dev Change Failure Rate',
+  DEV_MEAN_TIME_TO_RECOVERY = 'Dev Mean Time To Recovery',
 }
 
 export enum METRICS_SUBTITLE {
   PR_LEAD_TIME = 'PR Lead Time(Hours)',
   PIPELINE_LEAD_TIME = 'Pipeline Lead Time(Hours)',
   TOTAL_DELAY_TIME = 'Total Lead Time(Hours)',
-  DEPLOYMENT_FREQUENCY = 'Deployment Frequency(Deployments/Day)',
-  MEAN_TIME_TO_RECOVERY_HOURS = 'Mean Time To Recovery(Hours)',
-  FAILURE_RATE = 'Failure Rate',
+  DEPLOYMENT_FREQUENCY = '(Deployments/Days)',
+  DEV_MEAN_TIME_TO_RECOVERY_HOURS = '(Hours)',
+  FAILURE_RATE = '',
   AVERAGE_CYCLE_TIME_PRE_SP = 'Average Cycle Time(Days/SP)',
   AVERAGE_CYCLE_TIME_PRE_CARD = 'Average Cycle Time(Days/Card)',
   THROUGHPUT = 'Throughput(Cards Count)',
   VELOCITY = 'Velocity(Story Point)',
+  TOTAL_REWORK_TIMES = 'Total rework times',
+  TOTAL_REWORK_CARDS = 'Total rework cards',
+  REWORK_CARDS_RATIO = 'Rework cards ratio',
 }
 
 export const SOURCE_CONTROL_METRICS: string[] = [REQUIRED_DATA.LEAD_TIME_FOR_CHANGES];
 
 export const PIPELINE_METRICS: string[] = [
   REQUIRED_DATA.DEPLOYMENT_FREQUENCY,
-  REQUIRED_DATA.CHANGE_FAILURE_RATE,
-  REQUIRED_DATA.MEAN_TIME_TO_RECOVERY,
+  REQUIRED_DATA.DEV_CHANGE_FAILURE_RATE,
+  REQUIRED_DATA.DEV_MEAN_TIME_TO_RECOVERY,
 ];
 
 export const DORA_METRICS: string[] = [
   REQUIRED_DATA.LEAD_TIME_FOR_CHANGES,
   REQUIRED_DATA.DEPLOYMENT_FREQUENCY,
-  REQUIRED_DATA.CHANGE_FAILURE_RATE,
-  REQUIRED_DATA.MEAN_TIME_TO_RECOVERY,
+  REQUIRED_DATA.DEV_CHANGE_FAILURE_RATE,
+  REQUIRED_DATA.DEV_MEAN_TIME_TO_RECOVERY,
 ];
 
-export const BOARD_METRICS: string[] = [REQUIRED_DATA.VELOCITY, REQUIRED_DATA.CYCLE_TIME, REQUIRED_DATA.CLASSIFICATION];
+export const BOARD_METRICS: string[] = [
+  REQUIRED_DATA.VELOCITY,
+  REQUIRED_DATA.CYCLE_TIME,
+  REQUIRED_DATA.CLASSIFICATION,
+  REQUIRED_DATA.REWORK_TIMES,
+];
 
 export enum CONFIG_TITLE {
   BOARD = 'Board',
@@ -98,7 +123,6 @@ export const BOARD_TYPES = {
 
 export const PIPELINE_TOOL_TYPES = {
   BUILD_KITE: 'BuildKite',
-  GO_CD: 'GoCD',
 };
 
 export enum SOURCE_CONTROL_TYPES {
@@ -140,10 +164,20 @@ export const CYCLE_TIME_LIST = [
   METRICS_CONSTANTS.analysisValue,
   METRICS_CONSTANTS.inDevValue,
   METRICS_CONSTANTS.blockValue,
+  METRICS_CONSTANTS.reviewValue,
   METRICS_CONSTANTS.waitingValue,
   METRICS_CONSTANTS.testingValue,
-  METRICS_CONSTANTS.reviewValue,
   METRICS_CONSTANTS.doneValue,
+];
+
+export const REWORK_TIME_LIST = [
+  METRICS_CONSTANTS.todoValue,
+  METRICS_CONSTANTS.analysisValue,
+  METRICS_CONSTANTS.inDevValue,
+  METRICS_CONSTANTS.blockValue,
+  METRICS_CONSTANTS.reviewValue,
+  METRICS_CONSTANTS.waitingValue,
+  METRICS_CONSTANTS.testingValue,
 ];
 
 export const TOKEN_HELPER_TEXT = {
@@ -157,6 +191,7 @@ export const TIPS = {
   CYCLE_TIME: 'The report page will sum all the status in the column for cycletime calculation',
   ADVANCE:
     'If the story point and block related values in the board data are 0 due to token permissions or other reasons, please manually enter the corresponding customized field key.Otherwise, please ignore it.',
+  TIME_RANGE_PICKER: 'The report page will generate charts to compare metrics data over multiple time ranges',
 };
 
 export enum VELOCITY_METRICS_NAME {
@@ -178,11 +213,36 @@ export enum CYCLE_TIME_METRICS_NAME {
   AVERAGE_TESTING_TIME = 'Average testing time',
 }
 
+export const REWORK_TIME_MAPPING = {
+  totalReworkTimes: 'Total rework',
+  fromAnalysis: 'analysis',
+  fromInDev: 'in dev',
+  fromBlock: 'block',
+  fromFlag: 'flag',
+  fromReview: 'review',
+  fromWaitingForTesting: 'waiting for testing',
+  fromTesting: 'testing',
+  fromDone: 'done',
+  totalReworkCards: 'Total rework cards',
+  reworkCardsRatio: 'Rework cards ratio',
+};
+
+export const REWORK_BOARD_STATUS: string[] = [
+  REWORK_TIME_MAPPING.fromAnalysis,
+  REWORK_TIME_MAPPING.fromInDev,
+  REWORK_TIME_MAPPING.fromBlock,
+  REWORK_TIME_MAPPING.fromFlag,
+  REWORK_TIME_MAPPING.fromWaitingForTesting,
+  REWORK_TIME_MAPPING.fromTesting,
+  REWORK_TIME_MAPPING.fromReview,
+  REWORK_TIME_MAPPING.fromDone,
+];
+
 export const DEPLOYMENT_FREQUENCY_NAME = 'Deployment frequency';
 
-export const FAILURE_RATE_NAME = 'Failure rate';
+export const DEV_FAILURE_RATE_NAME = 'Dev change failure rate';
 
-export const MEAN_TIME_TO_RECOVERY_NAME = 'Mean Time To Recovery';
+export const DEV_MEAN_TIME_TO_RECOVERY_NAME = 'Dev mean time to recovery';
 
 export const PIPELINE_STEP = 'Pipeline/step';
 
@@ -271,8 +331,10 @@ export enum CYCLE_TIME_SETTINGS_TYPES {
 
 export const AXIOS_NETWORK_ERROR_CODES = [AxiosError.ECONNABORTED, AxiosError.ETIMEDOUT, AxiosError.ERR_NETWORK];
 
-export enum HEARTBEAT_EXCEPTION_CODE {
-  TIMEOUT = 'HB_TIMEOUT',
+export const NO_PIPELINE_STEP_ERROR = 'No steps for this pipeline!';
+
+export enum AXIOS_REQUEST_ERROR_CODE {
+  TIMEOUT = 'NETWORK_TIMEOUT',
 }
 
 export const BOARD_CONFIG_INFO_TITLE = {
@@ -321,9 +383,47 @@ export const SOURCE_CONTROL_GET_INFO_ERROR_CASE_TEXT_MAPPING: Record<string, str
   '403': 'Unable to read target branch, please check the token or target branch!',
 };
 
-export const SOURCE_CONTROL_BRANCH_INVALID_TEXT = 'The codebase branch marked in red is invalid!';
+export const SOURCE_CONTROL_BRANCH_INVALID_TEXT: Record<string, string> = {
+  '400': 'The codebase branch marked in red is invalid!',
+  '401': 'Can not read target branch due to unauthorized token!',
+  '404': 'The branch has been deleted!',
+};
 
 export const ALL_OPTION_META: Record<string, string> = {
   label: 'All',
   key: 'all',
 };
+
+export const REWORK_DIALOG_NOTE = {
+  REWORK_EXPLANATION:
+    'Rework to which state means going back to the selected state from any state after the selected state.',
+  REWORK_NOTE:
+    'The selectable states in the "rework to which state" drop-down list are the heartbeat states you matched in the board mapping.',
+  EXCLUDE_EXPLANATION:
+    'Exclude which states means going back to the 1st selected state from any state after the 1st selected state except the selected state.',
+  EXCLUDE_NOTE:
+    'The selectable states in the "Exclude which states(optional)" drop-down list are all states after the state selected in "rework to which state".',
+};
+
+export const REWORK_STEPS = {
+  REWORK_TO_WHICH_STATE: 0,
+  EXCLUDE_WHICH_STATES: 1,
+};
+
+export const REWORK_STEPS_NAME = ['Rework to which state', 'Exclude which states'];
+
+export const DEFAULT_SPRINT_INTERVAL_OFFSET_DAYS = 13;
+
+export const GENERATE_GITHUB_TOKEN_LINK =
+  'https://github.com/au-heartbeat/Heartbeat?tab=readme-ov-file#3133-guideline-for-generating-github-token';
+export const AUTHORIZE_ORGANIZATION_LINK =
+  'https://github.com/au-heartbeat/Heartbeat?tab=readme-ov-file#3134-authorize-github-token-with-correct-organization';
+
+export const DEFAULT_MONTH_INTERVAL_DAYS = 30;
+export const DATE_RANGE_FORMAT = 'YYYY-MM-DDTHH:mm:ss.SSSZ';
+export const TIME_RANGE_TITLE = 'Time range settings';
+export const ADD_TIME_RANGE_BUTTON_TEXT = 'New time range';
+export const REMOVE_BUTTON_TEXT = 'Remove';
+export const MAX_TIME_RANGE_AMOUNT = 6;
+export const START_DATE_INVALID_TEXT = 'Start date is invalid';
+export const END_DATE_INVALID_TEXT = 'End date is invalid';

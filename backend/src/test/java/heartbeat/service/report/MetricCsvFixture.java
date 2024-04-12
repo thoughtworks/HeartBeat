@@ -3,6 +3,7 @@ package heartbeat.service.report;
 import heartbeat.controller.report.dto.response.Classification;
 import heartbeat.controller.report.dto.response.ClassificationNameValuePair;
 import heartbeat.controller.report.dto.response.ReportResponse;
+import heartbeat.controller.report.dto.response.Rework;
 import heartbeat.controller.report.dto.response.Velocity;
 import heartbeat.controller.report.dto.response.CycleTime;
 import heartbeat.controller.report.dto.response.CycleTimeForSelectedStepItem;
@@ -10,12 +11,12 @@ import heartbeat.controller.report.dto.response.DeploymentFrequency;
 import heartbeat.controller.report.dto.response.AvgDeploymentFrequency;
 import heartbeat.controller.report.dto.response.DeploymentFrequencyOfPipeline;
 import heartbeat.controller.report.dto.response.DailyDeploymentCount;
-import heartbeat.controller.report.dto.response.ChangeFailureRate;
-import heartbeat.controller.report.dto.response.AvgChangeFailureRate;
-import heartbeat.controller.report.dto.response.ChangeFailureRateOfPipeline;
-import heartbeat.controller.report.dto.response.MeanTimeToRecovery;
-import heartbeat.controller.report.dto.response.AvgMeanTimeToRecovery;
-import heartbeat.controller.report.dto.response.MeanTimeToRecoveryOfPipeline;
+import heartbeat.controller.report.dto.response.DevChangeFailureRate;
+import heartbeat.controller.report.dto.response.AvgDevChangeFailureRate;
+import heartbeat.controller.report.dto.response.DevChangeFailureRateOfPipeline;
+import heartbeat.controller.report.dto.response.DevMeanTimeToRecovery;
+import heartbeat.controller.report.dto.response.AvgDevMeanTimeToRecovery;
+import heartbeat.controller.report.dto.response.DevMeanTimeToRecoveryOfPipeline;
 import heartbeat.controller.report.dto.response.LeadTimeForChanges;
 import heartbeat.controller.report.dto.response.LeadTimeForChangesOfPipelines;
 import heartbeat.controller.report.dto.response.AvgLeadTimeForChanges;
@@ -23,7 +24,105 @@ import heartbeat.controller.report.dto.response.AvgLeadTimeForChanges;
 import java.math.BigDecimal;
 import java.util.List;
 
+import static heartbeat.controller.board.dto.request.CardStepsEnum.TODO;
+import static heartbeat.service.report.scheduler.DeleteExpireCSVScheduler.EXPORT_CSV_VALIDITY_TIME;
+
 public class MetricCsvFixture {
+
+	public static ReportResponse MOCK_COMPOSED_REPORT_RESPONSE() {
+		return ReportResponse.builder()
+			.velocity(Velocity.builder().velocityForCards(2).velocityForSP(7).build())
+			.classificationList(List.of(Classification.builder().fieldName("Issue Type").build()))
+			.cycleTime(CycleTime.builder()
+				.totalTimeForCards(29.26)
+				.averageCycleTimePerCard(9.75)
+				.averageCycleTimePerSP(4.18)
+				.build())
+			.rework(Rework.builder()
+				.totalReworkCards(1)
+				.reworkCardsRatio(1.0)
+				.reworkState(TODO.getValue())
+				.fromInDev(1)
+				.build())
+			.exportValidityTime(EXPORT_CSV_VALIDITY_TIME)
+			.deploymentFrequency(DeploymentFrequency.builder()
+				.avgDeploymentFrequency(
+						AvgDeploymentFrequency.builder().name("Average").deploymentFrequency(0.67F).build())
+				.build())
+			.devChangeFailureRate(DevChangeFailureRate.builder()
+				.avgDevChangeFailureRate(AvgDevChangeFailureRate.builder()
+					.name("Average")
+					.totalTimes(12)
+					.totalFailedTimes(0)
+					.failureRate(0.0F)
+					.build())
+				.build())
+			.devMeanTimeToRecovery(DevMeanTimeToRecovery.builder()
+				.avgDevMeanTimeToRecovery(
+						AvgDevMeanTimeToRecovery.builder().timeToRecovery(BigDecimal.valueOf(0)).build())
+				.build())
+			.leadTimeForChanges(LeadTimeForChanges.builder()
+				.avgLeadTimeForChanges(AvgLeadTimeForChanges.builder()
+					.name("Average")
+					.prLeadTime(0.0)
+					.pipelineLeadTime(3.0949999999999998)
+					.totalDelayTime(3.0949999999999998)
+					.build())
+				.build())
+			.build();
+	}
+
+	public static ReportResponse MOCK_BOARD_REPORT_RESPONSE() {
+		return ReportResponse.builder()
+			.velocity(Velocity.builder().velocityForCards(2).velocityForSP(7).build())
+			.classificationList(List.of(Classification.builder().fieldName("Issue Type").build()))
+			.cycleTime(CycleTime.builder()
+				.totalTimeForCards(29.26)
+				.averageCycleTimePerCard(9.75)
+				.averageCycleTimePerSP(4.18)
+				.build())
+			.rework(Rework.builder()
+				.totalReworkCards(1)
+				.reworkCardsRatio(1.0)
+				.reworkState(TODO.getValue())
+				.fromInDev(1)
+				.build())
+			.build();
+	}
+
+	public static ReportResponse MOCK_PIPELINE_REPORT_RESPONSE() {
+		return ReportResponse.builder()
+			.deploymentFrequency(DeploymentFrequency.builder()
+				.avgDeploymentFrequency(
+						AvgDeploymentFrequency.builder().name("Average").deploymentFrequency(0.67F).build())
+				.build())
+			.devChangeFailureRate(DevChangeFailureRate.builder()
+				.avgDevChangeFailureRate(AvgDevChangeFailureRate.builder()
+					.name("Average")
+					.totalTimes(12)
+					.totalFailedTimes(0)
+					.failureRate(0.0F)
+					.build())
+				.build())
+			.devMeanTimeToRecovery(DevMeanTimeToRecovery.builder()
+				.avgDevMeanTimeToRecovery(
+						AvgDevMeanTimeToRecovery.builder().timeToRecovery(BigDecimal.valueOf(0)).build())
+				.build())
+			.build();
+	}
+
+	public static ReportResponse MOCK_SOURCE_CONTROL_REPORT_RESPONSE() {
+		return ReportResponse.builder()
+			.leadTimeForChanges(LeadTimeForChanges.builder()
+				.avgLeadTimeForChanges(AvgLeadTimeForChanges.builder()
+					.name("Average")
+					.prLeadTime(0.0)
+					.pipelineLeadTime(3.0949999999999998)
+					.totalDelayTime(3.0949999999999998)
+					.build())
+				.build())
+			.build();
+	}
 
 	public static ReportResponse MOCK_METRIC_CSV_DATA() {
 		return ReportResponse.builder()
@@ -88,22 +187,22 @@ public class MetricCsvFixture {
 									List.of(DailyDeploymentCount.builder().date("10/16/2023").count(1).build()))
 							.build()))
 				.build())
-			.changeFailureRate(ChangeFailureRate.builder()
-				.avgChangeFailureRate(AvgChangeFailureRate.builder()
+			.devChangeFailureRate(DevChangeFailureRate.builder()
+				.avgDevChangeFailureRate(AvgDevChangeFailureRate.builder()
 					.name("Average")
 					.totalTimes(12)
 					.totalFailedTimes(0)
 					.failureRate(0.0F)
 					.build())
-				.changeFailureRateOfPipelines(List.of(
-						ChangeFailureRateOfPipeline.builder()
+				.devChangeFailureRateOfPipelines(List.of(
+						DevChangeFailureRateOfPipeline.builder()
 							.name("Heartbeat")
 							.step(":rocket: Deploy prod")
 							.failedTimesOfPipeline(0)
 							.totalTimesOfPipeline(7)
 							.failureRate(0.0F)
 							.build(),
-						ChangeFailureRateOfPipeline.builder()
+						DevChangeFailureRateOfPipeline.builder()
 							.name("Heartbeat")
 							.step(":mag: Check Frontend License")
 							.failedTimesOfPipeline(0)
@@ -111,18 +210,19 @@ public class MetricCsvFixture {
 							.failureRate(0.0F)
 							.build()))
 				.build())
-			.meanTimeToRecovery(MeanTimeToRecovery.builder()
-				.avgMeanTimeToRecovery(AvgMeanTimeToRecovery.builder().timeToRecovery(BigDecimal.valueOf(0)).build())
-				.meanTimeRecoveryPipelines(List.of(
-						MeanTimeToRecoveryOfPipeline.builder()
+			.devMeanTimeToRecovery(DevMeanTimeToRecovery.builder()
+				.avgDevMeanTimeToRecovery(
+						AvgDevMeanTimeToRecovery.builder().timeToRecovery(BigDecimal.valueOf(0)).build())
+				.devMeanTimeToRecoveryOfPipelines(List.of(
+						DevMeanTimeToRecoveryOfPipeline.builder()
 							.timeToRecovery(BigDecimal.valueOf(0))
-							.pipelineName("Heartbeat")
-							.pipelineStep(":rocket: Deploy prod")
+							.name("Heartbeat")
+							.step(":rocket: Deploy prod")
 							.build(),
-						MeanTimeToRecoveryOfPipeline.builder()
+						DevMeanTimeToRecoveryOfPipeline.builder()
 							.timeToRecovery(BigDecimal.valueOf(0))
-							.pipelineName("Heartbeat")
-							.pipelineStep(":mag: Check Frontend License")
+							.name("Heartbeat")
+							.step(":mag: Check Frontend License")
 							.build()))
 				.build())
 			.leadTimeForChanges(LeadTimeForChanges.builder()
@@ -157,6 +257,7 @@ public class MetricCsvFixture {
 
 	public static ReportResponse MOCK_METRIC_CSV_DATA_WITH_ONE_PIPELINE() {
 		return ReportResponse.builder()
+			.rework(Rework.builder().totalReworkTimes(3).totalReworkCards(3).reworkCardsRatio(0.99).build())
 			.deploymentFrequency(DeploymentFrequency.builder()
 				.avgDeploymentFrequency(
 						AvgDeploymentFrequency.builder().name("Average").deploymentFrequency(0.67F).build())
@@ -167,14 +268,14 @@ public class MetricCsvFixture {
 					.dailyDeploymentCounts(List.of(DailyDeploymentCount.builder().date("10/16/2023").count(1).build()))
 					.build()))
 				.build())
-			.changeFailureRate(ChangeFailureRate.builder()
-				.avgChangeFailureRate(AvgChangeFailureRate.builder()
+			.devChangeFailureRate(DevChangeFailureRate.builder()
+				.avgDevChangeFailureRate(AvgDevChangeFailureRate.builder()
 					.name("Average")
 					.totalTimes(12)
 					.totalFailedTimes(0)
 					.failureRate(0.0F)
 					.build())
-				.changeFailureRateOfPipelines(List.of(ChangeFailureRateOfPipeline.builder()
+				.devChangeFailureRateOfPipelines(List.of(DevChangeFailureRateOfPipeline.builder()
 					.name("Heartbeat")
 					.step(":rocket: Deploy prod")
 					.failedTimesOfPipeline(0)
@@ -182,12 +283,13 @@ public class MetricCsvFixture {
 					.failureRate(0.0F)
 					.build()))
 				.build())
-			.meanTimeToRecovery(MeanTimeToRecovery.builder()
-				.avgMeanTimeToRecovery(AvgMeanTimeToRecovery.builder().timeToRecovery(BigDecimal.valueOf(0)).build())
-				.meanTimeRecoveryPipelines(List.of(MeanTimeToRecoveryOfPipeline.builder()
+			.devMeanTimeToRecovery(DevMeanTimeToRecovery.builder()
+				.avgDevMeanTimeToRecovery(
+						AvgDevMeanTimeToRecovery.builder().timeToRecovery(BigDecimal.valueOf(0)).build())
+				.devMeanTimeToRecoveryOfPipelines(List.of(DevMeanTimeToRecoveryOfPipeline.builder()
 					.timeToRecovery(BigDecimal.valueOf(0))
-					.pipelineName("Heartbeat")
-					.pipelineStep(":rocket: Deploy prod")
+					.name("Heartbeat")
+					.step(":rocket: Deploy prod")
 					.build()))
 				.build())
 			.leadTimeForChanges(LeadTimeForChanges.builder()

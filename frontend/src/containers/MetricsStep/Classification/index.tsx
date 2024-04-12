@@ -8,7 +8,7 @@ import { useAppDispatch } from '@src/hooks/useAppDispatch';
 import { ALL_OPTION_META } from '@src/constants/resources';
 import { Z_INDEX } from '@src/constants/commons';
 import { useAppSelector } from '@src/hooks';
-import React, { useMemo } from 'react';
+import React from 'react';
 
 export interface classificationProps {
   title: string;
@@ -21,9 +21,7 @@ export const Classification = ({ targetFields, title, label }: classificationPro
   const targetFieldsWithSuffix = formatDuplicatedNameWithSuffix(targetFields);
   const classificationWarningMessage = useAppSelector(selectClassificationWarningMessage);
   const selectedOptions = targetFieldsWithSuffix.filter(({ flag }) => flag);
-  const isAllSelected = useMemo(() => {
-    return selectedOptions.length > 0 && selectedOptions.length === targetFieldsWithSuffix.length;
-  }, [selectedOptions, targetFieldsWithSuffix]);
+  const isAllSelected = selectedOptions.length > 0 && selectedOptions.length === targetFieldsWithSuffix.length;
 
   const handleChange = (_: React.SyntheticEvent, value: ITargetFieldType[]) => {
     let nextSelectedOptions: ITargetFieldType[];

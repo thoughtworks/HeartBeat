@@ -21,8 +21,8 @@ export const DoraDetail = withGoBack(({ data }: Property) => {
     <>
       {showSection(METRICS_TITLE.DEPLOYMENT_FREQUENCY, mappedData.deploymentFrequencyList)}
       {showSection(METRICS_TITLE.LEAD_TIME_FOR_CHANGES, mappedData.leadTimeForChangesList)}
-      {showSection(METRICS_TITLE.CHANGE_FAILURE_RATE, mappedData.changeFailureRateList)}
-      {showSection(METRICS_TITLE.MEAN_TIME_TO_RECOVERY, mappedData.meanTimeToRecoveryList)}
+      {showSection(METRICS_TITLE.DEV_CHANGE_FAILURE_RATE, mappedData.devChangeFailureRateList)}
+      {showSection(METRICS_TITLE.DEV_MEAN_TIME_TO_RECOVERY, mappedData.devMeanTimeToRecoveryList)}
     </>
   );
 });

@@ -83,7 +83,7 @@ export const ReportForThreeColumns = ({
     });
 
   const getTitleUnit = (title: string) => {
-    return title === METRICS_TITLE.LEAD_TIME_FOR_CHANGES || title === METRICS_TITLE.MEAN_TIME_TO_RECOVERY
+    return title === METRICS_TITLE.LEAD_TIME_FOR_CHANGES || title === METRICS_TITLE.DEV_MEAN_TIME_TO_RECOVERY
       ? REPORT_SUFFIX_UNITS.HOURS
       : title === METRICS_TITLE.DEPLOYMENT_FREQUENCY
         ? REPORT_SUFFIX_UNITS.DEPLOYMENTS_DAY

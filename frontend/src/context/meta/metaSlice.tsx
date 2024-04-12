@@ -59,6 +59,9 @@ export const metaSlice = createSlice({
           branches: [],
         };
     },
+    clearMetricsPipelineFormMeta: (state) => {
+      state.form.metrics.pipelines = {};
+    },
     updateMetricsPipelineBranchFormMeta: (state, action: PayloadAction<{ id: number; data: FormFieldWithMeta }>) => {
       const { id, data } = action.payload;
       const branchesFormData = state.form.metrics.pipelines[id].branches;
@@ -85,10 +88,16 @@ export const {
   initMetricsPipelineFormMeta,
   deleteMetricsPipelineFormMeta,
   updateMetricsPipelineBranchFormMeta,
+  clearMetricsPipelineFormMeta,
 } = metaSlice.actions;
 
 export const getVersion = (state: RootState) => state.meta.version;
 
 export const getFormMeta = (state: RootState) => state.meta.form;
+
+export const getErrorDetail = (state: RootState) =>
+  Object.values(state.meta.form.metrics.pipelines)
+    .flatMap(({ branches }) => branches)
+    .find(({ error }) => error)?.errorDetail;
 
 export default metaSlice.reducer;

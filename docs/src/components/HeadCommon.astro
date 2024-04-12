@@ -12,22 +12,24 @@ import '@fontsource/ibm-plex-mono/400-italic.css';
 <link rel="alternate icon" type="image/x-icon" href="/favicon.ico" />
 <link rel="sitemap" href="/sitemap-index.xml" />
 
+<script is:inline type="module">
+	const hostAddress = new URL(import.meta.url);
+	const baseURL = `${hostAddress.origin}/${hostAddress.pathname.split('/')[1]}`;
 
-<script is:inline>
-
-	const sc = document.createElement("script");
-	sc.setAttribute("src", `${import.meta.env.BASE_URL}/make-scrollable-code-focusable.js`);
-	sc.setAttribute("type", "text/javascript");
+	const sc = document.createElement('script');
+	sc.setAttribute('type', 'module');
+	sc.setAttribute('src', `${baseURL}/make-scrollable-code-focusable.js`);
+	sc.setAttribute('type', 'text/javascript');
 	document.head.appendChild(sc);
 
-	const themeLink = document.createElement("link");
+	const themeLink = document.createElement('link');
 	themeLink.setAttribute('rel', 'stylesheet');
-	themeLink.setAttribute('href', `${import.meta.env.BASE_URL}/theme.css`);
+	themeLink.setAttribute('href', `${baseURL}/theme.css`);
 	document.head.appendChild(themeLink);
 
-	const indexLink = document.createElement("link");
+	const indexLink = document.createElement('link');
 	indexLink.setAttribute('rel', 'stylesheet');
-	indexLink.setAttribute('href', `${import.meta.env.BASE_URL}/index.css`);
+	indexLink.setAttribute('href', `${baseURL}/index.css`);
 	document.head.appendChild(indexLink);
 </script>
 

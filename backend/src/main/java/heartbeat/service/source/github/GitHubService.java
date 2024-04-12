@@ -7,10 +7,12 @@ import heartbeat.client.dto.codebase.github.PipelineLeadTime;
 import heartbeat.client.dto.codebase.github.PullRequestInfo;
 import heartbeat.client.dto.pipeline.buildkite.DeployInfo;
 import heartbeat.client.dto.pipeline.buildkite.DeployTimes;
+import heartbeat.exception.BadRequestException;
 import heartbeat.exception.BaseException;
 import heartbeat.exception.InternalServerErrorException;
 import heartbeat.exception.NotFoundException;
 import heartbeat.exception.PermissionDenyException;
+import heartbeat.exception.UnauthorizedException;
 import heartbeat.service.source.github.model.PipelineInfoOfRepository;
 import heartbeat.util.GithubUtil;
 import lombok.RequiredArgsConstructor;
@@ -18,12 +20,12 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Objects;
-import java.util.Collections;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 @Service
@@ -64,7 +66,15 @@ public class GitHubService {
 		}
 		catch (NotFoundException e) {
 			log.error("Failed to call GitHub with branch: {}, error: {} ", branch, e.getMessage());
-			throw new PermissionDenyException(String.format("Unable to read target branch: %s", branch));
+			throw new NotFoundException(String.format("Unable to read target branch: %s", branch));
+		}
+		catch (PermissionDenyException e) {
+			log.error("Failed to call GitHub token access error, error: {} ", e.getMessage());
+			throw new UnauthorizedException("Unable to read target organization");
+		}
+		catch (UnauthorizedException e) {
+			log.error("Failed to call GitHub with token_error: {}, error: {} ", branch, e.getMessage());
+			throw new BadRequestException(String.format("Unable to read target branch: %s, with token error", branch));
 		}
 		catch (RuntimeException e) {
 			Throwable cause = Optional.ofNullable(e.getCause()).orElse(e);
@@ -163,7 +173,8 @@ public class GitHubService {
 		}
 
 		Optional<PullRequestInfo> mergedPull = pullRequestInfos.stream()
-			.filter(gitHubPull -> gitHubPull.getMergedAt() != null)
+			.filter(gitHubPull -> gitHubPull.getMergedAt() != null
+					&& gitHubPull.getUrl().contains(item.getRepository()))
 			.min(Comparator.comparing(PullRequestInfo::getNumber));
 
 		if (mergedPull.isEmpty()) {

@@ -84,8 +84,8 @@ describe('BranchSelection', () => {
     expect(onUpdatePipeline).toBeCalledWith(0, 'Branches', ['OPT-2', 'OPT-3']);
   });
 
-  it('should show error text when API return 403 error', async () => {
-    server.use(rest.post(MOCK_SOURCE_CONTROL_VERIFY_BRANCH_URL, (req, res, ctx) => res(ctx.status(403))));
+  it('should show error text when API return 400 error', async () => {
+    server.use(rest.post(MOCK_SOURCE_CONTROL_VERIFY_BRANCH_URL, (req, res, ctx) => res(ctx.status(400))));
     setup();
 
     await waitFor(() => {

@@ -1,22 +1,34 @@
+import {
+  BOARD_METRICS,
+  CALENDAR,
+  DORA_METRICS,
+  IMPORT_METRICS_MAPPING,
+  MESSAGE,
+  REQUIRED_DATA,
+  MAX_TIME_RANGE_AMOUNT,
+} from '@src/constants/resources';
 import { initialPipelineToolState, IPipelineToolState } from '@src/context/config/pipelineTool/pipelineToolSlice';
 import { initialSourceControlState, ISourceControl } from '@src/context/config/sourceControl/sourceControlSlice';
-import { BOARD_METRICS, CALENDAR, DORA_METRICS, MESSAGE, REQUIRED_DATA } from '@src/constants/resources';
 import { IBoardState, initialBoardState } from '@src/context/config/board/boardSlice';
 import { pipeline } from '@src/context/config/pipelineTool/verifyResponseSlice';
 import { createSlice } from '@reduxjs/toolkit';
 import type { RootState } from '@src/store';
 import union from 'lodash/union';
 import merge from 'lodash/merge';
+import { isArray } from 'lodash';
 import dayjs from 'dayjs';
+
+export type TDateRange = {
+  startDate: string | null;
+  endDate: string | null;
+}[];
+
 export interface BasicConfigState {
   isProjectCreated: boolean;
   basic: {
     projectName: string;
     calendarType: string;
-    dateRange: {
-      startDate: string | null;
-      endDate: string | null;
-    };
+    dateRange: TDateRange;
     metrics: string[];
   };
   board: IBoardState;
@@ -30,10 +42,12 @@ export const initialBasicConfigState: BasicConfigState = {
   basic: {
     projectName: '',
     calendarType: CALENDAR.REGULAR,
-    dateRange: {
-      startDate: null,
-      endDate: null,
-    },
+    dateRange: [
+      {
+        startDate: null,
+        endDate: null,
+      },
+    ],
     metrics: [],
   },
   board: initialBoardState,
@@ -49,17 +63,20 @@ const getMetricsInfo = (metrics: string[]) => {
     CLASSIFICATION,
     LEAD_TIME_FOR_CHANGES,
     DEPLOYMENT_FREQUENCY,
-    CHANGE_FAILURE_RATE,
-    MEAN_TIME_TO_RECOVERY,
+    DEV_CHANGE_FAILURE_RATE,
+    DEV_MEAN_TIME_TO_RECOVERY,
+    REWORK_TIMES,
   } = REQUIRED_DATA;
   return {
-    metrics: metrics.filter((metric) => (Object.values(REQUIRED_DATA) as string[]).includes(metric)),
-    shouldBoardShow: [VELOCITY, CYCLE_TIME, CLASSIFICATION].some((metric) => metrics.includes(metric)),
+    metrics: metrics
+      .map((metric) => IMPORT_METRICS_MAPPING[metric])
+      .filter((metric) => (Object.values(REQUIRED_DATA) as string[]).includes(metric)),
+    shouldBoardShow: [VELOCITY, CYCLE_TIME, CLASSIFICATION, REWORK_TIMES].some((metric) => metrics.includes(metric)),
     shouldPipelineToolShow: [
       LEAD_TIME_FOR_CHANGES,
       DEPLOYMENT_FREQUENCY,
-      CHANGE_FAILURE_RATE,
-      MEAN_TIME_TO_RECOVERY,
+      DEV_CHANGE_FAILURE_RATE,
+      DEV_MEAN_TIME_TO_RECOVERY,
     ].some((metric) => metrics.includes(metric)),
     shouldSourceControlShow: [LEAD_TIME_FOR_CHANGES].some((metric) => metrics.includes(metric)),
   };
@@ -81,8 +98,7 @@ export const configSlice = createSlice({
       state.basic.calendarType = action.payload;
     },
     updateDateRange: (state, action) => {
-      const { startDate, endDate } = action.payload;
-      state.basic.dateRange = { startDate, endDate };
+      state.basic.dateRange = action.payload;
     },
     updateMetrics: (state, action) => {
       const { metrics, shouldBoardShow, shouldPipelineToolShow, shouldSourceControlShow } = getMetricsInfo(
@@ -98,14 +114,27 @@ export const configSlice = createSlice({
       const { metrics, shouldBoardShow, shouldPipelineToolShow, shouldSourceControlShow } = getMetricsInfo(
         action.payload.metrics,
       );
+      let importedDateRanges = action.payload.dateRange;
+      importedDateRanges =
+        importedDateRanges && importedDateRanges?.startDate && importedDateRanges?.endDate
+          ? [importedDateRanges]
+          : importedDateRanges;
+      state.basic.dateRange =
+        Array.isArray(importedDateRanges) && importedDateRanges.length > MAX_TIME_RANGE_AMOUNT
+          ? importedDateRanges.slice(0, MAX_TIME_RANGE_AMOUNT)
+          : importedDateRanges;
       state.basic.metrics = metrics;
       state.board.isShow = shouldBoardShow;
       state.pipelineTool.isShow = shouldPipelineToolShow;
       state.sourceControl.isShow = shouldSourceControlShow;
-      const { projectName, dateRange } = state.basic;
+      const { projectName } = state.basic;
       if (!state.isProjectCreated) {
         state.warningMessage =
-          projectName && dateRange.startDate && dateRange.endDate && metrics.length > 0
+          projectName &&
+          isArray(importedDateRanges) &&
+          importedDateRanges.length > 0 &&
+          importedDateRanges.length <= 6 &&
+          metrics.length > 0
             ? null
             : MESSAGE.CONFIG_PAGE_VERIFY_IMPORT_ERROR;
       }
@@ -230,7 +259,8 @@ export const selectStepsParams = (state: RootState, organizationName: string, pi
   const pipeline = state.config.pipelineTool.verifiedResponse.pipelineList.find(
     (pipeline) => pipeline.name === pipelineName && pipeline.orgName === organizationName,
   );
-  const { startDate, endDate } = state.config.basic.dateRange;
+
+  const { startDate, endDate } = state.config.basic.dateRange[0];
   const pipelineType = state.config.pipelineTool.config.type;
   const token = state.config.pipelineTool.config.token;
 

@@ -6,6 +6,7 @@ import {
 import { DEPLOYMENT_FREQUENCY_SETTINGS, LIST_OPEN, LOADING, ORGANIZATION, REMOVE_BUTTON } from '@test/fixtures';
 import { DeploymentFrequencySettings } from '@src/containers/MetricsStep/DeploymentFrequencySettings';
 import { IUseVerifyPipeLineToolStateInterface } from '@src/hooks/useGetPipelineToolInfoEffect';
+import { TokenAccessAlert } from '@src/containers/MetricsStep/TokenAccessAlert';
 import { act, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
@@ -40,6 +41,7 @@ jest.mock('@src/context/config/configSlice', () => ({
   selectBranches: jest.fn().mockReturnValue(['']),
   selectPipelineCrews: jest.fn().mockReturnValue(['']),
   selectStepsParams: jest.fn().mockReturnValue(['']),
+  selectDateRange: jest.fn().mockReturnValue(['']),
 }));
 
 const mockValidationCheckContext = {
@@ -154,5 +156,20 @@ describe('DeploymentFrequencySettings', () => {
     setup();
 
     expect(screen.getByTestId(LOADING)).toBeInTheDocument();
+  });
+
+  it('renders without error when errorDetail is provided', () => {
+    const { queryByLabelText } = render(<TokenAccessAlert errorDetail={401} />);
+    expect(queryByLabelText('alert for token access error')).toBeInTheDocument();
+  });
+
+  it('renders null when errorDetail is not provided', () => {
+    const { queryByLabelText } = render(<TokenAccessAlert />);
+    expect(queryByLabelText('alert for token access error')).not.toBeInTheDocument();
+  });
+
+  it('renders null when errorDetail is 404', () => {
+    const { queryByLabelText } = render(<TokenAccessAlert errorDetail={404} />);
+    expect(queryByLabelText('alert for token access error')).not.toBeInTheDocument();
   });
 });

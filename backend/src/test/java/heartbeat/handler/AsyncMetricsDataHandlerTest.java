@@ -3,8 +3,6 @@ package heartbeat.handler;
 import heartbeat.controller.report.dto.request.MetricType;
 import heartbeat.controller.report.dto.response.MetricsDataCompleted;
 import heartbeat.exception.GenerateReportException;
-import heartbeat.service.report.MetricsDataDTO;
-import heartbeat.util.IdUtil;
 import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
 import org.junit.jupiter.api.AfterAll;
@@ -95,16 +93,19 @@ class AsyncMetricsDataHandlerTest {
 			String prefix = "prefix-";
 			String currentTimeFileId = prefix + currentTimeMillis;
 			String expireTimeFileId = prefix + (currentTimeMillis - 1900000L);
+			String expireTimeLockFileId = prefix + (currentTimeMillis - 1900000L) + ".lock";
 			MetricsDataCompleted metricsDataCompleted = MetricsDataCompleted.builder()
 				.boardMetricsCompleted(false)
 				.build();
 			asyncMetricsDataHandler.putMetricsDataCompleted(currentTimeFileId, metricsDataCompleted);
 			asyncMetricsDataHandler.putMetricsDataCompleted(expireTimeFileId, metricsDataCompleted);
+			asyncMetricsDataHandler.putMetricsDataCompleted(expireTimeLockFileId, metricsDataCompleted);
 
 			asyncMetricsDataHandler.deleteExpireMetricsDataCompletedFile(currentTimeMillis,
 					new File(APP_OUTPUT_METRICS));
 
 			assertNull(asyncMetricsDataHandler.getMetricsDataCompleted(expireTimeFileId));
+			assertNull(asyncMetricsDataHandler.getMetricsDataCompleted(expireTimeLockFileId));
 			assertNotNull(asyncMetricsDataHandler.getMetricsDataCompleted(currentTimeFileId));
 			Files.deleteIfExists(Path.of(APP_OUTPUT_METRICS + "/" + currentTimeFileId));
 			assertNull(asyncMetricsDataHandler.getMetricsDataCompleted(currentTimeFileId));
@@ -141,7 +142,8 @@ class AsyncMetricsDataHandlerTest {
 			String currentTime = Long.toString(currentTimeMillis);
 
 			GenerateReportException exception = assertThrows(GenerateReportException.class,
-					() -> asyncMetricsDataHandler.updateMetricsDataCompletedInHandler(currentTime, MetricType.BOARD));
+					() -> asyncMetricsDataHandler.updateMetricsDataCompletedInHandler(currentTime, MetricType.BOARD,
+							false));
 
 			assertEquals("Failed to update metrics data completed through this timestamp.", exception.getMessage());
 		}
@@ -155,7 +157,7 @@ class AsyncMetricsDataHandlerTest {
 				.build();
 			asyncMetricsDataHandler.putMetricsDataCompleted(currentTime, metricsDataCompleted);
 
-			asyncMetricsDataHandler.updateMetricsDataCompletedInHandler(currentTime, MetricType.BOARD);
+			asyncMetricsDataHandler.updateMetricsDataCompletedInHandler(currentTime, MetricType.BOARD, true);
 
 			MetricsDataCompleted completed = asyncMetricsDataHandler.getMetricsDataCompleted(currentTime);
 			assertTrue(completed.boardMetricsCompleted());
@@ -172,7 +174,7 @@ class AsyncMetricsDataHandlerTest {
 				.build();
 			asyncMetricsDataHandler.putMetricsDataCompleted(currentTime, metricsDataCompleted);
 
-			asyncMetricsDataHandler.updateMetricsDataCompletedInHandler(currentTime, MetricType.DORA);
+			asyncMetricsDataHandler.updateMetricsDataCompletedInHandler(currentTime, MetricType.DORA, true);
 
 			MetricsDataCompleted completed = asyncMetricsDataHandler.getMetricsDataCompleted(currentTime);
 			assertTrue(completed.doraMetricsCompleted());
@@ -180,75 +182,57 @@ class AsyncMetricsDataHandlerTest {
 			assertNull(asyncMetricsDataHandler.getMetricsDataCompleted(currentTime));
 		}
 
+		@Test
+		void shouldUpdateDoraMetricDataWhenMetricIsDoraAndCreateCsvFileUnsuccessfully() throws IOException {
+			long currentTimeMillis = System.currentTimeMillis();
+			String currentTime = Long.toString(currentTimeMillis);
+			MetricsDataCompleted metricsDataCompleted = MetricsDataCompleted.builder()
+				.doraMetricsCompleted(false)
+				.isSuccessfulCreateCsvFile(false)
+				.build();
+			asyncMetricsDataHandler.putMetricsDataCompleted(currentTime, metricsDataCompleted);
+
+			asyncMetricsDataHandler.updateMetricsDataCompletedInHandler(currentTime, MetricType.DORA, false);
+
+			MetricsDataCompleted completed = asyncMetricsDataHandler.getMetricsDataCompleted(currentTime);
+			assertTrue(completed.doraMetricsCompleted());
+			assertFalse(completed.isSuccessfulCreateCsvFile());
+			Files.deleteIfExists(Path.of(APP_OUTPUT_METRICS + "/" + currentTime));
+			assertNull(asyncMetricsDataHandler.getMetricsDataCompleted(currentTime));
+		}
+
 	}
 
 	@Nested
-	class GetReportReadyStatusByTimeStamp {
+	class UpdateAllMetricsCompletedInHandler {
 
 		@Test
-		void shouldGetReadyFalseAndAllMetricsReadyTrueGivenPreviousMetricsStatusIsNull() throws IOException {
+		void shouldThrowGenerateReportExceptionGivenPreviousMetricsCompletedIsNull() {
 			long currentTimeMillis = System.currentTimeMillis();
 			String currentTime = Long.toString(currentTimeMillis);
 
-			MetricsDataDTO result = asyncMetricsDataHandler.getReportReadyStatusByTimeStamp(currentTime);
+			GenerateReportException exception = assertThrows(GenerateReportException.class,
+					() -> asyncMetricsDataHandler.updateOverallMetricsCompletedInHandler(currentTime));
 
-			assertEquals(false, result.isBoardReady());
-			assertEquals(false, result.isDoraReady());
-			assertEquals(true, result.isAllMetricsReady());
-			Files.deleteIfExists(Path.of(APP_OUTPUT_METRICS + "/" + currentTime));
-			assertNull(asyncMetricsDataHandler.getMetricsDataCompleted(currentTime));
+			assertEquals("Failed to update metrics data completed through this timestamp.", exception.getMessage());
 		}
 
 		@Test
-		void shouldGetReadyTrueAndAllMetricsReadyFalseGivenPreviousMetricsStatusIsNotAllTrue() throws IOException {
+		void shouldUpdateAllMetricDataWhenPreviousMetricsStatusIsNotNull() throws IOException {
 			long currentTimeMillis = System.currentTimeMillis();
 			String currentTime = Long.toString(currentTimeMillis);
-			MetricsDataCompleted boardCompleted = MetricsDataCompleted.builder().boardMetricsCompleted(false).build();
-			MetricsDataCompleted doraCompleted = MetricsDataCompleted.builder().doraMetricsCompleted(true).build();
-			asyncMetricsDataHandler.putMetricsDataCompleted(IdUtil.getBoardReportId(currentTime), boardCompleted);
-			asyncMetricsDataHandler.putMetricsDataCompleted(IdUtil.getDoraReportId(currentTime), doraCompleted);
+			MetricsDataCompleted metricsDataCompleted = MetricsDataCompleted.builder()
+				.boardMetricsCompleted(true)
+				.overallMetricCompleted(false)
+				.build();
+			asyncMetricsDataHandler.putMetricsDataCompleted(currentTime, metricsDataCompleted);
 
-			MetricsDataDTO result = asyncMetricsDataHandler.getReportReadyStatusByTimeStamp(currentTime);
+			asyncMetricsDataHandler.updateOverallMetricsCompletedInHandler(currentTime);
 
-			assertEquals(false, result.isBoardReady());
-			assertEquals(true, result.isDoraReady());
-			assertEquals(false, result.isAllMetricsReady());
-			Files.deleteIfExists(Path.of(APP_OUTPUT_METRICS + "/" + currentTime));
-			assertNull(asyncMetricsDataHandler.getMetricsDataCompleted(currentTime));
-		}
-
-		@Test
-		void shouldGetReadyTrueAndAllMetricsReadyTrueGivenPreviousMetricsStatusIsAllTrue() throws IOException {
-			long currentTimeMillis = System.currentTimeMillis();
-			String currentTime = Long.toString(currentTimeMillis);
-			MetricsDataCompleted boardCompleted = MetricsDataCompleted.builder().boardMetricsCompleted(true).build();
-			MetricsDataCompleted doraCompleted = MetricsDataCompleted.builder().doraMetricsCompleted(true).build();
-			asyncMetricsDataHandler.putMetricsDataCompleted(IdUtil.getBoardReportId(currentTime), boardCompleted);
-			asyncMetricsDataHandler.putMetricsDataCompleted(IdUtil.getDoraReportId(currentTime), doraCompleted);
-
-			MetricsDataDTO result = asyncMetricsDataHandler.getReportReadyStatusByTimeStamp(currentTime);
-
-			assertEquals(true, result.isBoardReady());
-			assertEquals(true, result.isDoraReady());
-			assertEquals(true, result.isAllMetricsReady());
-			Files.deleteIfExists(Path.of(APP_OUTPUT_METRICS + "/" + currentTime));
-			assertNull(asyncMetricsDataHandler.getMetricsDataCompleted(currentTime));
-		}
-
-		@Test
-		void shouldGetReadyFalseAndAllMetricsReadyFalseGivenPreviousMetricsStatusIsFalse() throws IOException {
-			long currentTimeMillis = System.currentTimeMillis();
-			String currentTime = Long.toString(currentTimeMillis);
-			MetricsDataCompleted boardCompleted = MetricsDataCompleted.builder().boardMetricsCompleted(false).build();
-			MetricsDataCompleted doraCompleted = MetricsDataCompleted.builder().doraMetricsCompleted(false).build();
-			asyncMetricsDataHandler.putMetricsDataCompleted(IdUtil.getBoardReportId(currentTime), boardCompleted);
-			asyncMetricsDataHandler.putMetricsDataCompleted(IdUtil.getDoraReportId(currentTime), doraCompleted);
-
-			MetricsDataDTO result = asyncMetricsDataHandler.getReportReadyStatusByTimeStamp(currentTime);
-
-			assertEquals(false, result.isBoardReady());
-			assertEquals(false, result.isDoraReady());
-			assertEquals(false, result.isAllMetricsReady());
+			MetricsDataCompleted completed = asyncMetricsDataHandler.getMetricsDataCompleted(currentTime);
+			assertTrue(completed.boardMetricsCompleted());
+			assertNull(completed.doraMetricsCompleted());
+			assertTrue(completed.allMetricsCompleted());
 			Files.deleteIfExists(Path.of(APP_OUTPUT_METRICS + "/" + currentTime));
 			assertNull(asyncMetricsDataHandler.getMetricsDataCompleted(currentTime));
 		}

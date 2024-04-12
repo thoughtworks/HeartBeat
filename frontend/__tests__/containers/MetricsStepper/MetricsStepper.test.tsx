@@ -1,26 +1,17 @@
 import {
   BASE_PAGE_ROUTE,
-  BOARD_TYPES,
   CONFIRM_DIALOG_DESCRIPTION,
+  DEFAULT_REWORK_SETTINGS,
   MOCK_REPORT_URL,
   NEXT,
-  PIPELINE_TOOL_TYPES,
   PREVIOUS,
   PROJECT_NAME_LABEL,
   SAVE,
   STEPPER,
   TEST_PROJECT_NAME,
   VELOCITY,
+  COMMON_TIME_FORMAT,
 } from '../../fixtures';
-import {
-  updateBoard,
-  updateBoardVerifyState,
-  updateMetrics,
-  updatePipelineTool,
-  updatePipelineToolVerifyState,
-  updateSourceControl,
-  updateSourceControlVerifyState,
-} from '@src/context/config/configSlice';
 import {
   updateCycleTimeSettings,
   saveDoneColumn,
@@ -29,8 +20,14 @@ import {
   updateDeploymentFrequencySettings,
   updateTreatFlagCardAsBlock,
 } from '@src/context/Metrics/metricsSlice';
-import { ASSIGNEE_FILTER_TYPES, SOURCE_CONTROL_TYPES } from '@src/constants/resources';
-import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import {
+  updateBoardVerifyState,
+  updateMetrics,
+  updatePipelineToolVerifyState,
+  updateSourceControlVerifyState,
+} from '@src/context/config/configSlice';
+import { act, render, screen, waitFor } from '@testing-library/react';
+import { ASSIGNEE_FILTER_TYPES } from '@src/constants/resources';
 import MetricsStepper from '@src/containers/MetricsStepper';
 import { setupStore } from '../../utils/setupStoreUtil';
 import userEvent from '@testing-library/user-event';
@@ -46,7 +43,6 @@ import React from 'react';
 const START_DATE_LABEL = 'From *';
 const TODAY = dayjs();
 const INPUT_DATE_VALUE = TODAY.format('MM/DD/YYYY');
-const END_DATE_LABEL = 'To *';
 const YES = 'Yes';
 const CANCEL = 'Cancel';
 const METRICS = 'Metrics';
@@ -94,7 +90,7 @@ jest.mock('@src/utils/util', () => ({
 
 jest.mock('@src/hooks/useGenerateReportEffect', () => ({
   useGenerateReportEffect: jest.fn().mockReturnValue({
-    startToRequestBoardData: jest.fn(),
+    startToRequestData: jest.fn(),
     startToRequestDoraData: jest.fn(),
     stopPollingReports: jest.fn(),
     isServerError: false,
@@ -110,9 +106,9 @@ Object.defineProperty(window, 'location', { value: mockLocation });
 let store = setupStore();
 const fillConfigPageData = async () => {
   const projectNameInput = await screen.findByRole('textbox', { name: PROJECT_NAME_LABEL });
-  fireEvent.change(projectNameInput, { target: { value: TEST_PROJECT_NAME } });
+  await userEvent.type(projectNameInput, TEST_PROJECT_NAME);
   const startDateInput = (await screen.findByRole('textbox', { name: START_DATE_LABEL })) as HTMLInputElement;
-  fireEvent.change(startDateInput, { target: { value: INPUT_DATE_VALUE } });
+  await userEvent.type(startDateInput, INPUT_DATE_VALUE);
 
   act(() => {
     store.dispatch(updateMetrics([VELOCITY]));
@@ -133,7 +129,12 @@ const fillMetricsPageDate = async () => {
     store.dispatch(saveTargetFields([{ name: 'mockClassification', key: 'mockClassification', flag: true }]));
     store.dispatch(saveUsers(['mockUsers']));
     store.dispatch(saveDoneColumn(['Done', 'Canceled'])),
-      store.dispatch(updateCycleTimeSettings([{ name: 'TODO', value: 'To do' }]));
+      store.dispatch(
+        updateCycleTimeSettings([
+          { column: 'Testing', status: 'testing', value: 'Done' },
+          { column: 'Testing', status: 'test', value: 'Done' },
+        ]),
+      );
     store.dispatch(updateTreatFlagCardAsBlock(false)),
       store.dispatch(
         updateDeploymentFrequencySettings({ updateId: 0, label: 'organization', value: 'mock new organization' }),
@@ -219,30 +220,6 @@ describe('MetricsStepper', () => {
     expect(screen.getByText(NEXT)).toBeDisabled();
   });
 
-  it('should disable next when dataRange is empty ', async () => {
-    setup();
-    await fillConfigPageData();
-
-    const startDateInput = screen.getByRole('textbox', { name: START_DATE_LABEL }) as HTMLInputElement;
-    const endDateInput = screen.getByRole('textbox', { name: END_DATE_LABEL }) as HTMLInputElement;
-
-    await userEvent.clear(startDateInput);
-    await userEvent.clear(endDateInput);
-
-    expect(screen.getByText(NEXT)).toBeDisabled();
-  }, 50000);
-
-  it('should disable next when endDate is empty ', async () => {
-    setup();
-    await fillConfigPageData();
-
-    const endDateInput = screen.getByRole('textbox', { name: END_DATE_LABEL }) as HTMLInputElement;
-
-    await userEvent.clear(endDateInput);
-
-    expect(screen.getByText(NEXT)).toBeDisabled();
-  });
-
   it('should enable next when every selected component is show and verified', async () => {
     setup();
     await fillConfigPageData();
@@ -264,7 +241,7 @@ describe('MetricsStepper', () => {
     setup();
 
     await fillConfigPageData();
-    fireEvent.click(screen.getByText(NEXT));
+    await userEvent.click(screen.getByText(NEXT));
 
     expect(screen.getByText(METRICS)).toHaveStyle(`color:${stepperColor}`);
   });
@@ -283,7 +260,6 @@ describe('MetricsStepper', () => {
     });
 
     await userEvent.click(screen.getByText(NEXT));
-
     expect(screen.getByText(REPORT)).toHaveStyle(`color:${stepperColor}`);
   });
 
@@ -292,10 +268,12 @@ describe('MetricsStepper', () => {
     const expectedJson = {
       board: undefined,
       calendarType: 'Regular Calendar(Weekend Considered)',
-      dateRange: {
-        endDate: null,
-        startDate: null,
-      },
+      dateRange: [
+        {
+          endDate: null,
+          startDate: null,
+        },
+      ],
       metrics: [],
       pipelineTool: undefined,
       projectName: '',
@@ -313,10 +291,12 @@ describe('MetricsStepper', () => {
     const expectedJson = {
       board: { boardId: '', email: '', site: '', token: '', type: 'Jira' },
       calendarType: 'Regular Calendar(Weekend Considered)',
-      dateRange: {
-        endDate: null,
-        startDate: null,
-      },
+      dateRange: [
+        {
+          endDate: null,
+          startDate: null,
+        },
+      ],
       metrics: ['Velocity'],
       pipelineTool: undefined,
       projectName: '',
@@ -338,11 +318,14 @@ describe('MetricsStepper', () => {
       assigneeFilter: ASSIGNEE_FILTER_TYPES.LAST_ASSIGNEE,
       board: { boardId: '', email: '', site: '', token: '', type: 'Jira' },
       calendarType: 'Regular Calendar(Weekend Considered)',
-      dateRange: {
-        endDate: dayjs().endOf('date').add(13, 'day').format('YYYY-MM-DDTHH:mm:ss.SSSZ'),
-        startDate: dayjs().startOf('date').format('YYYY-MM-DDTHH:mm:ss.SSSZ'),
-      },
+      dateRange: [
+        {
+          endDate: dayjs().endOf('date').add(0, 'day').format(COMMON_TIME_FORMAT),
+          startDate: dayjs().startOf('date').format(COMMON_TIME_FORMAT),
+        },
+      ],
       metrics: ['Velocity'],
+      pipelineCrews: undefined,
       pipelineTool: undefined,
       projectName: 'test project Name',
       sourceControl: undefined,
@@ -352,6 +335,7 @@ describe('MetricsStepper', () => {
       deployment: undefined,
       doneStatus: undefined,
       leadTime: undefined,
+      reworkTimesSettings: DEFAULT_REWORK_SETTINGS,
     };
     setup();
 
@@ -369,20 +353,35 @@ describe('MetricsStepper', () => {
       assigneeFilter: ASSIGNEE_FILTER_TYPES.LAST_ASSIGNEE,
       board: { boardId: '', email: '', site: '', token: '', type: 'Jira' },
       calendarType: 'Regular Calendar(Weekend Considered)',
-      dateRange: {
-        endDate: dayjs().endOf('date').add(13, 'day').format('YYYY-MM-DDTHH:mm:ss.SSSZ'),
-        startDate: dayjs().startOf('date').format('YYYY-MM-DDTHH:mm:ss.SSSZ'),
-      },
+      dateRange: [
+        {
+          endDate: dayjs().endOf('date').add(0, 'day').format(COMMON_TIME_FORMAT),
+          startDate: dayjs().startOf('date').format(COMMON_TIME_FORMAT),
+        },
+      ],
       metrics: ['Velocity'],
+      pipelineCrews: undefined,
       pipelineTool: undefined,
       projectName: 'test project Name',
       sourceControl: undefined,
-      classification: undefined,
-      crews: undefined,
-      cycleTime: undefined,
+      classification: ['mockClassification'],
+      crews: ['mockUsers'],
+      cycleTime: {
+        jiraColumns: [
+          {
+            Testing: 'Done',
+          },
+        ],
+        treatFlagCardAsBlock: false,
+        type: 'byColumn',
+      },
       deployment: undefined,
-      doneStatus: undefined,
+      doneStatus: ['Done', 'Canceled'],
       leadTime: undefined,
+      reworkTimesSettings: {
+        reworkState: null,
+        excludeStates: [],
+      },
     };
 
     setup();
@@ -403,24 +402,4 @@ describe('MetricsStepper', () => {
       expect(exportToJsonFile).toHaveBeenCalledWith(expectedFileName, expectedJson);
     });
   }, 25000);
-
-  it('should clean the config information that is hidden when click next button', async () => {
-    setup();
-
-    await fillConfigPageData();
-    await userEvent.click(screen.getByText(NEXT));
-
-    expect(updateBoard).not.toHaveBeenCalledWith({
-      type: BOARD_TYPES.JIRA,
-      boardId: '',
-      email: '',
-      projectKey: '',
-      site: '',
-      token: '',
-      startTime: 0,
-      endTime: 0,
-    });
-    expect(updateSourceControl).toHaveBeenCalledWith({ type: SOURCE_CONTROL_TYPES.GITHUB, token: '' });
-    expect(updatePipelineTool).toHaveBeenCalledWith({ type: PIPELINE_TOOL_TYPES.BUILD_KITE, token: '' });
-  }, 50000);
 });

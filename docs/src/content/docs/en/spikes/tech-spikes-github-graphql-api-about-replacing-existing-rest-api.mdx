@@ -49,6 +49,12 @@ query {
 }
 ```
 
+- Once query cost total node
+
+```
+1
+```
+
 - The meaning of response status 
 
 | response status | mean                |
@@ -92,6 +98,12 @@ query {
     }
   }
 }
+```
+
+- Once query cost total node
+
+```
+1
 ```
 
 - Required value and demo
@@ -153,7 +165,7 @@ response:
 }
 ```
 
-if the token can‘t get repository，you will get response with repository is null.
+if the token can't get repository，you will get response with repository is null.
 
 ```
 status: 200
@@ -218,6 +230,12 @@ query {
 		}
   }
 }
+```
+
+- Once query cost total node
+
+```
+1
 ```
 
 - Required value and demo
@@ -315,6 +333,12 @@ query {
     }
   }
 }
+```
+
+- Once query cost total node
+
+```
+1
 ```
 
 - Required value and demo
@@ -482,6 +506,12 @@ query {
 }
 ```
 
+- Once query cost total node
+
+```
+1
+```
+
 - Required value and demo
 
 | Required value |  explain     | demo                                     |
@@ -506,3 +536,195 @@ curl --request POST \
   --header 'User-Agent: insomnia/8.6.1' \
   --data '{"query":"{ repository(owner: \"au-heartbeat\", name: \"Heartbeat\") { object(expression: \"414e*********************************ae6\") { ... on Commit { associatedPullRequests(first: 100, after: \"\") { edges { node { number createdAt mergedAt mergeCommit { oid } commits(first: 100, after: \"\") { edges { node { commit { oid message author { name email date } committer { name email date }}}} pageInfo { endCursor hasNextPage }}}} pageInfo { endCursor hasNextPage }}}}}}"}'
 ```
+
+### 6、Node and Rate limits and calculate
+
+#### 6.1. Node limits
+
+`Individual calls cannot request more than 500,000 total nodes.`
+
+- How to calculate node count
+
+For example
+
+```
+query {
+  viewer {
+    repositories(first: 50) {
+      edges {
+        repository:node {
+          name
+          issues(first: 10) {
+            totalCount
+            edges {
+              node {
+                title
+                bodyHTML
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+IS
+
+```
+50 + 50 * 10 = 550
+```
+
+#### 6.2. Rate limits
+
+`5,000 points per hour per user.`
+
+`GitHub Enterprise Cloud organization have a higher rate limit of 10,000 points per hour.`
+
+- How to calculate points count
+
+You can use following query in target gql.
+
+```
+  rateLimit {
+    limit
+    remaining
+    used
+    resetAt
+    cost
+  }
+```
+
+- Required value and demo
+
+| Required value |  explain                                                                     | demo                 |
+|----------------|------------------------------------------------------------------------------|----------------------|
+| limit          | the maximum number of points that you can use per hour                       | 5000                 |
+| remaining      | the number of points remaining in the current rate limit window              | 4924                 |
+| used           | the number of points you have used in the current rate limit window          | 76                   |
+| resetAt        | the time at which the current rate limit window resets, in UTC epoch seconds | 2024-04-03T08:47:28Z |
+| cost           | the point value of a query                                                   | 51                   |
+
+
+For example
+
+```
+query {
+  rateLimit {
+    limit
+    remaining
+    used
+    resetAt
+    cost
+  }
+  viewer {
+    login
+    repositories(first: 100) {
+      edges {
+        node {
+          id
+          issues(first: 50) {
+            edges {
+              node {
+                id
+                labels(first: 60) {
+                  edges {
+                    node {
+                      id
+                      name
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+You can get response, the cost is every query count.
+
+```
+{
+	"data": {
+		"rateLimit": {
+			"limit": 5000,
+			"remaining": 4786,
+			"used": 214,
+			"resetAt": "2024-04-03T08:47:28Z",
+			"cost": 51
+		},
+		"viewer": {
+      ...
+		}
+	}
+}
+```
+
+#### 6.3. What can we do when the speed limit is reached
+
+`You can switch Rest api to replace graph ql`
+
+#### 6.3. Bottlenecks for daily use
+
+The following is a flow chart of the program that interacts with the GitHub API
+
+We define
+
+| variable |  meaning                                                                 |
+|----------|--------------------------------------------------------------------------|
+| V        | verify token cost                                                        |
+| B        | verify branch cost                                                       | 
+| I        | Get a commit info cost                                                   |
+| T        | Get all Commits under PullRequest cost                                   |
+| P        | Get the list of PullRequest where the commit is located cost             |
+| N        | Number of reports generated simultaneously                               |
+| R        | Number of pipelines selected                                             |
+| C        | Number of successful commits to the selected repo during the time period |
+| D        | Number of build commits to the selected repo during the time period      |
+
+![getDataFromGithubFlowChart.png](https://cdn.jsdelivr.net/gh/au-heartbeat/data-hosting@main/how-to-get-data-from-github/how-to-get-data-from-github.png)
+
+We can get
+
+```
+Verify stage:（ V + B ）
++
+Compute data stage: N * R *（ C * (P +（I + T）)）
++
+Report generation stage：N * R * ( D * I )
+=
+（ V + B ）+ N * R *（ C * (P +（I + T）)）+  N * R * ( D * I ) < 5000
+```
+
+And then introduce some constants
+
+| variable |  meaning                                                     | cost |
+|----------|--------------------------------------------------------------|------|
+| V        | verify token cost                                            | 1    |
+| B        | verify branch cost                                           | 1    |
+| I        | Get a commit info cost                                       | 1    |
+| T        | Get all Commits under PullRequest cost                       | 1    |
+| P        | Get the list of PullRequest where the commit is located cost | 1    |
+
+```
+1 + 1 + N * R * ( C * (1 + (1 + 1) ) + N * R * ( D * 1) < 5000
+NR * (3C + D) ~ 4NRD < 4998
+NRD < 1249
+```
+
+We can get some combination
+
+| N | R | D    | cost |
+|---|---|------|------|
+| 1 | 1 | 1249 | 1249 |
+| 3 | 2 | 208  | 1248 |
+| 4 | 3 | 104  | 1248 |
+| 5 | 3 | 83   | 1245 |
+| 5 | 4 | 62   | 1240 |
+| 7 | 4 | 44   | 1232 |
+| 9 | 5 | 27   | 1249 |

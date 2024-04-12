@@ -10,6 +10,7 @@ import heartbeat.client.dto.codebase.github.PipelineLeadTime;
 import heartbeat.client.dto.codebase.github.PullRequestInfo;
 import heartbeat.client.dto.pipeline.buildkite.DeployInfo;
 import heartbeat.client.dto.pipeline.buildkite.DeployTimes;
+import heartbeat.exception.BadRequestException;
 import heartbeat.exception.InternalServerErrorException;
 import heartbeat.exception.NotFoundException;
 import heartbeat.exception.PermissionDenyException;
@@ -24,12 +25,17 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CompletionException;
+
 import static heartbeat.TestFixtures.GITHUB_REPOSITORY;
 import static heartbeat.TestFixtures.GITHUB_TOKEN;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -38,11 +44,6 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.CompletionException;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -86,6 +87,7 @@ class GithubServiceTest {
 			.mergedAt("2022-07-23T04:04:00.000+00:00")
 			.createdAt("2022-07-23T04:03:00.000+00:00")
 			.mergeCommitSha("111")
+			.url("https://api.github.com/repos/XXXX-fs/fs-platform-onboarding/pulls/1")
 			.number(1)
 			.build();
 		deployInfo = DeployInfo.builder()
@@ -168,7 +170,7 @@ class GithubServiceTest {
 	}
 
 	@Test
-	void shouldThrowExceptionWhenGithubReturnUnExpectedException() {
+	void shouldThrowUnauthorizedExceptionGivenGithubReturnUnauthorizedExceptionWhenVerifyToken() {
 		String githubEmptyToken = GITHUB_TOKEN;
 		doThrow(new UnauthorizedException("Failed to get GitHub info_status: 401 UNAUTHORIZED, reason: ..."))
 			.when(gitHubFeignClient)
@@ -179,30 +181,42 @@ class GithubServiceTest {
 	}
 
 	@Test
-	void shouldThrowExceptionGivenGithubReturnUnExpectedExceptionWhenVerifyBranch() {
+	void shouldThrowBadRequestExceptionGivenGithubReturnUnExpectedExceptionWhenVerifyBranch() {
 		String githubEmptyToken = GITHUB_TOKEN;
 		doThrow(new UnauthorizedException("Failed to get GitHub info_status: 401 UNAUTHORIZED, reason: ..."))
 			.when(gitHubFeignClient)
 			.verifyCanReadTargetBranch("fake/repo", "main", "token " + githubEmptyToken);
 
-		var exception = assertThrows(UnauthorizedException.class,
+		var exception = assertThrows(BadRequestException.class,
 				() -> githubService.verifyCanReadTargetBranch(GITHUB_REPOSITORY, "main", githubEmptyToken));
-		assertEquals("Failed to get GitHub info_status: 401 UNAUTHORIZED, reason: ...", exception.getMessage());
+		assertEquals("Unable to read target branch: main, with token error", exception.getMessage());
 	}
 
 	@Test
-	void shouldThrowExceptionGivenGithubReturnPermissionDenyExceptionWhenVerifyBranch() {
+	void shouldThrowNotFoundExceptionGivenGithubReturnNotFoundExceptionWhenVerifyBranch() {
 		String githubEmptyToken = GITHUB_TOKEN;
 		doThrow(new NotFoundException("Failed to get GitHub info_status: 404, reason: ...")).when(gitHubFeignClient)
 			.verifyCanReadTargetBranch("fake/repo", "main", "token " + githubEmptyToken);
 
-		var exception = assertThrows(PermissionDenyException.class,
+		var exception = assertThrows(NotFoundException.class,
 				() -> githubService.verifyCanReadTargetBranch(GITHUB_REPOSITORY, "main", githubEmptyToken));
 		assertEquals("Unable to read target branch: main", exception.getMessage());
 	}
 
 	@Test
-	void shouldThrowExceptionGivenGithubReturnCompletionExceptionExceptionWhenVerifyToken() {
+	void shouldThrowInternalServerErrorExceptionGivenGithubReturnInternalServerErrorExceptionWhenVerifyBranch() {
+		String githubEmptyToken = GITHUB_TOKEN;
+		doThrow(new InternalServerErrorException("Failed to get GitHub info_status: 500, reason: ..."))
+			.when(gitHubFeignClient)
+			.verifyCanReadTargetBranch("fake/repo", "main", "token " + githubEmptyToken);
+
+		var exception = assertThrows(InternalServerErrorException.class,
+				() -> githubService.verifyCanReadTargetBranch(GITHUB_REPOSITORY, "main", githubEmptyToken));
+		assertEquals("Failed to get GitHub info_status: 500, reason: ...", exception.getMessage());
+	}
+
+	@Test
+	void shouldThrowInternalServerErrorExceptionGivenGithubReturnCompletionExceptionWhenVerifyToken() {
 		String githubEmptyToken = GITHUB_TOKEN;
 		doThrow(new CompletionException(new Exception("UnExpected Exception"))).when(gitHubFeignClient)
 			.verifyToken("token " + githubEmptyToken);
@@ -213,7 +227,7 @@ class GithubServiceTest {
 	}
 
 	@Test
-	void shouldThrowExceptionGivenGithubReturnUnauthorizedExceptionWhenVerifyBranch() {
+	void shouldThrowInternalServerErrorExceptionGivenGithubReturnCompletionExceptionWhenVerifyBranch() {
 		String githubEmptyToken = GITHUB_TOKEN;
 		doThrow(new CompletionException(new Exception("UnExpected Exception"))).when(gitHubFeignClient)
 			.verifyCanReadTargetBranch("fake/repo", "main", "token " + githubEmptyToken);
@@ -221,6 +235,18 @@ class GithubServiceTest {
 		var exception = assertThrows(InternalServerErrorException.class,
 				() -> githubService.verifyCanReadTargetBranch(GITHUB_REPOSITORY, "main", githubEmptyToken));
 		assertEquals("Failed to call GitHub branch: main with error: UnExpected Exception", exception.getMessage());
+	}
+
+	@Test
+	void shouldThrowUnauthorizedExceptionGivenGithubReturnPermissionDenyExceptionWhenVerifyBranch() {
+		String githubEmptyToken = GITHUB_TOKEN;
+		doThrow(new PermissionDenyException("Failed to get GitHub info_status: 403 FORBIDDEN..."))
+			.when(gitHubFeignClient)
+			.verifyCanReadTargetBranch("fake/repo", "main", "token " + githubEmptyToken);
+
+		var exception = assertThrows(UnauthorizedException.class,
+				() -> githubService.verifyCanReadTargetBranch(GITHUB_REPOSITORY, "main", githubEmptyToken));
+		assertEquals("Unable to read target organization", exception.getMessage());
 	}
 
 	@Test
@@ -360,6 +386,38 @@ class GithubServiceTest {
 
 		List<PipelineLeadTime> result = githubService.fetchPipelinesLeadTime(emptyDeployTimes, repositoryMap,
 				mockToken);
+
+		assertEquals(expect, result);
+	}
+
+	@Test
+	void shouldReturnEmptyLeadTimeGithubShaIsDifferent() {
+		String mockToken = "mockToken";
+		List<PipelineLeadTime> expect = List.of(PipelineLeadTime.builder()
+			.pipelineStep(PIPELINE_STEP)
+			.pipelineName("Name")
+			.leadTimes(List.of(LeadTime.builder()
+				.commitId("111")
+				.jobFinishTime(1658549160000L)
+				.pipelineCreateTime(1658549100000L)
+				.prLeadTime(0L)
+				.pipelineLeadTime(180000)
+				.totalTime(180000)
+				.build()))
+			.build());
+		var pullRequestInfoWithDifferentSha = PullRequestInfo.builder()
+			.mergedAt("2022-07-23T04:04:00.000+00:00")
+			.createdAt("2022-07-23T04:03:00.000+00:00")
+			.mergeCommitSha("222")
+			.url("https://api.github.com/repos/XXXX-fs/fs-platform-onboarding/pulls/1")
+			.number(1)
+			.build();
+		when(gitHubFeignClient.getPullRequestListInfo(any(), any(), any()))
+			.thenReturn(List.of(pullRequestInfoWithDifferentSha));
+		when(gitHubFeignClient.getPullRequestCommitInfo(any(), any(), any())).thenReturn(List.of(commitInfo));
+		when(gitHubFeignClient.getCommitInfo(any(), any(), any())).thenReturn(commitInfo);
+
+		List<PipelineLeadTime> result = githubService.fetchPipelinesLeadTime(deployTimes, repositoryMap, mockToken);
 
 		assertEquals(expect, result);
 	}
@@ -525,6 +583,7 @@ class GithubServiceTest {
 			.mergedAt("2022-07-23T04:04:00.000+00:00")
 			.createdAt("2022-07-23T04:03:00.000+00:00")
 			.mergeCommitSha("222")
+			.url("")
 			.number(1)
 			.build();
 		pipelineLeadTimes = List.of(PipelineLeadTime.builder()

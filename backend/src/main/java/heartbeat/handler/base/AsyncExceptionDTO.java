@@ -1,11 +1,20 @@
 package heartbeat.handler.base;
 
 import heartbeat.exception.BaseException;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
-public class AsyncExceptionDTO extends BaseException {
+@Data
+@AllArgsConstructor
+public class AsyncExceptionDTO {
 
-	public AsyncExceptionDTO(String message, int status) {
-		super(message, status);
+	private String message;
+
+	private int status;
+
+	public AsyncExceptionDTO(BaseException e) {
+		this.message = e.getMessage();
+		this.status = e.getStatus();
 	}
 
 }

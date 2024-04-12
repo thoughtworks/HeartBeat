@@ -5,27 +5,28 @@ import com.google.gson.JsonElement;
 import com.opencsv.CSVWriter;
 import heartbeat.controller.board.dto.response.JiraCardDTO;
 import heartbeat.controller.report.dto.request.ReportType;
-import heartbeat.controller.report.dto.response.AvgChangeFailureRate;
 import heartbeat.controller.report.dto.response.AvgDeploymentFrequency;
+import heartbeat.controller.report.dto.response.AvgDevChangeFailureRate;
+import heartbeat.controller.report.dto.response.AvgDevMeanTimeToRecovery;
 import heartbeat.controller.report.dto.response.AvgLeadTimeForChanges;
-import heartbeat.controller.report.dto.response.AvgMeanTimeToRecovery;
 import heartbeat.controller.report.dto.response.BoardCSVConfig;
 import heartbeat.controller.report.dto.response.BoardCSVConfigEnum;
-import heartbeat.controller.report.dto.response.ChangeFailureRate;
-import heartbeat.controller.report.dto.response.ChangeFailureRateOfPipeline;
 import heartbeat.controller.report.dto.response.Classification;
 import heartbeat.controller.report.dto.response.ClassificationNameValuePair;
 import heartbeat.controller.report.dto.response.CycleTime;
 import heartbeat.controller.report.dto.response.CycleTimeForSelectedStepItem;
 import heartbeat.controller.report.dto.response.DeploymentFrequency;
 import heartbeat.controller.report.dto.response.DeploymentFrequencyOfPipeline;
+import heartbeat.controller.report.dto.response.DevChangeFailureRate;
+import heartbeat.controller.report.dto.response.DevChangeFailureRateOfPipeline;
+import heartbeat.controller.report.dto.response.DevMeanTimeToRecovery;
+import heartbeat.controller.report.dto.response.DevMeanTimeToRecoveryOfPipeline;
 import heartbeat.controller.report.dto.response.LeadTimeForChanges;
 import heartbeat.controller.report.dto.response.LeadTimeForChangesOfPipelines;
 import heartbeat.controller.report.dto.response.LeadTimeInfo;
-import heartbeat.controller.report.dto.response.MeanTimeToRecovery;
-import heartbeat.controller.report.dto.response.MeanTimeToRecoveryOfPipeline;
 import heartbeat.controller.report.dto.response.PipelineCSVInfo;
 import heartbeat.controller.report.dto.response.ReportResponse;
+import heartbeat.controller.report.dto.response.Rework;
 import heartbeat.controller.report.dto.response.Velocity;
 import heartbeat.exception.FileIOException;
 import heartbeat.exception.GenerateReportException;
@@ -42,6 +43,8 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -49,6 +52,7 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 import static heartbeat.service.report.calculator.ClassificationCalculator.pickDisplayNameFromObj;
+import static heartbeat.util.DecimalUtil.formatDecimalFour;
 import static heartbeat.util.TimeUtil.convertToSimpleISOFormat;
 import static java.util.concurrent.TimeUnit.HOURS;
 
@@ -64,6 +68,8 @@ public class CSVFileGenerator {
 	public static final String FILE_LOCAL_PATH = "./app/output/csv";
 
 	private static final String CANCELED_STATUS = "canceled";
+
+	private static final String REWORK_FIELD = "Rework";
 
 	private static InputStreamResource readStringFromCsvFile(String fileName) {
 		try {
@@ -101,52 +107,52 @@ public class CSVFileGenerator {
 
 				csvWriter.writeNext(headers);
 
-				for (PipelineCSVInfo csvInfo : leadTimeData) {
-					String committerName = null;
-					String commitDate = null;
-					String creatorName = null;
-					String organization = csvInfo.getOrganizationName();
-					String pipelineName = csvInfo.getPipeLineName();
-					String stepName = csvInfo.getStepName();
-					String valid = String.valueOf(csvInfo.getValid()).toLowerCase();
-					String buildNumber = String.valueOf(csvInfo.getBuildInfo().getNumber());
-					String state = csvInfo.getPiplineStatus().equals(CANCELED_STATUS) ? CANCELED_STATUS
-							: csvInfo.getDeployInfo().getState();
-					String branch = csvInfo.getBuildInfo().getBranch();
-					if (csvInfo.getCommitInfo() != null) {
-						committerName = csvInfo.getCommitInfo().getCommit().getAuthor().getName();
-						commitDate = csvInfo.getCommitInfo().getCommit().getAuthor().getDate();
-					}
-
-					if (csvInfo.getBuildInfo().getCreator() != null
-							&& csvInfo.getBuildInfo().getCreator().getName() != null) {
-						creatorName = csvInfo.getBuildInfo().getCreator().getName();
-					}
-
-					LeadTimeInfo leadTimeInfo = csvInfo.getLeadTimeInfo();
-					String firstCommitTimeInPr = leadTimeInfo.getFirstCommitTimeInPr();
-					String prCreatedTime = leadTimeInfo.getPrCreatedTime();
-					String prMergedTime = leadTimeInfo.getPrMergedTime();
-					String jobFinishTime = csvInfo.getDeployInfo().getJobFinishTime();
-					String totalTime = leadTimeInfo.getTotalTime();
-					String prLeadTime = leadTimeInfo.getPrLeadTime();
-					String pipelineLeadTime = leadTimeInfo.getPipelineLeadTime();
-
-					String[] rowData = { organization, pipelineName, stepName, valid, buildNumber, committerName,
-							creatorName, firstCommitTimeInPr, commitDate, prCreatedTime, prMergedTime, jobFinishTime,
-							totalTime, prLeadTime, pipelineLeadTime, state, branch };
-
-					csvWriter.writeNext(rowData);
-				}
+				leadTimeData.stream().map(this::getRowData).forEach(csvWriter::writeNext);
 			}
 			catch (IOException e) {
-				log.error("Failed to write file", e);
+				log.error("Failed to write pipeline file", e);
 				throw new FileIOException(e);
 			}
 		}
 		else {
-			throw new GenerateReportException("Failed to generate csv file,invalid csvTimestamp");
+			throw new GenerateReportException("Failed to generate pipeline csv file, invalid csvTimestamp");
 		}
+	}
+
+	private String[] getRowData(PipelineCSVInfo csvInfo) {
+		String committerName = null;
+		String commitDate = null;
+		if (csvInfo.getCommitInfo() != null) {
+			committerName = csvInfo.getCommitInfo().getCommit().getAuthor().getName();
+			commitDate = csvInfo.getCommitInfo().getCommit().getAuthor().getDate();
+		}
+
+		String creatorName = null;
+		if (csvInfo.getBuildInfo().getCreator() != null && csvInfo.getBuildInfo().getCreator().getName() != null) {
+			creatorName = csvInfo.getBuildInfo().getCreator().getName();
+		}
+
+		String organization = csvInfo.getOrganizationName();
+		String pipelineName = csvInfo.getPipeLineName();
+		String stepName = csvInfo.getStepName();
+		String valid = String.valueOf(csvInfo.getValid()).toLowerCase();
+		String buildNumber = String.valueOf(csvInfo.getBuildInfo().getNumber());
+		String state = csvInfo.getPiplineStatus().equals(CANCELED_STATUS) ? CANCELED_STATUS
+				: csvInfo.getDeployInfo().getState();
+		String branch = csvInfo.getBuildInfo().getBranch();
+
+		LeadTimeInfo leadTimeInfo = csvInfo.getLeadTimeInfo();
+		String firstCommitTimeInPr = leadTimeInfo.getFirstCommitTimeInPr();
+		String prCreatedTime = leadTimeInfo.getPrCreatedTime();
+		String prMergedTime = leadTimeInfo.getPrMergedTime();
+		String jobFinishTime = csvInfo.getDeployInfo().getJobFinishTime();
+		String totalTime = leadTimeInfo.getTotalTime();
+		String prLeadTime = leadTimeInfo.getPrLeadTime();
+		String pipelineLeadTime = leadTimeInfo.getPipelineLeadTime();
+
+		return new String[] { organization, pipelineName, stepName, valid, buildNumber, committerName, creatorName,
+				firstCommitTimeInPr, commitDate, prCreatedTime, prMergedTime, jobFinishTime, totalTime, prLeadTime,
+				pipelineLeadTime, state, branch };
 	}
 
 	public InputStreamResource getDataFromCSV(ReportType reportDataType, long csvTimeStamp) {
@@ -170,35 +176,42 @@ public class CSVFileGenerator {
 	public void convertBoardDataToCSV(List<JiraCardDTO> cardDTOList, List<BoardCSVConfig> fields,
 			List<BoardCSVConfig> extraFields, String csvTimeStamp) {
 		log.info("Start to create board csv directory");
+		String[][] mergedArrays = assembleBoardData(cardDTOList, fields, extraFields);
+		writeDataToCSV(csvTimeStamp, mergedArrays);
+	}
+
+	public void writeDataToCSV(String csvTimeStamp, String[][] mergedArrays) {
 		createCsvDirToConvertData();
 
 		String fileName = CSVFileNameEnum.BOARD.getValue() + FILENAME_SEPARATOR + csvTimeStamp + CSV_EXTENSION;
 		if (!fileName.contains("..") && fileName.startsWith(FILE_LOCAL_PATH)) {
 			try (CSVWriter writer = new CSVWriter(new FileWriter(fileName))) {
-				List<BoardCSVConfig> fixedFields = new ArrayList<>(fields);
-				fixedFields.removeAll(extraFields);
-
-				String[][] fixedFieldsData = getFixedFieldsData(cardDTOList, fixedFields);
-				String[][] extraFieldsData = getExtraFieldsData(cardDTOList, extraFields);
-
-				String[] fixedFieldsRow = fixedFieldsData[0];
-				String targetElement = "Cycle Time";
-				List<String> fixedFieldsRowList = Arrays.asList(fixedFieldsRow);
-				int targetIndex = fixedFieldsRowList.indexOf(targetElement) + 1;
-
-				String[][] mergedArrays = mergeArrays(fixedFieldsData, extraFieldsData, targetIndex);
-
 				writer.writeAll(Arrays.asList(mergedArrays));
-
 			}
 			catch (IOException e) {
-				log.error("Failed to write file", e);
+				log.error("Failed to write board file", e);
 				throw new FileIOException(e);
 			}
 		}
 		else {
-			throw new GenerateReportException("Failed to generate csv file,invalid csvTimestamp");
+			throw new GenerateReportException("Failed to generate board csv file, invalid csvTimestamp");
 		}
+	}
+
+	public String[][] assembleBoardData(List<JiraCardDTO> cardDTOList, List<BoardCSVConfig> fields,
+			List<BoardCSVConfig> extraFields) {
+		List<BoardCSVConfig> fixedFields = new ArrayList<>(fields);
+		fixedFields.removeAll(extraFields);
+
+		String[][] fixedFieldsData = getFixedFieldsData(cardDTOList, fixedFields);
+		String[][] extraFieldsData = getExtraFieldsData(cardDTOList, extraFields);
+
+		String[] fixedFieldsRow = fixedFieldsData[0];
+		String targetElement = "Cycle Time";
+		List<String> fixedFieldsRowList = Arrays.asList(fixedFieldsRow);
+		int targetIndex = fixedFieldsRowList.indexOf(targetElement) + 1;
+
+		return mergeArrays(fixedFieldsData, extraFieldsData, targetIndex);
 	}
 
 	public String[][] mergeArrays(String[][] fixedFieldsData, String[][] extraFieldsData, int fixedColumnCount) {
@@ -289,33 +302,7 @@ public class CSVFileGenerator {
 			rowData[0] = cardDTO.getBaseInfo().getKey();
 
 			if (cardDTO.getBaseInfo().getFields() != null) {
-				rowData[1] = cardDTO.getBaseInfo().getFields().getSummary();
-				rowData[2] = cardDTO.getBaseInfo().getFields().getIssuetype().getName();
-				rowData[3] = cardDTO.getBaseInfo().getFields().getStatus().getName();
-				if (cardDTO.getBaseInfo().getFields().getLastStatusChangeDate() != null) {
-					rowData[4] = convertToSimpleISOFormat(cardDTO.getBaseInfo().getFields().getLastStatusChangeDate());
-				}
-				rowData[5] = String.valueOf(cardDTO.getBaseInfo().getFields().getStoryPoints());
-				if (cardDTO.getBaseInfo().getFields().getAssignee() != null) {
-					rowData[6] = cardDTO.getBaseInfo().getFields().getAssignee().getDisplayName();
-				}
-				if (cardDTO.getBaseInfo().getFields().getReporter() != null) {
-					rowData[7] = cardDTO.getBaseInfo().getFields().getReporter().getDisplayName();
-				}
-
-				rowData[8] = cardDTO.getBaseInfo().getFields().getProject().getKey();
-				rowData[9] = cardDTO.getBaseInfo().getFields().getProject().getName();
-				rowData[10] = cardDTO.getBaseInfo().getFields().getPriority().getName();
-
-				if (cardDTO.getBaseInfo().getFields().getParent() != null) {
-					rowData[11] = cardDTO.getBaseInfo().getFields().getParent().getFields().getSummary();
-				}
-
-				if (cardDTO.getBaseInfo().getFields().getSprint() != null) {
-					rowData[12] = cardDTO.getBaseInfo().getFields().getSprint().getName();
-				}
-
-				rowData[13] = String.join(",", cardDTO.getBaseInfo().getFields().getLabels());
+				fixDataWithFields(cardDTO, rowData);
 			}
 
 		}
@@ -332,7 +319,37 @@ public class CSVFileGenerator {
 		return rowData;
 	}
 
-	private String getExtraDataPerRow(Object object, BoardCSVConfig extraField) {
+	private void fixDataWithFields(JiraCardDTO cardDTO, String[] rowData) {
+		rowData[1] = cardDTO.getBaseInfo().getFields().getSummary();
+		rowData[2] = cardDTO.getBaseInfo().getFields().getIssuetype().getName();
+		rowData[3] = cardDTO.getBaseInfo().getFields().getStatus().getName();
+		if (cardDTO.getBaseInfo().getFields().getLastStatusChangeDate() != null) {
+			rowData[4] = convertToSimpleISOFormat(cardDTO.getBaseInfo().getFields().getLastStatusChangeDate());
+		}
+		rowData[5] = String.valueOf(cardDTO.getBaseInfo().getFields().getStoryPoints());
+		if (cardDTO.getBaseInfo().getFields().getAssignee() != null) {
+			rowData[6] = cardDTO.getBaseInfo().getFields().getAssignee().getDisplayName();
+		}
+		if (cardDTO.getBaseInfo().getFields().getReporter() != null) {
+			rowData[7] = cardDTO.getBaseInfo().getFields().getReporter().getDisplayName();
+		}
+
+		rowData[8] = cardDTO.getBaseInfo().getFields().getProject().getKey();
+		rowData[9] = cardDTO.getBaseInfo().getFields().getProject().getName();
+		rowData[10] = cardDTO.getBaseInfo().getFields().getPriority().getName();
+
+		if (cardDTO.getBaseInfo().getFields().getParent() != null) {
+			rowData[11] = cardDTO.getBaseInfo().getFields().getParent().getFields().getSummary();
+		}
+
+		if (cardDTO.getBaseInfo().getFields().getSprint() != null) {
+			rowData[12] = cardDTO.getBaseInfo().getFields().getSprint().getName();
+		}
+
+		rowData[13] = String.join(",", cardDTO.getBaseInfo().getFields().getLabels());
+	}
+
+	public String getExtraDataPerRow(Object object, BoardCSVConfig extraField) {
 		Map<String, JsonElement> elementMap = (Map<String, JsonElement>) object;
 		if (elementMap == null) {
 			return null;
@@ -381,12 +398,12 @@ public class CSVFileGenerator {
 				csvWriter.writeAll(convertReportResponseToCSVRows(reportResponse));
 			}
 			catch (IOException e) {
-				log.error("Failed to write file", e);
+				log.error("Failed to write metric file", e);
 				throw new FileIOException(e);
 			}
 		}
 		else {
-			throw new GenerateReportException("Failed to generate csv file,invalid csvTimestamp");
+			throw new GenerateReportException("Failed to generate metric csv file, invalid csvTimestamp");
 		}
 	}
 
@@ -405,6 +422,11 @@ public class CSVFileGenerator {
 		if (classificationList != null)
 			classificationList.forEach(classification -> rows.addAll(getRowsFormClassification(classification)));
 
+		Rework rework = reportResponse.getRework();
+		if (rework != null) {
+			rows.addAll(getRowFromRework(rework));
+		}
+
 		DeploymentFrequency deploymentFrequency = reportResponse.getDeploymentFrequency();
 		if (deploymentFrequency != null)
 			rows.addAll(getRowsFromDeploymentFrequency(deploymentFrequency));
@@ -413,13 +435,13 @@ public class CSVFileGenerator {
 		if (leadTimeForChanges != null)
 			rows.addAll(getRowsFromLeadTimeForChanges(leadTimeForChanges));
 
-		ChangeFailureRate changeFailureRate = reportResponse.getChangeFailureRate();
-		if (changeFailureRate != null)
-			rows.addAll(getRowsFromChangeFailureRate(changeFailureRate));
+		DevChangeFailureRate devChangeFailureRate = reportResponse.getDevChangeFailureRate();
+		if (devChangeFailureRate != null)
+			rows.addAll(getRowsFromDevChangeFailureRate(devChangeFailureRate));
 
-		MeanTimeToRecovery meanTimeToRecovery = reportResponse.getMeanTimeToRecovery();
-		if (meanTimeToRecovery != null)
-			rows.addAll(getRowsFromMeanTimeToRecovery(meanTimeToRecovery));
+		DevMeanTimeToRecovery devMeanTimeToRecovery = reportResponse.getDevMeanTimeToRecovery();
+		if (devMeanTimeToRecovery != null)
+			rows.addAll(getRowsFromDevMeanTimeToRecovery(devMeanTimeToRecovery));
 
 		return rows;
 	}
@@ -433,28 +455,38 @@ public class CSVFileGenerator {
 	}
 
 	private List<String[]> getRowsFromCycleTime(CycleTime cycleTime) {
+		String cycleTimeTitle = "Cycle time";
 		List<String[]> rows = new ArrayList<>();
 		List<String[]> rowsForSelectedStepItemAverageTime = new ArrayList<>();
-		rows.add(new String[] { "Cycle time", "Average cycle time(days/storyPoint)",
+		rows.add(new String[] { cycleTimeTitle, "Average cycle time(days/storyPoint)",
 				String.valueOf(cycleTime.getAverageCycleTimePerSP()) });
-		rows.add(new String[] { "Cycle time", "Average cycle time(days/card)",
+		rows.add(new String[] { cycleTimeTitle, "Average cycle time(days/card)",
 				String.valueOf(cycleTime.getAverageCycleTimePerCard()) });
 		List<CycleTimeForSelectedStepItem> swimlaneList = cycleTime.getSwimlaneList();
 
 		swimlaneList.forEach(cycleTimeForSelectedStepItem -> {
-			String StepName = formatStepName(cycleTimeForSelectedStepItem);
+			String stepName = formatStepName(cycleTimeForSelectedStepItem);
 			double proportion = cycleTimeForSelectedStepItem.getTotalTime() / cycleTime.getTotalTimeForCards();
-			rows.add(new String[] { "Cycle time", "Total " + StepName + " time / Total cycle time",
+			rows.add(new String[] { cycleTimeTitle, "Total " + stepName + " time / Total cycle time",
 					DecimalUtil.formatDecimalTwo(proportion * 100) });
 			rowsForSelectedStepItemAverageTime
-				.add(new String[] { "Cycle time", "Average " + StepName + " time(days/storyPoint)",
+				.add(new String[] { cycleTimeTitle, "Average " + stepName + " time(days/storyPoint)",
 						DecimalUtil.formatDecimalTwo(cycleTimeForSelectedStepItem.getAverageTimeForSP()) });
 			rowsForSelectedStepItemAverageTime
-				.add(new String[] { "Cycle time", "Average " + StepName + " time(days/card)",
+				.add(new String[] { cycleTimeTitle, "Average " + stepName + " time(days/card)",
 						DecimalUtil.formatDecimalTwo(cycleTimeForSelectedStepItem.getAverageTimeForCards()) });
 		});
 		rows.addAll(rowsForSelectedStepItemAverageTime);
 
+		return rows;
+	}
+
+	private List<String[]> getRowFromRework(Rework rework) {
+		List<String[]> rows = new ArrayList<>();
+		rows.add(new String[] { REWORK_FIELD, "Total rework times", String.valueOf(rework.getTotalReworkTimes()) });
+		rows.add(new String[] { REWORK_FIELD, "Total rework cards", String.valueOf(rework.getTotalReworkCards()) });
+		rows.add(new String[] { REWORK_FIELD, "Rework cards ratio(Total rework cards/Throughput)",
+				formatDecimalFour(rework.getReworkCardsRatio()) });
 		return rows;
 	}
 
@@ -483,7 +515,7 @@ public class CSVFileGenerator {
 		List<DeploymentFrequencyOfPipeline> deploymentFrequencyOfPipelines = deploymentFrequency
 			.getDeploymentFrequencyOfPipelines();
 		deploymentFrequencyOfPipelines.forEach(pipeline -> rows.add(new String[] { "Deployment frequency",
-				pipeline.getName() + " / " + pipeline.getStep().replaceAll(":\\w+: ", "")
+				pipeline.getName() + " / " + extractPipelineStep(pipeline.getStep())
 						+ " / Deployment frequency(Deployments/Day)",
 				DecimalUtil.formatDecimalTwo(pipeline.getDeploymentFrequency()) }));
 
@@ -496,32 +528,38 @@ public class CSVFileGenerator {
 		return rows;
 	}
 
+	private String extractPipelineStep(String step) {
+		return step.replaceAll(":\\w+: ", "");
+	}
+
 	private List<String[]> getRowsFromLeadTimeForChanges(LeadTimeForChanges leadTimeForChanges) {
 		List<String[]> rows = new ArrayList<>();
+
 		List<LeadTimeForChangesOfPipelines> leadTimeForChangesOfPipelines = leadTimeForChanges
 			.getLeadTimeForChangesOfPipelines();
+		String leadTimeForChangesTitle = "Lead time for changes";
 		leadTimeForChangesOfPipelines.forEach(pipeline -> {
-			String pipelineStep = pipeline.getStep().replaceAll(":\\w+: ", "");
-			rows.add(new String[] { "Lead time for changes",
+			String pipelineStep = extractPipelineStep(pipeline.getStep());
+			rows.add(new String[] { leadTimeForChangesTitle,
 					pipeline.getName() + " / " + pipelineStep + " / PR Lead Time",
 					DecimalUtil.formatDecimalTwo(TimeUtils.minutesToUnit(pipeline.getPrLeadTime(), HOURS)) });
-			rows.add(new String[] { "Lead time for changes",
+			rows.add(new String[] { leadTimeForChangesTitle,
 					pipeline.getName() + " / " + pipelineStep + " / Pipeline Lead Time",
 					DecimalUtil.formatDecimalTwo(TimeUtils.minutesToUnit(pipeline.getPipelineLeadTime(), HOURS)) });
-			rows.add(new String[] { "Lead time for changes",
+			rows.add(new String[] { leadTimeForChangesTitle,
 					pipeline.getName() + " / " + pipelineStep + " / Total Lead Time",
 					DecimalUtil.formatDecimalTwo(TimeUtils.minutesToUnit(pipeline.getTotalDelayTime(), HOURS)) });
 		});
 
 		AvgLeadTimeForChanges avgLeadTimeForChanges = leadTimeForChanges.getAvgLeadTimeForChanges();
 		if (leadTimeForChangesOfPipelines.size() > 1) {
-			rows.add(new String[] { "Lead time for changes", avgLeadTimeForChanges.getName() + " / PR Lead Time",
+			rows.add(new String[] { leadTimeForChangesTitle, avgLeadTimeForChanges.getName() + " / PR Lead Time",
 					DecimalUtil
 						.formatDecimalTwo(TimeUtils.minutesToUnit(avgLeadTimeForChanges.getPrLeadTime(), HOURS)) });
-			rows.add(new String[] { "Lead time for changes", avgLeadTimeForChanges.getName() + " / Pipeline Lead Time",
+			rows.add(new String[] { leadTimeForChangesTitle, avgLeadTimeForChanges.getName() + " / Pipeline Lead Time",
 					DecimalUtil.formatDecimalTwo(
 							TimeUtils.minutesToUnit(avgLeadTimeForChanges.getPipelineLeadTime(), HOURS)) });
-			rows.add(new String[] { "Lead time for changes", avgLeadTimeForChanges.getName() + " / Total Lead Time",
+			rows.add(new String[] { leadTimeForChangesTitle, avgLeadTimeForChanges.getName() + " / Total Lead Time",
 					DecimalUtil
 						.formatDecimalTwo(TimeUtils.minutesToUnit(avgLeadTimeForChanges.getTotalDelayTime(), HOURS)) });
 		}
@@ -529,37 +567,38 @@ public class CSVFileGenerator {
 		return rows;
 	}
 
-	private List<String[]> getRowsFromChangeFailureRate(ChangeFailureRate changeFailureRate) {
+	private List<String[]> getRowsFromDevChangeFailureRate(DevChangeFailureRate devChangeFailureRate) {
 		List<String[]> rows = new ArrayList<>();
-		List<ChangeFailureRateOfPipeline> changeFailureRateOfPipelines = changeFailureRate
-			.getChangeFailureRateOfPipelines();
-		changeFailureRateOfPipelines.forEach(pipeline -> rows.add(new String[] { "Change failure rate",
-				pipeline.getName() + " / " + pipeline.getStep().replaceAll(":\\w+: ", "") + " / Failure rate",
-				DecimalUtil.formatDecimalTwo(pipeline.getFailureRate() * 100) }));
+		List<DevChangeFailureRateOfPipeline> devChangeFailureRateOfPipelines = devChangeFailureRate
+			.getDevChangeFailureRateOfPipelines();
+		devChangeFailureRateOfPipelines.forEach(pipeline -> rows.add(new String[] { "Dev change failure rate",
+				pipeline.getName() + " / " + extractPipelineStep(pipeline.getStep()) + " / Dev change failure rate",
+				DecimalUtil.formatDecimalFour(pipeline.getFailureRate()) }));
 
-		AvgChangeFailureRate avgChangeFailureRate = changeFailureRate.getAvgChangeFailureRate();
-		if (changeFailureRateOfPipelines.size() > 1)
-			rows.add(new String[] { "Change failure rate", avgChangeFailureRate.getName() + " / Failure rate",
-					DecimalUtil.formatDecimalTwo(avgChangeFailureRate.getFailureRate() * 100) });
+		AvgDevChangeFailureRate avgDevChangeFailureRate = devChangeFailureRate.getAvgDevChangeFailureRate();
+		if (devChangeFailureRateOfPipelines.size() > 1)
+			rows.add(new String[] { "Dev change failure rate",
+					avgDevChangeFailureRate.getName() + " / Dev change failure rate",
+					DecimalUtil.formatDecimalTwo(avgDevChangeFailureRate.getFailureRate() * 100) });
 
 		return rows;
 	}
 
-	private List<String[]> getRowsFromMeanTimeToRecovery(MeanTimeToRecovery meanTimeToRecovery) {
+	private List<String[]> getRowsFromDevMeanTimeToRecovery(DevMeanTimeToRecovery devMeanTimeToRecovery) {
 		List<String[]> rows = new ArrayList<>();
-		List<MeanTimeToRecoveryOfPipeline> meanTimeRecoveryPipelines = meanTimeToRecovery
-			.getMeanTimeRecoveryPipelines();
-		meanTimeRecoveryPipelines.forEach(pipeline -> rows.add(new String[] { "Mean Time To Recovery",
-				pipeline.getPipelineName() + " / " + pipeline.getPipelineStep().replaceAll(":\\w+: ", "")
-						+ " / Mean Time To Recovery",
+		List<DevMeanTimeToRecoveryOfPipeline> devMeanTimeToRecoveryOfPipelines = devMeanTimeToRecovery
+			.getDevMeanTimeToRecoveryOfPipelines();
+		devMeanTimeToRecoveryOfPipelines.forEach(pipeline -> rows.add(new String[] { "Dev mean time to recovery",
+				pipeline.getName() + " / " + extractPipelineStep(pipeline.getStep()) + " / Dev mean time to recovery",
 				DecimalUtil
 					.formatDecimalTwo(TimeUtils.millisToUnit(pipeline.getTimeToRecovery().doubleValue(), HOURS)) }));
 
-		AvgMeanTimeToRecovery avgMeanTimeToRecovery = meanTimeToRecovery.getAvgMeanTimeToRecovery();
-		if (meanTimeRecoveryPipelines.size() > 1)
-			rows.add(new String[] { "Mean Time To Recovery",
-					avgMeanTimeToRecovery.getName() + " / Mean Time To Recovery", DecimalUtil.formatDecimalTwo(
-							TimeUtils.millisToUnit(avgMeanTimeToRecovery.getTimeToRecovery().doubleValue(), HOURS)) });
+		AvgDevMeanTimeToRecovery avgDevMeanTimeToRecovery = devMeanTimeToRecovery.getAvgDevMeanTimeToRecovery();
+		if (devMeanTimeToRecoveryOfPipelines.size() > 1)
+			rows.add(new String[] { "Dev mean time to recovery",
+					avgDevMeanTimeToRecovery.getName() + " / Dev mean time to recovery",
+					DecimalUtil.formatDecimalTwo(TimeUtils
+						.millisToUnit(avgDevMeanTimeToRecovery.getTimeToRecovery().doubleValue(), HOURS)) });
 
 		return rows;
 	}

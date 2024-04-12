@@ -4,14 +4,17 @@ import {
   MOCK_SOURCE_CONTROL_VERIFY_ERROR_CASE_TEXT,
   MOCK_SOURCE_CONTROL_VERIFY_TOKEN_URL,
   RESET,
+  REVERIFY,
   SOURCE_CONTROL_FIELDS,
   TOKEN_ERROR_MESSAGE,
   VERIFIED,
   VERIFY,
 } from '../../fixtures';
+import { initDeploymentFrequencySettings, updateShouldGetPipelineConfig } from '@src/context/Metrics/metricsSlice';
+import { AXIOS_REQUEST_ERROR_CODE, SOURCE_CONTROL_TYPES } from '@src/constants/resources';
+import { sourceControlClient } from '@src/clients/sourceControl/SourceControlClient';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { SourceControl } from '@src/containers/ConfigStep/SourceControl';
-import { SOURCE_CONTROL_TYPES } from '@src/constants/resources';
 import { setupStore } from '../../utils/setupStoreUtil';
 import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
@@ -35,6 +38,14 @@ let store = null;
 
 const server = setupServer(rest.post(MOCK_SOURCE_CONTROL_VERIFY_TOKEN_URL, (req, res, ctx) => res(ctx.status(204))));
 
+const originalVerifyToken = sourceControlClient.verifyToken;
+
+jest.mock('@src/context/Metrics/metricsSlice', () => ({
+  ...jest.requireActual('@src/context/Metrics/metricsSlice'),
+  updateShouldGetPipelineConfig: jest.fn().mockReturnValue({ type: 'SHOULD_UPDATE_PIPELINE_CONFIG' }),
+  initDeploymentFrequencySettings: jest.fn().mockReturnValue({ type: 'INIT_DEPLOYMENT_SETTINGS' }),
+}));
+
 describe('SourceControl', () => {
   beforeAll(() => server.listen());
   afterAll(() => server.close());
@@ -49,6 +60,7 @@ describe('SourceControl', () => {
   };
   afterEach(() => {
     store = null;
+    sourceControlClient.verifyToken = originalVerifyToken;
   });
 
   it('should show sourceControl title and fields when render sourceControl component', () => {
@@ -86,6 +98,41 @@ describe('SourceControl', () => {
     expect(screen.getByRole('button', { name: VERIFY })).toBeDisabled();
   });
 
+  it('should hidden timeout alert when click reset button', async () => {
+    const { getByTestId, queryByTestId } = setup();
+    await fillSourceControlFieldsInformation();
+    sourceControlClient.verifyToken = jest.fn().mockResolvedValue({
+      code: AXIOS_REQUEST_ERROR_CODE.TIMEOUT,
+    });
+
+    await userEvent.click(screen.getByText(VERIFY));
+    expect(getByTestId('timeoutAlert')).toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole('button', { name: RESET }));
+
+    expect(queryByTestId('timeoutAlert')).not.toBeInTheDocument();
+  });
+
+  it('should hidden timeout alert when the error type of api call becomes other', async () => {
+    const { getByTestId, queryByTestId } = setup();
+    await fillSourceControlFieldsInformation();
+    sourceControlClient.verifyToken = jest.fn().mockResolvedValue({
+      code: AXIOS_REQUEST_ERROR_CODE.TIMEOUT,
+    });
+
+    await userEvent.click(screen.getByText(VERIFY));
+
+    expect(getByTestId('timeoutAlert')).toBeInTheDocument();
+
+    sourceControlClient.verifyToken = jest.fn().mockResolvedValue({
+      code: HttpStatusCode.Unauthorized,
+    });
+
+    await userEvent.click(screen.getByText(REVERIFY));
+
+    expect(queryByTestId('timeoutAlert')).not.toBeInTheDocument();
+  });
+
   it('should enable verify button when all fields checked correctly given disable verify button', () => {
     setup();
     const verifyButton = screen.getByRole('button', { name: VERIFY });
@@ -110,6 +157,20 @@ describe('SourceControl', () => {
     await waitFor(() => {
       expect(screen.getByText(VERIFIED)).toBeTruthy();
     });
+  });
+
+  it('should reload pipeline config when reset fields', async () => {
+    setup();
+    fillSourceControlFieldsInformation();
+
+    await userEvent.click(screen.getByText(VERIFY));
+
+    await userEvent.click(screen.getByRole('button', { name: RESET }));
+
+    fillSourceControlFieldsInformation();
+
+    expect(updateShouldGetPipelineConfig).toHaveBeenCalledWith(true);
+    expect(initDeploymentFrequencySettings).toHaveBeenCalled();
   });
 
   it('should show error message and error style when token is empty', () => {

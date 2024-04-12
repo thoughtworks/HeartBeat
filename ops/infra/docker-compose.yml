@@ -16,6 +16,7 @@ services:
       - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-default}
       - BACKEND_SECRET_KEY=fake
       - FIXED_SALT=fake
+      - SWAGGER_HOST=SWAGGER_HOST_PLACEHOLDER
   frontend:
     image: heartbeat_frontend:latest
     container_name: frontend

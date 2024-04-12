@@ -1,0 +1,45 @@
+{
+  "projectName": "E2E-Test-For-Flag-As-Block",
+  "dateRange": {
+    "startDate": "2024-04-01T00:00:00.000+08:00",
+    "endDate": "2024-04-09T23:59:59.999+08:00"
+  },
+  "calendarType": "Calendar with Chinese Holiday",
+  "metrics": ["Velocity", "Cycle time", "Classification", "Rework times"],
+  "board": {
+    "type": "Jira",
+    "boardId": "34",
+    "email": "heartbeatuser2023@gmail.com",
+    "projectKey": "TFB",
+    "site": "dorametrics",
+    "token": "<E2E_TOKEN_JIRA>"
+  },
+  "crews": ["heartbeat user"],
+  "assigneeFilter": "lastAssignee",
+  "cycleTime": {
+    "type": "byColumn",
+    "jiraColumns": [
+      {
+        "To Do": "To do"
+      },
+      {
+        "In Progress": "In Dev"
+      },
+      {
+        "Review": "Review"
+      },
+      {
+        "Testing": "Testing"
+      },
+      {
+        "Done": "Done"
+      }
+    ],
+    "treatFlagCardAsBlock": true
+  },
+  "classification": ["issuetype", "parent", "project", "reporter", "labels", "assignee"],
+  "reworkTimesSettings": {
+    "reworkState": "In Dev",
+    "excludeStates": []
+  }
+}

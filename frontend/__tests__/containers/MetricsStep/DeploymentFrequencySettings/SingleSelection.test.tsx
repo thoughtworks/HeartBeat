@@ -17,6 +17,14 @@ jest.mock('react', () => ({
   ...jest.requireActual('react'),
   useEffect: jest.fn(),
 }));
+jest.mock('@src/context/Metrics/metricsSlice', () => ({
+  ...jest.requireActual('@src/context/Metrics/metricsSlice'),
+  selectDeploymentFrequencySettings: jest.fn().mockReturnValue([]),
+}));
+jest.mock('@src/utils/util', () => ({
+  ...jest.requireActual('@src/utils/util'),
+  getDisabledOptions: jest.fn(),
+}));
 let store = setupStore();
 
 describe('SingleSelection', () => {

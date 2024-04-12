@@ -5,7 +5,7 @@ import {
   setCycleTimeSettingsType,
   updateTreatFlagCardAsBlock,
 } from '@src/context/Metrics/metricsSlice';
-import { CYCLE_TIME_SETTINGS, ERROR_MESSAGE_TIME_DURATION, LIST_OPEN, NO_RESULT_DASH } from '../../fixtures';
+import { BOARD_MAPPING, ERROR_MESSAGE_TIME_DURATION, LIST_OPEN, NO_RESULT_DASH } from '../../fixtures';
 import { CYCLE_TIME_SETTINGS_TYPES, METRICS_CONSTANTS } from '@src/constants/resources';
 import { act, render, screen, waitFor, within } from '@testing-library/react';
 import { CycleTime } from '@src/containers/MetricsStep/CycleTime';
@@ -85,7 +85,7 @@ describe('CycleTime', () => {
   describe('CycleTime Title', () => {
     it('should show Cycle Time title when render Crews component', () => {
       setup();
-      expect(screen.getByText(CYCLE_TIME_SETTINGS)).toBeInTheDocument();
+      expect(screen.getByText(BOARD_MAPPING)).toBeInTheDocument();
     });
     it('should show Cycle Time tooltip when render Crews component', () => {
       setup();
@@ -269,7 +269,7 @@ describe('CycleTime', () => {
       const inputElements = screen.getAllByRole('combobox');
       const selectedInputValue = inputElements.map((option) => option.getAttribute('value'))[0];
 
-      expect(selectedInputValue).toBe('Review');
+      expect(selectedInputValue).toBe('Testing');
       await waitFor(() => expect(mockedUseAppDispatch).toHaveBeenCalledWith(saveDoneColumn([])));
     });
   });
@@ -402,7 +402,7 @@ describe('CycleTime', () => {
 
       const inputElements = screen.getAllByRole('combobox');
       const selectedInputValue = inputElements.map((option) => option.getAttribute('value'))[0];
-      expect(selectedInputValue).toBe('Review');
+      expect(selectedInputValue).toBe('Testing');
       expect(mockedUseAppDispatch).not.toHaveBeenCalledWith(saveDoneColumn([]));
     });
   });

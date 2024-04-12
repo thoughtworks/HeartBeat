@@ -2,6 +2,7 @@ package heartbeat.service.pipeline.buildkite;
 
 import heartbeat.client.BuildKiteFeignClient;
 import heartbeat.client.dto.pipeline.buildkite.BuildKiteBuildInfo;
+import heartbeat.client.dto.pipeline.buildkite.PageBuildKitePipelineInfoDTO;
 import heartbeat.client.dto.pipeline.buildkite.PageStepsInfoDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -41,16 +42,43 @@ public class CachePageService {
 		return PageStepsInfoDto.builder().firstPageStepsInfo(firstPageStepsInfo).totalPage(totalPage).build();
 	}
 
+	@Cacheable(cacheNames = "pagePipelineInfo", key = "#buildKiteToken+'-'+#orgSlug+'-'+#page+'-'+#perPage")
+	public PageBuildKitePipelineInfoDTO getPipelineInfoList(String orgSlug, String buildKiteToken, String page,
+			String perPage) {
+		var pipelineInfoResponse = buildKiteFeignClient.getPipelineInfo(buildKiteToken, orgSlug, page, perPage);
+		log.info("Successfully get paginated pipeline info pagination info, orgSlug: {}, page:{}", orgSlug, 1);
+
+		int totalPage = parseTotalPage(pipelineInfoResponse.getHeaders().get(BUILD_KITE_LINK_HEADER));
+		log.info("Successfully parse the total page_total page: {}", totalPage);
+
+		return PageBuildKitePipelineInfoDTO.builder()
+			.firstPageInfo(pipelineInfoResponse.getBody())
+			.totalPage(totalPage)
+			.build();
+	}
+
 	private int parseTotalPage(@Nullable List<String> linkHeader) {
 		if (linkHeader == null) {
 			return 1;
 		}
 		String lastLink = linkHeader.stream().map(link -> link.replaceAll("per_page=\\d+", "")).findFirst().orElse("");
-		Matcher matcher = Pattern.compile("page=(\\d+)[^>]*>;\\s*rel=\"last\"").matcher(lastLink);
-		if (matcher.find()) {
-			return Integer.parseInt(matcher.group(1));
+		int lastIndex = lastLink.indexOf("rel=\"last\"");
+		if (lastIndex == -1) {
+			return 1;
 		}
-		return 1;
+		String beforeLastRel = lastLink.substring(0, lastIndex);
+		Matcher matcher = Pattern.compile("page=(\\d+)").matcher(beforeLastRel);
+
+		String lastNumber = null;
+		while (matcher.find()) {
+			lastNumber = matcher.group(1);
+		}
+		if (lastNumber != null) {
+			return Integer.parseInt(lastNumber);
+		}
+		else {
+			return 1;
+		}
 	}
 
 }

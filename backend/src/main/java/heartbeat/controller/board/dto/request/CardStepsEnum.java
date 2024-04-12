@@ -1,19 +1,30 @@
 package heartbeat.controller.board.dto.request;
 
+import java.util.Map;
+import java.util.Set;
+
 public enum CardStepsEnum {
 
-	TODO("To do"), ANALYSE("Analysis"), DEVELOPMENT("In Dev"), BLOCK("Block"), TESTING("Testing"), REVIEW("Review"),
-	DONE("Done"), CLOSED("Closed"), WAITING("Waiting for testing"), FLAG("FLAG"), REMOVEFLAG("removeFlag"),
-	UNKNOWN("UNKNOWN");
+	TODO("To do", "To do"), ANALYSE("Analysis", "Analysis"), DEVELOPMENT("In Dev", "In dev"), BLOCK("Block", "Block"),
+	FLAG("FLAG", "Flag"), REMOVEFLAG("removeFlag", "Remove flag"), REVIEW("Review", "Review"),
+	WAITING("Waiting for testing", "Waiting for testing"), TESTING("Testing", "Testing"), DONE("Done", "Done"),
+	CLOSED("Closed", "Closed"), UNKNOWN("UNKNOWN", "Unknown");
 
 	private final String value;
 
-	CardStepsEnum(String value) {
+	private final String alias;
+
+	CardStepsEnum(String value, String alias) {
 		this.value = value;
+		this.alias = alias;
 	}
 
 	public String getValue() {
 		return value;
+	}
+
+	public String getAlias() {
+		return alias;
 	}
 
 	public static CardStepsEnum fromValue(String type) {
@@ -24,5 +35,11 @@ public enum CardStepsEnum {
 		}
 		throw new IllegalArgumentException("Type does not find!");
 	}
+
+	public static final Map<CardStepsEnum, Set<CardStepsEnum>> reworkJudgmentMap = Map.of(TODO,
+			Set.of(ANALYSE, DEVELOPMENT, BLOCK, FLAG, REVIEW, WAITING, TESTING, DONE), ANALYSE,
+			Set.of(DEVELOPMENT, BLOCK, FLAG, REVIEW, WAITING, TESTING, DONE), DEVELOPMENT,
+			Set.of(BLOCK, FLAG, REVIEW, WAITING, TESTING, DONE), BLOCK, Set.of(REVIEW, WAITING, TESTING, DONE), REVIEW,
+			Set.of(WAITING, TESTING, DONE), WAITING, Set.of(TESTING, DONE), TESTING, Set.of(DONE));
 
 }

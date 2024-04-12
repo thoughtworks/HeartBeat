@@ -7,6 +7,7 @@ import heartbeat.client.dto.board.jira.JiraBoardConfigDTO;
 import heartbeat.client.dto.board.jira.JiraCard;
 import heartbeat.client.dto.board.jira.JiraCardField;
 import heartbeat.client.dto.board.jira.Status;
+import heartbeat.controller.board.dto.request.ReworkTimesSetting;
 import heartbeat.controller.board.dto.response.CardCollection;
 import heartbeat.controller.board.dto.response.ColumnValue;
 import heartbeat.controller.board.dto.response.CycleTimeInfo;
@@ -34,12 +35,15 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static heartbeat.service.jira.JiraBoardConfigDTOFixture.MOCK_JIRA_BOARD_COLUMN_SETTING_LIST;
 import static heartbeat.service.report.BoardCsvFixture.MOCK_JIRA_CARD;
+import static heartbeat.service.report.BoardCsvFixture.MOCK_REWORK_TIMES_INFO_LIST;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -66,6 +70,9 @@ class KanbanCsvServiceTest {
 	private ArgumentCaptor<List<BoardCSVConfig>> csvFieldsCaptor;
 
 	@Captor
+	private ArgumentCaptor<String[][]> csvSheetCaptor;
+
+	@Captor
 	private ArgumentCaptor<List<BoardCSVConfig>> csvNewFieldsCaptor;
 
 	@Test
@@ -86,7 +93,7 @@ class KanbanCsvServiceTest {
 				CardCollection.builder().jiraCardDTOList(List.of(jiraCardDTO)).build(),
 				CardCollection.builder().build());
 
-		verify(csvFileGenerator).convertBoardDataToCSV(jiraCardDTOCaptor.capture(), anyList(), any(), any());
+		verify(csvFileGenerator).assembleBoardData(jiraCardDTOCaptor.capture(), anyList(), any());
 		assertEquals(2, jiraCardDTOCaptor.getValue().size());
 		assertTrue(jiraCardDTOCaptor.getValue().contains(jiraCardDTO));
 	}
@@ -109,7 +116,7 @@ class KanbanCsvServiceTest {
 				CardCollection.builder().jiraCardDTOList(List.of(jiraCardDTO)).build(),
 				CardCollection.builder().jiraCardDTOList(Lists.list()).build());
 
-		verify(csvFileGenerator).convertBoardDataToCSV(jiraCardDTOCaptor.capture(), anyList(), any(), any());
+		verify(csvFileGenerator).assembleBoardData(jiraCardDTOCaptor.capture(), anyList(), any());
 		assertEquals(2, jiraCardDTOCaptor.getValue().size());
 		assertTrue(jiraCardDTOCaptor.getValue().contains(jiraCardDTO));
 	}
@@ -169,7 +176,7 @@ class KanbanCsvServiceTest {
 				CardCollection.builder().jiraCardDTOList(List.of(jiraCardDTO)).build(),
 				CardCollection.builder().jiraCardDTOList(NonDoneJiraCardDTOList).build());
 
-		verify(csvFileGenerator).convertBoardDataToCSV(jiraCardDTOCaptor.capture(), anyList(), any(), any());
+		verify(csvFileGenerator).assembleBoardData(jiraCardDTOCaptor.capture(), anyList(), any());
 		assertEquals(5, jiraCardDTOCaptor.getValue().size());
 		assertEquals(testingJiraCard, jiraCardDTOCaptor.getValue().get(2));
 		assertEquals(blockedJiraCard, jiraCardDTOCaptor.getValue().get(3));
@@ -231,7 +238,7 @@ class KanbanCsvServiceTest {
 				CardCollection.builder().jiraCardDTOList(List.of(jiraCardDTO)).build(),
 				CardCollection.builder().jiraCardDTOList(NonDoneJiraCardDTOList).build());
 
-		verify(csvFileGenerator).convertBoardDataToCSV(jiraCardDTOCaptor.capture(), anyList(), any(), any());
+		verify(csvFileGenerator).assembleBoardData(jiraCardDTOCaptor.capture(), anyList(), any());
 		assertEquals(5, jiraCardDTOCaptor.getValue().size());
 		assertEquals(preDoingJiraCard, jiraCardDTOCaptor.getValue().get(3));
 		assertEquals(nextDoingJiraCard, jiraCardDTOCaptor.getValue().get(4));
@@ -275,7 +282,7 @@ class KanbanCsvServiceTest {
 				CardCollection.builder().jiraCardDTOList(doneJiraCardDTOList).build(),
 				CardCollection.builder().jiraCardDTOList(List.of(jiraCardDTO)).build());
 
-		verify(csvFileGenerator).convertBoardDataToCSV(jiraCardDTOCaptor.capture(), anyList(), any(), any());
+		verify(csvFileGenerator).assembleBoardData(jiraCardDTOCaptor.capture(), anyList(), any());
 		assertEquals(4, jiraCardDTOCaptor.getValue().size());
 		assertEquals(preDoneJiraCard, jiraCardDTOCaptor.getValue().get(0));
 		assertEquals(nextDoneJiraCard, jiraCardDTOCaptor.getValue().get(1));
@@ -323,7 +330,7 @@ class KanbanCsvServiceTest {
 				CardCollection.builder().jiraCardDTOList(doneJiraCardDTOList).build(),
 				CardCollection.builder().jiraCardDTOList(List.of(jiraCardDTO)).build());
 
-		verify(csvFileGenerator).convertBoardDataToCSV(jiraCardDTOCaptor.capture(), anyList(), any(), any());
+		verify(csvFileGenerator).assembleBoardData(jiraCardDTOCaptor.capture(), anyList(), any());
 		assertEquals(4, jiraCardDTOCaptor.getValue().size());
 		assertEquals(preDoneJiraCard, jiraCardDTOCaptor.getValue().get(1));
 		assertEquals(nextDoneJiraCard, jiraCardDTOCaptor.getValue().get(0));
@@ -374,7 +381,7 @@ class KanbanCsvServiceTest {
 				CardCollection.builder().jiraCardDTOList(List.of(jiraCardDTO)).build(),
 				CardCollection.builder().jiraCardDTOList(NonDoneJiraCardDTOList).build());
 
-		verify(csvFileGenerator).convertBoardDataToCSV(jiraCardDTOCaptor.capture(), anyList(), any(), any());
+		verify(csvFileGenerator).assembleBoardData(jiraCardDTOCaptor.capture(), anyList(), any());
 		assertEquals(5, jiraCardDTOCaptor.getValue().size());
 		assertEquals(blockedJiraCard, jiraCardDTOCaptor.getValue().get(2));
 		assertEquals(doingJiraCard, jiraCardDTOCaptor.getValue().get(3));
@@ -423,7 +430,7 @@ class KanbanCsvServiceTest {
 				CardCollection.builder().jiraCardDTOList(List.of(jiraCardDTO)).build(),
 				CardCollection.builder().jiraCardDTOList(NonDoneJiraCardDTOList).build());
 
-		verify(csvFileGenerator).convertBoardDataToCSV(jiraCardDTOCaptor.capture(), anyList(), any(), any());
+		verify(csvFileGenerator).assembleBoardData(jiraCardDTOCaptor.capture(), anyList(), any());
 		assertEquals(5, jiraCardDTOCaptor.getValue().size());
 		assertEquals(doingJiraCard, jiraCardDTOCaptor.getValue().get(2));
 		assertEquals(blockedJiraCard, jiraCardDTOCaptor.getValue().get(3));
@@ -462,8 +469,7 @@ class KanbanCsvServiceTest {
 				CardCollection.builder().jiraCardDTOList(List.of(jiraCardDTO)).build(),
 				CardCollection.builder().jiraCardDTOList(NonDoneJiraCardDTOList).build());
 
-		verify(csvFileGenerator).convertBoardDataToCSV(anyList(), csvFieldsCaptor.capture(),
-				csvNewFieldsCaptor.capture(), any());
+		verify(csvFileGenerator).assembleBoardData(anyList(), csvFieldsCaptor.capture(), csvNewFieldsCaptor.capture());
 		assertEquals(23, csvFieldsCaptor.getValue().size());
 		BoardCSVConfig targetValue = csvNewFieldsCaptor.getValue().get(0);
 		assertEquals("baseInfo.fields.customFields.key-target1", targetValue.getValue());
@@ -504,7 +510,7 @@ class KanbanCsvServiceTest {
 				CardCollection.builder().jiraCardDTOList(List.of(jiraCardDTO)).build(),
 				CardCollection.builder().jiraCardDTOList(NonDoneJiraCardDTOList).build());
 
-		verify(csvFileGenerator).convertBoardDataToCSV(anyList(), csvFieldsCaptor.capture(), anyList(), any());
+		verify(csvFileGenerator).assembleBoardData(anyList(), csvFieldsCaptor.capture(), anyList());
 		assertEquals(24, csvFieldsCaptor.getValue().size());
 		BoardCSVConfig targetValue = csvFieldsCaptor.getValue().get(22);
 		assertEquals("cardCycleTime.steps.review", targetValue.getValue());
@@ -546,7 +552,7 @@ class KanbanCsvServiceTest {
 				CardCollection.builder().jiraCardDTOList(List.of(jiraCardDTO)).build(),
 				CardCollection.builder().jiraCardDTOList(NonDoneJiraCardDTOList).build());
 
-		verify(csvFileGenerator).convertBoardDataToCSV(anyList(), csvFieldsCaptor.capture(), anyList(), any());
+		verify(csvFileGenerator).assembleBoardData(anyList(), csvFieldsCaptor.capture(), anyList());
 		assertEquals(23, csvFieldsCaptor.getValue().size());
 		BoardCSVConfig targetValue = csvFieldsCaptor.getValue().get(22);
 		assertEquals("cardCycleTime.steps.review", targetValue.getValue());
@@ -595,8 +601,7 @@ class KanbanCsvServiceTest {
 				CardCollection.builder().jiraCardDTOList(List.of(doneJiraCardDTO)).build(),
 				CardCollection.builder().jiraCardDTOList(NonDoneJiraCardDTOList).build());
 
-		verify(csvFileGenerator).convertBoardDataToCSV(anyList(), csvFieldsCaptor.capture(),
-				csvNewFieldsCaptor.capture(), any());
+		verify(csvFileGenerator).assembleBoardData(anyList(), csvFieldsCaptor.capture(), csvNewFieldsCaptor.capture());
 
 		assertEquals(28, csvFieldsCaptor.getValue().size());
 		BoardCSVConfig targetValue1 = csvNewFieldsCaptor.getValue().get(0);
@@ -611,6 +616,148 @@ class KanbanCsvServiceTest {
 		assertEquals("baseInfo.fields.customFields.customfield_1014[0].key", targetValue3.getValue());
 		assertEquals("baseInfo.fields.customFields.customfield_1015[0].displayName", targetValue4.getValue());
 		assertEquals("baseInfo.fields.customFields.json-array[0]", targetValue5.getValue());
+	}
+
+	@Test
+	void shouldAddReworkFieldsWhenGenerateSheetGivenReworkStateAndExcludedStatesAndConsiderFlagAsBlock()
+			throws URISyntaxException {
+		URI uri = new URI("site-uri");
+		when(urlGenerator.getUri(any())).thenReturn(uri);
+		when(jiraService.getJiraBoardConfig(any(), any(), any())).thenReturn(JiraBoardConfigDTO.builder().build());
+		when(jiraService.getJiraColumns(any(), any(), any())).thenReturn(JiraColumnResult.builder()
+			.jiraColumnResponse(List
+				.of(JiraColumnDTO.builder().value(ColumnValue.builder().statuses(List.of("BLOCKED")).build()).build()))
+			.build());
+		JiraCard jiraCard = JiraCard.builder().fields(MOCK_JIRA_CARD()).build();
+		JiraCard jiraCard2 = JiraCard.builder().fields(MOCK_JIRA_CARD()).build();
+		jiraCard2.getFields().setLastStatusChangeDate(1701251323000L);
+		List<JiraCardDTO> jiraCardDTOS = new ArrayList<>(List.of(
+				JiraCardDTO.builder()
+					.baseInfo(jiraCard)
+					.reworkTimesInfos(MOCK_REWORK_TIMES_INFO_LIST())
+					.totalReworkTimes(3)
+					.build(),
+				JiraCardDTO.builder()
+					.baseInfo(jiraCard2)
+					.reworkTimesInfos(MOCK_REWORK_TIMES_INFO_LIST())
+					.totalReworkTimes(3)
+					.build()));
+		JiraCardDTO blockedJiraCard = JiraCardDTO.builder()
+			.baseInfo(JiraCard.builder().fields(MOCK_JIRA_CARD()).build())
+			.build();
+		List<JiraCardDTO> NonDoneJiraCardDTOList = new ArrayList<>() {
+			{
+				add(blockedJiraCard);
+			}
+		};
+		String[][] fakeSringArray = new String[][] { { "cycle time" }, { "1" }, { "2" }, { "3" }, { "4" } };
+		when(csvFileGenerator.assembleBoardData(anyList(), anyList(), anyList())).thenReturn(fakeSringArray);
+		kanbanCsvService.generateCsvInfo(
+				GenerateReportRequest.builder()
+					.jiraBoardSetting(JiraBoardSetting.builder()
+						.targetFields(List.of(
+								TargetField.builder().name("assignee").flag(true).key("key-assignee").build(),
+								TargetField.builder().name("fake-target1").flag(true).key("key-target1").build(),
+								TargetField.builder().name("fake-target2").flag(false).key("key-target2").build()))
+						.reworkTimesSetting(ReworkTimesSetting.builder()
+							.reworkState("In Dev")
+							.excludedStates(List.of("Review"))
+							.build())
+						.boardColumns(MOCK_JIRA_BOARD_COLUMN_SETTING_LIST())
+						.treatFlagCardAsBlock(Boolean.TRUE)
+						.build())
+					.csvTimeStamp("2022-01-01 00:00:00")
+					.build(),
+				CardCollection.builder().jiraCardDTOList(jiraCardDTOS).build(),
+				CardCollection.builder().jiraCardDTOList(NonDoneJiraCardDTOList).build());
+
+		verify(csvFileGenerator).assembleBoardData(anyList(), csvFieldsCaptor.capture(), anyList());
+		verify(csvFileGenerator).writeDataToCSV(anyString(), csvSheetCaptor.capture());
+
+		assertEquals(23, csvFieldsCaptor.getValue().size());
+		BoardCSVConfig targetValue = csvFieldsCaptor.getValue().get(22);
+		assertEquals("cardCycleTime.steps.review", targetValue.getValue());
+		assertEquals("Review Days", targetValue.getLabel());
+		assertNull(targetValue.getOriginKey());
+
+		assertEquals(5, csvSheetCaptor.getValue().length);
+		assertEquals("cycle time", csvSheetCaptor.getValue()[0][0]);
+		assertEquals("Rework: total - In dev", csvSheetCaptor.getValue()[0][1]);
+		assertEquals("Rework: from Block", csvSheetCaptor.getValue()[0][2]);
+		assertEquals("Rework: from Waiting for testing", csvSheetCaptor.getValue()[0][3]);
+		assertEquals("Rework: from Testing", csvSheetCaptor.getValue()[0][4]);
+		assertEquals("Rework: from Done", csvSheetCaptor.getValue()[0][5]);
+	}
+
+	@Test
+	void shouldAddReworkFieldsWhenGenerateSheetGivenReworkStateAndExcludedStatesAndNotConsiderFlagAsBlock()
+			throws URISyntaxException {
+		URI uri = new URI("site-uri");
+		when(urlGenerator.getUri(any())).thenReturn(uri);
+		when(jiraService.getJiraBoardConfig(any(), any(), any())).thenReturn(JiraBoardConfigDTO.builder().build());
+		when(jiraService.getJiraColumns(any(), any(), any())).thenReturn(JiraColumnResult.builder()
+			.jiraColumnResponse(List
+				.of(JiraColumnDTO.builder().value(ColumnValue.builder().statuses(List.of("BLOCKED")).build()).build()))
+			.build());
+		JiraCard jiraCard = JiraCard.builder().fields(MOCK_JIRA_CARD()).build();
+		JiraCard jiraCard2 = JiraCard.builder().fields(MOCK_JIRA_CARD()).build();
+		jiraCard2.getFields().setLastStatusChangeDate(1701251323000L);
+		List<JiraCardDTO> jiraCardDTOS = new ArrayList<>(List.of(
+				JiraCardDTO.builder()
+					.baseInfo(jiraCard)
+					.reworkTimesInfos(MOCK_REWORK_TIMES_INFO_LIST())
+					.totalReworkTimes(3)
+					.build(),
+				JiraCardDTO.builder()
+					.baseInfo(jiraCard2)
+					.reworkTimesInfos(MOCK_REWORK_TIMES_INFO_LIST())
+					.totalReworkTimes(3)
+					.build()));
+		JiraCardDTO blockedJiraCard = JiraCardDTO.builder()
+			.baseInfo(JiraCard.builder().fields(MOCK_JIRA_CARD()).build())
+			.build();
+		List<JiraCardDTO> NonDoneJiraCardDTOList = new ArrayList<>() {
+			{
+				add(blockedJiraCard);
+			}
+		};
+		String[][] fakeSringArray = new String[][] { { "cycle time" }, { "1" }, { "2" }, { "3" }, { "4" } };
+		when(csvFileGenerator.assembleBoardData(anyList(), anyList(), anyList())).thenReturn(fakeSringArray);
+		kanbanCsvService.generateCsvInfo(
+				GenerateReportRequest.builder()
+					.jiraBoardSetting(JiraBoardSetting.builder()
+						.targetFields(List.of(
+								TargetField.builder().name("assignee").flag(true).key("key-assignee").build(),
+								TargetField.builder().name("fake-target1").flag(true).key("key-target1").build(),
+								TargetField.builder().name("fake-target2").flag(false).key("key-target2").build()))
+						.reworkTimesSetting(ReworkTimesSetting.builder()
+							.reworkState("In Dev")
+							.excludedStates(List.of("Review"))
+							.build())
+						.boardColumns(MOCK_JIRA_BOARD_COLUMN_SETTING_LIST())
+						.treatFlagCardAsBlock(Boolean.FALSE)
+						.build())
+					.csvTimeStamp("2022-01-01 00:00:00")
+					.build(),
+				CardCollection.builder().jiraCardDTOList(jiraCardDTOS).build(),
+				CardCollection.builder().jiraCardDTOList(NonDoneJiraCardDTOList).build());
+
+		verify(csvFileGenerator).assembleBoardData(anyList(), csvFieldsCaptor.capture(), anyList());
+		verify(csvFileGenerator).writeDataToCSV(anyString(), csvSheetCaptor.capture());
+
+		assertEquals(23, csvFieldsCaptor.getValue().size());
+		BoardCSVConfig targetValue = csvFieldsCaptor.getValue().get(22);
+		assertEquals("cardCycleTime.steps.review", targetValue.getValue());
+		assertEquals("Review Days", targetValue.getLabel());
+		assertNull(targetValue.getOriginKey());
+
+		assertEquals(5, csvSheetCaptor.getValue().length);
+		assertEquals("cycle time", csvSheetCaptor.getValue()[0][0]);
+		assertEquals("Rework: total - In dev", csvSheetCaptor.getValue()[0][1]);
+		assertEquals("Rework: from Block", csvSheetCaptor.getValue()[0][2]);
+		assertEquals("Rework: from Waiting for testing", csvSheetCaptor.getValue()[0][3]);
+		assertEquals("Rework: from Testing", csvSheetCaptor.getValue()[0][4]);
+		assertEquals("Rework: from Done", csvSheetCaptor.getValue()[0][5]);
 	}
 
 }

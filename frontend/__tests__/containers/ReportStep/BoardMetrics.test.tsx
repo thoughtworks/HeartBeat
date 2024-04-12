@@ -23,13 +23,9 @@ describe('Report Card', () => {
     return render(
       <Provider store={store}>
         <BoardMetrics
-          isBackFromDetail={false}
-          startDate={''}
-          endDate={''}
           startToRequestBoardData={mockHandleRetry}
           onShowDetail={onShowDetail}
           boardReport={boardReport}
-          csvTimeStamp={1705014731}
           errorMessage={errorMessage || ''}
         />
       </Provider>,

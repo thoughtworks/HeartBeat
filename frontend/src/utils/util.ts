@@ -162,11 +162,6 @@ export function convertCycleTimeSettings(
   return cycleTimeSettings?.map(({ status, value }: ICycleTimeSetting) => ({ [status]: value }));
 }
 
-export function existBlockColumn(
-  cycleTimeSettingsType: CYCLE_TIME_SETTINGS_TYPES,
-  cycleTimeSettings: ICycleTimeSetting[],
-) {
-  return cycleTimeSettingsType === CYCLE_TIME_SETTINGS_TYPES.BY_COLUMN
-    ? cycleTimeSettings.some(({ column }) => BLOCK_COLUMN_NAME.includes(column.toUpperCase()))
-    : cycleTimeSettings.some(({ status }) => BLOCK_COLUMN_NAME.includes(status.toUpperCase()));
+export function existBlockState(cycleTimeSettings: ICycleTimeSetting[]) {
+  return cycleTimeSettings.some(({ value }) => METRICS_CONSTANTS.blockValue === value);
 }

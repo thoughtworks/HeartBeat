@@ -21,6 +21,7 @@ import { FormControlLabel, Radio, Table, TableBody, TableContainer, TableHead, T
 import CellAutoComplete from '@src/containers/MetricsStep/CycleTime/Table/CellAutoComplete';
 import EllipsisText from '@src/components/Common/EllipsisText';
 import { useAppDispatch } from '@src/hooks/useAppDispatch';
+import { existBlockState } from '@src/utils/util';
 import { useAppSelector } from '@src/hooks';
 import React, { useCallback } from 'react';
 import { theme } from '@src/theme';
@@ -57,6 +58,8 @@ const CycleTimeTable = () => {
       );
       isColumnAsKey && resetRealDoneColumn(name, value);
       dispatch(updateCycleTimeSettings(newCycleTimeSettings));
+      if (!existBlockState(newCycleTimeSettings)) {
+      }
       dispatch(updateReworkTimesSettings({ excludeStates: [], reworkState: null }));
     },
     [cycleTimeSettings, dispatch, isColumnAsKey, resetRealDoneColumn],

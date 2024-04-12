@@ -4,6 +4,7 @@ import {
   selectMetricsContent,
   selectTreatFlagCardAsBlock,
   updateDisplayFlagCardDropWarning,
+  updateTreatFlagCardAsBlock,
 } from '@src/context/Metrics/metricsSlice';
 import SectionTitleWithTooltip from '@src/components/Common/SectionTitleWithTooltip';
 import { WarningNotification } from '@src/components/Common/WarningNotification';
@@ -30,6 +31,9 @@ export const CycleTime = () => {
     if (hasBlockState && displayFlagCardDropWarning) {
       setShouldShowConflictMessage(true);
       dispatch(updateDisplayFlagCardDropWarning(false));
+    }
+    if (hasBlockState && flagCardAsBlock) {
+      dispatch(updateTreatFlagCardAsBlock(false));
     }
   }, [dispatch, flagCardAsBlock, displayFlagCardDropWarning, hasBlockState]);
 

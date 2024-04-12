@@ -52,12 +52,8 @@ const CycleTimeTable = () => {
     newCycleTimeSettings: ICycleTimeSetting[],
     preHasBlockState: boolean,
   ) {
-    if (existBlockState(newCycleTimeSettings)) {
+    if (!existBlockState(newCycleTimeSettings) && preHasBlockState) {
       dispatch(updateTreatFlagCardAsBlock(true));
-    } else {
-      if (preHasBlockState) {
-        dispatch(updateTreatFlagCardAsBlock(true));
-      }
     }
   }
 

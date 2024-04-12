@@ -2,6 +2,7 @@ package heartbeat.service.pipeline.buildkite;
 
 import heartbeat.client.BuildKiteFeignClient;
 import heartbeat.client.dto.pipeline.buildkite.BuildKiteBuildInfo;
+import heartbeat.client.dto.pipeline.buildkite.PageBuildKitePipelineInfoDTO;
 import heartbeat.client.dto.pipeline.buildkite.PageStepsInfoDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -41,6 +42,21 @@ public class CachePageService {
 		return PageStepsInfoDto.builder().firstPageStepsInfo(firstPageStepsInfo).totalPage(totalPage).build();
 	}
 
+	@Cacheable(cacheNames = "pagePipelineInfo", key = "#buildKiteToken+'-'+#orgSlug+'-'+#page+'-'+#perPage")
+	public PageBuildKitePipelineInfoDTO getPipelineInfoList(String orgSlug, String buildKiteToken, String page,
+			String perPage) {
+		var pipelineInfoResponse = buildKiteFeignClient.getPipelineInfo(buildKiteToken, orgSlug, page, perPage);
+		log.info("Successfully get paginated pipeline info pagination info, orgSlug: {}, page:{}", orgSlug, 1);
+
+		int totalPage = parseTotalPage(pipelineInfoResponse.getHeaders().get(BUILD_KITE_LINK_HEADER));
+		log.info("Successfully parse the total page_total page: {}", totalPage);
+
+		return PageBuildKitePipelineInfoDTO.builder()
+			.firstPageInfo(pipelineInfoResponse.getBody())
+			.totalPage(totalPage)
+			.build();
+	}
+
 	private int parseTotalPage(@Nullable List<String> linkHeader) {
 		if (linkHeader == null) {
 			return 1;
@@ -55,7 +71,7 @@ public class CachePageService {
 
 		String lastNumber = null;
 		while (matcher.find()) {
-			lastNumber = matcher.group(1); // 每次找到匹配项时更新lastNumber
+			lastNumber = matcher.group(1);
 		}
 		if (lastNumber != null) {
 			return Integer.parseInt(lastNumber);

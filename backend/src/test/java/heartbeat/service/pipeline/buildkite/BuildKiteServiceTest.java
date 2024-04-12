@@ -1,25 +1,5 @@
 package heartbeat.service.pipeline.buildkite;
 
-import heartbeat.client.dto.pipeline.buildkite.DeployInfo;
-import heartbeat.controller.pipeline.dto.request.TokenParam;
-import heartbeat.client.dto.pipeline.buildkite.PageStepsInfoDto;
-import heartbeat.exception.InternalServerErrorException;
-import heartbeat.exception.PermissionDenyException;
-import heartbeat.exception.ServiceUnavailableException;
-import heartbeat.exception.UnauthorizedException;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import heartbeat.client.BuildKiteFeignClient;
@@ -28,28 +8,27 @@ import heartbeat.client.dto.pipeline.buildkite.BuildKiteJob;
 import heartbeat.client.dto.pipeline.buildkite.BuildKiteOrganizationsInfo;
 import heartbeat.client.dto.pipeline.buildkite.BuildKitePipelineDTO;
 import heartbeat.client.dto.pipeline.buildkite.BuildKiteTokenInfo;
+import heartbeat.client.dto.pipeline.buildkite.DeployInfo;
 import heartbeat.client.dto.pipeline.buildkite.DeployTimes;
+import heartbeat.client.dto.pipeline.buildkite.PageBuildKitePipelineInfoDTO;
+import heartbeat.client.dto.pipeline.buildkite.PageStepsInfoDto;
 import heartbeat.controller.pipeline.dto.request.DeploymentEnvironment;
 import heartbeat.controller.pipeline.dto.request.PipelineStepsParam;
+import heartbeat.controller.pipeline.dto.request.TokenParam;
 import heartbeat.controller.pipeline.dto.response.BuildKiteResponseDTO;
 import heartbeat.controller.pipeline.dto.response.Pipeline;
 import heartbeat.controller.pipeline.dto.response.PipelineStepsDTO;
+import heartbeat.exception.InternalServerErrorException;
 import heartbeat.exception.NotFoundException;
+import heartbeat.exception.PermissionDenyException;
 import heartbeat.exception.RequestFailedException;
+import heartbeat.exception.ServiceUnavailableException;
+import heartbeat.exception.UnauthorizedException;
 import heartbeat.service.pipeline.buildkite.builder.BuildKiteBuildInfoBuilder;
 import heartbeat.service.pipeline.buildkite.builder.BuildKiteJobBuilder;
 import heartbeat.service.pipeline.buildkite.builder.DeployInfoBuilder;
 import heartbeat.service.pipeline.buildkite.builder.DeployTimesBuilder;
 import heartbeat.service.pipeline.buildkite.builder.DeploymentEnvironmentBuilder;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.CompletionException;
-
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -62,6 +41,26 @@ import org.mockito.quality.Strictness;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.CompletionException;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -499,10 +498,14 @@ class BuildKiteServiceTest {
 				new File("src/test/java/heartbeat/controller/pipeline/buildKitePipelineInfoData.json"),
 				new TypeReference<>() {
 				});
+		var pipelineDTOResponse = PageBuildKitePipelineInfoDTO.builder()
+			.firstPageInfo(pipelineDTOS)
+			.totalPage(1)
+			.build();
 		when(buildKiteFeignClient.getBuildKiteOrganizationsInfo(any()))
 			.thenReturn(List.of(BuildKiteOrganizationsInfo.builder().name(TEST_ORG_NAME).slug(TEST_ORG_ID).build()));
-		when(buildKiteFeignClient.getPipelineInfo("Bearer mock_token", TEST_ORG_ID, "1", "100"))
-			.thenReturn(pipelineDTOS);
+		when(cachePageService.getPipelineInfoList(TEST_ORG_ID, "Bearer mock_token", "1", "100"))
+			.thenReturn(pipelineDTOResponse);
 
 		BuildKiteResponseDTO buildKiteResponseDTO = buildKiteService.getBuildKiteInfo(tokenParam);
 
@@ -515,6 +518,46 @@ class BuildKiteServiceTest {
 		assertThat(pipeline.getRepository())
 			.isEqualTo("https://github.com/XXXX-fs/fs-platform-payment-selector-ui.git");
 		assertThat(pipeline.getSteps().size()).isEqualTo(1);
+	}
+
+	@Test
+	void shouldReturnBuildKiteResponseGivenNonePipelineInfoWhenGetBuildKiteInfo() {
+		TokenParam tokenParam = TokenParam.builder().token(MOCK_TOKEN).build();
+		var pipelineDTOResponse = PageBuildKitePipelineInfoDTO.builder().firstPageInfo(null).totalPage(1).build();
+		when(buildKiteFeignClient.getBuildKiteOrganizationsInfo(any()))
+			.thenReturn(List.of(BuildKiteOrganizationsInfo.builder().name(TEST_ORG_NAME).slug(TEST_ORG_ID).build()));
+		when(cachePageService.getPipelineInfoList(TEST_ORG_ID, "Bearer mock_token", "1", "100"))
+			.thenReturn(pipelineDTOResponse);
+
+		BuildKiteResponseDTO buildKiteResponseDTO = buildKiteService.getBuildKiteInfo(tokenParam);
+
+		assertThat(buildKiteResponseDTO.getPipelineList()).isEmpty();
+	}
+
+	@Test
+	void shouldReturnBuildKiteResponseGivenManyPipelinePageWhenGetBuildKiteInfo() throws IOException {
+		TokenParam tokenParam = TokenParam.builder().token(MOCK_TOKEN).build();
+		ObjectMapper mapper = new ObjectMapper();
+		List<BuildKitePipelineDTO> pipelineDTOS = mapper.readValue(
+				new File("src/test/java/heartbeat/controller/pipeline/buildKitePipelineInfoData.json"),
+				new TypeReference<>() {
+				});
+		var pipelineDTOResponse = PageBuildKitePipelineInfoDTO.builder()
+			.firstPageInfo(pipelineDTOS)
+			.totalPage(3)
+			.build();
+		when(buildKiteFeignClient.getBuildKiteOrganizationsInfo(any()))
+			.thenReturn(List.of(BuildKiteOrganizationsInfo.builder().name(TEST_ORG_NAME).slug(TEST_ORG_ID).build()));
+		when(cachePageService.getPipelineInfoList(TEST_ORG_ID, "Bearer mock_token", "1", "100"))
+			.thenReturn(pipelineDTOResponse);
+		when(buildKiteFeignClient.getPipelineInfo("Bearer mock_token", TEST_ORG_ID, "2", "100"))
+			.thenReturn(ResponseEntity.ok(pipelineDTOS));
+		when(buildKiteFeignClient.getPipelineInfo("Bearer mock_token", TEST_ORG_ID, "3", "100"))
+			.thenReturn(ResponseEntity.ok(pipelineDTOS));
+
+		BuildKiteResponseDTO buildKiteResponseDTO = buildKiteService.getBuildKiteInfo(tokenParam);
+
+		assertThat(buildKiteResponseDTO.getPipelineList()).hasSize(3);
 	}
 
 	@Test

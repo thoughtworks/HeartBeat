@@ -3,11 +3,8 @@ package heartbeat.client;
 import heartbeat.client.decoder.BuildKiteFeignClientDecoder;
 import heartbeat.client.dto.pipeline.buildkite.BuildKiteBuildInfo;
 import heartbeat.client.dto.pipeline.buildkite.BuildKiteOrganizationsInfo;
-import heartbeat.client.dto.pipeline.buildkite.BuildKiteTokenInfo;
 import heartbeat.client.dto.pipeline.buildkite.BuildKitePipelineDTO;
-
-import java.util.List;
-
+import heartbeat.client.dto.pipeline.buildkite.BuildKiteTokenInfo;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.HttpStatus;
@@ -18,6 +15,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
+
+import java.util.List;
 
 @FeignClient(name = "buildKiteFeignClient", url = "${buildKite.url}", configuration = BuildKiteFeignClientDecoder.class)
 public interface BuildKiteFeignClient {
@@ -32,10 +31,9 @@ public interface BuildKiteFeignClient {
 	@ResponseStatus(HttpStatus.OK)
 	List<BuildKiteOrganizationsInfo> getBuildKiteOrganizationsInfo(@RequestHeader("Authorization") String token);
 
-	@Cacheable(cacheNames = "pipelineInfo", key = "#token+'-'+#organizationId+'-'+#page+'-'+#perPage")
 	@GetMapping(path = "v2/organizations/{organizationId}/pipelines?page={page}&per_page={perPage}")
 	@ResponseStatus(HttpStatus.OK)
-	List<BuildKitePipelineDTO> getPipelineInfo(@RequestHeader("Authorization") String token,
+	ResponseEntity<List<BuildKitePipelineDTO>> getPipelineInfo(@RequestHeader("Authorization") String token,
 			@PathVariable String organizationId, @PathVariable String page, @PathVariable String perPage);
 
 	@GetMapping(path = "v2/organizations/{organizationId}/pipelines/{pipelineId}/builds",

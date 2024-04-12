@@ -10,18 +10,14 @@ import java.io.Serializable;
 import java.util.List;
 
 @Data
-@Builder
+@JsonIgnoreProperties(ignoreUnknown = true)
 @AllArgsConstructor
 @NoArgsConstructor
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class BuildKitePipelineDTO implements Serializable {
+@Builder
+public class PageBuildKitePipelineInfoDTO implements Serializable {
 
-	private String name;
+	private int totalPage;
 
-	private String slug;
-
-	private String repository;
-
-	private List<StepsDTO> steps;
+	private List<BuildKitePipelineDTO> firstPageInfo;
 
 }

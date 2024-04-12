@@ -1,8 +1,11 @@
 package heartbeat.service.pipeline.buildkite;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import heartbeat.client.BuildKiteFeignClient;
 import heartbeat.client.dto.pipeline.buildkite.BuildKiteBuildInfo;
 import heartbeat.client.dto.pipeline.buildkite.BuildKiteJob;
+import heartbeat.client.dto.pipeline.buildkite.BuildKitePipelineDTO;
 import heartbeat.client.dto.pipeline.buildkite.PageStepsInfoDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,6 +18,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -94,10 +99,7 @@ class CachePageServiceTest {
 
 	@Test
 	void shouldReturnPageStepsInfoDtoWhenFetchPageStepsInfoSuccessGivenValidLinkHeader() {
-		List<String> linkHeader = new ArrayList<>();
-		linkHeader.add(TOTAL_PAGE_HEADER);
-		HttpHeaders httpHeaders = new HttpHeaders();
-		httpHeaders.addAll(HttpHeaders.LINK, linkHeader);
+		HttpHeaders httpHeaders = buildHttpHeaders(TOTAL_PAGE_HEADER);
 		List<BuildKiteBuildInfo> buildKiteBuildInfoList = new ArrayList<>();
 		BuildKiteJob testJob = BuildKiteJob.builder().name(TEST_JOB_NAME).build();
 		buildKiteBuildInfoList.add(BuildKiteBuildInfo.builder().jobs(List.of(testJob)).build());
@@ -117,10 +119,7 @@ class CachePageServiceTest {
 
 	@Test
 	void shouldReturnPageStepsInfoDtoWhenFetchPageStepsInfoSuccessGivenExistButNotMatchedLinkHeader() {
-		List<String> linkHeader = new ArrayList<>();
-		linkHeader.add(NONE_TOTAL_PAGE_HEADER);
-		HttpHeaders httpHeaders = new HttpHeaders();
-		httpHeaders.addAll(HttpHeaders.LINK, linkHeader);
+		HttpHeaders httpHeaders = buildHttpHeaders(NONE_TOTAL_PAGE_HEADER);
 		List<BuildKiteBuildInfo> buildKiteBuildInfoList = new ArrayList<>();
 		BuildKiteJob testJob = BuildKiteJob.builder().name(TEST_JOB_NAME).build();
 		buildKiteBuildInfoList.add(BuildKiteBuildInfo.builder().jobs(List.of(testJob)).build());
@@ -140,10 +139,7 @@ class CachePageServiceTest {
 
 	@Test
 	void shouldReturnPageStepsInfoDtoWhenFetchPageStepsInfoSuccessGivenExistButNotMatchedPageLinkHeader() {
-		List<String> linkHeader = new ArrayList<>();
-		linkHeader.add(NONE_PAGE_HEADER);
-		HttpHeaders httpHeaders = new HttpHeaders();
-		httpHeaders.addAll(HttpHeaders.LINK, linkHeader);
+		HttpHeaders httpHeaders = buildHttpHeaders(NONE_PAGE_HEADER);
 		List<BuildKiteBuildInfo> buildKiteBuildInfoList = new ArrayList<>();
 		BuildKiteJob testJob = BuildKiteJob.builder().name(TEST_JOB_NAME).build();
 		buildKiteBuildInfoList.add(BuildKiteBuildInfo.builder().jobs(List.of(testJob)).build());
@@ -159,6 +155,51 @@ class CachePageServiceTest {
 		assertNotNull(pageStepsInfoDto);
 		assertThat(pageStepsInfoDto.getFirstPageStepsInfo()).isEqualTo(responseEntity.getBody());
 		assertThat(pageStepsInfoDto.getTotalPage()).isEqualTo(1);
+	}
+
+	@Test
+	void shouldReturnPagePipelineInfoDtoWhenFetchPageStepsInfoSuccessGivenNullLinkHeader() throws IOException {
+		HttpHeaders httpHeaders = buildHttpHeaders(TOTAL_PAGE_HEADER);
+		ResponseEntity<List<BuildKitePipelineDTO>> responseEntity = getBuildKitepipelineResponseEntity(httpHeaders);
+		when(buildKiteFeignClient.getPipelineInfo(MOCK_TOKEN, TEST_ORG_ID, "1", "100")).thenReturn(responseEntity);
+
+		var pageStepsInfoDto = cachePageService.getPipelineInfoList(TEST_ORG_ID, MOCK_TOKEN, "1", "100");
+
+		assertNotNull(pageStepsInfoDto);
+		assertThat(pageStepsInfoDto.getFirstPageInfo()).isEqualTo(responseEntity.getBody());
+		assertThat(pageStepsInfoDto.getTotalPage()).isEqualTo(3);
+	}
+
+	@Test
+	void shouldReturnPagePipelineInfoDtoWhenFetchPagePipelineInfoSuccessGivenExistButNotMatchedLinkHeader()
+			throws IOException {
+		HttpHeaders httpHeaders = buildHttpHeaders(NONE_TOTAL_PAGE_HEADER);
+		ResponseEntity<List<BuildKitePipelineDTO>> responseEntity = getBuildKitepipelineResponseEntity(httpHeaders);
+		when(buildKiteFeignClient.getPipelineInfo(MOCK_TOKEN, TEST_ORG_ID, "1", "100")).thenReturn(responseEntity);
+
+		var PagePipelineInfoDTO = cachePageService.getPipelineInfoList(TEST_ORG_ID, MOCK_TOKEN, "1", "100");
+
+		assertNotNull(PagePipelineInfoDTO);
+		assertThat(PagePipelineInfoDTO.getFirstPageInfo()).isEqualTo(responseEntity.getBody());
+		assertThat(PagePipelineInfoDTO.getTotalPage()).isEqualTo(1);
+	}
+
+	private static ResponseEntity<List<BuildKitePipelineDTO>> getBuildKitepipelineResponseEntity(
+			HttpHeaders httpHeaders) throws IOException {
+		ObjectMapper mapper = new ObjectMapper();
+		List<BuildKitePipelineDTO> pipelineDTOS = mapper.readValue(
+				new File("src/test/java/heartbeat/controller/pipeline/buildKitePipelineInfoData.json"),
+				new TypeReference<>() {
+				});
+		return new ResponseEntity<>(pipelineDTOS, httpHeaders, HttpStatus.OK);
+	}
+
+	private HttpHeaders buildHttpHeaders(String totalPageHeader) {
+		List<String> linkHeader = new ArrayList<>();
+		linkHeader.add(totalPageHeader);
+		HttpHeaders httpHeaders = new HttpHeaders();
+		httpHeaders.addAll(HttpHeaders.LINK, linkHeader);
+		return httpHeaders;
 	}
 
 }

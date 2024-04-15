@@ -459,8 +459,7 @@ class GenerateReporterServiceTest {
 			doAnswer(invocation -> null).when(asyncMetricsDataHandler)
 				.updateMetricsDataCompletedInHandler(TIMESTAMP, MetricType.DORA, true);
 			List<PipelineCSVInfo> pipelineCSVInfos = List.of();
-			when(pipelineService.generateCSVForPipelineWithCodebase(any(), any(), any(), any(), any()))
-				.thenReturn(pipelineCSVInfos);
+			when(pipelineService.generateCSVForPipeline(any(), any(), any(), any())).thenReturn(pipelineCSVInfos);
 
 			generateReporterService.generateDoraReport(request);
 
@@ -486,8 +485,7 @@ class GenerateReporterServiceTest {
 			doAnswer(invocation -> null).when(asyncMetricsDataHandler)
 				.updateMetricsDataCompletedInHandler(TIMESTAMP, MetricType.DORA, true);
 			List<PipelineCSVInfo> pipelineCSVInfos = List.of();
-			when(pipelineService.generateCSVForPipelineWithCodebase(any(), any(), any(), any(), any()))
-				.thenReturn(pipelineCSVInfos);
+			when(pipelineService.generateCSVForPipeline(any(), any(), any(), any())).thenReturn(pipelineCSVInfos);
 
 			try {
 				generateReporterService.generateDoraReport(request);
@@ -515,8 +513,7 @@ class GenerateReporterServiceTest {
 			doAnswer(invocation -> null).when(asyncMetricsDataHandler)
 				.updateMetricsDataCompletedInHandler(TIMESTAMP, MetricType.DORA, true);
 			List<PipelineCSVInfo> pipelineCSVInfos = List.of();
-			when(pipelineService.generateCSVForPipelineWithCodebase(any(), any(), any(), any(), any()))
-				.thenReturn(pipelineCSVInfos);
+			when(pipelineService.generateCSVForPipeline(any(), any(), any(), any())).thenReturn(pipelineCSVInfos);
 
 			try {
 				generateReporterService.generateDoraReport(request);
@@ -548,8 +545,7 @@ class GenerateReporterServiceTest {
 			doAnswer(invocation -> null).when(asyncMetricsDataHandler)
 				.updateMetricsDataCompletedInHandler(TIMESTAMP, MetricType.DORA, true);
 			List<PipelineCSVInfo> pipelineCSVInfos = List.of();
-			when(pipelineService.generateCSVForPipelineWithCodebase(any(), any(), any(), any(), any()))
-				.thenReturn(pipelineCSVInfos);
+			when(pipelineService.generateCSVForPipeline(any(), any(), any(), any())).thenReturn(pipelineCSVInfos);
 			when(pipelineService.fetchBuildKiteInfo(request))
 				.thenReturn(FetchedData.BuildKiteData.builder().buildInfosList(List.of()).build());
 			DeploymentFrequency fakeDeploymentFrequency = DeploymentFrequency.builder().build();
@@ -594,8 +590,7 @@ class GenerateReporterServiceTest {
 			doAnswer(invocation -> null).when(asyncMetricsDataHandler)
 				.updateMetricsDataCompletedInHandler(TIMESTAMP, MetricType.DORA, false);
 			List<PipelineCSVInfo> pipelineCSVInfos = List.of();
-			when(pipelineService.generateCSVForPipelineWithCodebase(any(), any(), any(), any(), any()))
-				.thenReturn(pipelineCSVInfos);
+			when(pipelineService.generateCSVForPipeline(any(), any(), any(), any())).thenReturn(pipelineCSVInfos);
 			when(pipelineService.fetchBuildKiteInfo(request))
 				.thenReturn(FetchedData.BuildKiteData.builder().buildInfosList(List.of()).build());
 			when(devChangeFailureRate.calculate(any())).thenThrow(new NotFoundException(""));
@@ -623,8 +618,7 @@ class GenerateReporterServiceTest {
 			doAnswer(invocation -> null).when(asyncMetricsDataHandler)
 				.updateMetricsDataCompletedInHandler(TIMESTAMP, MetricType.DORA, true);
 			List<PipelineCSVInfo> pipelineCSVInfos = List.of();
-			when(pipelineService.generateCSVForPipelineWithCodebase(any(), any(), any(), any(), any()))
-				.thenReturn(pipelineCSVInfos);
+			when(pipelineService.generateCSVForPipeline(any(), any(), any(), any())).thenReturn(pipelineCSVInfos);
 			when(pipelineService.fetchGitHubData(request))
 				.thenReturn(FetchedData.BuildKiteData.builder().buildInfosList(List.of()).build());
 			LeadTimeForChanges fakeLeadTimeForChange = LeadTimeForChanges.builder().build();
@@ -662,8 +656,7 @@ class GenerateReporterServiceTest {
 			doAnswer(invocation -> null).when(asyncMetricsDataHandler)
 				.updateMetricsDataCompletedInHandler(TIMESTAMP, MetricType.DORA, true);
 			List<PipelineCSVInfo> pipelineCSVInfos = List.of();
-			when(pipelineService.generateCSVForPipelineWithCodebase(any(), any(), any(), any(), any()))
-				.thenReturn(pipelineCSVInfos);
+			when(pipelineService.generateCSVForPipeline(any(), any(), any(), any())).thenReturn(pipelineCSVInfos);
 			when(pipelineService.fetchGitHubData(any()))
 				.thenReturn(FetchedData.BuildKiteData.builder().buildInfosList(List.of()).build());
 			when(pipelineService.fetchBuildKiteInfo(any()))
@@ -701,8 +694,7 @@ class GenerateReporterServiceTest {
 			doAnswer(invocation -> null).when(asyncMetricsDataHandler)
 				.updateMetricsDataCompletedInHandler(TIMESTAMP, MetricType.DORA, true);
 			List<PipelineCSVInfo> pipelineCSVInfos = List.of();
-			when(pipelineService.generateCSVForPipelineWithCodebase(any(), any(), any(), any(), any()))
-				.thenReturn(pipelineCSVInfos);
+			when(pipelineService.generateCSVForPipeline(any(), any(), any(), any())).thenReturn(pipelineCSVInfos);
 			when(pipelineService.fetchGitHubData(request)).thenReturn(
 					FetchedData.BuildKiteData.builder().pipelineLeadTimes(List.of()).buildInfosList(List.of()).build());
 			doThrow(new NotFoundException("")).when(leadTimeForChangesCalculator).calculate(any());

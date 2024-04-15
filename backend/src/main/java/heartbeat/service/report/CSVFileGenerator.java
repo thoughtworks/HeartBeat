@@ -119,15 +119,19 @@ public class CSVFileGenerator {
 	}
 
 	private String[] getRowData(PipelineCSVInfo csvInfo) {
+		List<String> committerNames = new ArrayList<>();
+		if (csvInfo.getBuildInfo().getAuthor() != null && csvInfo.getBuildInfo().getAuthor().getName() != null) {
+			String authorName = String.valueOf(csvInfo.getBuildInfo().getAuthor().getName());
+			committerNames.add(authorName);
+		}
+
 		String creatorName = null;
 		if (csvInfo.getBuildInfo().getCreator() != null && csvInfo.getBuildInfo().getCreator().getName() != null) {
 			creatorName = csvInfo.getBuildInfo().getCreator().getName();
-		}
-		String committerName = null;
-		if (csvInfo.getBuildInfo().getAuthor() != null && csvInfo.getBuildInfo().getAuthor().getName() != null) {
-			committerName = String.valueOf(csvInfo.getBuildInfo().getAuthor().getName());
+			committerNames.add(creatorName);
 		}
 
+		String committerName = committerNames.isEmpty() ? null : String.join("\n", committerNames);
 		String organization = csvInfo.getOrganizationName();
 		String pipelineName = csvInfo.getPipeLineName();
 		String stepName = csvInfo.getStepName();

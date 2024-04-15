@@ -297,9 +297,8 @@ public class GenerateReporterService {
 	}
 
 	private void generateCSVForPipeline(GenerateReportRequest request, BuildKiteData buildKiteData) {
-		List<PipelineCSVInfo> pipelineData = pipelineService.generateCSVForPipelineWithCodebase(
-				request.getCodebaseSetting(), request.getStartTime(), request.getEndTime(), buildKiteData,
-				request.getBuildKiteSetting().getDeploymentEnvList());
+		List<PipelineCSVInfo> pipelineData = pipelineService.generateCSVForPipeline(request.getStartTime(),
+				request.getEndTime(), buildKiteData, request.getBuildKiteSetting().getDeploymentEnvList());
 
 		csvFileGenerator.convertPipelineDataToCSV(pipelineData, request.getCsvTimeStamp());
 		asyncMetricsDataHandler

@@ -1,47 +1,47 @@
 import {
+  selectBoard,
   selectDateRange,
   selectIsProjectCreated,
-  selectMetrics,
-  updateBoardVerifyState,
-  selectBoard,
-  updateJiraVerifyResponse,
-  selectUsers,
   selectJiraColumns,
+  selectMetrics,
+  selectUsers,
+  updateBoardVerifyState,
+  updateJiraVerifyResponse,
 } from '@src/context/config/configSlice';
 import {
   selectMetricsContent,
-  updateMetricsState,
   selectShouldGetBoardConfig,
-  updateShouldGetBoardConfig,
   updateFirstTimeRoadMetricsBoardData,
+  updateMetricsState,
+  updateShouldGetBoardConfig,
 } from '@src/context/Metrics/metricsSlice';
 import {
   MetricSelectionHeader,
   MetricSelectionWrapper,
   MetricsSelectionTitle,
+  StyledErrorMessage,
+  StyledRetryButton,
 } from '@src/containers/MetricsStep/style';
-import { CYCLE_TIME_SETTINGS_TYPES, DONE, REQUIRED_DATA, AXIOS_REQUEST_ERROR_CODE } from '@src/constants/resources';
+import { AXIOS_REQUEST_ERROR_CODE, CYCLE_TIME_SETTINGS_TYPES, DONE, REQUIRED_DATA } from '@src/constants/resources';
 import { DeploymentFrequencySettings } from '@src/containers/MetricsStep/DeploymentFrequencySettings';
-import { StyledRetryButton, StyledErrorMessage } from '@src/containers/MetricsStep/style';
 import { closeAllNotifications } from '@src/context/notification/NotificationSlice';
 import { Classification } from '@src/containers/MetricsStep/Classification';
 import { shouldMetricsLoad } from '@src/context/stepper/StepperSlice';
 import DateRangeViewer from '@src/components/Common/DateRangeViewer';
 import { useGetBoardInfoEffect } from '@src/hooks/useGetBoardInfo';
+import { combineBoardInfo, sortDateRanges } from '@src/utils/util';
 import { CycleTime } from '@src/containers/MetricsStep/CycleTime';
 import { RealDone } from '@src/containers/MetricsStep/RealDone';
 import EmptyContent from '@src/components/Common/EmptyContent';
-import { useAppSelector, useAppDispatch } from '@src/hooks';
+import { useAppDispatch, useAppSelector } from '@src/hooks';
 import { Crews } from '@src/containers/MetricsStep/Crews';
 import { useCallback, useLayoutEffect } from 'react';
 import { Loading } from '@src/components/Loading';
-import { sortDateRanges } from '@src/utils/util';
 import ReworkSettings from './ReworkSettings';
 import { Advance } from './Advance/Advance';
 import isEmpty from 'lodash/isEmpty';
 import { theme } from '@src/theme';
 import merge from 'lodash/merge';
-import dayjs from 'dayjs';
 
 const MetricsStep = () => {
   const boardConfig = useAppSelector(selectBoard);
@@ -68,20 +68,22 @@ const MetricsStep = () => {
   const shouldGetBoardConfig = useAppSelector(selectShouldGetBoardConfig);
 
   const getInfo = useCallback(
-    () =>
+    async () => {
       getBoardInfo({
         ...boardConfig,
-        startTime: dayjs(startDate).valueOf().toString(),
-        endTime: dayjs(endDate).valueOf().toString(),
+        dateRanges,
       }).then((res) => {
-        if (res.data) {
+        if (res && res[0].data) {
+          const boardInfo = res?.map((r) => r.data);
+          const commonPayload = combineBoardInfo(boardInfo!);
           dispatch(updateBoardVerifyState(true));
-          dispatch(updateJiraVerifyResponse(res.data));
-          dispatch(updateMetricsState(merge(res.data, { isProjectCreated: isProjectCreated })));
+          dispatch(updateJiraVerifyResponse(commonPayload));
+          dispatch(updateMetricsState(merge(commonPayload, { isProjectCreated: isProjectCreated })));
           dispatch(updateShouldGetBoardConfig(false));
           dispatch(updateFirstTimeRoadMetricsBoardData(false));
         }
-      }),
+      });
+    },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [],
   );

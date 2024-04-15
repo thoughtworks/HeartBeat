@@ -1,4 +1,5 @@
 import {
+  combineBoardInfo,
   convertCycleTimeSettings,
   exportToJsonFile,
   filterAndMapCycleTimeSettings,
@@ -17,6 +18,7 @@ import {
 import { CleanedBuildKiteEmoji, OriginBuildKiteEmoji } from '@src/constants/emojis/emoji';
 import { CYCLE_TIME_SETTINGS_TYPES, METRICS_CONSTANTS } from '@src/constants/resources';
 import { ICycleTimeSetting, IPipelineConfig } from '@src/context/Metrics/metricsSlice';
+import { BoardInfoResponse } from '@src/hooks/useGetBoardInfo';
 import { EMPTY_STRING } from '@src/constants/commons';
 import { PIPELINE_TOOL_TYPES } from '../fixtures';
 
@@ -427,5 +429,144 @@ describe('sortDateRanges function', () => {
   it('should ascend dateRanges', () => {
     const sortedDateRanges = sortDateRanges(dateRanges, false);
     expect(sortedDateRanges).toStrictEqual(expectResult.reverse());
+  });
+});
+
+describe('combineBoardInfo function', () => {
+  const boardInfoResponses: BoardInfoResponse[] = [
+    {
+      ignoredTargetFields: [
+        {
+          key: 'description',
+          name: 'Description',
+          flag: 'false',
+        },
+        {
+          key: 'customfield_10015',
+          name: 'Start date',
+          flag: 'false',
+        },
+      ],
+      jiraColumns: [
+        {
+          key: 'To Do',
+          value: '{ name: TODO, statuses: [TODO]}',
+        },
+        {
+          key: 'In Progress',
+          value: '{ name: DOING, statuses: [DOING]}',
+        },
+      ],
+      targetFields: [
+        {
+          key: 'issuetype',
+          name: 'Issue Type',
+          flag: 'false',
+        },
+        {
+          key: 'parent',
+          name: 'Parent',
+          flag: 'false',
+        },
+      ],
+      users: ['heartbeat user', 'Yunsong Yang'],
+    },
+    {
+      ignoredTargetFields: [
+        {
+          key: 'description',
+          name: 'Description',
+          flag: 'false',
+        },
+        {
+          key: 'customfield_10015',
+          name: 'Start date',
+          flag: 'false',
+        },
+      ],
+      jiraColumns: [
+        {
+          key: 'To Do',
+          value: '{ name: TODO, statuses: [TODO]}',
+        },
+        {
+          key: 'In Progress',
+          value: '{ name: DOING, statuses: [DOING]}',
+        },
+      ],
+      targetFields: [
+        {
+          key: 'issuetype',
+          name: 'Issue Type',
+          flag: 'false',
+        },
+        {
+          key: 'parent',
+          name: 'Parent',
+          flag: 'false',
+        },
+      ],
+      users: [
+        'heartbeat user',
+        'Yunsong Yang',
+        'Yufan Wang',
+        'Weiran Sun',
+        'Xuebing Li',
+        'Junbo Dai',
+        'Wenting Yan',
+        'Xingmeng Tao',
+      ],
+    },
+  ];
+  const expectResults = {
+    ignoredTargetFields: [
+      {
+        key: 'description',
+        name: 'Description',
+        flag: 'false',
+      },
+      {
+        key: 'customfield_10015',
+        name: 'Start date',
+        flag: 'false',
+      },
+    ],
+    jiraColumns: [
+      {
+        key: 'To Do',
+        value: '{ name: TODO, statuses: [TODO]}',
+      },
+      {
+        key: 'In Progress',
+        value: '{ name: DOING, statuses: [DOING]}',
+      },
+    ],
+    targetFields: [
+      {
+        key: 'issuetype',
+        name: 'Issue Type',
+        flag: 'false',
+      },
+      {
+        key: 'parent',
+        name: 'Parent',
+        flag: 'false',
+      },
+    ],
+    users: [
+      'heartbeat user',
+      'Yunsong Yang',
+      'Yufan Wang',
+      'Weiran Sun',
+      'Xuebing Li',
+      'Junbo Dai',
+      'Wenting Yan',
+      'Xingmeng Tao',
+    ],
+  };
+
+  it('should combine board info', () => {
+    const combineBoardData = combineBoardInfo(boardInfoResponses);
+    expect(combineBoardData).toStrictEqual(expectResults);
   });
 });

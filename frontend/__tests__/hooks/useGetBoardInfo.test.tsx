@@ -1,6 +1,6 @@
+import { MOCK_BOARD_INFO_URL, FAKE_TOKEN, FAKE_DATE_EARLIER, FAKE_DATE_LATER } from '@test/fixtures';
 import { useGetBoardInfoEffect } from '@src/hooks/useGetBoardInfo';
 import { renderHook, act, waitFor } from '@testing-library/react';
-import { MOCK_BOARD_INFO_URL, FAKE_TOKEN } from '@test/fixtures';
 import { setupServer } from 'msw/node';
 import { HttpStatusCode } from 'axios';
 import { rest } from 'msw';
@@ -14,9 +14,18 @@ const mockBoardConfig = {
   site: 'fake',
   email: 'fake@fake.com',
   token: FAKE_TOKEN,
-  startTime: null,
-  endTime: null,
+  dateRanges: [
+    {
+      startDate: FAKE_DATE_LATER.startDate,
+      endDate: FAKE_DATE_LATER.endDate,
+    },
+    {
+      startDate: FAKE_DATE_EARLIER.startDate,
+      endDate: FAKE_DATE_EARLIER.endDate,
+    },
+  ],
 };
+
 describe('use get board info', () => {
   beforeAll(() => server.listen());
   afterAll(() => {
@@ -35,18 +44,26 @@ describe('use get board info', () => {
       'No card within selected date range!',
       'Please go back to the previous page and change your collection date, or check your board info!',
     ],
-    [HttpStatusCode.BadRequest, 'Invalid input!', 'Please go back to the previous page and check your board info!'],
+    [
+      HttpStatusCode.BadRequest,
+      'Failed to get the board configuration!',
+      'Please go back to the previous page to check your board info, or change your time range!',
+    ],
     [
       HttpStatusCode.Unauthorized,
-      'Unauthorized request!',
-      'Please go back to the previous page and check your board info!',
+      'Failed to get the board configuration!',
+      'Please go back to the previous page to check your board info, or change your time range!',
     ],
     [
       HttpStatusCode.Forbidden,
-      'Forbidden request!',
-      'Please go back to the previous page and change your board token with correct access permission.',
+      'Failed to get the board configuration!',
+      'Please go back to the previous page to check your board info, or change your time range!',
     ],
-    [HttpStatusCode.NotFound, 'Not found!', 'Please go back to the previous page and check your board info!'],
+    [
+      HttpStatusCode.NotFound,
+      'Failed to get the board configuration!',
+      'Please go back to the previous page to check your board info, or change your time range!',
+    ],
   ])('should got error message when got code is %s', async (code, title, message) => {
     server.use(
       rest.post(MOCK_BOARD_INFO_URL, (_, res, ctx) => {

@@ -310,10 +310,56 @@ describe('MetricsStep', () => {
           return res(
             ctx.status(HttpStatusCode.Ok),
             ctx.json({
-              ignoredTargetFields: [],
-              jiraColumns: [],
-              targetFields: [],
-              users: [],
+              ignoredTargetFields: [
+                {
+                  key: 'description',
+                  name: 'Description',
+                  flag: false,
+                },
+                {
+                  key: 'customfield_10015',
+                  name: 'Start date',
+                  flag: false,
+                },
+              ],
+              jiraColumns: [
+                {
+                  key: 'To Do',
+                  value: {
+                    name: 'TODO',
+                    statuses: ['TODO'],
+                  },
+                },
+                {
+                  key: 'In Progress',
+                  value: {
+                    name: 'Doing',
+                    statuses: ['DOING'],
+                  },
+                },
+              ],
+              targetFields: [
+                {
+                  key: 'issuetype',
+                  name: 'Issue Type',
+                  flag: false,
+                },
+                {
+                  key: 'parent',
+                  name: 'Parent',
+                  flag: false,
+                },
+              ],
+              users: [
+                'heartbeat user',
+                'Yunsong Yang',
+                'Yufan Wang',
+                'Weiran Sun',
+                'Xuebing Li',
+                'Junbo Dai',
+                'Wenting Yan',
+                'Xingmeng Tao',
+              ],
             }),
           );
         }),

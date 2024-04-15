@@ -342,6 +342,7 @@ export const BOARD_CONFIG_INFO_TITLE = {
   UNAUTHORIZED_REQUEST: 'Unauthorized request!',
   NOT_FOUND: 'Not found!',
   NO_CONTENT: 'No card within selected date range!',
+  GENERAL_ERROR: 'Failed to get the board configuration!',
   EMPTY: '',
 };
 
@@ -349,6 +350,7 @@ export const BOARD_CONFIG_INFO_ERROR = {
   FORBIDDEN: 'Please go back to the previous page and change your board token with correct access permission.',
   NOT_FOUND: 'Please go back to the previous page and check your board info!',
   NOT_CONTENT: 'Please go back to the previous page and change your collection date, or check your board info!',
+  GENERAL_ERROR: 'Please go back to the previous page to check your board info, or change your time range!',
   RETRY: 'Data loading failed, please',
 };
 

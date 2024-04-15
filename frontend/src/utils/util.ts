@@ -1,9 +1,4 @@
-import {
-  BLOCK_COLUMN_NAME,
-  CYCLE_TIME_LIST,
-  CYCLE_TIME_SETTINGS_TYPES,
-  METRICS_CONSTANTS,
-} from '@src/constants/resources';
+import { CYCLE_TIME_LIST, CYCLE_TIME_SETTINGS_TYPES, METRICS_CONSTANTS } from '@src/constants/resources';
 import { CleanedBuildKiteEmoji, OriginBuildKiteEmoji } from '@src/constants/emojis/emoji';
 import { ICycleTimeSetting, IPipelineConfig } from '@src/context/Metrics/metricsSlice';
 import { ITargetFieldType } from '@src/components/Common/MultiAutoComplete/styles';
@@ -162,11 +157,6 @@ export function convertCycleTimeSettings(
   return cycleTimeSettings?.map(({ status, value }: ICycleTimeSetting) => ({ [status]: value }));
 }
 
-export function existBlockColumn(
-  cycleTimeSettingsType: CYCLE_TIME_SETTINGS_TYPES,
-  cycleTimeSettings: ICycleTimeSetting[],
-) {
-  return cycleTimeSettingsType === CYCLE_TIME_SETTINGS_TYPES.BY_COLUMN
-    ? cycleTimeSettings.some(({ column }) => BLOCK_COLUMN_NAME.includes(column.toUpperCase()))
-    : cycleTimeSettings.some(({ status }) => BLOCK_COLUMN_NAME.includes(status.toUpperCase()));
+export function existBlockState(cycleTimeSettings: ICycleTimeSetting[]) {
+  return cycleTimeSettings.some(({ value }) => METRICS_CONSTANTS.blockValue === value);
 }

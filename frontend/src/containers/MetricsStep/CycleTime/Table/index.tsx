@@ -1,17 +1,19 @@
 import {
+  updateCycleTimeSettings,
+  saveDoneColumn,
+  selectMetricsContent,
+  setCycleTimeSettingsType,
+  updateReworkTimesSettings,
+  updateTreatFlagCardAsBlock,
+  ICycleTimeSetting,
+} from '@src/context/Metrics/metricsSlice';
+import {
   CYCLE_TIME_SETTINGS_TYPES,
   DONE,
   METRICS_CONSTANTS,
   METRICS_CYCLE_SETTING_TABLE_HEADER_BY_COLUMN,
   METRICS_CYCLE_SETTING_TABLE_HEADER_BY_STATUS,
 } from '@src/constants/resources';
-import {
-  updateCycleTimeSettings,
-  saveDoneColumn,
-  selectMetricsContent,
-  setCycleTimeSettingsType,
-  updateReworkTimesSettings,
-} from '@src/context/Metrics/metricsSlice';
 import {
   StyledRadioGroup,
   StyledTableHeaderCell,
@@ -21,6 +23,7 @@ import { FormControlLabel, Radio, Table, TableBody, TableContainer, TableHead, T
 import CellAutoComplete from '@src/containers/MetricsStep/CycleTime/Table/CellAutoComplete';
 import EllipsisText from '@src/components/Common/EllipsisText';
 import { useAppDispatch } from '@src/hooks/useAppDispatch';
+import { existBlockState } from '@src/utils/util';
 import { useAppSelector } from '@src/hooks';
 import React, { useCallback } from 'react';
 import { theme } from '@src/theme';
@@ -45,8 +48,18 @@ const CycleTimeTable = () => {
     [cycleTimeSettings, dispatch],
   );
 
+  const updateTreatFlagCardAsBlockByCycleTimeSetting = useCallback(
+    (newCycleTimeSettings: ICycleTimeSetting[], preHasBlockState: boolean) => {
+      if (!existBlockState(newCycleTimeSettings) && preHasBlockState) {
+        dispatch(updateTreatFlagCardAsBlock(true));
+      }
+    },
+    [dispatch],
+  );
+
   const saveCycleTimeOptions = useCallback(
     (name: string, value: string) => {
+      const preHasBlockState = existBlockState(cycleTimeSettings);
       const newCycleTimeSettings = cycleTimeSettings.map((item) =>
         (isColumnAsKey ? item.column === name : item.status === name)
           ? {
@@ -56,10 +69,11 @@ const CycleTimeTable = () => {
           : item,
       );
       isColumnAsKey && resetRealDoneColumn(name, value);
+      updateTreatFlagCardAsBlockByCycleTimeSetting(newCycleTimeSettings, preHasBlockState);
       dispatch(updateCycleTimeSettings(newCycleTimeSettings));
       dispatch(updateReworkTimesSettings({ excludeStates: [], reworkState: null }));
     },
-    [cycleTimeSettings, dispatch, isColumnAsKey, resetRealDoneColumn],
+    [updateTreatFlagCardAsBlockByCycleTimeSetting, cycleTimeSettings, dispatch, isColumnAsKey, resetRealDoneColumn],
   );
 
   const header = isColumnAsKey
@@ -89,6 +103,9 @@ const CycleTimeTable = () => {
       ),
     );
     dispatch(saveDoneColumn([]));
+    if (!existBlockState(cycleTimeSettings)) {
+      dispatch(updateTreatFlagCardAsBlock(true));
+    }
   };
 
   return (

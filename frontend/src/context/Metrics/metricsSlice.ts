@@ -5,7 +5,7 @@ import {
   MESSAGE,
   METRICS_CONSTANTS,
 } from '@src/constants/resources';
-import { convertCycleTimeSettings, existBlockColumn, getSortedAndDeduplicationBoardingMapping } from '@src/utils/util';
+import { convertCycleTimeSettings, getSortedAndDeduplicationBoardingMapping } from '@src/utils/util';
 import { pipeline } from '@src/context/config/pipelineTool/verifyResponseSlice';
 import { createSlice } from '@reduxjs/toolkit';
 import camelCase from 'lodash.camelcase';
@@ -292,20 +292,6 @@ function resetReworkTimeSettingWhenMappingModified(preJiraColumnsValue: string[]
   };
 }
 
-function initTreatFlagCardAsBlock(
-  preTreatFlagCardAsBlock: boolean,
-  preHasBlockColumn: boolean,
-  state: ISavedMetricsSettingState,
-) {
-  if (
-    !preTreatFlagCardAsBlock &&
-    preHasBlockColumn &&
-    !existBlockColumn(state.cycleTimeSettingsType, state.cycleTimeSettings)
-  ) {
-    state.treatFlagCardAsBlock = true;
-  }
-}
-
 export const metricsSlice = createSlice({
   name: 'metrics',
   initialState,
@@ -396,8 +382,6 @@ export const metricsSlice = createSlice({
       const preJiraColumnsValue = getSortedAndDeduplicationBoardingMapping(state.cycleTimeSettings).filter(
         (item) => item !== METRICS_CONSTANTS.cycleTimeEmptyStr,
       );
-      const preHasBlockColumn = existBlockColumn(state.cycleTimeSettingsType, state.cycleTimeSettings);
-      const preTreatFlagCardAsBlock = state.treatFlagCardAsBlock;
 
       state.displayFlagCardDropWarning =
         state.displayFlagCardDropWarning && !isProjectCreated && importedCycleTime.importedTreatFlagCardAsBlock;
@@ -463,7 +447,6 @@ export const metricsSlice = createSlice({
             ? getCycleTimeSettingsByColumn(state, jiraColumns)
             : getCycleTimeSettingsByStatus(state, jiraColumns);
       }
-      initTreatFlagCardAsBlock(preTreatFlagCardAsBlock, preHasBlockColumn, state);
       resetReworkTimeSettingWhenMappingModified(preJiraColumnsValue, state);
 
       if (!isProjectCreated && importedDoneStatus.length > 0) {

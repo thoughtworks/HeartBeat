@@ -18,7 +18,7 @@ import merge from 'lodash/merge';
 import { isArray } from 'lodash';
 import dayjs from 'dayjs';
 
-export type TDateRange = {
+export type DateRange = {
   startDate: string | null;
   endDate: string | null;
 }[];
@@ -28,7 +28,7 @@ export interface BasicConfigState {
   basic: {
     projectName: string;
     calendarType: string;
-    dateRange: TDateRange;
+    dateRange: DateRange;
     metrics: string[];
   };
   board: IBoardState;

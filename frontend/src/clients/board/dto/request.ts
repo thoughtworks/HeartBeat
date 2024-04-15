@@ -1,4 +1,4 @@
-import { TDateRange } from '@src/context/config/configSlice';
+import { DateRange } from '@src/context/config/configSlice';
 
 export interface BoardRequestDTO {
   token: string;
@@ -20,6 +20,6 @@ export interface BoardInfoRequestDTO {
 }
 
 export interface BoardInfoConfigDTO extends BoardRequestDTO {
-  dateRanges: TDateRange | null;
+  dateRanges: DateRange | null;
   projectKey: string;
 }

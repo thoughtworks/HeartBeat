@@ -4,7 +4,7 @@ import { ICycleTimeSetting, IPipelineConfig } from '@src/context/Metrics/metrics
 import { ITargetFieldType } from '@src/components/Common/MultiAutoComplete/styles';
 import { BoardInfoResponse } from '@src/hooks/useGetBoardInfo';
 import { DATE_FORMAT_TEMPLATE } from '@src/constants/template';
-import { TDateRange } from '@src/context/config/configSlice';
+import { DateRange } from '@src/context/config/configSlice';
 import { includes, isEqual, sortBy, uniqBy } from 'lodash';
 import duration from 'dayjs/plugin/duration';
 import dayjs from 'dayjs';
@@ -102,7 +102,7 @@ export const formatDateToTimestampString = (date: string) => {
   return dayjs(date).valueOf().toString();
 };
 
-export const sortDateRanges = (dateRanges: TDateRange, descending = true) => {
+export const sortDateRanges = (dateRanges: DateRange, descending = true) => {
   const result = [...dateRanges].sort((a, b) => {
     return dayjs(b.startDate as string).diff(dayjs(a.startDate as string));
   });

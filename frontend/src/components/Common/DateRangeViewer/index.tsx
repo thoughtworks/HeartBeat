@@ -8,12 +8,12 @@ import {
   StyledExpandMoreIcon,
 } from './style';
 import React, { useRef, useState, forwardRef, useEffect, useCallback } from 'react';
-import { TDateRange } from '@src/context/config/configSlice';
+import { DateRange } from '@src/context/config/configSlice';
 import { formatDate } from '@src/utils/util';
 import { theme } from '@src/theme';
 
 type Props = {
-  dateRanges: TDateRange;
+  dateRanges: DateRange;
   expandColor?: string;
   expandBackgroundColor?: string;
 };

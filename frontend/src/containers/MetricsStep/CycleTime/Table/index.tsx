@@ -103,7 +103,9 @@ const CycleTimeTable = () => {
       ),
     );
     dispatch(saveDoneColumn([]));
-    dispatch(updateTreatFlagCardAsBlock(true));
+    if (!existBlockState(cycleTimeSettings)) {
+      dispatch(updateTreatFlagCardAsBlock(true));
+    }
   };
 
   return (

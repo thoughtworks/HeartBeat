@@ -99,7 +99,7 @@ public class CSVFileGenerator {
 			File file = new File(fileName);
 			try (CSVWriter csvWriter = new CSVWriter(new FileWriter(file))) {
 				String[] headers = { "Organization", "Pipeline Name", "Pipeline Step", "Valid", "Build Number",
-						"Code Committer", "Pipeline Creator", "First Code Committed Time In PR", "PR Created Time",
+						"Code Committer", "Build Creator", "First Code Committed Time In PR", "PR Created Time",
 						"PR Merged Time", "No PR Committed Time", "Job Start Time", "Pipeline Start Time",
 						"Pipeline Finish Time", "Total Lead Time (HH:mm:ss)", "PR Lead Time (HH:mm:ss)",
 						"Pipeline Lead Time (HH:mm:ss)", "Status", "Branch", "Revert" };
@@ -119,19 +119,16 @@ public class CSVFileGenerator {
 	}
 
 	private String[] getRowData(PipelineCSVInfo csvInfo) {
-		List<String> committerNames = new ArrayList<>();
+		String committerName = null;
 		if (csvInfo.getBuildInfo().getAuthor() != null && csvInfo.getBuildInfo().getAuthor().getName() != null) {
-			String authorName = String.valueOf(csvInfo.getBuildInfo().getAuthor().getName());
-			committerNames.add(authorName);
+			committerName = String.valueOf(csvInfo.getBuildInfo().getAuthor().getName());
 		}
 
 		String creatorName = null;
 		if (csvInfo.getBuildInfo().getCreator() != null && csvInfo.getBuildInfo().getCreator().getName() != null) {
 			creatorName = csvInfo.getBuildInfo().getCreator().getName();
-			committerNames.add(creatorName);
 		}
 
-		String committerName = committerNames.isEmpty() ? null : String.join("\n", committerNames);
 		String organization = csvInfo.getOrganizationName();
 		String pipelineName = csvInfo.getPipeLineName();
 		String stepName = csvInfo.getStepName();

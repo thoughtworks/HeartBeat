@@ -382,8 +382,6 @@ export const metricsSlice = createSlice({
       const preJiraColumnsValue = getSortedAndDeduplicationBoardingMapping(state.cycleTimeSettings).filter(
         (item) => item !== METRICS_CONSTANTS.cycleTimeEmptyStr,
       );
-      const preHasBlockColumn = existBlockState(state.cycleTimeSettings);
-      const preTreatFlagCardAsBlock = state.treatFlagCardAsBlock;
 
       state.displayFlagCardDropWarning =
         state.displayFlagCardDropWarning && !isProjectCreated && importedCycleTime.importedTreatFlagCardAsBlock;

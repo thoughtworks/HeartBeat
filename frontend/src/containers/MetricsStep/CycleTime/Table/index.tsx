@@ -48,14 +48,14 @@ const CycleTimeTable = () => {
     [cycleTimeSettings, dispatch],
   );
 
-  function updateTreatFlagCardAsBlockByCycleTimeSetting(
-    newCycleTimeSettings: ICycleTimeSetting[],
-    preHasBlockState: boolean,
-  ) {
-    if (!existBlockState(newCycleTimeSettings) && preHasBlockState) {
-      dispatch(updateTreatFlagCardAsBlock(true));
-    }
-  }
+  const updateTreatFlagCardAsBlockByCycleTimeSetting = useCallback(
+    (newCycleTimeSettings: ICycleTimeSetting[], preHasBlockState: boolean) => {
+      if (!existBlockState(newCycleTimeSettings) && preHasBlockState) {
+        dispatch(updateTreatFlagCardAsBlock(true));
+      }
+    },
+    [dispatch],
+  );
 
   const saveCycleTimeOptions = useCallback(
     (name: string, value: string) => {

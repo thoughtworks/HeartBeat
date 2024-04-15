@@ -1,9 +1,4 @@
-import {
-  BLOCK_COLUMN_NAME,
-  CYCLE_TIME_LIST,
-  CYCLE_TIME_SETTINGS_TYPES,
-  METRICS_CONSTANTS,
-} from '@src/constants/resources';
+import { CYCLE_TIME_LIST, CYCLE_TIME_SETTINGS_TYPES, METRICS_CONSTANTS } from '@src/constants/resources';
 import { CleanedBuildKiteEmoji, OriginBuildKiteEmoji } from '@src/constants/emojis/emoji';
 import { ICycleTimeSetting, IPipelineConfig } from '@src/context/Metrics/metricsSlice';
 import { ITargetFieldType } from '@src/components/Common/MultiAutoComplete/styles';

@@ -73,7 +73,7 @@ const CycleTimeTable = () => {
       dispatch(updateCycleTimeSettings(newCycleTimeSettings));
       dispatch(updateReworkTimesSettings({ excludeStates: [], reworkState: null }));
     },
-    [cycleTimeSettings, dispatch, isColumnAsKey, resetRealDoneColumn],
+    [updateTreatFlagCardAsBlockByCycleTimeSetting, cycleTimeSettings, dispatch, isColumnAsKey, resetRealDoneColumn],
   );
 
   const header = isColumnAsKey

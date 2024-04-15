@@ -5,7 +5,7 @@ import {
   MESSAGE,
   METRICS_CONSTANTS,
 } from '@src/constants/resources';
-import { convertCycleTimeSettings, existBlockState, getSortedAndDeduplicationBoardingMapping } from '@src/utils/util';
+import { convertCycleTimeSettings, getSortedAndDeduplicationBoardingMapping } from '@src/utils/util';
 import { pipeline } from '@src/context/config/pipelineTool/verifyResponseSlice';
 import { createSlice } from '@reduxjs/toolkit';
 import camelCase from 'lodash.camelcase';

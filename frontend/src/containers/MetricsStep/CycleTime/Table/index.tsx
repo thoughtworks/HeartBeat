@@ -103,6 +103,7 @@ const CycleTimeTable = () => {
       ),
     );
     dispatch(saveDoneColumn([]));
+    dispatch(updateTreatFlagCardAsBlock(true));
   };
 
   return (

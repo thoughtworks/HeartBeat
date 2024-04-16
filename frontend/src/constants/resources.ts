@@ -244,7 +244,7 @@ export const DEV_MEAN_TIME_TO_RECOVERY_NAME = 'Dev mean time to recovery';
 
 export const PIPELINE_STEP = 'Pipeline/step';
 
-export const NAME = 'Name';
+export const SUBTITLE = 'Subtitle';
 
 export const AVERAGE_FIELD = 'Average';
 

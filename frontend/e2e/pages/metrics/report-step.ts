@@ -38,6 +38,7 @@ export class ReportStep {
   readonly classificationRows: Locator;
   readonly leadTimeForChangesRows: Locator;
   readonly devChangeFailureRateRows: Locator;
+  readonly deploymentFrequencyRows: Locator;
   readonly devMeanTimeToRecoveryRows: Locator;
   readonly reworkRows: Locator;
 
@@ -72,10 +73,14 @@ export class ReportStep {
     this.homeIcon = page.getByLabel('Home');
     this.velocityRows = this.page.getByTestId('Velocity').locator('tbody').getByRole('row');
     this.cycleTimeRows = this.page.getByTestId('Cycle Time').locator('tbody').getByRole('row');
+    this.deploymentFrequencyRows = this.page.getByTestId('Deployment Frequency').locator('tbody').getByRole('row');
     this.classificationRows = this.page.getByTestId('Classification').locator('tbody').getByRole('row');
     this.leadTimeForChangesRows = this.page.getByTestId('Lead Time For Changes').getByRole('row');
-    this.devChangeFailureRateRows = this.page.getByTestId('Dev Change Failure Rate').getByRole('row');
-    this.devMeanTimeToRecoveryRows = this.page.getByTestId('Dev Mean Time To Recovery').getByRole('row');
+    this.devChangeFailureRateRows = this.page.getByTestId('Dev Change Failure Rate').locator('tbody').getByRole('row');
+    this.devMeanTimeToRecoveryRows = this.page
+      .getByTestId('Dev Mean Time To Recovery')
+      .locator('tbody')
+      .getByRole('row');
     this.reworkRows = this.page.getByTestId('Rework').getByRole('row');
   }
   combineStrings(arr: string[]): string {
@@ -91,9 +96,8 @@ export class ReportStep {
   }
 
   async checkDoraMetricsReportDetails() {
-    await expect(this.page.getByTestId('Deployment Frequency').getByRole('row').nth(2)).toContainText(
-      this.combineStrings(['Deployment frequency', '6.60']),
-    );
+    await expect(this.deploymentFrequencyRows.getByRole('cell').nth(0)).toContainText('Heartbeat/ Deploy prod');
+    await expect(this.deploymentFrequencyRows.getByRole('cell').nth(1)).toContainText('6.60');
 
     await expect(this.leadTimeForChangesRows.nth(2)).toContainText(this.combineStrings(['PR Lead Time', '6.12']));
     await expect(this.leadTimeForChangesRows.nth(3)).toContainText(this.combineStrings(['Pipeline Lead Time', '0.50']));
@@ -101,13 +105,10 @@ export class ReportStep {
 
     await expect(this.leadTimeForChangesRows.nth(4)).toContainText(this.combineStrings(['Total Lead Time', '6.62']));
 
-    await expect(this.devChangeFailureRateRows.nth(2)).toContainText(
-      this.combineStrings(['Dev change failure rate', '17.50%(7/40)']),
-    );
-
-    await expect(this.devMeanTimeToRecoveryRows.nth(2)).toContainText(
-      this.combineStrings(['Dev mean time to recovery', '1.90']),
-    );
+    await expect(this.devChangeFailureRateRows.getByRole('cell').nth(0)).toContainText('Heartbeat/ Deploy prod');
+    await expect(this.devChangeFailureRateRows.getByRole('cell').nth(1)).toContainText('17.50%(7/40)');
+    await expect(this.devMeanTimeToRecoveryRows.getByRole('cell').nth(0)).toContainText('Heartbeat/ Deploy prod');
+    await expect(this.devMeanTimeToRecoveryRows.getByRole('cell').nth(1)).toContainText('1.90');
   }
 
   async checkDoraMetricsDetails(projectCreationType: ProjectCreationType) {

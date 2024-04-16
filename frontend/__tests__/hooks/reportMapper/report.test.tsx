@@ -42,20 +42,9 @@ export const EXPECTED_REPORT_VALUES = {
     {
       id: 0,
       name: 'fs-platform-onboarding/ :shipit: deploy to PROD',
-      valuesList: [
+      valueList: [
         {
-          name: 'Deployment frequency',
           value: '0.30',
-        },
-      ],
-    },
-    {
-      id: 1,
-      name: 'Average',
-      valuesList: [
-        {
-          name: 'Deployment frequency',
-          value: '0.40',
         },
       ],
     },
@@ -64,9 +53,8 @@ export const EXPECTED_REPORT_VALUES = {
     {
       id: 0,
       name: 'Heartbeat/:react: Build Frontend',
-      valuesList: [
+      valueList: [
         {
-          name: 'Dev mean time to recovery',
           value: '4.32',
         },
       ],
@@ -74,9 +62,8 @@ export const EXPECTED_REPORT_VALUES = {
     {
       id: 1,
       name: 'Heartbeat/:cloudformation: Deploy infra',
-      valuesList: [
+      valueList: [
         {
-          name: 'Dev mean time to recovery',
           value: '0.00',
         },
       ],
@@ -84,20 +71,9 @@ export const EXPECTED_REPORT_VALUES = {
     {
       id: 2,
       name: 'Heartbeat/:rocket: Run e2e',
-      valuesList: [
+      valueList: [
         {
-          name: 'Dev mean time to recovery',
           value: '7.67',
-        },
-      ],
-    },
-    {
-      id: 3,
-      name: 'Average',
-      valuesList: [
-        {
-          name: 'Dev mean time to recovery',
-          value: '4.00',
         },
       ],
     },
@@ -126,20 +102,9 @@ export const EXPECTED_REPORT_VALUES = {
     {
       id: 0,
       name: 'fs-platform-onboarding/ :shipit: deploy to PROD',
-      valuesList: [
+      valueList: [
         {
-          name: 'Dev change failure rate',
           value: '0.00%(0/2)',
-        },
-      ],
-    },
-    {
-      id: 1,
-      name: 'Average',
-      valuesList: [
-        {
-          name: 'Dev change failure rate',
-          value: '0.00%(0/6)',
         },
       ],
     },

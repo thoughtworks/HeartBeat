@@ -22,7 +22,7 @@ jobs:
           java-version: ${{ vars.JAVA_VERSION || 19 }}
           distribution: "adopt"
       - name: Validate Gradle wrapper
-        uses: gradle/wrapper-validation-action@v2
+        uses: gradle/wrapper-validation-action@v3
       - name: Set up Gradle
         uses: gradle/gradle-build-action@v3.2.1
       - name: Build

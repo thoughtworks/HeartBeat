@@ -30,7 +30,7 @@ dependencies {
   implementation 'org.springframework.boot:spring-boot-starter-log4j2'
   implementation 'org.springframework.boot:spring-boot-starter-validation'
   implementation 'org.springframework:spring-core:6.1.6'
-  implementation("org.springframework.cloud:spring-cloud-starter-openfeign:4.1.1") {
+  implementation("org.springframework.cloud:spring-cloud-starter-openfeign:4.0.2") {
     exclude group: 'commons-fileupload', module: 'commons-fileupload'
   }
   implementation ("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0") {

@@ -33,7 +33,7 @@ dependencies {
   implementation("org.springframework.cloud:spring-cloud-starter-openfeign:4.1.1") {
     exclude group: 'commons-fileupload', module: 'commons-fileupload'
   }
-  implementation ("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.4") {
+  implementation ("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0") {
     exclude group: 'org.yaml', module: 'snakeyaml'
   }
   implementation 'commons-fileupload:commons-fileupload:1.5'

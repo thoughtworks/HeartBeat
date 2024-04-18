@@ -1,4 +1,3 @@
-import { SortType } from '@src/containers/ConfigStep/DateRangePicker/DateRangePickerGroup';
 import { CALENDAR, REWORK_TIME_LIST } from '@src/constants/resources';
 import { IReworkConfig } from '@src/context/Metrics/metricsSlice';
 
@@ -63,7 +62,6 @@ export interface NewFileConfig {
     startDate: string;
     endDate: string;
   }[];
-  sortType: SortType;
   calendarType: string;
   metrics: string[];
   board?: {
@@ -130,7 +128,6 @@ export const convertToNewFileConfig = (fileConfig: OldFileConfig | NewFileConfig
       reworkTimesSettings,
     } = fileConfig;
     return {
-      sortType: SortType?.DEFAULT,
       projectName,
       dateRange,
       calendarType: considerHoliday ? CALENDAR.CHINA : CALENDAR.REGULAR,

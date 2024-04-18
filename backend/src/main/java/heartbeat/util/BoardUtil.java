@@ -68,6 +68,9 @@ public class BoardUtil {
 			double totalFlagTimeInDays = calculateTotalFlagCycleTime(flagTimeStamp);
 			originCycleTimeInfos
 				.add(CycleTimeInfo.builder().day(totalFlagTimeInDays).column(CardStepsEnum.FLAG.getValue()).build());
+			originCycleTimeInfos = originCycleTimeInfos.stream()
+				.filter(it -> !Objects.equals(it.getColumn(), CardStepsEnum.BLOCK.getValue().toUpperCase()))
+				.toList();
 		}
 
 		return originCycleTimeInfos;

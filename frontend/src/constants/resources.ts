@@ -429,4 +429,10 @@ export const MAX_TIME_RANGE_AMOUNT = 6;
 export const START_DATE_INVALID_TEXT = 'Start date is invalid';
 export const END_DATE_INVALID_TEXT = 'End date is invalid';
 
+export enum SORTING_DATE_RANGE_TEXT {
+  DEFAULT = 'Default sort',
+  ASCENDING = 'Ascending',
+  DESCENDING = 'Descending',
+}
+
 export const BLOCK_COLUMN_NAME = ['BLOCKED', 'BLOCK'];

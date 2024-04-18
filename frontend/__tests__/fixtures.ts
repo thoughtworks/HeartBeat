@@ -1,3 +1,4 @@
+import { SortType } from '@src/containers/ConfigStep/DateRangePicker/DateRangePickerGroup';
 import { CSVReportRequestDTO, ReportRequestDTO } from '@src/clients/report/dto/request';
 import { ReportResponseDTO } from '@src/clients/report/dto/response';
 import { SOURCE_CONTROL_TYPES } from '@src/constants/resources';
@@ -224,6 +225,7 @@ export const MOCK_GENERATE_REPORT_REQUEST_PARAMS: ReportRequestDTO = {
 export const IMPORTED_NEW_CONFIG_FIXTURE = {
   projectName: 'ConfigFileForImporting',
   metrics: ['Velocity', 'Cycle time', 'Classification', 'Lead time for changes'],
+  sortType: SortType.DEFAULT,
   dateRange: [
     {
       startDate: '2023-03-16T00:00:00.000+08:00',

@@ -1,7 +1,8 @@
+import { ArrowDropDown, ArrowDropUp } from '@mui/icons-material';
 import { BasicButton } from '@src/components/Common/Buttons';
+import { Button, IconButton } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers';
 import { styled } from '@mui/material/styles';
-import { Button } from '@mui/material';
 import { theme } from '@src/theme';
 
 export const DateRangePickerGroupContainer = styled('div')({
@@ -14,6 +15,7 @@ export const TitleContainer = styled('div')({
   display: 'flex',
   flexDirection: 'row',
   alignItems: 'center',
+  justifyContent: 'space-between',
 });
 
 export const StyledFeaturedRangePickerContainer = styled('div')({
@@ -59,4 +61,37 @@ export const RemoveButton = styled(BasicButton)({
   position: 'absolute',
   right: 0,
   top: '3rem',
+});
+
+export const SortingTextButton = styled(Button)({
+  cursor: 'default',
+  backgroundColor: theme.main.button.disabled.color,
+  '&:hover': {
+    backgroundColor: theme.main.button.disabled.color,
+  },
+  color: theme.main.color,
+});
+
+export const SortingButton = styled(IconButton)({
+  display: 'flex',
+  flexDirection: 'column',
+  padding: 0,
+  '& svg': {
+    margin: '-0.9rem 0',
+  },
+  marginRight: '2.4rem',
+  fontSize: '2.4rem',
+  color: theme.main.button.disabled.color,
+});
+
+export const SortingButtoningContainer = styled('div')({
+  display: 'flex',
+});
+
+export const AscendingIcon = styled(ArrowDropUp)({
+  color: theme.main.backgroundColor,
+});
+
+export const DescendingIcon = styled(ArrowDropDown)({
+  color: theme.main.backgroundColor,
 });

@@ -16,6 +16,8 @@ public class GenerateReportRequestTest {
 	private final GenerateReportRequest request = GenerateReportRequest.builder()
 		.metrics(UPPER_METRICS)
 		.csvTimeStamp("123456789")
+		.startTime("1710000000000")
+		.endTime("1712678399999")
 		.build();
 
 	@Test
@@ -38,13 +40,13 @@ public class GenerateReportRequestTest {
 
 	@Test
 	void shouldReturnRelatedReportId() {
-		String boardReportId = request.getBoardReportId();
-		String pipelineReportId = request.getPipelineReportId();
-		String sourceControlReportId = request.getSourceControlReportId();
+		String boardReportId = request.getBoardReportFileId();
+		String pipelineReportId = request.getPipelineReportFileId();
+		String sourceControlReportId = request.getSourceControlReportFileId();
 
-		Assertions.assertEquals("board-123456789", boardReportId);
-		Assertions.assertEquals("pipeline-123456789", pipelineReportId);
-		Assertions.assertEquals("sourceControl-123456789", sourceControlReportId);
+		Assertions.assertEquals("board-20240310-20240409-123456789", boardReportId);
+		Assertions.assertEquals("pipeline-20240310-20240409-123456789", pipelineReportId);
+		Assertions.assertEquals("sourceControl-20240310-20240409-123456789", sourceControlReportId);
 	}
 
 }

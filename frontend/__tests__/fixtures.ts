@@ -110,7 +110,7 @@ export const MOCK_SOURCE_CONTROL_VERIFY_TOKEN_URL = `${BASE_URL}/source-control/
 export const MOCK_SOURCE_CONTROL_VERIFY_BRANCH_URL = `${BASE_URL}/source-control/:type/repos/branches/verify`;
 export const MOCK_REPORT_URL = `${BASE_URL}/reports`;
 export const MOCK_VERSION_URL = `${BASE_URL}/version`;
-export const MOCK_EXPORT_CSV_URL = `${BASE_URL}/reports/:dataType/:fileName`;
+export const MOCK_EXPORT_CSV_URL = `${BASE_URL}/reports/:dataType/:csvTimeStamp`;
 
 export const VERSION_RESPONSE = {
   version: '1.11',

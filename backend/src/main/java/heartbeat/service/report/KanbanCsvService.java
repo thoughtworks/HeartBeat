@@ -25,14 +25,12 @@ import heartbeat.service.board.jira.JiraColumnResult;
 import heartbeat.service.board.jira.JiraService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -41,7 +39,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static heartbeat.controller.board.dto.request.CardStepsEnum.BLOCK;
-import static heartbeat.controller.board.dto.request.CardStepsEnum.FLAG;
 import static heartbeat.controller.board.dto.request.CardStepsEnum.reworkJudgmentMap;
 
 @Service
@@ -104,11 +101,11 @@ public class KanbanCsvService {
 		}
 		this.generateCSVForBoard(realDoneCardCollection.getJiraCardDTOList(),
 				nonDoneCardCollection.getJiraCardDTOList(), jiraColumns.getJiraColumnResponse(),
-				jiraBoardSetting.getTargetFields(), request.getCsvTimeStamp(), reworkState, reworkFromStates);
+				jiraBoardSetting.getTargetFields(), request.getTimeRangeAndTimeStamp(), reworkState, reworkFromStates);
 	}
 
 	private void generateCSVForBoard(List<JiraCardDTO> allDoneCards, List<JiraCardDTO> nonDoneCards,
-			List<JiraColumnDTO> jiraColumns, List<TargetField> targetFields, String csvTimeStamp,
+			List<JiraColumnDTO> jiraColumns, List<TargetField> targetFields, String csvTimeRangeTimeStamp,
 			CardStepsEnum reworkState, List<String> reworkFromStates) {
 		List<JiraCardDTO> cardDTOList = new ArrayList<>();
 		List<JiraCardDTO> emptyJiraCard = List.of(JiraCardDTO.builder().build());
@@ -181,7 +178,7 @@ public class KanbanCsvService {
 			.mergeBaseInfoAndCycleTimeSheet()
 			.mergeReworkTimesSheet()
 			.generate();
-		csvFileGenerator.writeDataToCSV(csvTimeStamp, sheet);
+		csvFileGenerator.writeDataToCSV(csvTimeRangeTimeStamp, sheet);
 	}
 
 	private void sortNonDoneCardsByStatusAndTime(List<JiraCardDTO> nonDoneCards, List<JiraColumnDTO> jiraColumns) {

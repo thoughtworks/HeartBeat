@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import heartbeat.util.IdUtil;
 import heartbeat.util.MetricsUtil;
+import heartbeat.util.TimeUtil;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -69,18 +70,25 @@ public class GenerateReportRequest {
 	}
 
 	@JsonIgnore
-	public String getPipelineReportId() {
-		return IdUtil.getPipelineReportId(this.csvTimeStamp);
+	public String getTimeRangeAndTimeStamp() {
+		return TimeUtil.convertToChinaSimpleISOFormat(Long.parseLong(this.startTime)) + "-"
+				+ TimeUtil.convertToChinaSimpleISOFormat(Long.parseLong(this.endTime)) + "-" + this.csvTimeStamp;
+
 	}
 
 	@JsonIgnore
-	public String getSourceControlReportId() {
-		return IdUtil.getSourceControlReportId(this.csvTimeStamp);
+	public String getPipelineReportFileId() {
+		return IdUtil.getPipelineReportFileId(this.getTimeRangeAndTimeStamp());
 	}
 
 	@JsonIgnore
-	public String getBoardReportId() {
-		return IdUtil.getBoardReportId(this.csvTimeStamp);
+	public String getSourceControlReportFileId() {
+		return IdUtil.getSourceControlReportFileId(this.getTimeRangeAndTimeStamp());
+	}
+
+	@JsonIgnore
+	public String getBoardReportFileId() {
+		return IdUtil.getBoardReportFileId(this.getTimeRangeAndTimeStamp());
 	}
 
 	@JsonIgnore

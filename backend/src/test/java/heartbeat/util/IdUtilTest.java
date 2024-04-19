@@ -10,7 +10,7 @@ public class IdUtilTest {
 		String timeStamp = "121322545121";
 		String expected = "board-121322545121";
 
-		String boardReportId = IdUtil.getBoardReportId(timeStamp);
+		String boardReportId = IdUtil.getBoardReportFileId(timeStamp);
 
 		Assertions.assertEquals(expected, boardReportId);
 	}
@@ -20,7 +20,7 @@ public class IdUtilTest {
 		String timeStamp = "121322545121";
 		String expected = "pipeline-121322545121";
 
-		String pipelineReportId = IdUtil.getPipelineReportId(timeStamp);
+		String pipelineReportId = IdUtil.getPipelineReportFileId(timeStamp);
 
 		Assertions.assertEquals(expected, pipelineReportId);
 	}
@@ -30,7 +30,7 @@ public class IdUtilTest {
 		String timeStamp = "121322545121";
 		String expected = "sourceControl-121322545121";
 
-		String sourceControlReportId = IdUtil.getSourceControlReportId(timeStamp);
+		String sourceControlReportId = IdUtil.getSourceControlReportFileId(timeStamp);
 
 		Assertions.assertEquals(expected, sourceControlReportId);
 	}

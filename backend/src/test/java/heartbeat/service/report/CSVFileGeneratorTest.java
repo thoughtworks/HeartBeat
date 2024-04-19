@@ -28,6 +28,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static heartbeat.tools.TimeUtils.mockTimeStamp;
 import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -250,8 +251,7 @@ class CSVFileGeneratorTest {
 		List<PipelineCSVInfo> pipelineCSVInfos = PipelineCsvFixture.MOCK_PIPELINE_CSV_DATA();
 		csvFileGenerator.convertPipelineDataToCSV(pipelineCSVInfos, mockTimeStamp);
 
-		InputStreamResource inputStreamResource = csvFileGenerator.getDataFromCSV(ReportType.PIPELINE,
-				Long.parseLong(mockTimeStamp));
+		InputStreamResource inputStreamResource = csvFileGenerator.getDataFromCSV(ReportType.PIPELINE, mockTimeStamp);
 		InputStream csvDataInputStream = inputStreamResource.getInputStream();
 		String csvPipelineData = new BufferedReader(new InputStreamReader(csvDataInputStream)).lines()
 			.collect(Collectors.joining("\n"));
@@ -307,7 +307,7 @@ class CSVFileGeneratorTest {
 	@Test
 	void shouldThrowExceptionWhenFileNotExist() {
 		List<PipelineCSVInfo> pipelineCSVInfos = PipelineCsvFixture.MOCK_PIPELINE_CSV_DATA();
-		assertThrows(FileIOException.class, () -> csvFileGenerator.getDataFromCSV(ReportType.PIPELINE, 123456L));
+		assertThrows(FileIOException.class, () -> csvFileGenerator.getDataFromCSV(ReportType.PIPELINE, "123456"));
 		assertThrows(FileIOException.class,
 				() -> csvFileGenerator.convertPipelineDataToCSV(pipelineCSVInfos, "15469:89/033"));
 	}
@@ -350,8 +350,7 @@ class CSVFileGeneratorTest {
 		List<BoardCSVConfig> extraFields = BoardCsvFixture.MOCK_EXTRA_FIELDS_WITH_CUSTOM();
 
 		csvFileGenerator.convertBoardDataToCSV(cardDTOList, fields, extraFields, mockTimeStamp);
-		InputStreamResource inputStreamResource = csvFileGenerator.getDataFromCSV(ReportType.BOARD,
-				Long.parseLong(mockTimeStamp));
+		InputStreamResource inputStreamResource = csvFileGenerator.getDataFromCSV(ReportType.BOARD, mockTimeStamp);
 		InputStream csvDataInputStream = inputStreamResource.getInputStream();
 		BufferedReader reader = new BufferedReader(new InputStreamReader(csvDataInputStream));
 		String header = reader.readLine();
@@ -414,7 +413,7 @@ class CSVFileGeneratorTest {
 		List<BoardCSVConfig> fields = BoardCsvFixture.MOCK_ALL_FIELDS();
 		List<BoardCSVConfig> extraFields = BoardCsvFixture.MOCK_EXTRA_FIELDS();
 
-		assertThrows(FileIOException.class, () -> csvFileGenerator.getDataFromCSV(ReportType.BOARD, 1686710104536L));
+		assertThrows(FileIOException.class, () -> csvFileGenerator.getDataFromCSV(ReportType.BOARD, "1686710104536"));
 		assertThrows(FileIOException.class,
 				() -> csvFileGenerator.convertBoardDataToCSV(cardDTOList, fields, extraFields, "15469:89/033"));
 	}
@@ -426,8 +425,7 @@ class CSVFileGeneratorTest {
 		List<BoardCSVConfig> extraFields = BoardCsvFixture.MOCK_EXTRA_FIELDS();
 
 		csvFileGenerator.convertBoardDataToCSV(cardDTOList, fields, extraFields, mockTimeStamp);
-		InputStreamResource inputStreamResource = csvFileGenerator.getDataFromCSV(ReportType.BOARD,
-				Long.parseLong(mockTimeStamp));
+		InputStreamResource inputStreamResource = csvFileGenerator.getDataFromCSV(ReportType.BOARD, mockTimeStamp);
 		InputStream csvDataInputStream = inputStreamResource.getInputStream();
 		String boardCsvData = new BufferedReader(new InputStreamReader(csvDataInputStream)).lines()
 			.collect(Collectors.joining("\n"));
@@ -480,9 +478,23 @@ class CSVFileGeneratorTest {
 	void shouldThrowExceptionWhenMetricCsvNotExist() {
 		ReportResponse reportResponse = MetricCsvFixture.MOCK_METRIC_CSV_DATA();
 
-		assertThrows(FileIOException.class, () -> csvFileGenerator.getDataFromCSV(ReportType.METRIC, 1686710104536L));
+		assertThrows(FileIOException.class, () -> csvFileGenerator.getDataFromCSV(ReportType.METRIC, "1686710104536"));
 		assertThrows(FileIOException.class,
 				() -> csvFileGenerator.convertMetricDataToCSV(reportResponse, "15469:89/033"));
+	}
+
+	@Test
+	void shouldThrowExceptionWhenTimeStampIsIllegal() {
+		String mockTimeRangeTimeStampWithBackSlash = mockTimeStamp(2021, 4, 9, 0, 0, 0) + "\\";
+		String mockTimeRangeTimeStampWithSlash = mockTimeStamp(2021, 4, 9, 0, 0, 0) + "/";
+		String mockTimeRangeTimeStampWithPoint = mockTimeStamp(2021, 4, 9, 0, 0, 0) + "..";
+
+		assertThrows(IllegalArgumentException.class,
+				() -> csvFileGenerator.getDataFromCSV(ReportType.METRIC, mockTimeRangeTimeStampWithBackSlash));
+		assertThrows(IllegalArgumentException.class,
+				() -> csvFileGenerator.getDataFromCSV(ReportType.METRIC, mockTimeRangeTimeStampWithSlash));
+		assertThrows(IllegalArgumentException.class,
+				() -> csvFileGenerator.getDataFromCSV(ReportType.METRIC, mockTimeRangeTimeStampWithPoint));
 	}
 
 	@Test
@@ -491,8 +503,7 @@ class CSVFileGeneratorTest {
 
 		csvFileGenerator.convertMetricDataToCSV(reportResponse, mockTimeStamp);
 
-		InputStreamResource inputStreamResource = csvFileGenerator.getDataFromCSV(ReportType.METRIC,
-				Long.parseLong(mockTimeStamp));
+		InputStreamResource inputStreamResource = csvFileGenerator.getDataFromCSV(ReportType.METRIC, mockTimeStamp);
 		InputStream csvDataInputStream = inputStreamResource.getInputStream();
 		String metricCsvData = new BufferedReader(new InputStreamReader(csvDataInputStream)).lines()
 			.collect(Collectors.joining("\n"));
@@ -549,8 +560,7 @@ class CSVFileGeneratorTest {
 		ReportResponse reportResponse = MetricCsvFixture.MOCK_EMPTY_METRIC_CSV_DATA();
 
 		csvFileGenerator.convertMetricDataToCSV(reportResponse, mockTimeStamp);
-		InputStreamResource inputStreamResource = csvFileGenerator.getDataFromCSV(ReportType.METRIC,
-				Long.parseLong(mockTimeStamp));
+		InputStreamResource inputStreamResource = csvFileGenerator.getDataFromCSV(ReportType.METRIC, mockTimeStamp);
 		InputStream csvDataInputStream = inputStreamResource.getInputStream();
 		String metricCsvData = new BufferedReader(new InputStreamReader(csvDataInputStream)).lines()
 			.collect(Collectors.joining("\n"));
@@ -567,8 +577,7 @@ class CSVFileGeneratorTest {
 		ReportResponse reportResponse = MetricCsvFixture.MOCK_METRIC_CSV_DATA_WITH_ONE_PIPELINE();
 
 		csvFileGenerator.convertMetricDataToCSV(reportResponse, mockTimeStamp);
-		InputStreamResource inputStreamResource = csvFileGenerator.getDataFromCSV(ReportType.METRIC,
-				Long.parseLong(mockTimeStamp));
+		InputStreamResource inputStreamResource = csvFileGenerator.getDataFromCSV(ReportType.METRIC, mockTimeStamp);
 		InputStream csvDataInputStream = inputStreamResource.getInputStream();
 		String metricCsvData = new BufferedReader(new InputStreamReader(csvDataInputStream)).lines()
 			.collect(Collectors.joining("\n"));
@@ -612,6 +621,14 @@ class CSVFileGeneratorTest {
 
 		assertThrows(GenerateReportException.class,
 				() -> csvFileGenerator.convertMetricDataToCSV(reportResponse, "../"));
+	}
+
+	@Test
+	void shouldThrowIllegalArgumentExceptionWhenFilePathIsError() {
+		String fileName = "./app/output/docs/metric-20240310-20240409-127272861371";
+		File file = new File(fileName);
+
+		assertThrows(IllegalArgumentException.class, () -> CSVFileGenerator.readStringFromCsvFile(file));
 	}
 
 }

@@ -56,8 +56,8 @@ class AsyncExceptionHandlerTest {
 		long fileId = System.currentTimeMillis();
 		String currentTime = Long.toString(fileId);
 		String expireTime = Long.toString(fileId - 1900000L);
-		String unExpireFile = IdUtil.getBoardReportId(currentTime);
-		String expireFile = IdUtil.getBoardReportId(expireTime);
+		String unExpireFile = IdUtil.getBoardReportFileId(currentTime);
+		String expireFile = IdUtil.getBoardReportFileId(expireTime);
 		asyncExceptionHandler.put(unExpireFile, new UnauthorizedException(""));
 		asyncExceptionHandler.put(expireFile, new UnauthorizedException(""));
 
@@ -74,8 +74,8 @@ class AsyncExceptionHandlerTest {
 		long fileId = System.currentTimeMillis();
 		String currentTime = Long.toString(fileId);
 		String expireTime = Long.toString(fileId - 1900000L);
-		String unExpireFile = IdUtil.getBoardReportId(currentTime) + ".tmp";
-		String expireFile = IdUtil.getBoardReportId(expireTime) + ".tmp";
+		String unExpireFile = IdUtil.getBoardReportFileId(currentTime) + ".tmp";
+		String expireFile = IdUtil.getBoardReportFileId(expireTime) + ".tmp";
 		asyncExceptionHandler.put(unExpireFile, new UnauthorizedException(""));
 		asyncExceptionHandler.put(expireFile, new UnauthorizedException(""));
 
@@ -92,8 +92,8 @@ class AsyncExceptionHandlerTest {
 		long fileId = System.currentTimeMillis();
 		String currentTime = Long.toString(fileId);
 		String expireTime = Long.toString(fileId - 1900000L);
-		String unExpireFile = IdUtil.getBoardReportId(currentTime);
-		String expireFile = IdUtil.getBoardReportId(expireTime);
+		String unExpireFile = IdUtil.getBoardReportFileId(currentTime);
+		String expireFile = IdUtil.getBoardReportFileId(expireTime);
 		asyncExceptionHandler.put(unExpireFile, new UnauthorizedException(""));
 		asyncExceptionHandler.put(expireFile, new UnauthorizedException(""));
 		CyclicBarrier barrier = new CyclicBarrier(3);
@@ -125,7 +125,7 @@ class AsyncExceptionHandlerTest {
 	void shouldPutAndGetAsyncException() {
 		long currentTimeMillis = System.currentTimeMillis();
 		String currentTime = Long.toString(currentTimeMillis);
-		String boardReportId = IdUtil.getBoardReportId(currentTime);
+		String boardReportId = IdUtil.getBoardReportFileId(currentTime);
 		asyncExceptionHandler.put(boardReportId, new UnauthorizedException("test"));
 
 		var baseException = asyncExceptionHandler.get(boardReportId);
@@ -147,7 +147,7 @@ class AsyncExceptionHandlerTest {
 	@Test
 	void shouldThrowExceptionGivenCannotReadFileWhenGetFile() throws IOException {
 		new File("./app/output/error/").mkdirs();
-		String boardReportId = IdUtil.getBoardReportId(Long.toString(System.currentTimeMillis()));
+		String boardReportId = IdUtil.getBoardReportFileId(Long.toString(System.currentTimeMillis()));
 		Path filePath = Paths.get("./app/output/error/" + boardReportId);
 		Files.createFile(filePath);
 		Files.write(filePath, "test".getBytes());
@@ -163,7 +163,7 @@ class AsyncExceptionHandlerTest {
 		boolean mkdirs = new File(APP_OUTPUT_ERROR).mkdirs();
 		long currentTimeMillis = System.currentTimeMillis();
 		String currentTime = Long.toString(currentTimeMillis);
-		String boardReportId = IdUtil.getBoardReportId(currentTime);
+		String boardReportId = IdUtil.getBoardReportFileId(currentTime);
 
 		asyncExceptionHandler.put(boardReportId, new UnauthorizedException("test"));
 
@@ -177,7 +177,7 @@ class AsyncExceptionHandlerTest {
 	void shouldPutAndRemoveAsyncException() {
 		long currentTimeMillis = System.currentTimeMillis();
 		String currentTime = Long.toString(currentTimeMillis);
-		String boardReportId = IdUtil.getBoardReportId(currentTime);
+		String boardReportId = IdUtil.getBoardReportFileId(currentTime);
 		asyncExceptionHandler.put(boardReportId, new UnauthorizedException("test"));
 
 		AsyncExceptionDTO baseException = asyncExceptionHandler.remove(boardReportId);
@@ -190,7 +190,7 @@ class AsyncExceptionHandlerTest {
 	@Test
 	void shouldReturnExceptionGivenWrongFileWhenReadAndRemoveAsyncException() throws IOException {
 		new File("./app/output/error/").mkdirs();
-		String boardReportId = IdUtil.getBoardReportId(Long.toString(System.currentTimeMillis()));
+		String boardReportId = IdUtil.getBoardReportFileId(Long.toString(System.currentTimeMillis()));
 		Path filePath = Paths.get("./app/output/error/" + boardReportId);
 		Files.createFile(filePath);
 		Files.write(filePath, "test".getBytes());

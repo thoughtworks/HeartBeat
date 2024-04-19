@@ -43,6 +43,7 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -65,14 +66,18 @@ public class CSVFileGenerator {
 
 	public static final String FILE_LOCAL_PATH = "./app/output/csv";
 
+	private static final Path FILE_PATH = new File(FILE_LOCAL_PATH).toPath().normalize();
+
 	private static final String CANCELED_STATUS = "canceled";
 
 	private static final String REWORK_FIELD = "Rework";
 
-	private static InputStreamResource readStringFromCsvFile(String fileName) {
+	public static InputStreamResource readStringFromCsvFile(File file) {
+		if (!file.toPath().normalize().startsWith(FILE_PATH)) {
+			throw new IllegalArgumentException("Invalid file path");
+		}
 		try {
-			InputStream inputStream = new FileInputStream(fileName);
-
+			InputStream inputStream = new FileInputStream(file);
 			return new InputStreamResource(inputStream);
 		}
 		catch (IOException e) {
@@ -157,14 +162,18 @@ public class CSVFileGenerator {
 				pipelineFinishTime, totalTime, prLeadTime, pipelineLeadTime, state, branch, isRevert };
 	}
 
-	public InputStreamResource getDataFromCSV(ReportType reportDataType, long csvTimeStamp) {
+	public InputStreamResource getDataFromCSV(ReportType reportDataType, String timeRangeAndTimeStamp) {
+		if (timeRangeAndTimeStamp.contains("..") || timeRangeAndTimeStamp.contains("/")
+				|| timeRangeAndTimeStamp.contains("\\")) {
+			throw new IllegalArgumentException("Invalid time range time stamp");
+		}
 		return switch (reportDataType) {
-			case METRIC -> readStringFromCsvFile(
-					CSVFileNameEnum.METRIC.getValue() + FILENAME_SEPARATOR + csvTimeStamp + CSV_EXTENSION);
-			case PIPELINE -> readStringFromCsvFile(
-					CSVFileNameEnum.PIPELINE.getValue() + FILENAME_SEPARATOR + csvTimeStamp + CSV_EXTENSION);
-			default -> readStringFromCsvFile(
-					CSVFileNameEnum.BOARD.getValue() + FILENAME_SEPARATOR + csvTimeStamp + CSV_EXTENSION);
+			case METRIC -> readStringFromCsvFile(new File(FILE_LOCAL_PATH,
+					ReportType.METRIC.getValue() + FILENAME_SEPARATOR + timeRangeAndTimeStamp + CSV_EXTENSION));
+			case PIPELINE -> readStringFromCsvFile(new File(FILE_LOCAL_PATH,
+					ReportType.PIPELINE.getValue() + FILENAME_SEPARATOR + timeRangeAndTimeStamp + CSV_EXTENSION));
+			default -> readStringFromCsvFile(new File(FILE_LOCAL_PATH,
+					ReportType.BOARD.getValue() + FILENAME_SEPARATOR + timeRangeAndTimeStamp + CSV_EXTENSION));
 		};
 	}
 
@@ -182,10 +191,10 @@ public class CSVFileGenerator {
 		writeDataToCSV(csvTimeStamp, mergedArrays);
 	}
 
-	public void writeDataToCSV(String csvTimeStamp, String[][] mergedArrays) {
+	public void writeDataToCSV(String csvTimeRangeTimeStamp, String[][] mergedArrays) {
 		createCsvDirToConvertData();
 
-		String fileName = CSVFileNameEnum.BOARD.getValue() + FILENAME_SEPARATOR + csvTimeStamp + CSV_EXTENSION;
+		String fileName = CSVFileNameEnum.BOARD.getValue() + FILENAME_SEPARATOR + csvTimeRangeTimeStamp + CSV_EXTENSION;
 		if (!fileName.contains("..") && fileName.startsWith(FILE_LOCAL_PATH)) {
 			try (CSVWriter writer = new CSVWriter(new FileWriter(fileName))) {
 				writer.writeAll(Arrays.asList(mergedArrays));

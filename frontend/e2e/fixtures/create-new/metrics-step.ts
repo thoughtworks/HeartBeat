@@ -6,6 +6,7 @@ export const config = {
       endDate: '2024-01-19T23:59:59.999+08:00',
     },
   ],
+  sortType: 'DEFAULT',
   calendarType: 'Calendar with Chinese Holiday',
   metrics: [
     'Velocity',
@@ -112,6 +113,7 @@ export const modifiedConfig = {
     startDate: '2024-01-15T00:00:00.000+08:00',
     endDate: '2024-01-19T23:59:59.999+08:00',
   },
+  sortType: 'DEFAULT',
   calendarType: 'Calendar with Chinese Holiday',
   metrics: [
     'Velocity',

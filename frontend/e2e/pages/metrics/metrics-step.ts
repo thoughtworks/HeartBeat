@@ -585,7 +585,7 @@ export class MetricsStep {
   async checkPipelineFillNoStep(pipelineSettings: typeof metricsStepData.deployment) {
     const firstPipelineConfig = pipelineSettings[0];
     await expect(this.page.getByRole('alert')).toContainText(
-      'There is no step during this period for this pipeline! Please change the search time in the Config page!',
+      'There is no step during these periods for this pipeline! Please change the search time in the Config page!',
     );
     await expect(this.pipelineOrganizationSelect).toHaveValue(firstPipelineConfig.organization);
     await expect(this.pipelineNameSelect).toHaveValue(firstPipelineConfig.pipelineName);

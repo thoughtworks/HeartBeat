@@ -1,12 +1,19 @@
 import { HttpClient } from '@src/clients/HttpClient';
 import { HttpStatusCode } from 'axios';
 
-export interface getStepsParams {
+export interface IStepsParams {
   pipelineName: string;
   repository: string;
   orgName: string;
   startTime: number;
   endTime: number;
+}
+
+export interface IStepsRes {
+  response: string[];
+  haveStep: boolean;
+  branches: string[];
+  pipelineCrews: string[];
 }
 
 export class MetricsClient extends HttpClient {
@@ -16,12 +23,12 @@ export class MetricsClient extends HttpClient {
   pipelineCrews: string[] = [];
 
   getSteps = async (
-    params: getStepsParams,
+    params: IStepsParams,
     organizationId: string,
     buildId: string,
     pipelineType: string,
     token: string,
-  ) => {
+  ): Promise<IStepsRes> => {
     this.steps = [];
     this.haveStep = true;
     const result = await this.axiosInstance.get(

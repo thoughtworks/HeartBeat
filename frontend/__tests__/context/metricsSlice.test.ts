@@ -20,6 +20,7 @@ import saveMetricsSettingReducer, {
   selectReworkTimesSettings,
   selectShouldGetBoardConfig,
   selectShouldGetPipelineConfig,
+  selectShouldRetryPipelineConfig,
   selectStepWarningMessage,
   selectTreatFlagCardAsBlock,
   setCycleTimeSettingsType,
@@ -34,6 +35,7 @@ import saveMetricsSettingReducer, {
   updateReworkTimesSettings,
   updateShouldGetBoardConfig,
   updateShouldGetPipelineConfig,
+  updateShouldRetryPipelineConfig,
   updateTreatFlagCardAsBlock,
 } from '@src/context/Metrics/metricsSlice';
 import {
@@ -49,6 +51,7 @@ import { store } from '@src/store';
 const initState = {
   shouldGetBoardConfig: true,
   shouldGetPipeLineConfig: true,
+  shouldRetryPipelineConfig: false,
   jiraColumns: [],
   targetFields: [],
   users: [],
@@ -588,6 +591,11 @@ describe('saveMetricsSetting reducer', () => {
     const savedPipelineCrews = saveMetricsSettingReducer(initState, savePipelineCrews(crews));
 
     expect(savedPipelineCrews.pipelineCrews).toBe(crews);
+  });
+
+  it('should update ShouldRetryPipelineConfig', async () => {
+    store.dispatch(updateShouldRetryPipelineConfig(true));
+    expect(selectShouldRetryPipelineConfig(store.getState())).toEqual(true);
   });
 
   it('should set cycle time setting type', () => {

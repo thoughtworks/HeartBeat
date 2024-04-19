@@ -238,13 +238,15 @@ describe('pipelineTool reducer', () => {
       expect(selectStepsParams(store.getState(), 'mockOrgName', 'mockName')).toEqual({
         buildId: 'mockId',
         organizationId: 'mockOrgId',
-        params: {
-          endTime: dayjs(MOCK_DATE_RANGE[0].endDate).endOf('date').valueOf(),
-          orgName: 'mockOrgName',
-          pipelineName: 'mockName',
-          repository: 'mockRepository',
-          startTime: dayjs(MOCK_DATE_RANGE[0].startDate).startOf('date').valueOf(),
-        },
+        params: [
+          {
+            endTime: dayjs(MOCK_DATE_RANGE[0].endDate).endOf('date').valueOf(),
+            orgName: 'mockOrgName',
+            pipelineName: 'mockName',
+            repository: 'mockRepository',
+            startTime: dayjs(MOCK_DATE_RANGE[0].startDate).startOf('date').valueOf(),
+          },
+        ],
         pipelineType: 'BuildKite',
         token: '',
       });
@@ -254,13 +256,15 @@ describe('pipelineTool reducer', () => {
       expect(selectStepsParams(store.getState(), '', '')).toEqual({
         buildId: '',
         organizationId: '',
-        params: {
-          endTime: dayjs(MOCK_DATE_RANGE[0].endDate).endOf('date').valueOf(),
-          orgName: '',
-          pipelineName: '',
-          repository: '',
-          startTime: dayjs(MOCK_DATE_RANGE[0].startDate).startOf('date').valueOf(),
-        },
+        params: [
+          {
+            endTime: dayjs(MOCK_DATE_RANGE[0].endDate).endOf('date').valueOf(),
+            orgName: '',
+            pipelineName: '',
+            repository: '',
+            startTime: dayjs(MOCK_DATE_RANGE[0].startDate).startOf('date').valueOf(),
+          },
+        ],
         pipelineType: 'BuildKite',
         token: '',
       });

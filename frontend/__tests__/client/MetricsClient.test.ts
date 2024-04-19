@@ -18,7 +18,7 @@ describe('get steps from metrics response', () => {
       }),
     );
 
-    const result = await metricsClient.getSteps(params, buildId, organizationId, pipelineType, token);
+    const result = await metricsClient.getSteps(params[0], buildId, organizationId, pipelineType, token);
 
     expect(result).toEqual({ response: ['step1'], haveStep: true });
   });
@@ -36,7 +36,7 @@ describe('get steps from metrics response', () => {
     );
 
     await expect(async () => {
-      await metricsClient.getSteps(params, buildId, organizationId, pipelineType, token);
+      await metricsClient.getSteps(params[0], buildId, organizationId, pipelineType, token);
     }).rejects.toThrow(VERIFY_ERROR_MESSAGE.INTERNAL_SERVER_ERROR);
   });
 
@@ -48,14 +48,14 @@ describe('get steps from metrics response', () => {
     );
 
     await expect(async () => {
-      await metricsClient.getSteps(params, buildId, organizationId, pipelineType, token);
+      await metricsClient.getSteps(params[0], buildId, organizationId, pipelineType, token);
     }).rejects.toThrow(VERIFY_ERROR_MESSAGE.BAD_REQUEST);
   });
 
   it('should show isNoStep True when getSteps response status 204', async () => {
     server.use(rest.get(getStepsUrl, (req, res, ctx) => res(ctx.status(HttpStatusCode.NoContent))));
 
-    const result = await metricsClient.getSteps(params, buildId, organizationId, pipelineType, token);
+    const result = await metricsClient.getSteps(params[0], buildId, organizationId, pipelineType, token);
 
     expect(result).toEqual({ branches: [], response: [], haveStep: false, pipelineCrews: [] });
   });

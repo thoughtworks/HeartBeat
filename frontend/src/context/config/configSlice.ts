@@ -268,22 +268,23 @@ export const selectStepsParams = (state: RootState, organizationName: string, pi
     (pipeline) => pipeline.name === pipelineName && pipeline.orgName === organizationName,
   );
 
-  const { startDate, endDate } = state.config.basic.dateRange[0];
   const pipelineType = state.config.pipelineTool.config.type;
   const token = state.config.pipelineTool.config.token;
 
   return {
-    params: {
-      pipelineName: pipeline?.name ?? '',
-      repository: pipeline?.repository ?? '',
-      orgName: pipeline?.orgName ?? '',
-      startTime: dayjs(startDate).startOf('date').valueOf(),
-      endTime: dayjs(endDate).endOf('date').valueOf(),
-    },
     buildId: pipeline?.id ?? '',
     organizationId: pipeline?.orgId ?? '',
     pipelineType,
     token,
+    params: state.config.basic.dateRange.map((dateRange) => {
+      return {
+        pipelineName: pipeline?.name ?? '',
+        repository: pipeline?.repository ?? '',
+        orgName: pipeline?.orgName ?? '',
+        startTime: dayjs(dateRange.startDate).startOf('date').valueOf(),
+        endTime: dayjs(dateRange.endDate).endOf('date').valueOf(),
+      };
+    }),
   };
 };
 

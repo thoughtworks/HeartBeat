@@ -23,8 +23,8 @@ import { MESSAGE, NO_PIPELINE_STEP_ERROR } from '@src/constants/resources';
 import { ErrorNotification } from '@src/components/ErrorNotification';
 import { shouldMetricsLoad } from '@src/context/stepper/StepperSlice';
 import { useAppDispatch, useAppSelector } from '@src/hooks';
-import { useEffect, useMemo, useState } from 'react';
 import { Loading } from '@src/components/Loading';
+import { useEffect, useState } from 'react';
 import { store } from '@src/store';
 
 interface pipelineMetricSelectionProps {
@@ -55,17 +55,18 @@ export const PipelineMetricSelection = ({
   const { id, organization, pipelineName, step } = pipelineSetting;
   const dispatch = useAppDispatch();
   const { isLoading, errorMessage, getSteps } = useGetMetricsStepsEffect();
-  const organizationNameOptions = selectPipelineOrganizations(store.getState());
-  const pipelineNameOptions = selectPipelineNames(store.getState(), organization);
-  const stepsOptions = selectSteps(store.getState(), organization, pipelineName);
-  const organizationWarningMessage = selectOrganizationWarningMessage(store.getState(), id);
-  const pipelineNameWarningMessage = selectPipelineNameWarningMessage(store.getState(), id);
-  const stepWarningMessage = selectStepWarningMessage(store.getState(), id);
+  const storeContext = store.getState();
+  const organizationNameOptions = selectPipelineOrganizations(storeContext);
+  const pipelineNameOptions = selectPipelineNames(storeContext, organization);
+  const stepsOptions = selectSteps(storeContext, organization, pipelineName);
+  const organizationWarningMessage = selectOrganizationWarningMessage(storeContext, id);
+  const pipelineNameWarningMessage = selectPipelineNameWarningMessage(storeContext, id);
+  const stepWarningMessage = selectStepWarningMessage(storeContext, id);
   const [isShowNoStepWarning, setIsShowNoStepWarning] = useState(false);
   const shouldLoad = useAppSelector(shouldMetricsLoad);
   const shouldGetPipelineConfig = useAppSelector(selectShouldGetPipelineConfig);
 
-  const validStepValue = useMemo<string>(() => (stepsOptions.includes(step) ? step : ''), [step, stepsOptions]);
+  const validStepValue = stepsOptions.includes(step) ? step : '';
 
   const handleRemoveClick = () => {
     onRemovePipeline(id);

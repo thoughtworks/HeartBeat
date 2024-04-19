@@ -2,6 +2,7 @@ import { SortType } from '@src/containers/ConfigStep/DateRangePicker/DateRangePi
 import { CSVReportRequestDTO, ReportRequestDTO } from '@src/clients/report/dto/request';
 import { ReportResponseDTO } from '@src/clients/report/dto/response';
 import { SOURCE_CONTROL_TYPES } from '@src/constants/resources';
+import { IStepsParams } from '@src/clients/MetricsClient';
 import { METRIC_TYPES } from '@src/constants/commons';
 
 export const PROJECT_NAME = 'Heartbeat';
@@ -368,13 +369,22 @@ export enum PIPELINE_SETTING_TYPES {
 export const CONFIRM_DIALOG_DESCRIPTION = 'All the filled data will be cleared. Continue to Home page?';
 
 export const MOCK_GET_STEPS_PARAMS = {
-  params: {
-    pipelineName: 'mock pipeline name',
-    repository: 'mock repository',
-    orgName: 'mock orgName',
-    startTime: 1212112121212,
-    endTime: 1313131313131,
-  },
+  params: [
+    {
+      pipelineName: 'mock pipeline name',
+      repository: 'mock repository',
+      orgName: 'mock orgName',
+      startTime: 1212112121212,
+      endTime: 1313131313131,
+    },
+    {
+      pipelineName: 'mock pipeline name',
+      repository: 'mock repository',
+      orgName: 'mock orgName',
+      startTime: 1212112121214,
+      endTime: 1313131313134,
+    },
+  ] as IStepsParams[],
   buildId: 'mockBuildId',
   organizationId: 'mockOrganizationId',
   pipelineType: 'BuildKite',

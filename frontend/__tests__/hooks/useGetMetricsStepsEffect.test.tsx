@@ -1,10 +1,10 @@
-import { ERROR_MESSAGE_TIME_DURATION, MOCK_GET_STEPS_PARAMS } from '../fixtures';
 import { useGetMetricsStepsEffect } from '@src/hooks/useGetMetricsStepsEffect';
 import { AXIOS_REQUEST_ERROR_CODE } from '@src/constants/resources';
+import { act, renderHook, waitFor } from '@testing-library/react';
 import { metricsClient } from '@src/clients/MetricsClient';
-import { act, renderHook } from '@testing-library/react';
 import { setupStore } from '@test/utils/setupStoreUtil';
 import { TimeoutError } from '@src/errors/TimeoutError';
+import { MOCK_GET_STEPS_PARAMS } from '../fixtures';
 import React, { ReactNode } from 'react';
 import { Provider } from 'react-redux';
 
@@ -76,12 +76,17 @@ describe('use get steps effect', () => {
 
     expect(result.current.isLoading).toEqual(false);
 
-    act(() => {
-      result.current.getSteps(params, buildId, organizationId, pipelineType, token);
-      jest.advanceTimersByTime(ERROR_MESSAGE_TIME_DURATION);
+    await act(async () => {
+      await result.current.getSteps(params, buildId, organizationId, pipelineType, token);
     });
 
-    expect(result.current.errorMessage).toEqual('');
+    expect(result.current.errorMessage).toEqual('Failed to get BuildKite steps');
+
+    jest.runAllTimers();
+
+    await waitFor(() => {
+      expect(result.current.errorMessage).toEqual('');
+    });
   });
 
   it('should set error message when get steps responses are failed', async () => {

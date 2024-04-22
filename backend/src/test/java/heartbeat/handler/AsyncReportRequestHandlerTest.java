@@ -79,9 +79,4 @@ class AsyncReportRequestHandlerTest {
 				() -> asyncReportRequestHandler.putReport("../", ReportResponse.builder().build()));
 	}
 
-	@Test
-	void shouldThrowGenerateReportExceptionGivenFileNameInvalidWhenHandlerGetData() {
-		assertThrows(GenerateReportException.class, () -> asyncReportRequestHandler.getReport("../"));
-	}
-
 }

@@ -161,8 +161,8 @@ devDependencies:
     specifier: ^29.7.0
     version: 29.7.0
   license-compliance:
-    specifier: ^2.0.1
-    version: 2.0.1(typescript@5.4.5)
+    specifier: ^3.0.0
+    version: 3.0.0(typescript@5.4.5)
   lint-staged:
     specifier: ^15.2.2
     version: 15.2.2
@@ -4424,6 +4424,11 @@ packages:
     engines: {node: '>=16'}
     dev: true
 
+  /commander@12.0.0:
+    resolution: {integrity: sha512-MwVNWlYjDTtOjX5PiD7o5pK0UrFU/OYgcJfjjK4RaHZETNtjJqrZa9Y9ds88+A+f+d5lv+561eZ+yCKoS3gbAA==}
+    engines: {node: '>=18'}
+    dev: true
+
   /commander@2.20.3:
     resolution: {integrity: sha512-GpVkmM8vF2vQUkj2LvZmD35JxeJOLCwJ9cUkugyk2nuhbv3+mJvpLYYt+0+USMxE+oj+ey/lJEnhZw75x/OMcQ==}
     dev: false
@@ -4493,8 +4498,8 @@ packages:
       yaml: 1.10.2
     dev: false
 
-  /cosmiconfig@8.3.6(typescript@5.4.5):
-    resolution: {integrity: sha512-kcZ6+W5QzcJ3P1Mt+83OUv/oHFqZHIx8DuxG6eZ5RGMERoLqp4BuGjhHLYGK+Kf5XVkQvqBSmAy/nGWN3qDgEA==}
+  /cosmiconfig@9.0.0(typescript@5.4.5):
+    resolution: {integrity: sha512-itvL5h8RETACmOTFc4UfIyB2RfEHi71Ax6E/PivVxq9NseKbOWpeyHEOIbmAw1rs8Ak0VursQNww7lf7YtUwzg==}
     engines: {node: '>=14'}
     peerDependencies:
       typescript: '>=4.9.5'
@@ -4502,10 +4507,10 @@ packages:
       typescript:
         optional: true
     dependencies:
+      env-paths: 2.2.1
       import-fresh: 3.3.0
       js-yaml: 4.1.0
       parse-json: 5.2.0
-      path-type: 4.0.0
       typescript: 5.4.5
     dev: true
 
@@ -6930,8 +6935,8 @@ packages:
     resolution: {integrity: sha512-8wb9Yw966OSxApiCt0K3yNJL8pnNeIv+OEq2YMidz4FKP6nonSRoOXc80iXY4JaN2FC11B9qsNmDsm+ZOfMROA==}
     dev: true
 
-  /joi@17.11.0:
-    resolution: {integrity: sha512-NgB+lZLNoqISVy1rZocE9PZI36bL/77ie924Ri43yEvi9GUUMPeyVIr8KdFTMUlby1p0PBYMk9spIxEUQYqrJQ==}
+  /joi@17.12.3:
+    resolution: {integrity: sha512-2RRziagf555owrm9IRVtdKynOBeITiDpuZqIpgwqXShPncPKNiRQoiGsl/T8SQdq+8ugRzH2LqY67irr2y/d+g==}
     dependencies:
       '@hapi/hoek': 9.3.0
       '@hapi/topo': 5.1.0
@@ -7107,17 +7112,17 @@ packages:
       type-check: 0.4.0
     dev: true
 
-  /license-compliance@2.0.1(typescript@5.4.5):
-    resolution: {integrity: sha512-c6w74uKnDgvbW3opy8NFMeX1pgWsHl8dLOu7Bc85s9eurXYCzF5x+Sj7gvZJIjtsYu3vQ7aYYpjc23ru+4onPA==}
-    engines: {node: '>=14.17.0'}
+  /license-compliance@3.0.0(typescript@5.4.5):
+    resolution: {integrity: sha512-0kXEr7JSdP+jPSTSEnAiyGvpOoFnkiVXqmTFhXx22+tCay7shTN1mVM7Z+p2F3YNeIhx0tmADglrp5ddWGyHnQ==}
+    engines: {node: '>=18.20.1'}
     hasBin: true
     dependencies:
       chalk: 4.1.2
-      commander: 11.1.0
-      cosmiconfig: 8.3.6(typescript@5.4.5)
+      commander: 12.0.0
+      cosmiconfig: 9.0.0(typescript@5.4.5)
       debug: 4.3.4
-      joi: 17.11.0
-      spdx-expression-parse: 3.0.1
+      joi: 17.12.3
+      spdx-expression-parse: 4.0.0
       spdx-satisfies: 5.0.1
       tslib: 2.6.2
       xmlbuilder: 15.1.1
@@ -8566,6 +8571,13 @@ packages:
 
   /spdx-expression-parse@3.0.1:
     resolution: {integrity: sha512-cbqHunsQWnJNE6KhVSMsMeH5H/L9EpymbzqTQ3uLwNCLZ1Q481oWaofqH7nO6V07xlXwY6PhQdQ2IedWx/ZK4Q==}
+    dependencies:
+      spdx-exceptions: 2.5.0
+      spdx-license-ids: 3.0.17
+    dev: true
+
+  /spdx-expression-parse@4.0.0:
+    resolution: {integrity: sha512-Clya5JIij/7C6bRR22+tnGXbc4VKlibKSVj2iHvVeX5iMW7s1SIQlqu699JkODJJIhh/pUu8L0/VLh8xflD+LQ==}
     dependencies:
       spdx-exceptions: 2.5.0
       spdx-license-ids: 3.0.17

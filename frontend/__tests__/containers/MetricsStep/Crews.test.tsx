@@ -13,7 +13,7 @@ const assigneeFilterValues = ['lastAssignee', 'historicalAssignee'];
 
 jest.mock('@src/context/Metrics/metricsSlice', () => ({
   ...jest.requireActual('@src/context/Metrics/metricsSlice'),
-  selectMetricsContent: jest.fn().mockReturnValue({ users: ['crew A', 'crew B'] }),
+  selectMetricsContent: jest.fn().mockReturnValue({ users: ['crew A', 'crew B'], pipelineCrews: ['A', 'B'] }),
 }));
 
 const mockedUseAppDispatch = jest.fn();
@@ -23,10 +23,10 @@ jest.mock('@src/hooks/useAppDispatch', () => ({
 
 let store = setupStore();
 
-const setup = () => {
+const setup = (type?: string) => {
   return render(
     <Provider store={store}>
-      <Crews options={mockOptions} title={mockTitle} label={mockLabel} />
+      <Crews options={mockOptions} title={mockTitle} label={mockLabel} type={type ? type : 'board'} />
     </Provider>,
   );
 };
@@ -46,13 +46,18 @@ describe('Crew', () => {
     expect(screen.getByText(mockTitle)).toBeInTheDocument();
   });
 
-  it('should selected all options by default when initializing', () => {
+  it('should selected all options by default when initializing given type is board', () => {
     setup();
 
     expect(screen.getByRole('button', { name: 'crew A' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'crew B' })).toBeInTheDocument();
   });
+  it('should selected all options by default when initializing given type is other', () => {
+    setup('other');
 
+    expect(screen.getByRole('button', { name: 'A' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'B' })).toBeInTheDocument();
+  });
   it('should show detail options when click Included crews button', async () => {
     setup();
 

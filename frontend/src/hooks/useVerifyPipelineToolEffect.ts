@@ -1,4 +1,3 @@
-import { initDeploymentFrequencySettings } from '@src/context/Metrics/metricsSlice';
 import { updatePipelineToolVerifyState } from '@src/context/config/configSlice';
 import { pipelineToolClient } from '@src/clients/pipeline/PipelineToolClient';
 import { IPipelineVerifyRequestDTO } from '@src/clients/pipeline/dto/request';
@@ -20,7 +19,6 @@ export const useVerifyPipelineToolEffect = () => {
     setIsShowAlert(false);
     if (response.code === HttpStatusCode.NoContent) {
       dispatch(updatePipelineToolVerifyState(true));
-      dispatch(initDeploymentFrequencySettings());
     } else if (response.code === AXIOS_REQUEST_ERROR_CODE.TIMEOUT) {
       setIsVerifyTimeOut(true);
       setIsShowAlert(true);

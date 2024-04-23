@@ -20,16 +20,16 @@ export interface BranchSelectionProps {
   organization: string;
   pipelineName: string;
   branches: string[];
+  isStepLoading: boolean;
   onUpdatePipeline: (id: number, label: string, value: string[] | unknown) => void;
 }
 
 export const BranchSelection = (props: BranchSelectionProps) => {
   const dispatch = useAppDispatch();
-  const { id, organization, pipelineName, branches, onUpdatePipeline } = props;
+  const { id, organization, pipelineName, branches, onUpdatePipeline, isStepLoading } = props;
   const formMeta = useAppSelector(getFormMeta);
   const pipelineList = useAppSelector(selectPipelineList);
   const sourceControlFields = useAppSelector(selectSourceControl);
-
   const currentPipeline = useMemo(
     () => pipelineList.find((pipeline) => pipeline.name === pipelineName && pipeline.orgName === organization),
     [organization, pipelineList, pipelineName],
@@ -132,10 +132,10 @@ export const BranchSelection = (props: BranchSelectionProps) => {
           <TextField
             {...params}
             required={true}
-            error={isInputError}
+            error={!isStepLoading && isInputError}
             variant='standard'
             label='Branches'
-            helperText={isInputError ? SOURCE_CONTROL_BRANCH_INVALID_TEXT[errorDetail as string] : ''}
+            helperText={!isStepLoading && isInputError ? SOURCE_CONTROL_BRANCH_INVALID_TEXT[errorDetail as string] : ''}
           />
         )}
         renderTags={(selectedOptions, getTagProps) =>

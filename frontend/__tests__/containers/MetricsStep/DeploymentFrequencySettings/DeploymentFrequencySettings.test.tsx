@@ -7,10 +7,28 @@ import { DEPLOYMENT_FREQUENCY_SETTINGS, LIST_OPEN, LOADING, ORGANIZATION, REMOVE
 import { DeploymentFrequencySettings } from '@src/containers/MetricsStep/DeploymentFrequencySettings';
 import { IUseVerifyPipeLineToolStateInterface } from '@src/hooks/useGetPipelineToolInfoEffect';
 import { TokenAccessAlert } from '@src/containers/MetricsStep/TokenAccessAlert';
-import { act, render, screen, within } from '@testing-library/react';
+import { act, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
-import { store } from '@src/store';
+
+import { setupStore } from '@test/utils/setupStoreUtil';
+
+let mockSelectShouldGetPipelineConfig = true;
+let mockSelectPipelineNames: string[] = [];
+const mockSelectStepsParams = {
+  organizationId: 0,
+  pipelineType: '',
+  token: '',
+  params: [
+    {
+      pipelineName: mockSelectPipelineNames,
+      repository: '',
+      orgName: '',
+      startTime: '2024-02-01T00:00:00.000+08:00',
+      endTime: '2024-02-15T23:59:59.999+08:00',
+    },
+  ],
+};
 
 jest.mock('@src/hooks', () => ({
   ...jest.requireActual('@src/hooks'),
@@ -23,24 +41,24 @@ jest.mock('@src/context/Metrics/metricsSlice', () => ({
   deleteADeploymentFrequencySetting: jest.fn(),
   updateDeploymentFrequencySettings: jest.fn(),
   selectDeploymentFrequencySettings: jest.fn().mockReturnValue([
-    { id: 0, organization: '', pipelineName: '', steps: '', branches: [] },
+    { id: 0, organization: 'mockOrgName', pipelineName: '1', steps: '', branches: [] },
     { id: 1, organization: '', pipelineName: '', steps: '', branches: [] },
   ]),
   selectOrganizationWarningMessage: jest.fn().mockReturnValue(null),
   selectPipelineNameWarningMessage: jest.fn().mockReturnValue(null),
   selectStepWarningMessage: jest.fn().mockReturnValue(null),
   selectMetricsContent: jest.fn().mockReturnValue({ pipelineCrews: [], users: [] }),
-  selectShouldGetPipelineConfig: jest.fn().mockReturnValue(true),
+  selectShouldGetPipelineConfig: jest.fn().mockImplementation(() => mockSelectShouldGetPipelineConfig),
 }));
 
 jest.mock('@src/context/config/configSlice', () => ({
   ...jest.requireActual('@src/context/config/configSlice'),
-  selectPipelineOrganizations: jest.fn().mockReturnValue(['mockOrgName']),
-  selectPipelineNames: jest.fn().mockReturnValue(['']),
+  selectPipelineOrganizations: jest.fn().mockReturnValue(['mockOrgName', 'mockOrgName2']),
+  selectPipelineNames: jest.fn().mockImplementation(() => mockSelectPipelineNames),
   selectSteps: jest.fn().mockReturnValue(['']),
   selectBranches: jest.fn().mockReturnValue(['']),
   selectPipelineCrews: jest.fn().mockReturnValue(['']),
-  selectStepsParams: jest.fn().mockReturnValue(['']),
+  selectStepsParams: jest.fn().mockImplementation(() => mockSelectStepsParams),
   selectDateRange: jest.fn().mockReturnValue(['']),
 }));
 
@@ -53,6 +71,7 @@ jest.mock('@src/hooks/useMetricsStepValidationCheckContext', () => ({
 }));
 
 const mockGetPipelineToolInfoOkResponse = {
+  isFirstFetch: false,
   isLoading: false,
   apiCallFunc: jest.fn(),
   result: {
@@ -67,6 +86,7 @@ const mockGetPipelineToolInfoOkResponse = {
           repository: 'git@github.com:au-heartbeat/Heartbeat.git',
           steps: [':pipeline: Upload pipeline.yml'],
           branches: [],
+          crews: [],
         },
       ],
     },
@@ -80,14 +100,45 @@ jest.mock('@src/hooks/useGetPipelineToolInfoEffect', () => ({
   useGetPipelineToolInfoEffect: () => mockGetPipelineToolInfoSpy,
 }));
 describe('DeploymentFrequencySettings', () => {
-  const setup = () =>
-    render(
+  let store = null;
+  const setup = () => {
+    store = setupStore();
+    return render(
       <Provider store={store}>
         <DeploymentFrequencySettings />
       </Provider>,
     );
+  };
   afterEach(() => {
     jest.clearAllMocks();
+  });
+  beforeEach(() => {
+    mockSelectShouldGetPipelineConfig = true;
+    mockSelectPipelineNames = [];
+    mockGetPipelineToolInfoSpy = mockGetPipelineToolInfoOkResponse;
+  });
+
+  it('should show crew settings when select pipelineName', async () => {
+    mockSelectPipelineNames = ['Heartbeat'];
+    const { getAllByRole, getByRole } = await setup();
+    await act(async () => {
+      await userEvent.click(getAllByRole('button', { name: LIST_OPEN })[0]);
+    });
+
+    let listBox = within(getByRole('listbox'));
+    await act(async () => {
+      await userEvent.click(listBox.getByText('mockOrgName'));
+    });
+    await act(async () => {
+      await userEvent.click(getAllByRole('button', { name: LIST_OPEN })[1]);
+    });
+    listBox = within(getByRole('listbox'));
+    await act(async () => {
+      await userEvent.click(listBox.getByText('Heartbeat'));
+    });
+    waitFor(() => {
+      expect(screen.getByText('Crew setting (optional)')).toBeInTheDocument();
+    });
   });
 
   it('should render DeploymentFrequencySettings component', () => {
@@ -122,14 +173,21 @@ describe('DeploymentFrequencySettings', () => {
     });
     const listBox = within(getByRole('listbox'));
     await act(async () => {
-      await userEvent.click(listBox.getByText('mockOrgName'));
+      await userEvent.click(listBox.getByText('mockOrgName2'));
     });
 
     expect(updateDeploymentFrequencySettings).toHaveBeenCalledTimes(1);
   });
 
+  it('show render crews component when all pipelines load completed', () => {
+    mockSelectShouldGetPipelineConfig = false;
+    setup();
+    expect(screen.getByText('Crew setting (optional)')).toBeInTheDocument();
+  });
+
   it('should display error UI when get pipeline info client returns non-200 code', () => {
     mockGetPipelineToolInfoSpy = {
+      isFirstFetch: false,
       isLoading: false,
       apiCallFunc: jest.fn(),
       result: {
@@ -145,6 +203,7 @@ describe('DeploymentFrequencySettings', () => {
 
   it('should show loading when get pipeline info client pending', () => {
     mockGetPipelineToolInfoSpy = {
+      isFirstFetch: false,
       isLoading: true,
       apiCallFunc: jest.fn(),
       result: {
@@ -156,6 +215,15 @@ describe('DeploymentFrequencySettings', () => {
     setup();
 
     expect(screen.getByTestId(LOADING)).toBeInTheDocument();
+  });
+
+  it('should not show crews part when pipeline is loading', async () => {
+    mockGetPipelineToolInfoSpy = {
+      ...mockGetPipelineToolInfoOkResponse,
+      isFirstFetch: true,
+    };
+    setup();
+    expect(screen.queryByText('Crews Setting')).toBeNull();
   });
 
   it('renders without error when errorDetail is provided', () => {

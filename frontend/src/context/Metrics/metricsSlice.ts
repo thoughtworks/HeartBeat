@@ -7,10 +7,10 @@ import {
 } from '@src/constants/resources';
 import { convertCycleTimeSettings, getSortedAndDeduplicationBoardingMapping } from '@src/utils/util';
 import { pipeline } from '@src/context/config/pipelineTool/verifyResponseSlice';
+import _, { omit, uniqWith, isEqual, intersection, concat } from 'lodash';
 import { createSlice } from '@reduxjs/toolkit';
 import camelCase from 'lodash.camelcase';
 import { RootState } from '@src/store';
-import _ from 'lodash';
 
 export interface IPipelineConfig {
   id: number;
@@ -18,6 +18,7 @@ export interface IPipelineConfig {
   pipelineName: string;
   step: string;
   branches: string[];
+  isStepEmptyString?: boolean;
 }
 
 export interface IReworkConfig {
@@ -163,14 +164,14 @@ const setCreateSelectUsers = (metricsState: ISavedMetricsSettingState, users: st
   }
 };
 
-const setPipelineCrews = (isProjectCreated: boolean, pipelineCrews: string[], importedPipelineCrews: string[]) => {
+const setPipelineCrews = (isProjectCreated: boolean, pipelineCrews: string[], currentCrews: string[]) => {
   if (_.isEmpty(pipelineCrews)) {
     return [];
   }
   if (isProjectCreated) {
     return pipelineCrews;
   }
-  return pipelineCrews.filter((item: string) => importedPipelineCrews?.includes(item));
+  return intersection(pipelineCrews, currentCrews);
 };
 
 const setSelectTargetFields = (
@@ -336,7 +337,7 @@ export const metricsSlice = createSlice({
         return deploymentFrequencySetting.id === updateId
           ? {
               ...deploymentFrequencySetting,
-              [label === 'Steps' ? 'step' : camelCase(label)]: value,
+              [label === 'Step' ? 'step' : camelCase(label)]: value,
             }
           : deploymentFrequencySetting;
       });
@@ -466,29 +467,63 @@ export const metricsSlice = createSlice({
           : ASSIGNEE_FILTER_TYPES.LAST_ASSIGNEE;
     },
 
+    updatePiplineCrews: (state, action) => {
+      state.pipelineCrews = intersection(state.pipelineCrews, action.payload);
+    },
+
     updatePipelineSettings: (state, action) => {
       const { pipelineList, isProjectCreated, pipelineCrews } = action.payload;
-      const { importedDeployment, importedPipelineCrews } = state.importedData;
-
+      const { importedDeployment } = state.importedData;
       if (pipelineCrews) {
-        state.pipelineCrews = setPipelineCrews(isProjectCreated, pipelineCrews, importedPipelineCrews);
+        state.pipelineCrews = setPipelineCrews(isProjectCreated, pipelineCrews, state.pipelineCrews);
       }
       const orgNames: Array<string> = _.uniq(pipelineList.map((item: pipeline) => item.orgName));
       const filteredPipelineNames = (organization: string) =>
         pipelineList
           .filter((pipeline: pipeline) => pipeline.orgName.toLowerCase() === organization.toLowerCase())
           .map((item: pipeline) => item.name);
+
+      const uniqueResponse = (res: IPipelineConfig[]) => {
+        let itemsOmitId = uniqWith(
+          res.map((value) => omit(value, ['id', 'isStepEmptyString'])),
+          isEqual,
+        );
+        if (itemsOmitId.length > 1) {
+          itemsOmitId = itemsOmitId.filter(
+            (item) => !Object.values(item).every((value) => value === '' || !value?.length),
+          );
+        }
+        return itemsOmitId.length < res.length
+          ? itemsOmitId.map((item, index) => {
+              return {
+                id: index,
+                ...item,
+              };
+            })
+          : res;
+      };
+
       const getValidPipelines = (pipelines: IPipelineConfig[]) => {
         const hasPipeline = pipelines.filter(({ id }) => id !== undefined).length;
-        return pipelines.length && hasPipeline
-          ? pipelines.map(({ id, organization, pipelineName, step, branches }) => ({
-              id,
-              organization: orgNames.find((i) => (i as string).toLowerCase() === organization.toLowerCase()) || '',
-              pipelineName: filteredPipelineNames(organization).includes(pipelineName) ? pipelineName : '',
-              step: step || '',
-              branches: branches || [],
-            }))
-          : [{ id: 0, organization: '', pipelineName: '', step: '', branches: [] }];
+        const res =
+          pipelines.length && hasPipeline
+            ? pipelines.map(({ id, organization, pipelineName, step, branches, isStepEmptyString }) => {
+                const matchedOrganization =
+                  orgNames.find((i) => (i as string).toLowerCase() === organization.toLowerCase()) || '';
+                const matchedPipelineName = filteredPipelineNames(organization).includes(pipelineName)
+                  ? pipelineName
+                  : '';
+                return {
+                  id,
+                  isStepEmptyString: isStepEmptyString || false,
+                  organization: matchedOrganization,
+                  pipelineName: matchedPipelineName,
+                  step: matchedPipelineName ? step : '',
+                  branches: matchedPipelineName ? branches : [],
+                };
+              })
+            : [{ id: 0, organization: '', pipelineName: '', step: '', branches: [], isStepEmptyString: false }];
+        return uniqueResponse(res);
       };
       const createPipelineWarning = ({ id, organization, pipelineName }: IPipelineConfig) => {
         const orgWarning = orgNames.some((i) => (i as string).toLowerCase() === organization.toLowerCase())
@@ -521,47 +556,59 @@ export const metricsSlice = createSlice({
       state.deploymentFrequencySettings = getValidPipelines(deploymentSettings);
       state.deploymentWarningMessage = getPipelinesWarningMessage(deploymentSettings);
     },
-
     updatePipelineStep: (state, action) => {
       const { steps, id, branches, pipelineCrews } = action.payload;
-      const { importedDeployment, importedPipelineCrews } = state.importedData;
-      const updatedImportedPipelineStep = importedDeployment.find((pipeline) => pipeline.id === id)?.step ?? '';
-      const updatedImportedPipelineBranches = importedDeployment.find((pipeline) => pipeline.id === id)?.branches ?? [];
       const selectedPipelineStep = state.deploymentFrequencySettings.find((pipeline) => pipeline.id === id)?.step ?? '';
-      state.pipelineCrews = _.filter(pipelineCrews, (crew) => importedPipelineCrews.includes(crew));
-      const stepWarningMessage = (selectedStep: string) => (steps.includes(selectedStep) ? null : MESSAGE.STEP_WARNING);
+      const currentCrews = concat(pipelineCrews, state.pipelineCrews);
 
-      const validStep = (selectedStep: string): string => (steps.includes(selectedStep) ? selectedStep : '');
+      state.pipelineCrews = intersection(currentCrews, state.pipelineCrews);
+      const stepWarningMessage = (selectedStep: string, isStepEmptyString: boolean) =>
+        steps.includes(selectedStep) || isStepEmptyString ? null : MESSAGE.STEP_WARNING;
+
+      const validStep = (pipeline: IPipelineConfig): string => {
+        const selectedStep = pipeline.step;
+        if (!selectedStep) {
+          pipeline.isStepEmptyString = true;
+        }
+        return steps.includes(selectedStep) ? selectedStep : '';
+      };
 
       const validBranches = (selectedBranches: string[]): string[] =>
         _.filter(branches, (branch) => selectedBranches.includes(branch));
 
-      const getPipelineSettings = (pipelines: IPipelineConfig[]) =>
-        pipelines.map((pipeline) =>
-          pipeline.id === id
+      const getPipelineSettings = (pipelines: IPipelineConfig[]) => {
+        return pipelines.map((pipeline) => {
+          const filterValidStep = validStep(pipeline);
+          return pipeline.id === id
             ? {
                 ...pipeline,
-                step: validStep(pipeline.step || updatedImportedPipelineStep),
-                branches: validBranches(
-                  pipeline.branches.length > 0 ? pipeline.branches : updatedImportedPipelineBranches,
-                ),
+                step: filterValidStep,
+                branches: validBranches(pipeline.branches.length > 0 ? pipeline.branches : []),
               }
-            : pipeline,
-        );
-
-      const getStepWarningMessage = (pipelines: IPipelineWarningMessageConfig[]) => {
-        return pipelines.map((pipeline) =>
-          pipeline?.id === id
-            ? {
-                ...pipeline,
-                step: stepWarningMessage(selectedPipelineStep || updatedImportedPipelineStep),
-              }
-            : pipeline,
-        );
+            : pipeline;
+        });
       };
 
+      const getStepWarningMessage = (
+        pipelinesWarning: IPipelineWarningMessageConfig[],
+        pipelinesValue: IPipelineConfig[],
+      ) => {
+        return pipelinesWarning.map((pipeline) => {
+          const matchedPipeline = pipelinesValue.find((pipeline) => pipeline.id === id);
+          return pipeline?.id === id
+            ? {
+                ...pipeline,
+                step: stepWarningMessage(selectedPipelineStep, matchedPipeline?.isStepEmptyString || false),
+              }
+            : pipeline;
+        });
+      };
+
+      state.deploymentWarningMessage = getStepWarningMessage(
+        state.deploymentWarningMessage,
+        state.deploymentFrequencySettings,
+      );
       state.deploymentFrequencySettings = getPipelineSettings(state.deploymentFrequencySettings);
-      state.deploymentWarningMessage = getStepWarningMessage(state.deploymentWarningMessage);
     },
 
     deleteADeploymentFrequencySetting: (state, action) => {
@@ -621,6 +668,7 @@ export const {
   updateAssigneeFilter,
   updateMetricsState,
   updatePipelineSettings,
+  updatePiplineCrews,
   updatePipelineStep,
   setCycleTimeSettingsType,
   resetMetricData,

@@ -53,8 +53,15 @@ export const metaSlice = createSlice({
     initMetricsPipelineFormMeta: (state, action: PayloadAction<number>) => {
       const id = action.payload;
       const branchesFormData = state.form.metrics.pipelines[id];
-
       if (!branchesFormData)
+        state.form.metrics.pipelines[id] = {
+          branches: [],
+        };
+    },
+    initSinglePipelineListBranches: (state, action: PayloadAction<number>) => {
+      const id = action.payload;
+      const branchesFormData = state.form.metrics.pipelines[id];
+      if (branchesFormData)
         state.form.metrics.pipelines[id] = {
           branches: [],
         };
@@ -86,6 +93,7 @@ export const {
   resetFormMeta,
   updateFormMeta,
   initMetricsPipelineFormMeta,
+  initSinglePipelineListBranches,
   deleteMetricsPipelineFormMeta,
   updateMetricsPipelineBranchFormMeta,
   clearMetricsPipelineFormMeta,

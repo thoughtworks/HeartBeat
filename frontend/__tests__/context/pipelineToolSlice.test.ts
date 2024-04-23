@@ -25,6 +25,7 @@ describe('pipelineTool reducer', () => {
         orgName: 'mockOrgName',
         repository: 'mockRepository',
         steps: ['step1', 'step2'],
+        crews: [],
       },
     ],
   };
@@ -38,6 +39,7 @@ describe('pipelineTool reducer', () => {
         orgName: 'mockOrgName',
         repository: 'mockRepository',
         steps: ['step1', 'step2'],
+        crews: [],
       },
       {
         id: 'mockId2',
@@ -46,6 +48,7 @@ describe('pipelineTool reducer', () => {
         orgName: 'mockOrgName',
         repository: 'mockRepository',
         steps: ['step3', 'step4'],
+        crews: [],
       },
     ],
   };
@@ -95,9 +98,9 @@ describe('pipelineTool reducer', () => {
               repository: 'mock repository url',
               steps: [],
               branches: [],
+              crews: [],
             },
           ],
-          pipelineCrews: [],
         },
       },
     };
@@ -143,9 +146,9 @@ describe('pipelineTool reducer', () => {
               repository: 'mock repository url',
               steps: [],
               branches: [],
+              crews: [],
             },
           ],
-          pipelineCrews: [],
         },
       },
     };
@@ -168,6 +171,7 @@ describe('pipelineTool reducer', () => {
         repository: 'mock repository url',
         steps: [],
         branches: [],
+        crews: [],
       },
     ]);
   });

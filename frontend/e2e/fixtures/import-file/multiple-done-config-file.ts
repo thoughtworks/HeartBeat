@@ -96,6 +96,7 @@ export const importMultipleDoneProjectFromFile = {
       pipelineName: 'Heartbeat',
       step: ':rocket: Deploy prod',
       branches: ['main'],
+      isStepEmptyString: false,
     },
   ],
   reworkTimesSettings: {

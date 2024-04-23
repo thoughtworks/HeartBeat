@@ -10,9 +10,9 @@ import {
   VERIFIED,
   VERIFY,
 } from '../../fixtures';
-import { initDeploymentFrequencySettings, updateShouldGetPipelineConfig } from '@src/context/Metrics/metricsSlice';
 import { AXIOS_REQUEST_ERROR_CODE, SOURCE_CONTROL_TYPES } from '@src/constants/resources';
 import { sourceControlClient } from '@src/clients/sourceControl/SourceControlClient';
+import { updateShouldGetPipelineConfig } from '@src/context/Metrics/metricsSlice';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { SourceControl } from '@src/containers/ConfigStep/SourceControl';
 import { setupStore } from '../../utils/setupStoreUtil';
@@ -170,7 +170,6 @@ describe('SourceControl', () => {
     fillSourceControlFieldsInformation();
 
     expect(updateShouldGetPipelineConfig).toHaveBeenCalledWith(true);
-    expect(initDeploymentFrequencySettings).toHaveBeenCalled();
   });
 
   it('should show error message and error style when token is empty', () => {

@@ -119,6 +119,6 @@ describe('SingleSelection', () => {
     });
 
     expect(mockOnGetSteps).toHaveBeenCalledTimes(1);
-    expect(mockUpdatePipeline).toHaveBeenCalledTimes(2);
+    expect(mockUpdatePipeline).toHaveBeenCalledTimes(3);
   });
 });

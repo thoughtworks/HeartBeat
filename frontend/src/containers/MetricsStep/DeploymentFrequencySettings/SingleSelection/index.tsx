@@ -1,9 +1,11 @@
 import { selectDeploymentFrequencySettings } from '@src/context/Metrics/metricsSlice';
 import { getEmojiUrls, removeExtraEmojiName } from '@src/constants/emojis/emoji';
+import { initSinglePipelineListBranches } from '@src/context/meta/metaSlice';
 import { Autocomplete, Box, ListItemText, TextField } from '@mui/material';
 import { getDisabledOptions, sortDisabledOptions } from '@src/utils/util';
 import { EmojiWrap, StyledAvatar } from '@src/constants/emojis/style';
 import { DEFAULT_HELPER_TEXT, Z_INDEX } from '@src/constants/commons';
+import { useAppDispatch } from '@src/hooks/useAppDispatch';
 import { FormControlWrapper } from './style';
 import { useAppSelector } from '@src/hooks';
 import React, { useState } from 'react';
@@ -16,7 +18,7 @@ interface Props {
   isError?: boolean;
   errorText?: string;
   onGetSteps?: (pipelineName: string) => void;
-  onUpDatePipeline: (id: number, label: string, value: string) => void;
+  onUpDatePipeline: (id: number, label: string, value: string | []) => void;
 }
 
 export const SingleSelection = ({
@@ -32,11 +34,14 @@ export const SingleSelection = ({
   const labelId = `single-selection-${label.toLowerCase().replace(' ', '-')}`;
   const [inputValue, setInputValue] = useState<string>(value);
   const deploymentFrequencySettings = useAppSelector(selectDeploymentFrequencySettings);
+  const dispatch = useAppDispatch();
 
   const handleSelectedOptionsChange = (value: string) => {
     if (onGetSteps) {
       onUpDatePipeline(id, 'Step', '');
+      onUpDatePipeline(id, 'Branches', []);
       onGetSteps(value);
+      dispatch(initSinglePipelineListBranches(id));
     }
     onUpDatePipeline(id, label, value);
   };

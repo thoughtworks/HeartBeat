@@ -51,7 +51,7 @@ dependencies {
   testAnnotationProcessor 'org.projectlombok:lombok:1.18.32'
   implementation 'com.opencsv:opencsv:5.9'
   implementation 'org.apache.commons:commons-text:1.11.0'
-  implementation 'org.awaitility:awaitility:3.1.6'
+  implementation 'org.awaitility:awaitility:4.2.1'
 }
 
 tasks.named('test') {

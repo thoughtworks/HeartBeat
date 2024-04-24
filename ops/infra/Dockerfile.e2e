@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/playwright:latest
+FROM jacoblincool/playwright:base
 COPY ./frontend /app
 
 ENV TZ=Asia/Shanghai

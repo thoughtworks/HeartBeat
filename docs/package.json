@@ -112,7 +112,7 @@
     "rehype-autolink-headings": "^7.1.0",
     "rehype-slug": "^6.0.0",
     "remark-gfm": "^4.0.0",
-    "remark-smartypants": "^2.1.0",
+    "remark-smartypants": "^3.0.0",
     "sass": "^1.72.0"
   },
   "engines": {

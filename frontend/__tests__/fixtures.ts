@@ -1,5 +1,5 @@
-import { SortType } from '@src/containers/ConfigStep/DateRangePicker/DateRangePickerGroup';
 import { CSVReportRequestDTO, ReportRequestDTO } from '@src/clients/report/dto/request';
+import { SortType } from '@src/containers/ConfigStep/DateRangePicker/types';
 import { ReportResponseDTO } from '@src/clients/report/dto/response';
 import { SOURCE_CONTROL_TYPES } from '@src/constants/resources';
 import { IStepsParams } from '@src/clients/MetricsClient';
@@ -651,6 +651,7 @@ export const MOCK_SOURCE_CONTROL_VERIFY_ERROR_CASE_TEXT = 'Token is incorrect!';
 export const MOCK_PIPELINE_VERIFY_UNAUTHORIZED_TEXT = 'Token is incorrect!';
 export const MOCK_PIPELINE_VERIFY_FORBIDDEN_ERROR_TEXT =
   'Forbidden request, please change your token with correct access permission.';
+export const UNKNOWN_ERROR_TEXT = 'Unknown error';
 
 export const FAKE_TOKEN = 'fake-token';
 
@@ -694,3 +695,7 @@ export const TIME_RANGE_ERROR_MESSAGE = {
 };
 
 export const COMMON_TIME_FORMAT = 'YYYY-MM-DDTHH:mm:ss.SSSZ';
+
+export const PIPELINE_TOOL_TOKEN_INPUT_LABEL = 'input token';
+
+export const TIMEOUT_ALERT_TEST_ID = 'timeoutAlert';

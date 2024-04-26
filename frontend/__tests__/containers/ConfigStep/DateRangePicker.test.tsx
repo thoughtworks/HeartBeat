@@ -1,15 +1,18 @@
 import { updateShouldGetBoardConfig, updateShouldGetPipelineConfig } from '@src/context/Metrics/metricsSlice';
+import { basicInfoDefaultValues } from '@src/containers/ConfigStep/Form/useDefaultValues';
 import { DateRangePickerSection } from '@src/containers/ConfigStep/DateRangePicker';
+import { basicInfoSchema } from '@src/containers/ConfigStep/Form/schema';
 import { ERROR_DATE, TIME_RANGE_ERROR_MESSAGE } from '../../fixtures';
 import { render, screen, within } from '@testing-library/react';
 import { setupStore } from '../../utils/setupStoreUtil';
+import { FormProvider } from '@test/utils/FormProvider';
 import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import React from 'react';
 import dayjs from 'dayjs';
 
-const START_DATE_LABEL = 'From *';
-const END_DATE_LABEL = 'To *';
+const START_DATE_LABEL = 'From';
+const END_DATE_LABEL = 'To';
 const TODAY = dayjs('2024-03-20');
 const INPUT_DATE_VALUE = TODAY.format('MM/DD/YYYY');
 let store = setupStore();
@@ -26,7 +29,9 @@ const setup = () => {
   store = setupStore();
   return render(
     <Provider store={store}>
-      <DateRangePickerSection />
+      <FormProvider schema={basicInfoSchema} defaultValues={basicInfoDefaultValues}>
+        <DateRangePickerSection />
+      </FormProvider>
     </Provider>,
   );
 };
@@ -299,5 +304,47 @@ describe('DateRangePickerSection', () => {
     expect(screen.getByRole('button', { name: 'Descending' })).toBeInTheDocument();
     await userEvent.click(sortButton);
     expect(screen.getByRole('button', { name: 'Ascending' })).toBeInTheDocument();
+  });
+
+  it('should provide unified error message when given all invalid time input', async () => {
+    const correctRange = ['03/15/2024', '03/25/2024'];
+    const rangeOfTooEarly = ['03/15/1600', '03/25/1600'];
+    const rangeOfInvalidFormat = ['XXxYY/2024', 'ZZ/11/2024'];
+    const startDateRequiredErrorMessage = 'Start date is required';
+    const endDateRequiredErrorMessage = 'End date is required';
+    const unifiedStartDateErrorMessage = 'Start date is invalid';
+    const unifiedEndDateErrorMessage = 'End date is invalid';
+
+    const ranges = screen.getAllByLabelText('Range picker row');
+    const startDateInput = within(ranges[0]).getByRole('textbox', { name: START_DATE_LABEL }) as HTMLInputElement;
+    const endDateInput = within(ranges[0]).getByRole('textbox', { name: END_DATE_LABEL }) as HTMLInputElement;
+    await userEvent.type(startDateInput, rangeOfTooEarly[0]);
+    await userEvent.type(endDateInput, rangeOfTooEarly[1]);
+
+    expect(await screen.findByText(unifiedStartDateErrorMessage)).toBeVisible();
+    expect(await screen.findByText(unifiedEndDateErrorMessage)).toBeVisible();
+
+    await userEvent.clear(startDateInput);
+    await userEvent.clear(endDateInput);
+    await userEvent.keyboard('{Tab}');
+
+    expect(await screen.findByText(startDateRequiredErrorMessage)).toBeVisible();
+    expect(await screen.findByText(endDateRequiredErrorMessage)).toBeVisible();
+
+    await userEvent.type(startDateInput, correctRange[0]);
+    await userEvent.type(endDateInput, correctRange[1]);
+
+    expect(screen.queryByText(startDateRequiredErrorMessage)).toBeNull();
+    expect(screen.queryByText(endDateRequiredErrorMessage)).toBeNull();
+    expect(screen.queryByText(unifiedStartDateErrorMessage)).toBeNull();
+    expect(screen.queryByText(unifiedEndDateErrorMessage)).toBeNull();
+
+    await userEvent.type(startDateInput, rangeOfInvalidFormat[0]);
+    await userEvent.type(endDateInput, rangeOfInvalidFormat[1]);
+
+    expect(screen.queryByText(startDateRequiredErrorMessage)).toBeNull();
+    expect(screen.queryByText(endDateRequiredErrorMessage)).toBeNull();
+    expect(screen.queryByText(unifiedStartDateErrorMessage)).toBeVisible();
+    expect(screen.queryByText(unifiedEndDateErrorMessage)).toBeVisible();
   });
 });

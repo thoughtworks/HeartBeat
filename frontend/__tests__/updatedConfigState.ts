@@ -21,7 +21,6 @@ const updatedConfigState = {
       site: '',
       token: '',
     },
-    isVerified: false,
     isShow: false,
     verifiedResponse: {
       jiraColumns: [],
@@ -34,7 +33,6 @@ const updatedConfigState = {
       type: PIPELINE_TOOL_TYPES.BUILD_KITE,
       token: '',
     },
-    isVerified: false,
     isShow: false,
     verifiedResponse: {
       pipelineList: [],
@@ -45,7 +43,6 @@ const updatedConfigState = {
       type: SOURCE_CONTROL_TYPES.GITHUB,
       token: '',
     },
-    isVerified: false,
     isShow: false,
     verifiedResponse: {
       repoList: [],

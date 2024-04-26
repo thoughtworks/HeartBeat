@@ -1,161 +1,154 @@
-import { useVerifyBoardEffect, useVerifyBoardStateInterface } from '@src/hooks/useVerifyBoardEffect';
-import { act, renderHook, waitFor } from '@testing-library/react';
-import { FAKE_TOKEN } from '@test/fixtures';
-import { HttpStatusCode } from 'axios';
-
+import { boardConfigDefaultValues } from '@src/containers/ConfigStep/Form/useDefaultValues';
+import { boardConfigSchema } from '@src/containers/ConfigStep/Form/schema';
+import { useVerifyBoardEffect } from '@src/hooks/useVerifyBoardEffect';
 import { InternalServerError } from '@src/errors/InternalServerError';
 import { AXIOS_REQUEST_ERROR_CODE } from '@src/constants/resources';
 import { UnauthorizedError } from '@src/errors/UnauthorizedError';
 import { boardClient } from '@src/clients/board/BoardClient';
 import { NotFoundError } from '@src/errors/NotFoundError';
 import { TimeoutError } from '@src/errors/TimeoutError';
-import { BOARD_TYPES } from '@test/fixtures';
+import { FormProvider } from '@test/utils/FormProvider';
+import { setupStore } from '../utils/setupStoreUtil';
+import { renderHook } from '@testing-library/react';
+import { Provider } from 'react-redux';
+import { HttpStatusCode } from 'axios';
+import { ReactNode } from 'react';
 
-const mockDispatch = jest.fn();
-jest.mock('react-redux', () => ({
-  ...jest.requireActual('react-redux'),
-  useDispatch: () => mockDispatch,
-}));
+const setErrorSpy = jest.fn();
+const resetSpy = jest.fn();
 
-jest.mock('@src/hooks/useAppDispatch', () => ({
-  useAppSelector: () => ({ type: BOARD_TYPES.JIRA }),
-  useAppDispatch: jest.fn(() => jest.fn()),
-}));
+jest.mock('react-hook-form', () => {
+  return {
+    ...jest.requireActual('react-hook-form'),
+    useFormContext: () => {
+      const { useFormContext } = jest.requireActual('react-hook-form');
+      const originals = useFormContext();
+      return {
+        ...originals,
+        setError: (...args: [string, { message: string }]) => setErrorSpy(...args),
+        reset: (...args: [string, { message: string }]) => resetSpy(...args),
+      };
+    },
+  };
+});
 
-const updateFields = (result: { current: useVerifyBoardStateInterface }) => {
-  result.current.updateField('Board Id', '1');
-  result.current.updateField('Email', 'fake@qq.com');
-  result.current.updateField('Site', 'fake');
-  result.current.updateField('Token', FAKE_TOKEN);
+const HookWrapper = ({ children }: { children: ReactNode }) => {
+  const store = setupStore();
+  return (
+    <Provider store={store}>
+      <FormProvider defaultValues={boardConfigDefaultValues} schema={boardConfigSchema}>
+        {children}
+      </FormProvider>
+    </Provider>
+  );
+};
+
+const setup = () => {
+  const { result } = renderHook(useVerifyBoardEffect, { wrapper: HookWrapper });
+
+  return { result };
 };
 
 describe('use verify board state', () => {
+  beforeEach(() => {
+    setErrorSpy.mockClear();
+    resetSpy.mockClear();
+  });
   afterAll(() => {
     jest.clearAllMocks();
   });
   it('should got initial data state when hook render given none input', async () => {
-    const { result } = renderHook(() => useVerifyBoardEffect());
+    const { result } = setup();
 
     expect(result.current.isLoading).toBe(false);
     expect(result.current.fields.length).toBe(5);
+  });
+
+  it('should keep verified values when call verify function given a valid token', async () => {
+    const mockedOkResponse = {
+      response: 'ok',
+    };
+    boardClient.getVerifyBoard = jest.fn().mockImplementation(() => Promise.resolve(mockedOkResponse));
+
+    const { result } = setup();
+    await result.current.verifyJira();
+
+    expect(resetSpy).toHaveBeenCalledWith(
+      {
+        type: 'Jira',
+        boardId: '',
+        email: '',
+        site: '',
+        token: '',
+      },
+      { keepValues: true },
+    );
   });
 
   it('should got email and token fields error message when call verify function given a invalid token', async () => {
     const mockedError = new UnauthorizedError('', HttpStatusCode.Unauthorized, '');
     boardClient.getVerifyBoard = jest.fn().mockImplementation(() => Promise.reject(mockedError));
 
-    const { result } = renderHook(() => useVerifyBoardEffect());
-    await act(async () => {
-      await updateFields(result);
-      await result.current.verifyJira();
+    const { result } = setup();
+    await result.current.verifyJira();
+
+    expect(setErrorSpy).toHaveBeenCalledWith('email', { message: 'Email is incorrect!' });
+    expect(setErrorSpy).toHaveBeenCalledWith('token', {
+      message: 'Token is invalid, please change your token with correct access permission!',
     });
-
-    const emailFiled = result.current.fields.find((field) => field.key === 'Email');
-    const tokenField = result.current.fields.find((field) => field.key === 'Token');
-    expect(emailFiled?.verifiedError).toBe('Email is incorrect!');
-    expect(tokenField?.verifiedError).toBe(
-      'Token is invalid, please change your token with correct access permission!',
-    );
-  });
-
-  it('should clear email validatedError when updateField by Email given fetch error ', async () => {
-    const mockedError = new UnauthorizedError('', HttpStatusCode.Unauthorized, '');
-    boardClient.getVerifyBoard = jest.fn().mockImplementation(() => Promise.reject(mockedError));
-
-    const { result } = renderHook(() => useVerifyBoardEffect());
-    await act(async () => {
-      await updateFields(result);
-      await result.current.verifyJira();
-    });
-
-    const emailFiled = result.current.fields.find((field) => field.key === 'Email');
-    expect(emailFiled?.verifiedError).toBe('Email is incorrect!');
-
-    await act(async () => {
-      await result.current.updateField('Email', 'fake@qq.com');
-    });
-    const emailText = result.current.fields.find((field) => field.key === 'Email');
-    expect(emailText?.verifiedError).toBe('');
   });
 
   it('should got site field error message when call verify function given a invalid site', async () => {
     const mockedError = new NotFoundError('site is incorrect', HttpStatusCode.NotFound, 'site is incorrect');
     boardClient.getVerifyBoard = jest.fn().mockImplementation(() => Promise.reject(mockedError));
 
-    const { result } = renderHook(() => useVerifyBoardEffect());
-    await act(async () => {
-      await updateFields(result);
-      await result.current.verifyJira();
-    });
+    const { result } = setup();
+    await result.current.verifyJira();
 
-    await waitFor(() => {
-      const site = result.current.fields.find((field) => field.key === 'Site');
-
-      expect(site?.verifiedError).toBe('Site is incorrect!');
-    });
+    expect(setErrorSpy).toHaveBeenCalledWith('site', { message: 'Site is incorrect!' });
   });
 
   it('should got board id field error message when call verify function given a invalid board id', async () => {
     const mockedError = new NotFoundError('boardId is incorrect', HttpStatusCode.NotFound, 'boardId is incorrect');
     boardClient.getVerifyBoard = jest.fn().mockImplementation(() => Promise.reject(mockedError));
 
-    const { result } = renderHook(() => useVerifyBoardEffect());
-    await act(() => {
-      updateFields(result);
-      result.current.verifyJira();
-    });
+    const { result } = setup();
+    await result.current.verifyJira();
 
-    await waitFor(() => {
-      const boardId = result.current.fields.find((field) => field.key === 'Board Id');
-      expect(boardId?.verifiedError).toBe('Board Id is incorrect!');
-    });
+    expect(setErrorSpy).toHaveBeenCalledWith('boardId', { message: 'Board Id is incorrect!' });
   });
 
   it('should got token fields error message when call verify function given a unknown error', async () => {
     const mockedError = new InternalServerError('', HttpStatusCode.ServiceUnavailable, '');
     boardClient.getVerifyBoard = jest.fn().mockImplementation(() => Promise.reject(mockedError));
 
-    const { result } = renderHook(() => useVerifyBoardEffect());
-    await act(async () => {
-      await updateFields(result);
-      await result.current.verifyJira();
-    });
+    const { result } = setup();
+    await result.current.verifyJira();
 
-    const tokenField = result.current.fields.find((field) => field.key === 'Token');
-    expect(tokenField?.verifiedError).toBe('Unknown error');
-  });
-
-  it('should clear all verified error messages when update a verified error field', async () => {
-    const mockedError = new UnauthorizedError('', HttpStatusCode.Unauthorized, '');
-    boardClient.getVerifyBoard = jest.fn().mockImplementation(() => Promise.reject(mockedError));
-
-    const { result } = renderHook(() => useVerifyBoardEffect());
-    await act(() => {
-      updateFields(result);
-      result.current.verifyJira();
-    });
-    await waitFor(() => {
-      result.current.updateField('Token', 'fake-token-new');
-    });
-
-    const emailFiled = result.current.fields.find((field) => field.key === 'Email');
-    const tokenField = result.current.fields.find((field) => field.key === 'Token');
-    expect(emailFiled?.verifiedError).toBe('');
-    expect(tokenField?.verifiedError).toBe('');
+    expect(setErrorSpy).toHaveBeenCalledWith('token', { message: 'Unknown error' });
   });
 
   it('should set timeout is true given getVerifyBoard api is timeout', async () => {
     const mockedError = new TimeoutError('', AXIOS_REQUEST_ERROR_CODE.TIMEOUT);
     boardClient.getVerifyBoard = jest.fn().mockImplementation(() => Promise.reject(mockedError));
 
-    const { result } = renderHook(() => useVerifyBoardEffect());
-    await act(() => {
-      result.current.verifyJira();
-    });
+    const { result } = setup();
+    await result.current.verifyJira();
 
-    await waitFor(() => {
-      const isVerifyTimeOut = result.current.isVerifyTimeOut;
-      expect(isVerifyTimeOut).toBe(true);
+    expect(setErrorSpy).toHaveBeenCalledWith('token', { message: 'Timeout!' });
+  });
+
+  it('should clear all verified error messages when call resetFeilds', async () => {
+    const { result } = setup();
+
+    result.current.resetFields();
+
+    expect(resetSpy).toHaveBeenCalledWith({
+      type: 'Jira',
+      boardId: '',
+      email: '',
+      site: '',
+      token: '',
     });
   });
 });

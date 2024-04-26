@@ -1,4 +1,4 @@
-import { SortType } from '@src/containers/ConfigStep/DateRangePicker/DateRangePickerGroup';
+import { SortType } from '@src/containers/ConfigStep/DateRangePicker/types';
 import { CALENDAR, REWORK_TIME_LIST } from '@src/constants/resources';
 import { IReworkConfig } from '@src/context/Metrics/metricsSlice';
 

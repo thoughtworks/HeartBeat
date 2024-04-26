@@ -14,7 +14,6 @@ export interface IBoardState {
     site: string;
     token: string;
   };
-  isVerified: boolean;
   isShow: boolean;
   verifiedResponse: IBoardVerifyResponseState;
 }
@@ -34,7 +33,6 @@ export const initialBoardState: IBoardState = {
     site: '',
     token: '',
   },
-  isVerified: false,
   isShow: false,
   verifiedResponse: initialVerifiedBoardState,
 };

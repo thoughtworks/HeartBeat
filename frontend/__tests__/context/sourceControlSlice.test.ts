@@ -1,24 +1,11 @@
 import sourceControlReducer, {
   updateSourceControl,
   updateSourceControlVerifiedResponse,
-  updateSourceControlVerifyState,
 } from '@src/context/config/configSlice';
 import { MOCK_GITHUB_VERIFY_RESPONSE } from '../fixtures';
 import initialConfigState from '../initialConfigState';
 
 describe('sourceControl reducer', () => {
-  it('should set isSourceControlVerified false when handle initial state', () => {
-    const sourceControl = sourceControlReducer(undefined, { type: 'unknown' });
-
-    expect(sourceControl.sourceControl.isVerified).toEqual(false);
-  });
-
-  it('should return true when handle changeSourceControlVerifyState given isSourceControlVerified is true', () => {
-    const sourceControl = sourceControlReducer(initialConfigState, updateSourceControlVerifyState(true));
-
-    expect(sourceControl.sourceControl.isVerified).toEqual(true);
-  });
-
   it('should update sourceControl fields when change sourceControl fields input', () => {
     const sourceControl = sourceControlReducer(initialConfigState, updateSourceControl({ token: 'token' }));
 

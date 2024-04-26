@@ -1,94 +1,119 @@
-import { MOCK_SOURCE_CONTROL_VERIFY_ERROR_CASE_TEXT, MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS } from '../fixtures';
 import { useVerifySourceControlTokenEffect } from '@src/hooks/useVerifySourceControlTokenEffect';
+import { sourceControlDefaultValues } from '@src/containers/ConfigStep/Form/useDefaultValues';
+import { MOCK_PIPELINE_VERIFY_UNAUTHORIZED_TEXT, UNKNOWN_ERROR_TEXT } from '../fixtures';
 import { sourceControlClient } from '@src/clients/sourceControl/SourceControlClient';
-import { ContextProvider } from '@src/hooks/useMetricsStepValidationCheckContext';
+import { sourceControlSchema } from '@src/containers/ConfigStep/Form/schema';
 import { AXIOS_REQUEST_ERROR_CODE } from '@src/constants/resources';
-import { act, renderHook, waitFor } from '@testing-library/react';
+import { FormProvider } from '@test/utils/FormProvider';
 import { setupStore } from '../utils/setupStoreUtil';
+import { renderHook } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { HttpStatusCode } from 'axios';
-import React from 'react';
+import { ReactNode } from 'react';
+
+const setErrorSpy = jest.fn();
+const resetSpy = jest.fn();
+
+jest.mock('react-hook-form', () => {
+  return {
+    ...jest.requireActual('react-hook-form'),
+    useFormContext: () => {
+      const { useFormContext } = jest.requireActual('react-hook-form');
+      const originals = useFormContext();
+      return {
+        ...originals,
+        setError: (...args: [string, { message: string }]) => setErrorSpy(...args),
+        reset: (...args: [string, { message: string }]) => resetSpy(...args),
+      };
+    },
+  };
+});
+
+const HookWrapper = ({ children }: { children: ReactNode }) => {
+  const store = setupStore();
+  return (
+    <Provider store={store}>
+      <FormProvider defaultValues={sourceControlDefaultValues} schema={sourceControlSchema}>
+        {children}
+      </FormProvider>
+    </Provider>
+  );
+};
 
 describe('use verify sourceControl token', () => {
   const setup = () => {
-    const store = setupStore();
-    const wrapper = ({ children }: { children: React.ReactNode }) => (
-      <Provider store={store}>
-        <ContextProvider>{children}</ContextProvider>
-      </Provider>
-    );
-    const { result } = renderHook(() => useVerifySourceControlTokenEffect(), { wrapper });
+    const { result } = renderHook(useVerifySourceControlTokenEffect, { wrapper: HookWrapper });
 
     return { result };
   };
 
-  it('should initial data state when render hook', async () => {
+  it('should keep verified values when call verify function given a valid token', async () => {
     const { result } = setup();
-
-    expect(result.current.isLoading).toEqual(false);
-  });
-
-  it('should set error message when get verify sourceControl throw error', async () => {
     sourceControlClient.verifyToken = jest.fn().mockResolvedValue({
       code: HttpStatusCode.NoContent,
     });
-    const { result } = setup();
 
-    act(() => {
-      result.current.verifyToken(MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS);
-    });
+    await result.current.verifyToken();
 
-    await waitFor(() => {
-      expect(result.current.isLoading).toEqual(false);
-    });
-    await waitFor(() => expect(result.current.verifiedError).toBeUndefined());
+    expect(resetSpy).toHaveBeenCalledWith(
+      {
+        type: 'GitHub',
+        token: '',
+      },
+      { keepValues: true },
+    );
   });
 
-  it('should set error message when get verify sourceControl response status 401', async () => {
-    sourceControlClient.verifyToken = jest.fn().mockResolvedValue({
-      code: HttpStatusCode.Unauthorized,
-      errorTitle: MOCK_SOURCE_CONTROL_VERIFY_ERROR_CASE_TEXT,
-    });
+  const errorScenarios = [
+    {
+      mock: {
+        code: HttpStatusCode.Unauthorized,
+        errorTitle: MOCK_PIPELINE_VERIFY_UNAUTHORIZED_TEXT,
+      },
+      field: 'token',
+      status: '401',
+      message: 'Token is incorrect!',
+    },
+    {
+      mock: {
+        code: HttpStatusCode.ServiceUnavailable,
+        errorTitle: UNKNOWN_ERROR_TEXT,
+      },
+      field: 'token',
+      status: 'Unknown',
+      message: 'Unknown error',
+    },
+    {
+      mock: {
+        code: AXIOS_REQUEST_ERROR_CODE.TIMEOUT,
+        errorTitle: '',
+      },
+      field: 'token',
+      status: 'Timeout',
+      message: 'Timeout!',
+    },
+  ];
+
+  it.each(errorScenarios)(
+    'should set $field error message when verifying pipeline given response status',
+    async ({ mock, field, message }) => {
+      sourceControlClient.verifyToken = jest.fn().mockResolvedValue(mock);
+
+      const { result } = setup();
+      await result.current.verifyToken();
+
+      expect(setErrorSpy).toHaveBeenCalledWith(field, { message });
+    },
+  );
+
+  it('should clear all verified error messages when call resetFeilds', async () => {
     const { result } = setup();
 
-    act(() => {
-      result.current.verifyToken(MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS);
-    });
+    result.current.resetFields();
 
-    await waitFor(() => {
-      expect(result.current.isLoading).toEqual(false);
-    });
-    await waitFor(() => {
-      expect(result.current.verifiedError).toEqual(MOCK_SOURCE_CONTROL_VERIFY_ERROR_CASE_TEXT);
-    });
-  });
-
-  it('should clear error message when call clearErrorMessage', async () => {
-    sourceControlClient.verifyToken = jest.fn().mockResolvedValue({
-      code: HttpStatusCode.Unauthorized,
-      errorTitle: MOCK_SOURCE_CONTROL_VERIFY_ERROR_CASE_TEXT,
-    });
-    const { result } = setup();
-
-    await act(() => result.current.verifyToken(MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS));
-    await act(() => result.current.clearVerifiedError());
-
-    await waitFor(() => {
-      expect(result.current.verifiedError).toEqual('');
-    });
-  });
-
-  it('should isVerifyTimeOut and isShowAlert is true  when api timeout', async () => {
-    sourceControlClient.verifyToken = jest.fn().mockResolvedValue({
-      code: AXIOS_REQUEST_ERROR_CODE.TIMEOUT,
-    });
-    const { result } = setup();
-
-    await act(() => result.current.verifyToken(MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS));
-
-    await waitFor(() => {
-      expect(result.current.isVerifyTimeOut).toBeTruthy();
-      expect(result.current.isShowAlert).toBeTruthy();
+    expect(resetSpy).toHaveBeenCalledWith({
+      type: 'GitHub',
+      token: '',
     });
   });
 });

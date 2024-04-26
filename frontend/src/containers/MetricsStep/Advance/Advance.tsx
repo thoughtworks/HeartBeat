@@ -4,10 +4,18 @@ import { ItemCheckbox, TitleAndTooltipContainer, TooltipContainer } from '../Cyc
 import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined';
 import { StyledLink } from '@src/containers/MetricsStep/style';
 import { useAppDispatch } from '@src/hooks/useAppDispatch';
-import { Field } from '@src/hooks/useVerifyBoardEffect';
 import { useAppSelector } from '@src/hooks';
 import { TextField } from '@mui/material';
 import React, { useState } from 'react';
+
+export interface Field {
+  key: string;
+  value: string;
+  validateRule?: (value: string) => boolean;
+  validatedError: string;
+  verifiedError: string;
+  col: number;
+}
 
 export const Advance = () => {
   const url = 'https://github.com/au-heartbeat/Heartbeat/blob/main/README.md#323-setting-advanced-setting';

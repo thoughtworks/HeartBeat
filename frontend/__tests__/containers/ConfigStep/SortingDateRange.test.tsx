@@ -1,5 +1,5 @@
 import { SortingDateRange } from '@src/containers/ConfigStep/DateRangePicker/SortingDateRange';
-import { SortType } from '@src/containers/ConfigStep/DateRangePicker/DateRangePickerGroup';
+import { SortType } from '@src/containers/ConfigStep/DateRangePicker/types';
 import { updateDateRangeSortType } from '@src/context/config/configSlice';
 import { setupStore } from '@test/utils/setupStoreUtil';
 import { render, screen } from '@testing-library/react';

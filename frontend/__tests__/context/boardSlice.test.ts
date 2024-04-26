@@ -1,24 +1,8 @@
-import boardReducer, {
-  updateBoard,
-  updateBoardVerifyState,
-  updateJiraVerifyResponse,
-} from '@src/context/config/configSlice';
+import boardReducer, { updateBoard, updateJiraVerifyResponse } from '@src/context/config/configSlice';
 import { MOCK_JIRA_VERIFY_RESPONSE } from '../fixtures';
 import initialConfigState from '../initialConfigState';
 
 describe('board reducer', () => {
-  it('should return false when handle initial state', () => {
-    const result = boardReducer(undefined, { type: 'unknown' });
-
-    expect(result.board.isVerified).toEqual(false);
-  });
-
-  it('should return true when handle changeBoardVerifyState given isBoardVerified is true', () => {
-    const result = boardReducer(initialConfigState, updateBoardVerifyState(true));
-
-    expect(result.board.isVerified).toEqual(true);
-  });
-
   it('should update board fields when change board fields input', () => {
     const board = boardReducer(initialConfigState, updateBoard({ boardId: '1' }));
 

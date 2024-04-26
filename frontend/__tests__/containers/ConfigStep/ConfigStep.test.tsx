@@ -15,13 +15,33 @@ import {
   VELOCITY,
   VERIFIED,
   VERIFY,
+  ALL,
+  FAKE_TOKEN,
+  PIPELINE_TOOL_TOKEN_INPUT_LABEL,
 } from '../../fixtures';
-import { fillBoardFieldsInformation } from '@test/containers/ConfigStep/Board.test';
+import {
+  basicInfoSchema,
+  boardConfigSchema,
+  pipelineToolSchema,
+  sourceControlSchema,
+  IBasicInfoData,
+  IBoardConfigData,
+  IPipelineToolData,
+  ISourceControlData,
+} from '@src/containers/ConfigStep/Form/schema';
+import {
+  basicInfoDefaultValues,
+  boardConfigDefaultValues,
+  pipelineToolDefaultValues,
+  sourceControlDefaultValues,
+} from '@src/containers/ConfigStep/Form/useDefaultValues';
 import { act, render, screen, waitFor, within } from '@testing-library/react';
 import { setupStore } from '../../utils/setupStoreUtil';
+import { yupResolver } from '@hookform/resolvers/yup';
 import userEvent from '@testing-library/user-event';
 import ConfigStep from '@src/containers/ConfigStep';
 import { closeMuiModal } from '@test/testUtils';
+import { useForm } from 'react-hook-form';
 import { Provider } from 'react-redux';
 import { setupServer } from 'msw/node';
 import { rest } from 'msw';
@@ -39,18 +59,59 @@ const server = setupServer(
   ),
 );
 
+export const fillBoardFieldsInformation = async () => {
+  await userEvent.type(screen.getByLabelText(/board id/i), '1');
+  await userEvent.type(screen.getByLabelText(/email/i), 'fake@qq.com');
+  await userEvent.type(screen.getByLabelText(/site/i), 'fake');
+  await userEvent.type(screen.getByLabelText(/token/i), FAKE_TOKEN);
+};
+
 let store = null;
 jest.mock('@src/context/config/configSlice', () => ({
   ...jest.requireActual('@src/context/config/configSlice'),
   selectWarningMessage: jest.fn().mockReturnValue('Test warning Message'),
 }));
 
+const ConfigStepWithFormInstances = () => {
+  const basicInfoMethods = useForm<IBasicInfoData>({
+    defaultValues: basicInfoDefaultValues,
+    resolver: yupResolver(basicInfoSchema),
+    mode: 'onChange',
+  });
+
+  const boardConfigMethods = useForm<IBoardConfigData>({
+    defaultValues: boardConfigDefaultValues,
+    resolver: yupResolver(boardConfigSchema),
+    mode: 'onChange',
+  });
+
+  const pipelineToolMethods = useForm<IPipelineToolData>({
+    defaultValues: pipelineToolDefaultValues,
+    resolver: yupResolver(pipelineToolSchema),
+    mode: 'onChange',
+  });
+
+  const sourceControlMethods = useForm<ISourceControlData>({
+    defaultValues: sourceControlDefaultValues,
+    resolver: yupResolver(sourceControlSchema),
+    mode: 'onChange',
+  });
+  return (
+    <ConfigStep
+      basicInfoMethods={basicInfoMethods}
+      boardConfigMethods={boardConfigMethods}
+      pipelineToolMethods={pipelineToolMethods}
+      sourceControlMethods={sourceControlMethods}
+    />
+  );
+};
+
 describe('ConfigStep', () => {
   const setup = () => {
     store = setupStore();
     return render(
       <Provider store={store}>
-        <ConfigStep />
+        <ConfigStepWithFormInstances />
       </Provider>,
     );
   };
@@ -235,7 +296,9 @@ describe('ConfigStep', () => {
     const requireDateSelection = within(screen.getByRole('listbox'));
     await userEvent.click(requireDateSelection.getByRole('option', { name: DEPLOYMENT_FREQUENCY }));
     await closeMuiModal(userEvent);
-    const tokenNode = within(screen.getByTestId('pipelineToolTextField')).getByLabelText('input Token');
+    const tokenNode = within(screen.getByTestId('pipelineToolTextField')).getByLabelText(
+      PIPELINE_TOOL_TOKEN_INPUT_LABEL,
+    );
     await userEvent.type(tokenNode, FAKE_PIPELINE_TOKEN);
     const submitButton = screen.getByText(VERIFY);
     await userEvent.click(submitButton);
@@ -247,5 +310,19 @@ describe('ConfigStep', () => {
     });
     expect(screen.queryByText(VERIFIED)).toBeVisible();
     expect(screen.queryByText(RESET)).toBeVisible();
+  });
+
+  it('should show all forms given all metrics selected', async () => {
+    setup();
+
+    const requiredMetricsField = screen.getByRole('combobox', { name: REQUIRED_DATA });
+    await userEvent.click(requiredMetricsField);
+    const requireDateSelection = within(screen.getByRole('listbox'));
+    await userEvent.click(requireDateSelection.getByRole('option', { name: ALL }));
+    await closeMuiModal(userEvent);
+
+    expect(screen.getByLabelText('Board Config')).toBeInTheDocument();
+    expect(screen.getByLabelText('Pipeline Tool Config')).toBeInTheDocument();
+    expect(screen.getByLabelText('Source Control Config')).toBeInTheDocument();
   });
 });

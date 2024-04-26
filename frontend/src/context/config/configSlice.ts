@@ -9,10 +9,10 @@ import {
 } from '@src/constants/resources';
 import { initialPipelineToolState, IPipelineToolState } from '@src/context/config/pipelineTool/pipelineToolSlice';
 import { initialSourceControlState, ISourceControl } from '@src/context/config/sourceControl/sourceControlSlice';
-import { SortType } from '@src/containers/ConfigStep/DateRangePicker/DateRangePickerGroup';
 import { IBoardState, initialBoardState } from '@src/context/config/board/boardSlice';
 import { pipeline } from '@src/context/config/pipelineTool/verifyResponseSlice';
 import { uniqPipelineListCrews, updateResponseCrews } from '@src/utils/util';
+import { SortType } from '@src/containers/ConfigStep/DateRangePicker/types';
 import { createSlice } from '@reduxjs/toolkit';
 import type { RootState } from '@src/store';
 import merge from 'lodash/merge';
@@ -50,7 +50,7 @@ export const initialBasicConfigState: BasicConfigState = {
         endDate: null,
       },
     ],
-    sortType: SortType?.DEFAULT,
+    sortType: SortType.DEFAULT,
     metrics: [],
   },
   board: initialBoardState,
@@ -144,15 +144,12 @@ export const configSlice = createSlice({
             ? null
             : MESSAGE.CONFIG_PAGE_VERIFY_IMPORT_ERROR;
       }
-      state.board.config = merge(action.payload.board, { type: 'jira' });
+      state.board.config = merge(action.payload.board, { type: 'Jira' });
       state.pipelineTool.config = action.payload.pipelineTool || state.pipelineTool.config;
       state.sourceControl.config = action.payload.sourceControl || state.sourceControl.config;
     },
     updateProjectCreatedState: (state, action) => {
       state.isProjectCreated = action.payload;
-    },
-    updateBoardVerifyState: (state, action) => {
-      state.board.isVerified = action.payload;
     },
     updateBoard: (state, action) => {
       state.board.config = action.payload;
@@ -162,10 +159,6 @@ export const configSlice = createSlice({
       state.board.verifiedResponse.jiraColumns = jiraColumns;
       state.board.verifiedResponse.targetFields = targetFields;
       state.board.verifiedResponse.users = users;
-    },
-
-    updatePipelineToolVerifyState: (state, action) => {
-      state.pipelineTool.isVerified = action.payload;
     },
     updatePipelineTool: (state, action) => {
       state.pipelineTool.config = action.payload;
@@ -190,9 +183,6 @@ export const configSlice = createSlice({
               }
             : pipeline,
       );
-    },
-    updateSourceControlVerifyState: (state, action) => {
-      state.sourceControl.isVerified = action.payload;
     },
     updateSourceControl: (state, action) => {
       state.sourceControl.config = action.payload;
@@ -220,22 +210,18 @@ export const {
   updateDateRangeSortType,
   updateMetrics,
   updateBoard,
-  updateBoardVerifyState,
   updateJiraVerifyResponse,
   updateBasicConfigState,
-  updatePipelineToolVerifyState,
   updatePipelineTool,
   updatePipelineToolVerifyResponse,
   updateSourceControl,
-  updateSourceControlVerifyState,
   updateSourceControlVerifiedResponse,
   updatePipelineToolVerifyResponseSteps,
   resetImportedData,
   updatePipelineToolVerifyResponseCrews,
 } = configSlice.actions;
 
-export const selectProjectName = (state: RootState) => state.config.basic.projectName;
-export const selectCalendarType = (state: RootState) => state.config.basic.calendarType;
+export const selectBasicInfo = (state: RootState) => state.config.basic;
 export const selectDateRange = (state: RootState) => state.config.basic.dateRange;
 export const selectDateRangeSortType = (state: RootState) => state.config.basic.sortType;
 export const selectMetrics = (state: RootState) => state.config.basic.metrics;
@@ -246,15 +232,10 @@ export const isSelectDoraMetrics = (state: RootState) =>
 export const isOnlySelectClassification = (state: RootState) =>
   state.config.basic.metrics.length === 1 && state.config.basic.metrics[0] === REQUIRED_DATA.CLASSIFICATION;
 export const selectBoard = (state: RootState) => state.config.board.config;
-export const isPipelineToolVerified = (state: RootState) => state.config.pipelineTool.isVerified;
 export const selectPipelineTool = (state: RootState) => state.config.pipelineTool.config;
-export const isSourceControlVerified = (state: RootState) => state.config.sourceControl.isVerified;
 export const selectSourceControl = (state: RootState) => state.config.sourceControl.config;
 export const selectWarningMessage = (state: RootState) => state.config.warningMessage;
-
 export const selectConfig = (state: RootState) => state.config;
-
-export const selectIsBoardVerified = (state: RootState) => state.config.board.isVerified;
 export const selectUsers = (state: RootState) => state.config.board.verifiedResponse.users;
 export const selectJiraColumns = (state: RootState) => state.config.board.verifiedResponse.jiraColumns;
 export const selectIsProjectCreated = (state: RootState) => state.config.isProjectCreated;

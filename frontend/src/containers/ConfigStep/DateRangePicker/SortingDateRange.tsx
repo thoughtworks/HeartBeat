@@ -5,7 +5,7 @@ import {
   SortingButtoningContainer,
   SortingTextButton,
 } from '@src/containers/ConfigStep/DateRangePicker/style';
-import { SortType } from '@src/containers/ConfigStep/DateRangePicker/DateRangePickerGroup';
+import { SortType } from '@src/containers/ConfigStep/DateRangePicker/types';
 import { updateDateRangeSortType } from '@src/context/config/configSlice';
 import { SORTING_DATE_RANGE_TEXT } from '@src/constants/resources';
 import { ArrowDropDown, ArrowDropUp } from '@mui/icons-material';

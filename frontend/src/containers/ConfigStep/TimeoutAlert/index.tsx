@@ -4,22 +4,19 @@ import BoldText from '@src/components/Common/BoldText';
 import CancelIcon from '@mui/icons-material/Cancel';
 
 interface PropsInterface {
-  isVerifyTimeOut: boolean;
-  isShowAlert: boolean;
-  setIsShowAlert: (value: boolean) => void;
+  showAlert: boolean;
+  onClose: () => void;
   moduleType: string;
 }
-export const TimeoutAlert = ({ isVerifyTimeOut, isShowAlert, setIsShowAlert, moduleType }: PropsInterface) => {
+export const TimeoutAlert = ({ showAlert, onClose, moduleType }: PropsInterface) => {
   return (
     <>
-      {isVerifyTimeOut && isShowAlert && (
+      {showAlert && (
         <StyledAlert
           data-testid='timeoutAlert'
           icon={<CancelIcon fontSize='inherit' />}
           severity='error'
-          onClose={() => {
-            setIsShowAlert(false);
-          }}
+          onClose={onClose}
         >
           <EllipsisText fitContent>
             Submission timeout on <BoldText>{moduleType}</BoldText>, please reverify!

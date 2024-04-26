@@ -4,41 +4,20 @@ import userEvent from '@testing-library/user-event';
 import React from 'react';
 
 describe('TimeoutAlert', () => {
-  const setIsShowAlert = jest.fn();
-  const setup = (
-    setIsShowAlert: (value: boolean) => void,
-    isShowAlert: boolean,
-    isVerifyTimeOut: boolean,
-    moduleType: string,
-  ) => {
-    return render(
-      <TimeoutAlert
-        setIsShowAlert={setIsShowAlert}
-        isShowAlert={isShowAlert}
-        isVerifyTimeOut={isVerifyTimeOut}
-        moduleType={moduleType}
-      />,
-    );
+  const onCloseSpy = jest.fn();
+  const setup = (onClose: () => void, showAlert: boolean, moduleType: string) => {
+    return render(<TimeoutAlert showAlert={showAlert} onClose={onClose} moduleType={moduleType} />);
   };
 
   it('should render board message given moduleType is board', () => {
-    setup(setIsShowAlert, true, true, 'Board');
+    setup(onCloseSpy, true, 'Board');
     const message = screen.getByText('Board');
 
     expect(message).toBeInTheDocument();
   });
-  it('should not render the alert given isVerifyTimeOut or isShowAlert is false', () => {
-    setup(setIsShowAlert, false, true, 'Board');
 
-    expect(screen.queryByText('Board')).not.toBeInTheDocument();
-
-    setup(setIsShowAlert, true, false, 'Board');
-
-    expect(screen.queryByText('Board')).not.toBeInTheDocument();
-  });
-
-  it('should call setIsShowAlert with false when click the close icon given init value', async () => {
-    setup(setIsShowAlert, true, true, 'any');
+  it('should call onCloseSpy when click the close icon given init value', async () => {
+    setup(onCloseSpy, true, 'any');
     const closeIcon = screen.getByTestId('CloseIcon');
 
     act(() => {
@@ -46,8 +25,7 @@ describe('TimeoutAlert', () => {
     });
 
     await waitFor(() => {
-      expect(setIsShowAlert).toHaveBeenCalledTimes(1);
-      expect(setIsShowAlert).toHaveBeenCalledWith(false);
+      expect(onCloseSpy).toHaveBeenCalledTimes(1);
     });
   });
 });

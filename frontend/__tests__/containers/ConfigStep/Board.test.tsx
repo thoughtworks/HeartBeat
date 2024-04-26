@@ -10,11 +10,14 @@ import {
   FAKE_TOKEN,
   REVERIFY,
 } from '../../fixtures';
+import { boardConfigDefaultValues } from '@src/containers/ConfigStep/Form/useDefaultValues';
+import { boardConfigSchema } from '@src/containers/ConfigStep/Form/schema';
 import { render, screen, waitFor, within } from '@testing-library/react';
 import { AXIOS_REQUEST_ERROR_CODE } from '@src/constants/resources';
 import { boardClient } from '@src/clients/board/BoardClient';
 import { Board } from '@src/containers/ConfigStep/Board';
 import { setupStore } from '../../utils/setupStoreUtil';
+import { FormProvider } from '@test/utils/FormProvider';
 import { TimeoutError } from '@src/errors/TimeoutError';
 import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
@@ -59,7 +62,9 @@ describe('Board', () => {
     store = setupStore();
     return render(
       <Provider store={store}>
-        <Board />
+        <FormProvider schema={boardConfigSchema} defaultValues={boardConfigDefaultValues}>
+          <Board />
+        </FormProvider>
       </Provider>,
     );
   };
@@ -251,5 +256,40 @@ describe('Board', () => {
         screen.getByText(/Token is invalid, please change your token with correct access permission!/i),
       ).toBeInTheDocument();
     });
+  });
+
+  it('should close alert modal when user manually close the alert', async () => {
+    setup();
+    await fillBoardFieldsInformation();
+    const timeoutError = new TimeoutError('', AXIOS_REQUEST_ERROR_CODE.TIMEOUT);
+    boardClient.getVerifyBoard = jest.fn().mockImplementation(() => Promise.reject(timeoutError));
+
+    await userEvent.click(screen.getByText(VERIFY));
+
+    expect(screen.getByTestId('timeoutAlert')).toBeInTheDocument();
+
+    await userEvent.click(screen.getByLabelText('Close'));
+
+    expect(screen.queryByLabelText('timeoutAlert')).not.toBeInTheDocument();
+  });
+
+  it('should allow user to re-submit when user interact again with form given form is already submit successfully', async () => {
+    setup();
+    mockVerifySuccess();
+    await fillBoardFieldsInformation();
+
+    expect(screen.getByRole('button', { name: /verify/i })).toBeEnabled();
+
+    await userEvent.click(screen.getByText(/verify/i));
+
+    expect(await screen.findByRole('button', { name: /reset/i })).toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: /verified/i })).toBeDisabled();
+
+    const emailInput = (await screen.findByRole('textbox', { name: 'Email' })) as HTMLInputElement;
+    await userEvent.clear(emailInput);
+    await userEvent.type(emailInput, 'other@qq.com');
+    const verifyButton = await screen.findByRole('button', { name: /verify/i });
+
+    expect(verifyButton).toBeEnabled();
   });
 });

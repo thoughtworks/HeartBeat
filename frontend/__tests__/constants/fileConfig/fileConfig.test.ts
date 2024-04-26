@@ -5,7 +5,7 @@ import {
   CHINA_CALENDAR,
   DEFAULT_REWORK_SETTINGS,
 } from '../../fixtures';
-import { SortType } from '@src/containers/ConfigStep/DateRangePicker/DateRangePickerGroup';
+import { SortType } from '@src/containers/ConfigStep/DateRangePicker/types';
 import { convertToNewFileConfig } from '@src/constants/fileConfig';
 
 describe('#fileConfig', () => {

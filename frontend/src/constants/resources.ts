@@ -257,10 +257,6 @@ export enum REPORT_SUFFIX_UNITS {
 
 export const MESSAGE = {
   VERIFY_FAILED_ERROR: 'verify failed',
-  VERIFY_MAIL_FAILED_ERROR: 'Email is incorrect!',
-  VERIFY_TOKEN_FAILED_ERROR: 'Token is invalid, please change your token with correct access permission!',
-  VERIFY_SITE_FAILED_ERROR: 'Site is incorrect!',
-  VERIFY_BOARD_FAILED_ERROR: 'Board Id is incorrect!',
   UNKNOWN_ERROR: 'Unknown',
   GET_STEPS_FAILED: 'Failed to get',
   HOME_VERIFY_IMPORT_WARNING: 'The content of the imported JSON file is empty. Please confirm carefully',
@@ -437,8 +433,6 @@ export const TIME_RANGE_TITLE = 'Time range settings';
 export const ADD_TIME_RANGE_BUTTON_TEXT = 'New time range';
 export const REMOVE_BUTTON_TEXT = 'Remove';
 export const MAX_TIME_RANGE_AMOUNT = 6;
-export const START_DATE_INVALID_TEXT = 'Start date is invalid';
-export const END_DATE_INVALID_TEXT = 'End date is invalid';
 
 export enum SORTING_DATE_RANGE_TEXT {
   DEFAULT = 'Default sort',

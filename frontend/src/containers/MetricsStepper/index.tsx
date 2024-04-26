@@ -1,4 +1,14 @@
 import {
+  basicInfoSchema,
+  boardConfigSchema,
+  pipelineToolSchema,
+  sourceControlSchema,
+  IBasicInfoData,
+  IBoardConfigData,
+  IPipelineToolData,
+  ISourceControlData,
+} from '@src/containers/ConfigStep/Form/schema';
+import {
   BackButton,
   ButtonContainer,
   MetricsStepperContent,
@@ -18,14 +28,17 @@ import { backStep, nextStep, selectStepNumber, updateTimeStamp } from '@src/cont
 import { useMetricsStepValidationCheckContext } from '@src/hooks/useMetricsStepValidationCheckContext';
 import { convertCycleTimeSettings, exportToJsonFile, onlyEmptyAndDoneState } from '@src/utils/util';
 import { selectConfig, selectMetrics, selectPipelineList } from '@src/context/config/configSlice';
+import { useDefaultValues } from '@src/containers/ConfigStep/Form/useDefaultValues';
 import { COMMON_BUTTONS, METRICS_STEPS, STEPS } from '@src/constants/commons';
 import { ConfirmDialog } from '@src/containers/MetricsStepper/ConfirmDialog';
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch';
 import { lazy, Suspense, useEffect, useMemo, useState } from 'react';
 import { getFormMeta } from '@src/context/meta/metaSlice';
 import SaveAltIcon from '@mui/icons-material/SaveAlt';
+import { yupResolver } from '@hookform/resolvers/yup';
 import { useNavigate } from 'react-router-dom';
 import { ROUTE } from '@src/constants/router';
+import { useForm } from 'react-hook-form';
 import { Tooltip } from '@mui/material';
 import isEmpty from 'lodash/isEmpty';
 import every from 'lodash/every';
@@ -49,10 +62,78 @@ const MetricsStepper = () => {
   const { getDuplicatedPipeLineIds } = useMetricsStepValidationCheckContext();
   const formMeta = useAppSelector(getFormMeta);
   const pipelineList = useAppSelector(selectPipelineList);
+  const defaultValues = useDefaultValues();
+  const { isShow: isShowBoard } = config.board;
+  const { isShow: isShowPipeline } = config.pipelineTool;
+  const { isShow: isShowSourceControl } = config.sourceControl;
 
-  const { isShow: isShowBoard, isVerified: isBoardVerified } = config.board;
-  const { isShow: isShowPipeline, isVerified: isPipelineToolVerified } = config.pipelineTool;
-  const { isShow: isShowSourceControl, isVerified: isSourceControlVerified } = config.sourceControl;
+  const basicInfoMethods = useForm<IBasicInfoData>({
+    defaultValues: defaultValues.basicInfoWithImport,
+    resolver: yupResolver(basicInfoSchema),
+    mode: 'onChange',
+  });
+
+  const boardConfigMethods = useForm<IBoardConfigData>({
+    defaultValues: defaultValues.boardConfigWithImport,
+    resolver: yupResolver(boardConfigSchema),
+    mode: 'onChange',
+  });
+
+  const pipelineToolMethods = useForm<IPipelineToolData>({
+    defaultValues: defaultValues.pipelineToolWithImport,
+    resolver: yupResolver(pipelineToolSchema),
+    mode: 'onChange',
+  });
+
+  const sourceControlMethods = useForm<ISourceControlData>({
+    defaultValues: defaultValues.sourceControlWithImport,
+    resolver: yupResolver(sourceControlSchema),
+    mode: 'onChange',
+  });
+
+  useEffect(() => {
+    basicInfoMethods.trigger();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const { isValid: isBasicInfoValid } = basicInfoMethods.formState;
+  const { isValid: isBoardConfigValid, isSubmitSuccessful: isBoardConfigSubmitSuccessful } =
+    boardConfigMethods.formState;
+  const { isValid: isPipelineToolValid, isSubmitSuccessful: isPipelineToolSubmitSuccessful } =
+    pipelineToolMethods.formState;
+  const { isValid: isSourceControlValid, isSubmitSuccessful: isSourceControlSubmitSuccessful } =
+    sourceControlMethods.formState;
+
+  const configPageFormMeta = useMemo(
+    () => [
+      { isShow: isShowBoard, isValid: isBoardConfigValid, isSubmitSuccessful: isBoardConfigSubmitSuccessful },
+      { isShow: isShowPipeline, isValid: isPipelineToolValid, isSubmitSuccessful: isPipelineToolSubmitSuccessful },
+      {
+        isShow: isShowSourceControl,
+        isValid: isSourceControlValid,
+        isSubmitSuccessful: isSourceControlSubmitSuccessful,
+      },
+    ],
+    [
+      isShowBoard,
+      isBoardConfigValid,
+      isBoardConfigSubmitSuccessful,
+      isShowPipeline,
+      isPipelineToolValid,
+      isPipelineToolSubmitSuccessful,
+      isShowSourceControl,
+      isSourceControlValid,
+      isSourceControlSubmitSuccessful,
+    ],
+  );
+  const activeFormMeta = useMemo(() => configPageFormMeta.filter(({ isShow }) => isShow), [configPageFormMeta]);
+  const shownFormsVerified = useMemo(
+    () =>
+      activeFormMeta.length > 0 &&
+      activeFormMeta.every(({ isValid, isSubmitSuccessful }) => isValid && isSubmitSuccessful),
+    [activeFormMeta],
+  );
+
   const isShowCycleTimeSettings =
     requiredData.includes(REQUIRED_DATA.CYCLE_TIME) ||
     requiredData.includes(REQUIRED_DATA.CLASSIFICATION) ||
@@ -100,18 +181,6 @@ const MetricsStepper = () => {
   }, [pipelineList, formMeta.metrics.pipelines, getDuplicatedPipeLineIds, metricsConfig.deploymentFrequencySettings]);
 
   useEffect(() => {
-    if (activeStep === METRICS_STEPS.CONFIG) {
-      const nextButtonValidityOptions = [
-        { isShow: isShowBoard, isValid: isBoardVerified },
-        { isShow: isShowPipeline, isValid: isPipelineToolVerified },
-        { isShow: isShowSourceControl, isValid: isSourceControlVerified },
-      ];
-      const activeNextButtonValidityOptions = nextButtonValidityOptions.filter(({ isShow }) => isShow);
-      projectName && dateRange && dateRange.length && metrics.length
-        ? setIsDisableNextButton(!activeNextButtonValidityOptions.every(({ isValid }) => isValid))
-        : setIsDisableNextButton(true);
-    }
-
     if (activeStep === METRICS_STEPS.METRICS) {
       const nextButtonValidityOptions = [
         { isShow: isShowBoard, isValid: isCrewsSettingValid },
@@ -131,12 +200,9 @@ const MetricsStepper = () => {
     }
   }, [
     activeStep,
-    isBoardVerified,
-    isPipelineToolVerified,
     isShowBoard,
     isShowSourceControl,
     isShowPipeline,
-    isSourceControlVerified,
     metrics,
     projectName,
     dateRange,
@@ -155,6 +221,9 @@ const MetricsStepper = () => {
     isOnlyEmptyAndDoneState,
     onlyIncludeReworkMetrics,
   ]);
+
+  const isNextDisabledTempForFormRefactor =
+    activeStep === METRICS_STEPS.CONFIG ? !(isBasicInfoValid && shownFormsVerified) : isDisableNextButton;
 
   const filterMetricsConfig = (metricsConfig: ISavedMetricsSettingState) => {
     return Object.fromEntries(
@@ -261,7 +330,14 @@ const MetricsStepper = () => {
       </StyledStepper>
       <MetricsStepperContent>
         <Suspense>
-          {activeStep === METRICS_STEPS.CONFIG && <ConfigStep />}
+          {activeStep === METRICS_STEPS.CONFIG && (
+            <ConfigStep
+              basicInfoMethods={basicInfoMethods}
+              boardConfigMethods={boardConfigMethods}
+              pipelineToolMethods={pipelineToolMethods}
+              sourceControlMethods={sourceControlMethods}
+            />
+          )}
           {activeStep === METRICS_STEPS.METRICS && <MetricsStep />}
           {activeStep === METRICS_STEPS.REPORT && <ReportStep handleSave={handleSave} />}
         </Suspense>
@@ -278,7 +354,7 @@ const MetricsStepper = () => {
               <BackButton variant='outlined' onClick={handleBack}>
                 {COMMON_BUTTONS.BACK}
               </BackButton>
-              <NextButton onClick={handleNext} disabled={isDisableNextButton}>
+              <NextButton onClick={handleNext} disabled={isNextDisabledTempForFormRefactor}>
                 {COMMON_BUTTONS.NEXT}
               </NextButton>
             </div>

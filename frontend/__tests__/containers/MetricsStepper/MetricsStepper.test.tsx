@@ -8,9 +8,13 @@ import {
   PROJECT_NAME_LABEL,
   SAVE,
   STEPPER,
+  VERIFY,
   TEST_PROJECT_NAME,
   VELOCITY,
   COMMON_TIME_FORMAT,
+  REQUIRED_DATA,
+  MOCK_PIPELINE_VERIFY_URL,
+  MOCK_BOARD_URL_FOR_JIRA,
 } from '../../fixtures';
 import {
   updateCycleTimeSettings,
@@ -20,14 +24,9 @@ import {
   updateDeploymentFrequencySettings,
   updateTreatFlagCardAsBlock,
 } from '@src/context/Metrics/metricsSlice';
-import {
-  updateBoardVerifyState,
-  updateMetrics,
-  updatePipelineToolVerifyState,
-  updateSourceControlVerifyState,
-} from '@src/context/config/configSlice';
-import { act, render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor, within } from '@testing-library/react';
 import { ASSIGNEE_FILTER_TYPES } from '@src/constants/resources';
+import { updateMetrics } from '@src/context/config/configSlice';
 import MetricsStepper from '@src/containers/MetricsStepper';
 import { setupStore } from '../../utils/setupStoreUtil';
 import userEvent from '@testing-library/user-event';
@@ -40,7 +39,7 @@ import { rest } from 'msw';
 import dayjs from 'dayjs';
 import React from 'react';
 
-const START_DATE_LABEL = 'From *';
+const START_DATE_LABEL = 'From';
 const TODAY = dayjs();
 const INPUT_DATE_VALUE = TODAY.format('MM/DD/YYYY');
 const YES = 'Yes';
@@ -98,23 +97,41 @@ jest.mock('@src/hooks/useGenerateReportEffect', () => ({
   }),
 }));
 
-const server = setupServer(rest.post(MOCK_REPORT_URL, (_, res, ctx) => res(ctx.status(HttpStatusCode.Ok))));
+const server = setupServer(
+  rest.post(MOCK_REPORT_URL, (_, res, ctx) => res(ctx.status(HttpStatusCode.Ok))),
+  rest.post(MOCK_BOARD_URL_FOR_JIRA, (_, res, ctx) => res(ctx.status(HttpStatusCode.NoContent))),
+);
 
-const mockLocation = { reload: jest.fn() };
+const mockLocation = { ...window.location, reload: jest.fn() };
 Object.defineProperty(window, 'location', { value: mockLocation });
 
 let store = setupStore();
-const fillConfigPageData = async () => {
+const fillAndVerifyConfigPageData = async () => {
   const projectNameInput = await screen.findByRole('textbox', { name: PROJECT_NAME_LABEL });
   await userEvent.type(projectNameInput, TEST_PROJECT_NAME);
   const startDateInput = (await screen.findByRole('textbox', { name: START_DATE_LABEL })) as HTMLInputElement;
   await userEvent.type(startDateInput, INPUT_DATE_VALUE);
+  await userEvent.click(screen.getByRole('combobox', { name: REQUIRED_DATA }));
+  const requireMetricsSelection = within(screen.getByRole('listbox'));
+  await userEvent.click(requireMetricsSelection.getByRole('option', { name: VELOCITY }));
+  await userEvent.keyboard('{Escape}');
+  const boardConfigModule = screen.getByLabelText('Board Config');
 
-  act(() => {
-    store.dispatch(updateMetrics([VELOCITY]));
-    store.dispatch(updateBoardVerifyState(true));
-    store.dispatch(updatePipelineToolVerifyState(true));
-    store.dispatch(updateSourceControlVerifyState(true));
+  expect(boardConfigModule).toBeInTheDocument();
+
+  const boardIdInput = within(boardConfigModule).getByRole('textbox', { name: 'Board Id' });
+  await userEvent.type(boardIdInput, '2');
+  const emailInput = within(boardConfigModule).getByRole('textbox', { name: 'Email' });
+  await userEvent.type(emailInput, 'user@test.com');
+  const siteInput = within(boardConfigModule).getByRole('textbox', { name: 'Site' });
+  await userEvent.type(siteInput, 'dorametrics');
+  const tokenInput = within(boardConfigModule).getByLabelText('Token *');
+  await userEvent.type(tokenInput, 'mockJiraToken');
+  const verifyBoardButton = within(boardConfigModule).getByText(VERIFY);
+  await userEvent.click(verifyBoardButton);
+
+  await waitFor(() => {
+    expect(screen.getByText(NEXT)).toBeEnabled();
   });
 };
 
@@ -125,20 +142,20 @@ const fillMetricsData = () => {
 };
 
 const fillMetricsPageDate = async () => {
-  act(() => {
+  await act(async () => {
     store.dispatch(saveTargetFields([{ name: 'mockClassification', key: 'mockClassification', flag: true }]));
     store.dispatch(saveUsers(['mockUsers']));
-    store.dispatch(saveDoneColumn(['Done', 'Canceled'])),
-      store.dispatch(
-        updateCycleTimeSettings([
-          { column: 'Testing', status: 'testing', value: 'Done' },
-          { column: 'Testing', status: 'test', value: 'Done' },
-        ]),
-      );
-    store.dispatch(updateTreatFlagCardAsBlock(false)),
-      store.dispatch(
-        updateDeploymentFrequencySettings({ updateId: 0, label: 'organization', value: 'mock new organization' }),
-      );
+    store.dispatch(saveDoneColumn(['Done', 'Canceled']));
+    store.dispatch(
+      updateCycleTimeSettings([
+        { column: 'Testing', status: 'testing', value: 'Done' },
+        { column: 'Testing', status: 'test', value: 'Done' },
+      ]),
+    );
+    store.dispatch(updateTreatFlagCardAsBlock(false));
+    store.dispatch(
+      updateDeploymentFrequencySettings({ updateId: 0, label: 'organization', value: 'mock new organization' }),
+    );
     store.dispatch(
       updateDeploymentFrequencySettings({ updateId: 0, label: 'pipelineName', value: 'mock new pipelineName' }),
     );
@@ -146,16 +163,17 @@ const fillMetricsPageDate = async () => {
   });
 };
 
-describe('MetricsStepper', () => {
-  beforeAll(() => server.listen());
-  afterAll(() => server.close());
-  beforeEach(() => {
-    store = setupStore();
-  });
-  afterEach(() => {
-    navigateMock.mockClear();
-  });
+beforeAll(() => server.listen({ onUnhandledRequest: 'error' }));
+afterAll(() => server.close());
+beforeEach(() => {
+  store = setupStore();
+});
+afterEach(() => {
+  server.resetHandlers();
+  navigateMock.mockClear();
+});
 
+describe('MetricsStepper', () => {
   const setup = () =>
     render(
       <Provider store={store}>
@@ -221,34 +239,38 @@ describe('MetricsStepper', () => {
   });
 
   it('should enable next when every selected component is show and verified', async () => {
-    setup();
-    await fillConfigPageData();
-
-    expect(screen.getByText(NEXT)).toBeEnabled();
+    server.use(rest.post(MOCK_PIPELINE_VERIFY_URL, (_, res, ctx) => res(ctx.status(HttpStatusCode.NoContent))));
+    await act(async () => {
+      setup();
+    });
+    await fillAndVerifyConfigPageData();
   });
 
   it('should disable next when board component is exist but not verified successfully', async () => {
     setup();
     act(() => {
       store.dispatch(updateMetrics([VELOCITY]));
-      store.dispatch(updateBoardVerifyState(false));
     });
 
     expect(screen.getByText(NEXT)).toBeDisabled();
   });
 
   it('should go metrics page when click next button given next button enabled', async () => {
-    setup();
+    await act(async () => {
+      setup();
+    });
 
-    await fillConfigPageData();
+    await fillAndVerifyConfigPageData();
     await userEvent.click(screen.getByText(NEXT));
 
-    expect(screen.getByText(METRICS)).toHaveStyle(`color:${stepperColor}`);
+    expect(screen.getByText(METRICS)).toHaveClass('Mui-active');
   });
 
   it('should show metrics export step when click next button given export step', async () => {
-    setup();
-    await fillConfigPageData();
+    await act(async () => {
+      setup();
+    });
+    await fillAndVerifyConfigPageData();
     await userEvent.click(screen.getByText(NEXT));
     await fillMetricsPageDate();
     waitFor(() => {
@@ -274,6 +296,7 @@ describe('MetricsStepper', () => {
           startDate: null,
         },
       ],
+      sortType: 'DEFAULT',
       metrics: [],
       pipelineTool: undefined,
       projectName: '',
@@ -297,6 +320,7 @@ describe('MetricsStepper', () => {
           startDate: null,
         },
       ],
+      sortType: 'DEFAULT',
       metrics: ['Velocity'],
       pipelineTool: undefined,
       projectName: '',
@@ -316,7 +340,6 @@ describe('MetricsStepper', () => {
     const expectedJson = {
       advancedSettings: null,
       assigneeFilter: ASSIGNEE_FILTER_TYPES.LAST_ASSIGNEE,
-      board: { boardId: '', email: '', site: '', token: '', type: 'Jira' },
       calendarType: 'Regular Calendar(Weekend Considered)',
       dateRange: [
         {
@@ -325,8 +348,16 @@ describe('MetricsStepper', () => {
         },
       ],
       metrics: ['Velocity'],
-      pipelineCrews: undefined,
+      board: {
+        type: 'Jira',
+        boardId: '',
+        email: '',
+        site: '',
+        token: '',
+      },
       pipelineTool: undefined,
+      sortType: 'DEFAULT',
+      pipelineCrews: undefined,
       projectName: 'test project Name',
       sourceControl: undefined,
       classification: undefined,
@@ -337,13 +368,23 @@ describe('MetricsStepper', () => {
       leadTime: undefined,
       reworkTimesSettings: DEFAULT_REWORK_SETTINGS,
     };
-    setup();
+    await act(() => {
+      setup();
+    });
 
-    await fillConfigPageData();
+    await fillAndVerifyConfigPageData();
     await userEvent.click(screen.getByText(NEXT));
+    const saveButton = screen.getByText(SAVE);
+    expect(screen.getByText(METRICS)).toHaveClass('Mui-active');
+
+    waitFor(() => {
+      expect(saveButton).toBeInTheDocument();
+    });
     await userEvent.click(screen.getByText(SAVE));
 
-    expect(exportToJsonFile).toHaveBeenCalledWith(expectedFileName, expectedJson);
+    await waitFor(() => {
+      expect(exportToJsonFile).toHaveBeenCalledWith(expectedFileName, expectedJson);
+    });
   }, 50000);
 
   it('should export json file when click save button in report page given all content is empty', async () => {
@@ -366,6 +407,7 @@ describe('MetricsStepper', () => {
       sourceControl: undefined,
       classification: ['mockClassification'],
       crews: ['mockUsers'],
+      sortType: 'DEFAULT',
       cycleTime: {
         jiraColumns: [
           {
@@ -384,13 +426,20 @@ describe('MetricsStepper', () => {
       },
     };
 
-    setup();
-    await fillConfigPageData();
+    await act(() => {
+      setup();
+    });
+    await fillAndVerifyConfigPageData();
     await userEvent.click(screen.getByText(NEXT));
+
+    expect(screen.getByText(METRICS)).toHaveClass('Mui-active');
+
     await fillMetricsPageDate();
+
     waitFor(() => {
       expect(screen.getByText(NEXT)).toBeInTheDocument();
     });
+
     await userEvent.click(screen.getByText(NEXT));
 
     await waitFor(() => {

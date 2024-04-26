@@ -1,5 +1,5 @@
-import { DateRangePickerGroup, SortType } from '@src/containers/ConfigStep/DateRangePicker/DateRangePickerGroup';
-import { SortedDateRangeType } from '@src/containers/ConfigStep/DateRangePicker/DateRangePickerGroup';
+import { DateRangePickerGroup } from '@src/containers/ConfigStep/DateRangePicker/DateRangePickerGroup';
+import { SortedDateRangeType, SortType } from '@src/containers/ConfigStep/DateRangePicker/types';
 import { SortingDateRange } from '@src/containers/ConfigStep/DateRangePicker/SortingDateRange';
 import { selectDateRange, selectDateRangeSortType } from '@src/context/config/configSlice';
 import SectionTitleWithTooltip from '@src/components/Common/SectionTitleWithTooltip';
@@ -11,9 +11,7 @@ import { useMemo, useState } from 'react';
 export const DateRangePickerSection = () => {
   const dateRangeGroup = useAppSelector(selectDateRange);
   const dateRangeGroupSortType = useAppSelector(selectDateRangeSortType);
-  const [sortType, setSortType] = useState<SortType>(
-    dateRangeGroupSortType ? dateRangeGroupSortType : SortType.DEFAULT,
-  );
+  const [sortType, setSortType] = useState<SortType>(dateRangeGroupSortType);
 
   const [hasError, setHasError] = useState(false);
   const isDateRangeValid = useMemo(() => {

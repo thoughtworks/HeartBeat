@@ -282,6 +282,14 @@ export const MESSAGE = {
     'Failed to get Classification data, please go back to previous page and try again!',
   FAILED_TO_EXPORT_CSV: 'Failed to export csv.',
   FAILED_TO_REQUEST: 'Failed to request!',
+  BOARD_INFO_REQUEST_PARTIAL_FAILED_4XX:
+    'Failed to get partial Board configuration, please go back to the previous page and check your board info, or click "Next" button to go to Report page.',
+  BOARD_INFO_REQUEST_PARTIAL_FAILED_OTHERS:
+    'Failed to get partial Board configuration, you can click "Next" button to go to Report page.',
+  PIPELINE_STEP_REQUEST_PARTIAL_FAILED_4XX:
+    'Failed to get partial Pipeline configuration, please go back to the previous page and change your pipeline token with correct access permission, or click "Next" button to go to Report page.',
+  PIPELINE_STEP_REQUEST_PARTIAL_FAILED_OTHERS:
+    'Failed to get partial Pipeline configuration, you can click "Next" button to go to Report page.',
 };
 
 export const METRICS_CYCLE_SETTING_TABLE_HEADER_BY_COLUMN = [
@@ -334,6 +342,7 @@ export const NO_PIPELINE_STEP_ERROR = 'No steps for this pipeline!';
 
 export enum AXIOS_REQUEST_ERROR_CODE {
   TIMEOUT = 'NETWORK_TIMEOUT',
+  NO_CARDS = 'NO_CARDS',
 }
 
 export const BOARD_CONFIG_INFO_TITLE = {
@@ -342,15 +351,17 @@ export const BOARD_CONFIG_INFO_TITLE = {
   UNAUTHORIZED_REQUEST: 'Unauthorized request!',
   NOT_FOUND: 'Not found!',
   NO_CONTENT: 'No card within selected date range!',
-  GENERAL_ERROR: 'Failed to get the board configuration!',
+  GENERAL_ERROR: 'Failed to get Board configuration!',
   EMPTY: '',
 };
+
+export const PIPELINE_CONFIG_TITLE = 'Failed to get Pipeline configuration!';
 
 export const BOARD_CONFIG_INFO_ERROR = {
   FORBIDDEN: 'Please go back to the previous page and change your board token with correct access permission.',
   NOT_FOUND: 'Please go back to the previous page and check your board info!',
   NOT_CONTENT: 'Please go back to the previous page and change your collection date, or check your board info!',
-  GENERAL_ERROR: 'Please go back to the previous page to check your board info, or change your time range!',
+  GENERAL_ERROR: 'Please go back to the previous page and check your board info!',
   RETRY: 'Data loading failed, please',
 };
 

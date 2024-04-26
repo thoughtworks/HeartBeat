@@ -1,6 +1,7 @@
 import { useGetMetricsStepsEffect } from '@src/hooks/useGetMetricsStepsEffect';
 import { AXIOS_REQUEST_ERROR_CODE } from '@src/constants/resources';
 import { act, renderHook, waitFor } from '@testing-library/react';
+import { METRICS_DATA_FAIL_STATUS } from '@src/constants/commons';
 import { metricsClient } from '@src/clients/MetricsClient';
 import { setupStore } from '@test/utils/setupStoreUtil';
 import { TimeoutError } from '@src/errors/TimeoutError';
@@ -65,6 +66,44 @@ describe('use get steps effect', () => {
       branches: ['branchA', 'branchB', 'branchC', 'branchD'],
       pipelineCrews: ['crewA', 'crewB'],
     });
+  });
+
+  it('should get the steps failed status when partial 4xx response from steps res', async () => {
+    metricsClient.getSteps = jest
+      .fn()
+      .mockReturnValueOnce({
+        response: ['a', 'b', 'c'],
+        haveStep: true,
+        branches: ['branchA', 'branchB'],
+        pipelineCrews: ['crewA', 'crewB'],
+      })
+      .mockRejectedValue({
+        code: 400,
+      });
+    const { result } = renderHook(() => useGetMetricsStepsEffect());
+    await act(async () => {
+      await result.current.getSteps(params, buildId, organizationId, pipelineType, token);
+    });
+    expect(result.current.stepFailedStatus).toEqual(METRICS_DATA_FAIL_STATUS.PARTIAL_FAILED_4XX);
+  });
+
+  it('should get the steps failed status when partial timeout response from steps res', async () => {
+    metricsClient.getSteps = jest
+      .fn()
+      .mockReturnValueOnce({
+        response: ['a', 'b', 'c'],
+        haveStep: true,
+        branches: ['branchA', 'branchB'],
+        pipelineCrews: ['crewA', 'crewB'],
+      })
+      .mockRejectedValue({
+        code: 'NETWORK_TIMEOUT',
+      });
+    const { result } = renderHook(() => useGetMetricsStepsEffect());
+    await act(async () => {
+      await result.current.getSteps(params, buildId, organizationId, pipelineType, token);
+    });
+    expect(result.current.stepFailedStatus).toEqual(METRICS_DATA_FAIL_STATUS.PARTIAL_FAILED_TIMEOUT);
   });
 
   it('should set error message when get steps throw error', async () => {

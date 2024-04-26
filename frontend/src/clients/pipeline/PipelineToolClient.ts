@@ -3,6 +3,7 @@ import {
   PIPELINE_TOOL_GET_INFO_ERROR_CASE_TEXT_MAPPING,
   PIPELINE_TOOL_GET_INFO_ERROR_MESSAGE,
   UNKNOWN_ERROR_TITLE,
+  PIPELINE_CONFIG_TITLE,
 } from '@src/constants/resources';
 import { IPipelineVerifyRequestDTO, PipelineInfoRequestDTO } from '@src/clients/pipeline/dto/request';
 import { IPipelineInfoResponseDTO } from '@src/clients/pipeline/dto/response';
@@ -64,7 +65,14 @@ export class PipelineToolClient extends HttpClient {
       if (isAppError(e)) {
         const exception = e as IAppError;
         result.code = exception.code;
-        result.errorTitle = PIPELINE_TOOL_GET_INFO_ERROR_CASE_TEXT_MAPPING[`${exception.code}`] || UNKNOWN_ERROR_TITLE;
+        if (
+          (exception.code as number) >= HttpStatusCode.BadRequest &&
+          (exception.code as number) < HttpStatusCode.InternalServerError
+        ) {
+          result.errorTitle = PIPELINE_CONFIG_TITLE;
+        } else {
+          result.errorTitle = UNKNOWN_ERROR_TITLE;
+        }
       }
 
       result.errorMessage = PIPELINE_TOOL_GET_INFO_ERROR_MESSAGE;

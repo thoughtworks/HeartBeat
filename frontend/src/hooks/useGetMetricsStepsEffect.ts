@@ -1,9 +1,9 @@
 import { updateShouldRetryPipelineConfig } from '@src/context/Metrics/metricsSlice';
 import { IStepsParams, IStepsRes, metricsClient } from '@src/clients/MetricsClient';
+import { METRICS_DATA_FAIL_STATUS, DURATION } from '@src/constants/commons';
 import { useAppDispatch } from '@src/hooks/useAppDispatch';
 import { TimeoutError } from '@src/errors/TimeoutError';
 import { MESSAGE } from '@src/constants/resources';
-import { DURATION } from '@src/constants/commons';
 import { useState } from 'react';
 
 export interface useGetMetricsStepsEffectInterface {
@@ -16,6 +16,7 @@ export interface useGetMetricsStepsEffectInterface {
   ) => Promise<IStepsRes | undefined>;
   isLoading: boolean;
   errorMessage: string;
+  stepFailedStatus: METRICS_DATA_FAIL_STATUS;
 }
 
 const TIMEOUT = 'timeout';
@@ -30,6 +31,7 @@ export const useGetMetricsStepsEffect = (): useGetMetricsStepsEffectInterface =>
   const dispatch = useAppDispatch();
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [stepFailedStatus, setStepFailedStatus] = useState(METRICS_DATA_FAIL_STATUS.NOT_FAILED);
 
   const getSteps = async (
     params: IStepsParams[],
@@ -44,6 +46,18 @@ export const useGetMetricsStepsEffect = (): useGetMetricsStepsEffectInterface =>
         return metricsClient.getSteps(param, organizationId, buildId, pipelineType, token);
       }),
     );
+    const hasRejected = allStepsRes.some((stepInfo) => stepInfo.status === 'rejected');
+    const hasFulfilled = allStepsRes.some((stepInfo) => stepInfo.status === 'fulfilled');
+    if (!hasRejected) {
+      setStepFailedStatus(METRICS_DATA_FAIL_STATUS.NOT_FAILED);
+    } else if (hasRejected && hasFulfilled) {
+      const rejectedStep = allStepsRes.find((stepInfo) => stepInfo.status === 'rejected');
+      if ((rejectedStep as PromiseRejectedResult).reason.code == 400) {
+        setStepFailedStatus(METRICS_DATA_FAIL_STATUS.PARTIAL_FAILED_4XX);
+      } else {
+        setStepFailedStatus(METRICS_DATA_FAIL_STATUS.PARTIAL_FAILED_TIMEOUT);
+      }
+    }
     setIsLoading(false);
     if (allStepsRes.every((stepInfo) => stepInfo.status === 'rejected')) {
       if (isAllTimeoutError(allStepsRes)) {
@@ -83,5 +97,5 @@ export const useGetMetricsStepsEffect = (): useGetMetricsStepsEffectInterface =>
     }, DURATION.ERROR_MESSAGE_TIME);
   };
 
-  return { isLoading, getSteps, errorMessage };
+  return { isLoading, getSteps, errorMessage, stepFailedStatus };
 };

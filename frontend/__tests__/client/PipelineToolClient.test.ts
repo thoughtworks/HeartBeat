@@ -79,22 +79,22 @@ describe('PipelineToolClient', () => {
         },
         {
           code: HttpStatusCode.BadRequest,
-          errorTitle: 'Invalid input!',
+          errorTitle: 'Failed to get Pipeline configuration!',
           errorMessage,
         },
         {
           code: HttpStatusCode.Unauthorized,
-          errorTitle: 'Unauthorized request!',
+          errorTitle: 'Failed to get Pipeline configuration!',
           errorMessage,
         },
         {
           code: HttpStatusCode.Forbidden,
-          errorTitle: 'Forbidden request!',
+          errorTitle: 'Failed to get Pipeline configuration!',
           errorMessage,
         },
         {
           code: HttpStatusCode.NotFound,
-          errorTitle: 'Not found!',
+          errorTitle: 'Failed to get Pipeline configuration!',
           errorMessage,
         },
       ];

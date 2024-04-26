@@ -22,10 +22,12 @@ import { BranchSelection } from '@src/containers/MetricsStep/DeploymentFrequency
 import { ButtonWrapper, PipelineMetricSelectionWrapper, RemoveButton, WarningMessage } from './style';
 import { WarningNotification } from '@src/components/Common/WarningNotification';
 import { useGetMetricsStepsEffect } from '@src/hooks/useGetMetricsStepsEffect';
+import { addNotification } from '@src/context/notification/NotificationSlice';
 import { uniqPipelineListCrews, updateResponseCrews } from '@src/utils/util';
 import { MESSAGE, NO_PIPELINE_STEP_ERROR } from '@src/constants/resources';
 import { ErrorNotification } from '@src/components/ErrorNotification';
 import { shouldMetricsLoad } from '@src/context/stepper/StepperSlice';
+import { METRICS_DATA_FAIL_STATUS } from '@src/constants/commons';
 import { useAppDispatch, useAppSelector } from '@src/hooks';
 import { useEffect, useRef, useState } from 'react';
 import { Loading } from '@src/components/Loading';
@@ -62,7 +64,7 @@ export const PipelineMetricSelection = ({
 }: pipelineMetricSelectionProps) => {
   const { id, organization, pipelineName, step } = pipelineSetting;
   const dispatch = useAppDispatch();
-  const { isLoading, errorMessage, getSteps } = useGetMetricsStepsEffect();
+  const { isLoading, errorMessage, getSteps, stepFailedStatus } = useGetMetricsStepsEffect();
   const storeContext = store.getState();
   const organizationNameOptions = selectPipelineOrganizations(storeContext);
   const pipelineNameOptions = selectPipelineNames(storeContext, organization);
@@ -129,6 +131,32 @@ export const PipelineMetricSelection = ({
       res && setIsShowNoStepWarning(!res.haveStep);
     });
   };
+
+  useEffect(() => {
+    const popup = () => {
+      if (stepFailedStatus === METRICS_DATA_FAIL_STATUS.PARTIAL_FAILED_4XX) {
+        dispatch(
+          addNotification({
+            type: 'warning',
+            message: MESSAGE.PIPELINE_STEP_REQUEST_PARTIAL_FAILED_4XX,
+          }),
+        );
+      } else if (
+        stepFailedStatus === METRICS_DATA_FAIL_STATUS.PARTIAL_FAILED_NO_CARDS ||
+        stepFailedStatus === METRICS_DATA_FAIL_STATUS.PARTIAL_FAILED_TIMEOUT
+      ) {
+        dispatch(
+          addNotification({
+            type: 'warning',
+            message: MESSAGE.PIPELINE_STEP_REQUEST_PARTIAL_FAILED_OTHERS,
+          }),
+        );
+      }
+    };
+    if (!isLoading) {
+      popup();
+    }
+  }, [stepFailedStatus, dispatch, isLoading]);
 
   return (
     <PipelineMetricSelectionWrapper>

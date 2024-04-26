@@ -195,7 +195,6 @@ describe('MetricsStep', () => {
         { key: 'done', value: { name: 'Done', statuses: ['PRE-DONE,', 'DONE', 'CANCEL'] } },
       ];
 
-      store.dispatch(updateShouldGetBoardConfig(true));
       store.dispatch(updateMetrics(REQUIRED_DATA_LIST));
       store.dispatch(updateCycleTimeSettings(cycleTimeSettingsWithTwoDoneValue));
       store.dispatch(saveDoneColumn(doneColumn));
@@ -286,6 +285,7 @@ describe('MetricsStep', () => {
     });
 
     it('should be render no card container when get board card when no data', async () => {
+      store.dispatch(updateShouldGetBoardConfig(true));
       server.use(
         rest.post(MOCK_BOARD_INFO_URL, (_, res, ctx) => {
           return res(ctx.status(HttpStatusCode.Ok));
@@ -304,7 +304,35 @@ describe('MetricsStep', () => {
       ).toBeInTheDocument();
     });
 
+    it('should be render failed message container when get 4xx error', async () => {
+      store.dispatch(updateShouldGetBoardConfig(true));
+      server.use(
+        rest.post(MOCK_BOARD_INFO_URL, (_, res, ctx) => {
+          return res(ctx.status(HttpStatusCode.BadRequest));
+        }),
+      );
+
+      setup();
+
+      await waitFor(() => {
+        expect(screen.getByText('Failed to get Board configuration!')).toBeInTheDocument();
+      });
+      expect(screen.getByText('Please go back to the previous page and check your board info!')).toBeInTheDocument();
+    });
+
+    it('should be render popup when get partial 4xx error', async () => {
+      store.dispatch(updateShouldGetBoardConfig(true));
+
+      setup();
+
+      await waitFor(() => {
+        expect(screen.getByText('Failed to get Board configuration!')).toBeInTheDocument();
+      });
+      expect(screen.getByText('Please go back to the previous page and check your board info!')).toBeInTheDocument();
+    });
+
     it('should be render form container when got board card success', async () => {
+      store.dispatch(updateShouldGetBoardConfig(true));
       server.use(
         rest.post(MOCK_BOARD_INFO_URL, (_, res, ctx) => {
           return res(
@@ -374,6 +402,7 @@ describe('MetricsStep', () => {
     });
 
     it('should show retry button when call get info timeout', async () => {
+      store.dispatch(updateShouldGetBoardConfig(true));
       server.use(
         rest.post(MOCK_BOARD_INFO_URL, (_, res) => {
           return res.networkError('NETWORK_TIMEOUT');

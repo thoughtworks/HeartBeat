@@ -22,20 +22,27 @@ import {
   StyledErrorMessage,
   StyledRetryButton,
 } from '@src/containers/MetricsStep/style';
-import { AXIOS_REQUEST_ERROR_CODE, CYCLE_TIME_SETTINGS_TYPES, DONE, REQUIRED_DATA } from '@src/constants/resources';
+import {
+  AXIOS_REQUEST_ERROR_CODE,
+  CYCLE_TIME_SETTINGS_TYPES,
+  DONE,
+  MESSAGE,
+  REQUIRED_DATA,
+} from '@src/constants/resources';
 import { DeploymentFrequencySettings } from '@src/containers/MetricsStep/DeploymentFrequencySettings';
-import { closeAllNotifications } from '@src/context/notification/NotificationSlice';
+import { addNotification, closeAllNotifications } from '@src/context/notification/NotificationSlice';
 import { Classification } from '@src/containers/MetricsStep/Classification';
 import { shouldMetricsLoad } from '@src/context/stepper/StepperSlice';
 import DateRangeViewer from '@src/components/Common/DateRangeViewer';
 import { useGetBoardInfoEffect } from '@src/hooks/useGetBoardInfo';
 import { combineBoardInfo, sortDateRanges } from '@src/utils/util';
 import { CycleTime } from '@src/containers/MetricsStep/CycleTime';
+import { METRICS_DATA_FAIL_STATUS } from '@src/constants/commons';
 import { RealDone } from '@src/containers/MetricsStep/RealDone';
+import { useCallback, useEffect, useLayoutEffect } from 'react';
 import EmptyContent from '@src/components/Common/EmptyContent';
 import { useAppDispatch, useAppSelector } from '@src/hooks';
 import { Crews } from '@src/containers/MetricsStep/Crews';
-import { useCallback, useLayoutEffect } from 'react';
 import { Loading } from '@src/components/Loading';
 import ReworkSettings from './ReworkSettings';
 import { Advance } from './Advance/Advance';
@@ -63,7 +70,7 @@ const MetricsStep = () => {
   const isShowRealDone =
     cycleTimeSettingsType === CYCLE_TIME_SETTINGS_TYPES.BY_COLUMN &&
     cycleTimeSettings.filter((e) => e.value === DONE).length > 1;
-  const { getBoardInfo, isLoading, errorMessage } = useGetBoardInfoEffect();
+  const { getBoardInfo, isLoading, errorMessage, boardInfoFailedStatus } = useGetBoardInfoEffect();
   const shouldLoad = useAppSelector(shouldMetricsLoad);
   const shouldGetBoardConfig = useAppSelector(selectShouldGetBoardConfig);
 
@@ -73,9 +80,8 @@ const MetricsStep = () => {
         ...boardConfig,
         dateRanges,
       }).then((res) => {
-        if (res && res[0].data) {
-          const boardInfo = res?.map((r) => r.data);
-          const commonPayload = combineBoardInfo(boardInfo!);
+        if (res && res.length) {
+          const commonPayload = combineBoardInfo(res);
           dispatch(updateBoardVerifyState(true));
           dispatch(updateJiraVerifyResponse(commonPayload));
           dispatch(updateMetricsState(merge(commonPayload, { isProjectCreated: isProjectCreated })));
@@ -87,6 +93,32 @@ const MetricsStep = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [],
   );
+
+  useEffect(() => {
+    const popup = () => {
+      if (boardInfoFailedStatus === METRICS_DATA_FAIL_STATUS.PARTIAL_FAILED_4XX) {
+        dispatch(
+          addNotification({
+            type: 'warning',
+            message: MESSAGE.BOARD_INFO_REQUEST_PARTIAL_FAILED_4XX,
+          }),
+        );
+      } else if (
+        boardInfoFailedStatus === METRICS_DATA_FAIL_STATUS.PARTIAL_FAILED_NO_CARDS ||
+        boardInfoFailedStatus === METRICS_DATA_FAIL_STATUS.PARTIAL_FAILED_TIMEOUT
+      ) {
+        dispatch(
+          addNotification({
+            type: 'warning',
+            message: MESSAGE.BOARD_INFO_REQUEST_PARTIAL_FAILED_OTHERS,
+          }),
+        );
+      }
+    };
+    if (!isLoading) {
+      popup();
+    }
+  }, [boardInfoFailedStatus, dispatch, isLoading]);
 
   useLayoutEffect(() => {
     if (!shouldLoad) return;
@@ -106,12 +138,15 @@ const MetricsStep = () => {
           />
         </MetricSelectionHeader>
       )}
-
       {isShowCrewsAndRealDone && (
         <MetricSelectionWrapper>
           {isLoading && <Loading />}
-          <MetricsSelectionTitle>Board configuration</MetricsSelectionTitle>
-          {isEmpty(errorMessage) ? (
+          <MetricsSelectionTitle>Board configuration </MetricsSelectionTitle>
+
+          {isEmpty(errorMessage) ||
+          (boardInfoFailedStatus != METRICS_DATA_FAIL_STATUS.ALL_FAILED_4XX &&
+            boardInfoFailedStatus != METRICS_DATA_FAIL_STATUS.ALL_FAILED_TIMEOUT &&
+            boardInfoFailedStatus != METRICS_DATA_FAIL_STATUS.ALL_FAILED_NO_CARDS) ? (
             <>
               <Crews options={users} title={'Crew settings'} label={'Included Crews'} />
 

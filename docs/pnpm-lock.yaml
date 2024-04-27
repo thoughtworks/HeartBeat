@@ -56,13 +56,13 @@ importers:
         version: 1.10.1
       '@astrojs/mdx':
         specifier: ^2.2.0
-        version: 2.2.2(astro@4.5.7)
+        version: 2.2.2(astro@4.5.7(@types/node@20.12.7)(sass@1.72.0)(typescript@5.4.5))
       '@astrojs/preact':
         specifier: ^3.1.1
-        version: 3.1.1(@babel/core@7.24.3)(preact@10.19.7)
+        version: 3.1.1(@babel/core@7.24.3)(preact@10.19.7)(vite@5.2.8(@types/node@20.12.7)(sass@1.72.0))
       '@astrojs/sitemap':
-        specifier: 3.1.2
-        version: 3.1.2
+        specifier: 3.1.4
+        version: 3.1.4
       '@babel/core':
         specifier: ^7.24.3
         version: 7.24.3
@@ -89,7 +89,7 @@ importers:
         version: 20.12.7
       '@typescript-eslint/eslint-plugin':
         specifier: ^7.3.1
-        version: 7.4.0(@typescript-eslint/parser@7.4.0)(eslint@8.57.0)(typescript@5.4.5)
+        version: 7.4.0(@typescript-eslint/parser@7.4.0(eslint@8.57.0)(typescript@5.4.5))(eslint@8.57.0)(typescript@5.4.5)
       '@typescript-eslint/parser':
         specifier: ^7.3.1
         version: 7.4.0(eslint@8.57.0)(typescript@5.4.5)
@@ -101,16 +101,16 @@ importers:
         version: 4.5.7(@types/node@20.12.7)(sass@1.72.0)(typescript@5.4.5)
       astro-auto-import:
         specifier: ^0.4.2
-        version: 0.4.2(astro@4.5.7)
+        version: 0.4.2(astro@4.5.7(@types/node@20.12.7)(sass@1.72.0)(typescript@5.4.5))
       astro-eslint-parser:
         specifier: ^0.16.3
         version: 0.16.3
       astro-expressive-code:
         specifier: ^0.33.5
-        version: 0.33.5(astro@4.5.7)
+        version: 0.33.5(astro@4.5.7(@types/node@20.12.7)(sass@1.72.0)(typescript@5.4.5))
       astro-og-canvas:
         specifier: ^0.4.2
-        version: 0.4.2(astro@4.5.7)
+        version: 0.4.2(astro@4.5.7(@types/node@20.12.7)(sass@1.72.0)(typescript@5.4.5))
       bcp-47-normalize:
         specifier: ^2.3.0
         version: 2.3.0
@@ -402,8 +402,8 @@ packages:
     resolution: {integrity: sha512-g61lZupWq1bYbcBnYZqdjndShr/J3l/oFobBKPA3+qMat146zce3nz2kdO4giGbhYDt4gYdhmoBz0vZJ4sIurQ==}
     engines: {node: '>=18.14.1'}
 
-  '@astrojs/sitemap@3.1.2':
-    resolution: {integrity: sha512-FxOJldIl5ltZ5CNjocQxHkAO9orwHBjqtaU28o4smobp9vowS0nbGp+I9CrPxkzWdl1crSDm9vjL9tnvG1DSug==}
+  '@astrojs/sitemap@3.1.4':
+    resolution: {integrity: sha512-po8CqDCK14O6phU1mB5C8SyVLyQEa+7pJM8oXxs1mVh8DgvxxaA5E7lak1vzOmBcyyyHBW32jakGqNYc66sBRw==}
 
   '@astrojs/telemetry@3.0.4':
     resolution: {integrity: sha512-A+0c7k/Xy293xx6odsYZuXiaHO0PL+bnDoXOc47sGDF5ffIKdKQGRPFl2NMlCF4L0NqN4Ynbgnaip+pPF0s7pQ==}
@@ -966,9 +966,6 @@ packages:
     peerDependencies:
       '@babel/core': 7.x
       vite: 2.x || 3.x || 4.x || 5.x
-    peerDependenciesMeta:
-      vite:
-        optional: true
 
   '@preact/signals-core@1.5.1':
     resolution: {integrity: sha512-dE6f+WCX5ZUDwXzUIWNMhhglmuLpqJhuy3X3xHrhZYI0Hm2LyQwOu0l9mdPiWrVNsE+Q7txOnJPgtIqHCYoBVA==}
@@ -994,9 +991,6 @@ packages:
     peerDependencies:
       preact: ^10.4.0
       vite: '>=2.0.0'
-    peerDependenciesMeta:
-      vite:
-        optional: true
 
   '@rollup/pluginutils@4.2.1':
     resolution: {integrity: sha512-iKnFXr7NkdZAIHiIWE+BX5ULi/ucVFYWD6TbAV+rZctiRTY2PL6tsIKhoIOaoskiWAkgu+VsbXgUVDNLHf+InQ==}
@@ -1708,7 +1702,7 @@ packages:
     resolution: {integrity: sha512-L3sHRo1pXXEqX8VU28kfgUY+YGsk09hPqZiZmLacNib6XNTCM8ubYeT7ryXQw8asB1sKgcU5lkB7ONug08aB8w==}
 
   concat-map@0.0.1:
-    resolution: {integrity: sha1-2Klr13/Wjfd5OnMDajug1UBdR3s=}
+    resolution: {integrity: sha512-/Srv4dswyQNBfohGpz9o6Yb3Gz3SrUDqBH5rTuhGR7ahtlbYKnVxw2bCFMRljaA7EXHaXZ8wsHdodFvbkhKmqg==}
 
   convert-source-map@2.0.0:
     resolution: {integrity: sha512-Kvp459HrV2FEJ1CAsi1Ku+MY3kasH19TFykTz2xWmMeq6bk2NU3XXvfJ+Q61m0xktWwt+1HSYf3JZsTms3aRJg==}
@@ -3743,6 +3737,9 @@ packages:
     resolution: {integrity: sha512-68Kl+79cE0RGKemKkhxTSg8+6AGrqBt+cbZAXevg2iJ6Y3zX4JhA/sZeGzLpxW9cXhmqAcE7KnJCisUmIUfnFQ==}
     engines: {node: '>=0.10.0'}
 
+  stream-replace-string@2.0.0:
+    resolution: {integrity: sha512-TlnjJ1C0QrmxRNrON00JvaFFlNh5TTG00APw23j74ET7gkQpTASi6/L2fuiav8pzK715HXtUeClpBTw2NPSn6w==}
+
   stream-via@1.0.4:
     resolution: {integrity: sha512-DBp0lSvX5G9KGRDTkR/R+a29H+Wk2xItOF+MpZLLNDWbEV9tGPnqLPxHEYjmiz8xGtJHRIqmI+hCjmNzqoA4nQ==}
     engines: {node: '>=0.10.0'}
@@ -4553,8 +4550,6 @@ snapshots:
       '@volar/language-service': 2.1.6
       '@volar/typescript': 2.1.6
       fast-glob: 3.3.2
-      prettier: 3.2.5
-      prettier-plugin-astro: 0.13.0
       volar-service-css: 0.0.34(@volar/language-service@2.1.6)
       volar-service-emmet: 0.0.34(@volar/language-service@2.1.6)
       volar-service-html: 0.0.34(@volar/language-service@2.1.6)
@@ -4563,6 +4558,9 @@ snapshots:
       volar-service-typescript-twoslash-queries: 0.0.34(@volar/language-service@2.1.6)
       vscode-html-languageservice: 5.2.0
       vscode-uri: 3.0.8
+    optionalDependencies:
+      prettier: 3.2.5
+      prettier-plugin-astro: 0.13.0
     transitivePeerDependencies:
       - typescript
 
@@ -4612,7 +4610,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@astrojs/mdx@2.2.2(astro@4.5.7)':
+  '@astrojs/mdx@2.2.2(astro@4.5.7(@types/node@20.12.7)(sass@1.72.0)(typescript@5.4.5))':
     dependencies:
       '@astrojs/markdown-remark': 4.3.2
       '@mdx-js/mdx': 3.0.1
@@ -4633,11 +4631,11 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@astrojs/preact@3.1.1(@babel/core@7.24.3)(preact@10.19.7)':
+  '@astrojs/preact@3.1.1(@babel/core@7.24.3)(preact@10.19.7)(vite@5.2.8(@types/node@20.12.7)(sass@1.72.0))':
     dependencies:
       '@babel/plugin-transform-react-jsx': 7.23.4(@babel/core@7.24.3)
       '@babel/plugin-transform-react-jsx-development': 7.22.5(@babel/core@7.24.3)
-      '@preact/preset-vite': 2.8.2(@babel/core@7.24.3)(preact@10.19.7)
+      '@preact/preset-vite': 2.8.2(@babel/core@7.24.3)(preact@10.19.7)(vite@5.2.8(@types/node@20.12.7)(sass@1.72.0))
       '@preact/signals': 1.2.2(preact@10.19.7)
       babel-plugin-transform-hook-names: 1.0.2(@babel/core@7.24.3)
       preact: 10.19.7
@@ -4652,9 +4650,10 @@ snapshots:
     dependencies:
       prismjs: 1.29.0
 
-  '@astrojs/sitemap@3.1.2':
+  '@astrojs/sitemap@3.1.4':
     dependencies:
       sitemap: 7.1.1
+      stream-replace-string: 2.0.0
       zod: 3.22.4
 
   '@astrojs/telemetry@3.0.4':
@@ -4846,6 +4845,7 @@ snapshots:
       '@algolia/autocomplete-preset-algolia': 1.9.3(@algolia/client-search@4.23.3)(algoliasearch@4.22.1)
       '@docsearch/css': 3.6.0
       algoliasearch: 4.22.1
+    optionalDependencies:
       search-insights: 2.13.0
     transitivePeerDependencies:
       - '@algolia/client-search'
@@ -5147,12 +5147,12 @@ snapshots:
 
   '@pkgr/core@0.1.1': {}
 
-  '@preact/preset-vite@2.8.2(@babel/core@7.24.3)(preact@10.19.7)':
+  '@preact/preset-vite@2.8.2(@babel/core@7.24.3)(preact@10.19.7)(vite@5.2.8(@types/node@20.12.7)(sass@1.72.0))':
     dependencies:
       '@babel/core': 7.24.3
       '@babel/plugin-transform-react-jsx': 7.23.4(@babel/core@7.24.3)
       '@babel/plugin-transform-react-jsx-development': 7.22.5(@babel/core@7.24.3)
-      '@prefresh/vite': 2.4.5(preact@10.19.7)
+      '@prefresh/vite': 2.4.5(preact@10.19.7)(vite@5.2.8(@types/node@20.12.7)(sass@1.72.0))
       '@rollup/pluginutils': 4.2.1
       babel-plugin-transform-hook-names: 1.0.2(@babel/core@7.24.3)
       debug: 4.3.4
@@ -5162,6 +5162,7 @@ snapshots:
       resolve: 1.22.8
       source-map: 0.7.4
       stack-trace: 1.0.0-pre2
+      vite: 5.2.8(@types/node@20.12.7)(sass@1.72.0)
     transitivePeerDependencies:
       - preact
       - supports-color
@@ -5181,7 +5182,7 @@ snapshots:
 
   '@prefresh/utils@1.2.0': {}
 
-  '@prefresh/vite@2.4.5(preact@10.19.7)':
+  '@prefresh/vite@2.4.5(preact@10.19.7)(vite@5.2.8(@types/node@20.12.7)(sass@1.72.0))':
     dependencies:
       '@babel/core': 7.24.3
       '@prefresh/babel-plugin': 0.5.1
@@ -5189,6 +5190,7 @@ snapshots:
       '@prefresh/utils': 1.2.0
       '@rollup/pluginutils': 4.2.1
       preact: 10.19.7
+      vite: 5.2.8(@types/node@20.12.7)(sass@1.72.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -5351,7 +5353,7 @@ snapshots:
 
   '@types/unist@3.0.2': {}
 
-  '@typescript-eslint/eslint-plugin@7.4.0(@typescript-eslint/parser@7.4.0)(eslint@8.57.0)(typescript@5.4.5)':
+  '@typescript-eslint/eslint-plugin@7.4.0(@typescript-eslint/parser@7.4.0(eslint@8.57.0)(typescript@5.4.5))(eslint@8.57.0)(typescript@5.4.5)':
     dependencies:
       '@eslint-community/regexpp': 4.10.0
       '@typescript-eslint/parser': 7.4.0(eslint@8.57.0)(typescript@5.4.5)
@@ -5366,6 +5368,7 @@ snapshots:
       natural-compare: 1.4.0
       semver: 7.6.0
       ts-api-utils: 1.3.0(typescript@5.4.5)
+    optionalDependencies:
       typescript: 5.4.5
     transitivePeerDependencies:
       - supports-color
@@ -5378,6 +5381,7 @@ snapshots:
       '@typescript-eslint/visitor-keys': 7.4.0
       debug: 4.3.4
       eslint: 8.57.0
+    optionalDependencies:
       typescript: 5.4.5
     transitivePeerDependencies:
       - supports-color
@@ -5399,6 +5403,7 @@ snapshots:
       debug: 4.3.4
       eslint: 8.57.0
       ts-api-utils: 1.3.0(typescript@5.4.5)
+    optionalDependencies:
       typescript: 5.4.5
     transitivePeerDependencies:
       - supports-color
@@ -5417,6 +5422,7 @@ snapshots:
       minimatch: 9.0.3
       semver: 7.6.0
       ts-api-utils: 1.3.0(typescript@5.4.5)
+    optionalDependencies:
       typescript: 5.4.5
     transitivePeerDependencies:
       - supports-color
@@ -5690,7 +5696,7 @@ snapshots:
 
   astring@1.8.6: {}
 
-  astro-auto-import@0.4.2(astro@4.5.7):
+  astro-auto-import@0.4.2(astro@4.5.7(@types/node@20.12.7)(sass@1.72.0)(typescript@5.4.5)):
     dependencies:
       '@types/node': 18.19.26
       acorn: 8.11.3
@@ -5710,13 +5716,13 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  astro-expressive-code@0.33.5(astro@4.5.7):
+  astro-expressive-code@0.33.5(astro@4.5.7(@types/node@20.12.7)(sass@1.72.0)(typescript@5.4.5)):
     dependencies:
       astro: 4.5.7(@types/node@20.12.7)(sass@1.72.0)(typescript@5.4.5)
       hast-util-to-html: 8.0.4
       remark-expressive-code: 0.33.5
 
-  astro-og-canvas@0.4.2(astro@4.5.7):
+  astro-og-canvas@0.4.2(astro@4.5.7(@types/node@20.12.7)(sass@1.72.0)(typescript@5.4.5)):
     dependencies:
       astro: 4.5.7(@types/node@20.12.7)(sass@1.72.0)(typescript@5.4.5)
       canvaskit-wasm: 0.37.2
@@ -5782,7 +5788,7 @@ snapshots:
       unist-util-visit: 5.0.0
       vfile: 6.0.1
       vite: 5.2.8(@types/node@20.12.7)(sass@1.72.0)
-      vitefu: 0.2.5(vite@5.2.8)
+      vitefu: 0.2.5(vite@5.2.8(@types/node@20.12.7)(sass@1.72.0))
       which-pm: 2.1.1
       yargs-parser: 21.1.1
       zod: 3.22.4
@@ -8847,6 +8853,8 @@ snapshots:
     dependencies:
       array-back: 1.0.4
 
+  stream-replace-string@2.0.0: {}
+
   stream-via@1.0.4: {}
 
   streamx@2.16.1:
@@ -9037,7 +9045,7 @@ snapshots:
       code-block-writer: 11.0.3
 
   tsconfck@3.0.3(typescript@5.4.5):
-    dependencies:
+    optionalDependencies:
       typescript: 5.4.5
 
   tsconfig@7.0.0:
@@ -9323,21 +9331,20 @@ snapshots:
 
   vite@5.2.8(@types/node@20.12.7)(sass@1.72.0):
     dependencies:
-      '@types/node': 20.12.7
       esbuild: 0.20.2
       postcss: 8.4.38
       rollup: 4.13.0
-      sass: 1.72.0
     optionalDependencies:
+      '@types/node': 20.12.7
       fsevents: 2.3.3
+      sass: 1.72.0
 
-  vitefu@0.2.5(vite@5.2.8):
-    dependencies:
+  vitefu@0.2.5(vite@5.2.8(@types/node@20.12.7)(sass@1.72.0)):
+    optionalDependencies:
       vite: 5.2.8(@types/node@20.12.7)(sass@1.72.0)
 
   vitest@1.4.0(@types/node@20.12.7)(sass@1.72.0):
     dependencies:
-      '@types/node': 20.12.7
       '@vitest/expect': 1.4.0
       '@vitest/runner': 1.4.0
       '@vitest/snapshot': 1.4.0
@@ -9358,6 +9365,8 @@ snapshots:
       vite: 5.2.8(@types/node@20.12.7)(sass@1.72.0)
       vite-node: 1.4.0(@types/node@20.12.7)(sass@1.72.0)
       why-is-node-running: 2.2.2
+    optionalDependencies:
+      '@types/node': 20.12.7
     transitivePeerDependencies:
       - less
       - lightningcss
@@ -9369,42 +9378,47 @@ snapshots:
 
   volar-service-css@0.0.34(@volar/language-service@2.1.6):
     dependencies:
-      '@volar/language-service': 2.1.6
       vscode-css-languageservice: 6.2.14
       vscode-languageserver-textdocument: 1.0.11
       vscode-uri: 3.0.8
+    optionalDependencies:
+      '@volar/language-service': 2.1.6
 
   volar-service-emmet@0.0.34(@volar/language-service@2.1.6):
     dependencies:
-      '@volar/language-service': 2.1.6
       '@vscode/emmet-helper': 2.9.3
       vscode-html-languageservice: 5.2.0
+    optionalDependencies:
+      '@volar/language-service': 2.1.6
 
   volar-service-html@0.0.34(@volar/language-service@2.1.6):
     dependencies:
-      '@volar/language-service': 2.1.6
       vscode-html-languageservice: 5.2.0
       vscode-languageserver-textdocument: 1.0.11
       vscode-uri: 3.0.8
+    optionalDependencies:
+      '@volar/language-service': 2.1.6
 
   volar-service-prettier@0.0.34(@volar/language-service@2.1.6)(prettier@3.2.5):
     dependencies:
+      vscode-uri: 3.0.8
+    optionalDependencies:
       '@volar/language-service': 2.1.6
       prettier: 3.2.5
-      vscode-uri: 3.0.8
 
   volar-service-typescript-twoslash-queries@0.0.34(@volar/language-service@2.1.6):
-    dependencies:
+    optionalDependencies:
       '@volar/language-service': 2.1.6
 
   volar-service-typescript@0.0.34(@volar/language-service@2.1.6):
     dependencies:
-      '@volar/language-service': 2.1.6
       path-browserify: 1.0.1
       semver: 7.6.0
       typescript-auto-import-cache: 0.3.2
       vscode-languageserver-textdocument: 1.0.11
       vscode-nls: 5.2.0
+    optionalDependencies:
+      '@volar/language-service': 2.1.6
 
   vscode-css-languageservice@6.2.14:
     dependencies:

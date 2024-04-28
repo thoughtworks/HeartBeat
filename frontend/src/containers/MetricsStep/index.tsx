@@ -142,9 +142,9 @@ const MetricsStep = () => {
           <MetricsSelectionTitle>Board configuration </MetricsSelectionTitle>
 
           {isEmpty(errorMessage) ||
-          (boardInfoFailedStatus != METRICS_DATA_FAIL_STATUS.ALL_FAILED_4XX &&
-            boardInfoFailedStatus != METRICS_DATA_FAIL_STATUS.ALL_FAILED_TIMEOUT &&
-            boardInfoFailedStatus != METRICS_DATA_FAIL_STATUS.ALL_FAILED_NO_CARDS) ? (
+          (boardInfoFailedStatus !== METRICS_DATA_FAIL_STATUS.ALL_FAILED_4XX &&
+            boardInfoFailedStatus !== METRICS_DATA_FAIL_STATUS.ALL_FAILED_TIMEOUT &&
+            boardInfoFailedStatus !== METRICS_DATA_FAIL_STATUS.ALL_FAILED_NO_CARDS) ? (
             <>
               <Crews options={users} title={'Crew settings'} label={'Included Crews'} />
 

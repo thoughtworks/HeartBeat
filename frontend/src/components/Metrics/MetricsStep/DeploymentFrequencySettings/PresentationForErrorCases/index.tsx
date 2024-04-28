@@ -2,17 +2,15 @@ import {
   StyledContainer,
   StyledImageContainer,
   StyledImage,
-  StyledCommonTitle,
-  StyledCommonMessage,
   StyledRetryMessage,
   StyledRetryButton,
 } from '@src/components/Metrics/MetricsStep/DeploymentFrequencySettings/PresentationForErrorCases/style';
+import { StyledErrorMessage, StyledErrorSection, StyledErrorTitle } from '@src/components/Common/EmptyContent/styles';
 import { PIPELINE_TOOL_RETRY_MESSAGE, PIPELINE_TOOL_RETRY_TRIGGER_MESSAGE } from '@src/constants/resources';
 import { IGetPipelineToolInfoResult } from '@src/clients/pipeline/PipelineToolClient';
 import { AXIOS_REQUEST_ERROR_CODE } from '@src/constants/resources';
 import errorSvg from '@src/assets/PipelineInfoError.svg';
 import React, { useCallback } from 'react';
-import { Box } from '@mui/material';
 
 export interface IPresentationForErrorCasesProps extends IGetPipelineToolInfoResult {
   retry: () => void;
@@ -35,10 +33,10 @@ const PresentationForErrorCases = (props: IPresentationForErrorCasesProps) => {
           </StyledRetryButton>
         </StyledRetryMessage>
       ) : (
-        <Box>
-          <StyledCommonTitle>{props.errorTitle}</StyledCommonTitle>
-          <StyledCommonMessage>{props.errorMessage}</StyledCommonMessage>
-        </Box>
+        <StyledErrorSection>
+          <StyledErrorTitle>{props.errorTitle}</StyledErrorTitle>
+          <StyledErrorMessage>{props.errorMessage}</StyledErrorMessage>
+        </StyledErrorSection>
       )}
     </StyledContainer>
   );

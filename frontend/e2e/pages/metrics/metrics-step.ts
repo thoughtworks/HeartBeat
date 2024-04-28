@@ -557,6 +557,15 @@ export class MetricsStep {
     await this.page.keyboard.press('Escape');
   }
 
+  async addBranch(branches: string[]) {
+    await this.pipelineBranchSelect.click();
+    for (const branchName of branches) {
+      await this.page.getByRole('combobox', { name: 'Branches' }).fill(branchName);
+      await this.page.getByRole('option', { name: branchName }).getByRole('checkbox').check();
+    }
+    await this.page.keyboard.press('Escape');
+  }
+
   async deselectBranch(branch: string) {
     await this.pipelineDefaultBranchSelectContainer.click();
     await this.page.getByRole('option', { name: branch }).getByRole('checkbox').uncheck();

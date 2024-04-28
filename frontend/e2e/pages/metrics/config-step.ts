@@ -27,6 +27,10 @@ export class ConfigStep {
   readonly regularCalendar: Locator;
   readonly chineseCalendar: Locator;
   readonly basicInfoContainer: Locator;
+  readonly newTimeRangeButton: Locator;
+  readonly removeTimeRangeButtons: Locator;
+  readonly fromDateErrorMessage: Locator;
+  readonly toDateErrorMessage: Locator;
   readonly fromDateInput: Locator;
   readonly fromDateInputButton: Locator;
   readonly fromDateInputValueSelect: (fromDay: Dayjs) => Locator;
@@ -101,6 +105,10 @@ export class ConfigStep {
       .getByRole('button', { name: 'Choose date' });
     this.toDateInputValueSelect = (toDay: Dayjs) =>
       page.getByRole('dialog', { name: 'To *' }).getByRole('gridcell', { name: `${toDay.date()}` });
+    this.newTimeRangeButton = this.basicInfoContainer.getByRole('button', { name: 'Button for adding date range' });
+    this.fromDateErrorMessage = this.basicInfoContainer.getByText('Start date is invalid');
+    this.toDateErrorMessage = this.basicInfoContainer.getByText('End date is invalid');
+    this.removeTimeRangeButtons = this.basicInfoContainer.getByText('Remove');
 
     this.requireDataButton = page.getByRole('button', { name: 'Required Data' });
     this.velocityCheckbox = page.getByRole('option', { name: 'Velocity' }).getByRole('checkbox');
@@ -242,6 +250,22 @@ export class ConfigStep {
 
   async validateNextButtonNotClickable() {
     await expect(this.nextButton).toBeDisabled();
+  }
+
+  async validateAddNewTimeRangeButtonNotClickable() {
+    await expect(this.newTimeRangeButton).toBeDisabled();
+  }
+
+  async validateRemoveTimeRangeButtonIsHidden() {
+    await expect(this.removeTimeRangeButtons.last()).toBeHidden();
+  }
+
+  async checkErrorStratTimeMessage() {
+    await expect(this.fromDateErrorMessage).toBeVisible();
+  }
+
+  async checkErrorEndTimeMessage() {
+    await expect(this.toDateErrorMessage).toBeVisible();
   }
 
   async validateNextButtonClickable() {
@@ -448,6 +472,14 @@ export class ConfigStep {
 
   async verifyBoardConfig() {
     await this.boardVerifyButton.click();
+  }
+
+  async addNewTimeRange() {
+    await this.newTimeRangeButton.click();
+  }
+
+  async RemoveLastNewPipeline() {
+    await this.removeTimeRangeButtons.last().click();
   }
 
   async checkAllConfigInvalid() {

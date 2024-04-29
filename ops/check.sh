@@ -284,15 +284,39 @@ e2e_container_check() {
 }
 
 e2e_check() {
-  echo "start to run e2e"
+  local project="${E2E_PROJECT:-Google Chrome}"
+  echo "start to run e2e for project: ${project}"
   export TZ=Asia/Shanghai
   npm install -g pnpm
   cd frontend
   pnpm install --no-frozen-lockfile
-  pnpm exec playwright install
-  pnpm exec playwright install msedge
-  pnpm exec playwright install chrome
-  pnpm run e2e:ci
+  case "$project" in
+    "Google Chrome")
+      echo "Installing Chrome browser"
+      pnpm exec playwright install chrome
+      ;;
+    "Microsoft Edge")
+      echo "Installing Microsoft Edge browser"
+      pnpm exec playwright install msedge
+      ;;
+    "webkit")
+      echo "Installing WebKit browser"
+      pnpm exec playwright install webkit
+      ;;
+    "firefox")
+      echo "Installing WebKit browser"
+      pnpm exec playwright install firefox
+      ;;
+    "chromium")
+      echo "Installing WebKit browser"
+      pnpm exec playwright install chromium
+      ;;
+    *)
+      echo "No browser is found for  $project type, install default browsers."
+      pnpm exec playwright install
+      ;;
+  esac
+  pnpm run e2e:ci --project="${project}"
 }
 
 buildkite_status_check() {

@@ -243,9 +243,9 @@ export class ConfigStep {
     expect(this.requiredDataErrorMessage).toBeTruthy();
   }
 
-  async typeInDateRange({ startDate, endDate }: { startDate: string; endDate: string }) {
-    await this.fromDateInput.fill(startDate);
-    await this.toDateInput.fill(endDate);
+  async typeInDateRange({ startDate, endDate, number = 0 }: { startDate: string; endDate: string; number?: number }) {
+    await this.fromDateInput.nth(number).fill(startDate);
+    await this.toDateInput.nth(number).fill(endDate);
   }
 
   async validateNextButtonNotClickable() {
@@ -279,7 +279,7 @@ export class ConfigStep {
   }
 
   async selectBoardMetricsOnly() {
-    await this.requiredMetricsLabel.click();
+    await this.requiredMetricsLabel.first().click();
     await this.velocityCheckbox.click();
     await this.classificationCheckbox.click();
     await this.cycleTimeCheckbox.click();

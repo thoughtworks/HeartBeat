@@ -35,7 +35,7 @@ export default defineConfig({
     /* Base URL to use in actions like `await page.goto('/')`. */
     baseURL: process.env.APP_ORIGIN,
     viewport: VIEWPORT_DEFAULT,
-    timezoneId: "Asia/Shanghai",
+    timezoneId: 'Asia/Shanghai',
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on',

@@ -7,7 +7,6 @@ import {
   EXPORT_METRIC_DATA,
   EXPORT_PIPELINE_DATA,
   LEAD_TIME_FOR_CHANGES,
-  MOCK_DATE_RANGE,
   MOCK_JIRA_VERIFY_RESPONSE,
   MOCK_REPORT_RESPONSE,
   PREVIOUS,
@@ -24,21 +23,23 @@ import {
   updatePipelineToolVerifyResponse,
 } from '@src/context/config/configSlice';
 import { addADeploymentFrequencySetting, updateDeploymentFrequencySettings } from '@src/context/Metrics/metricsSlice';
+import { act, render, renderHook, screen, waitFor } from '@testing-library/react';
+import { closeNotification } from '@src/context/notification/NotificationSlice';
 import { addNotification } from '@src/context/notification/NotificationSlice';
 import { useGenerateReportEffect } from '@src/hooks/useGenerateReportEffect';
-import { render, renderHook, screen, waitFor } from '@testing-library/react';
+import { DEFAULT_MESSAGE, MESSAGE } from '@src/constants/resources';
 import { useExportCsvEffect } from '@src/hooks/useExportCsvEffect';
 import { backStep } from '@src/context/stepper/StepperSlice';
 import { setupStore } from '../../utils/setupStoreUtil';
 import userEvent from '@testing-library/user-event';
 import ReportStep from '@src/containers/ReportStep';
-import { MESSAGE } from '@src/constants/resources';
 import { Provider } from 'react-redux';
-import React from 'react';
+import { ReactNode } from 'react';
 
 jest.mock('@src/context/notification/NotificationSlice', () => ({
   ...jest.requireActual('@src/context/notification/NotificationSlice'),
   addNotification: jest.fn().mockReturnValue({ type: 'ADD_NOTIFICATION' }),
+  closeNotification: jest.fn(),
 }));
 
 jest.mock('@src/context/stepper/StepperSlice', () => ({
@@ -54,12 +55,14 @@ jest.mock('@src/hooks/useExportCsvEffect', () => ({
 }));
 
 jest.mock('@src/hooks/useGenerateReportEffect', () => ({
+  ...jest.requireActual('@src/hooks/useGenerateReportEffect'),
   useGenerateReportEffect: jest.fn().mockReturnValue({
     startToRequestData: jest.fn(),
-    startToRequestDoraData: jest.fn(),
     stopPollingReports: jest.fn(),
-    isServerError: false,
-    errorMessage: '',
+    closeReportInfosErrorStatus: jest.fn(),
+    closeBoardMetricsError: jest.fn(),
+    closePipelineMetricsError: jest.fn(),
+    closeSourceControlMetricsError: jest.fn(),
   }),
 }));
 
@@ -77,20 +80,60 @@ jest.mock('@src/utils/util', () => ({
   formatMillisecondsToHours: jest.fn().mockImplementation((time) => time / 60 / 60 / 1000),
 }));
 
-let store = null;
+let store = setupStore();
+
+const emptyValueDateRange = {
+  startDate: '2024-02-04T00:00:00.000+08:00',
+  endDate: '2024-02-17T23:59:59.999+08:00',
+};
+
+const fullValueDateRange = {
+  startDate: '2024-02-18T00:00:00.000+08:00',
+  endDate: '2024-02-28T23:59:59.999+08:00',
+};
+
 describe('Report Step', () => {
-  const { result: reportHook } = renderHook(() => useGenerateReportEffect());
+  const { result: reportHook } = renderHook(() => useGenerateReportEffect(), {
+    wrapper: ({ children }: { children: ReactNode }) => {
+      return <Provider store={store}>{children}</Provider>;
+    },
+  });
   beforeEach(() => {
+    store = setupStore();
     resetReportHook();
   });
   const resetReportHook = async () => {
-    reportHook.current.startToRequestData = jest.fn();
-    reportHook.current.stopPollingReports = jest.fn();
-    reportHook.current.reportData = { ...MOCK_REPORT_RESPONSE, exportValidityTime: 30 };
+    reportHook.current.reportInfos = [
+      {
+        id: fullValueDateRange.startDate,
+        timeout4Board: { message: DEFAULT_MESSAGE, shouldShow: true },
+        timeout4Dora: { message: DEFAULT_MESSAGE, shouldShow: true },
+        timeout4Report: { message: DEFAULT_MESSAGE, shouldShow: true },
+        generalError4Board: { message: DEFAULT_MESSAGE, shouldShow: true },
+        generalError4Dora: { message: DEFAULT_MESSAGE, shouldShow: true },
+        generalError4Report: { message: DEFAULT_MESSAGE, shouldShow: true },
+        shouldShowBoardMetricsError: true,
+        shouldShowPipelineMetricsError: true,
+        shouldShowSourceControlMetricsError: true,
+        reportData: { ...MOCK_REPORT_RESPONSE, exportValidityTime: 30 },
+      },
+      {
+        id: emptyValueDateRange.startDate,
+        timeout4Board: { message: DEFAULT_MESSAGE, shouldShow: true },
+        timeout4Dora: { message: DEFAULT_MESSAGE, shouldShow: true },
+        timeout4Report: { message: DEFAULT_MESSAGE, shouldShow: true },
+        generalError4Board: { message: DEFAULT_MESSAGE, shouldShow: true },
+        generalError4Dora: { message: DEFAULT_MESSAGE, shouldShow: true },
+        generalError4Report: { message: DEFAULT_MESSAGE, shouldShow: true },
+        shouldShowBoardMetricsError: true,
+        shouldShowPipelineMetricsError: true,
+        shouldShowSourceControlMetricsError: true,
+        reportData: { ...EMPTY_REPORT_VALUES },
+      },
+    ];
   };
   const handleSaveMock = jest.fn();
-  const setup = (params: string[], dateRange?: DateRange) => {
-    store = setupStore();
+  const setup = (params: string[], dateRange: DateRange = [fullValueDateRange]) => {
     dateRange && store.dispatch(updateDateRange(dateRange));
     store.dispatch(
       updateJiraVerifyResponse({
@@ -129,13 +172,12 @@ describe('Report Step', () => {
     );
   };
   afterEach(() => {
-    store = null;
     jest.clearAllMocks();
   });
 
   describe('render correctly', () => {
     it('should render report page', () => {
-      setup(REQUIRED_DATA_LIST);
+      setup(REQUIRED_DATA_LIST, [emptyValueDateRange]);
 
       expect(screen.getByText('Board Metrics')).toBeInTheDocument();
       expect(screen.getByText('Velocity')).toBeInTheDocument();
@@ -148,9 +190,7 @@ describe('Report Step', () => {
     });
 
     it('should render loading page when report data is empty', () => {
-      reportHook.current.reportData = EMPTY_REPORT_VALUES;
-
-      setup(REQUIRED_DATA_LIST);
+      setup(REQUIRED_DATA_LIST, [emptyValueDateRange]);
 
       expect(screen.getAllByTestId('loading-page')).toHaveLength(7);
     });
@@ -169,7 +209,6 @@ describe('Report Step', () => {
 
     it('should render the velocity component with correct props', async () => {
       setup([REQUIRED_DATA_LIST[1]]);
-
       expect(screen.getByText('20')).toBeInTheDocument();
       expect(screen.getByText('14')).toBeInTheDocument();
     });
@@ -255,7 +294,7 @@ describe('Report Step', () => {
     it.each([[REQUIRED_DATA_LIST[2]], [REQUIRED_DATA_LIST[5]]])(
       'should render detail page when clicking show more button given metric %s',
       async (requiredData) => {
-        setup([requiredData], MOCK_DATE_RANGE);
+        setup([requiredData]);
 
         await userEvent.click(screen.getByText(SHOW_MORE));
 
@@ -340,8 +379,8 @@ describe('Report Step', () => {
       expect(result.current.fetchExportData).toBeCalledWith({
         csvTimeStamp: 0,
         dataType: 'pipeline',
-        endDate: '',
-        startDate: '',
+        endDate: '2024-02-28T23:59:59.999+08:00',
+        startDate: '2024-02-18T00:00:00.000+08:00',
       });
     });
   });
@@ -377,8 +416,8 @@ describe('Report Step', () => {
       expect(result.current.fetchExportData).toBeCalledWith({
         csvTimeStamp: 0,
         dataType: 'board',
-        endDate: '',
-        startDate: '',
+        endDate: '2024-02-28T23:59:59.999+08:00',
+        startDate: '2024-02-18T00:00:00.000+08:00',
       });
     });
   });
@@ -403,8 +442,8 @@ describe('Report Step', () => {
       expect(result.current.fetchExportData).toBeCalledWith({
         csvTimeStamp: 0,
         dataType: 'metric',
-        endDate: '',
-        startDate: '',
+        endDate: '2024-02-28T23:59:59.999+08:00',
+        startDate: '2024-02-18T00:00:00.000+08:00',
       });
     });
 
@@ -419,40 +458,47 @@ describe('Report Step', () => {
     const error = 'error';
 
     it('should call addNotification when having timeout4Board error', () => {
-      reportHook.current.timeout4Board = error;
+      reportHook.current.reportInfos = reportHook.current.reportInfos.slice(1);
+      reportHook.current.reportInfos[0].timeout4Board = { message: error, shouldShow: true };
 
-      setup(REQUIRED_DATA_LIST);
+      setup(REQUIRED_DATA_LIST, [emptyValueDateRange]);
+      expect(addNotification).toHaveBeenCalledTimes(1);
 
-      expect(addNotification).toBeCalledWith({
+      expect(addNotification).toHaveBeenCalledWith({
+        id: expect.any(String),
         message: MESSAGE.LOADING_TIMEOUT('Board metrics'),
         type: 'error',
       });
     });
 
     it('should call addNotification when having timeout4Dora error', () => {
-      reportHook.current.timeout4Dora = error;
+      reportHook.current.reportInfos = reportHook.current.reportInfos.slice(1);
+      reportHook.current.reportInfos[0].timeout4Dora = { message: error, shouldShow: true };
 
-      setup(REQUIRED_DATA_LIST);
+      setup(REQUIRED_DATA_LIST, [emptyValueDateRange]);
 
-      expect(addNotification).toBeCalledWith({
+      expect(addNotification).toHaveBeenCalledWith({
+        id: expect.any(String),
         message: MESSAGE.LOADING_TIMEOUT('DORA metrics'),
         type: 'error',
       });
     });
 
     it('should call addNotification when having timeout4Report error', () => {
-      reportHook.current.timeout4Report = error;
+      reportHook.current.reportInfos = reportHook.current.reportInfos.slice(1);
+      reportHook.current.reportInfos[0].timeout4Report = { message: error, shouldShow: true };
 
-      setup(REQUIRED_DATA_LIST);
+      setup(REQUIRED_DATA_LIST, [emptyValueDateRange]);
 
-      expect(addNotification).toBeCalledWith({
+      expect(addNotification).toHaveBeenCalledWith({
+        id: expect.any(String),
         message: MESSAGE.LOADING_TIMEOUT('Report'),
         type: 'error',
       });
     });
 
     it('should call addNotification when having boardMetricsError', () => {
-      reportHook.current.reportData = {
+      reportHook.current.reportInfos[0].reportData = {
         ...MOCK_REPORT_RESPONSE,
         reportMetricsError: {
           boardMetricsError: {
@@ -466,14 +512,15 @@ describe('Report Step', () => {
 
       setup(REQUIRED_DATA_LIST);
 
-      expect(addNotification).toBeCalledWith({
+      expect(addNotification).toHaveBeenCalledWith({
+        id: expect.any(String),
         message: MESSAGE.FAILED_TO_GET_DATA('Board Metrics'),
         type: 'error',
       });
     });
 
     it('should call addNotification when having pipelineMetricsError', () => {
-      reportHook.current.reportData = {
+      reportHook.current.reportInfos[0].reportData = {
         ...MOCK_REPORT_RESPONSE,
         reportMetricsError: {
           boardMetricsError: null,
@@ -486,15 +533,16 @@ describe('Report Step', () => {
       };
 
       setup(REQUIRED_DATA_LIST);
-
-      expect(addNotification).toBeCalledWith({
+      expect(addNotification).toHaveBeenCalledTimes(2);
+      expect(addNotification).toHaveBeenCalledWith({
+        id: expect.any(String),
         message: MESSAGE.FAILED_TO_GET_DATA('Buildkite'),
         type: 'error',
       });
     });
 
     it('should call addNotification when having sourceControlMetricsError', () => {
-      reportHook.current.reportData = {
+      reportHook.current.reportInfos[0].reportData = {
         ...MOCK_REPORT_RESPONSE,
         reportMetricsError: {
           boardMetricsError: null,
@@ -508,48 +556,52 @@ describe('Report Step', () => {
 
       setup(REQUIRED_DATA_LIST);
 
-      expect(addNotification).toBeCalledWith({
+      expect(addNotification).toHaveBeenCalledWith({
+        id: expect.any(String),
         message: MESSAGE.FAILED_TO_GET_DATA('GitHub'),
         type: 'error',
       });
     });
 
     it('should call addNotification when having generalError4Board error', () => {
-      reportHook.current.generalError4Board = error;
+      reportHook.current.reportInfos[1].generalError4Board = { message: error, shouldShow: true };
 
-      setup(REQUIRED_DATA_LIST);
+      setup(REQUIRED_DATA_LIST, [emptyValueDateRange]);
 
-      expect(addNotification).toBeCalledWith({
+      expect(addNotification).toHaveBeenCalledWith({
+        id: expect.any(String),
         message: MESSAGE.FAILED_TO_REQUEST,
         type: 'error',
       });
     });
 
     it('should call addNotification when having generalError4Dora error', () => {
-      reportHook.current.generalError4Dora = error;
+      reportHook.current.reportInfos[1].generalError4Dora = { message: error, shouldShow: true };
 
-      setup(REQUIRED_DATA_LIST);
+      setup(REQUIRED_DATA_LIST, [emptyValueDateRange]);
 
-      expect(addNotification).toBeCalledWith({
+      expect(addNotification).toHaveBeenCalledWith({
+        id: expect.any(String),
         message: MESSAGE.FAILED_TO_REQUEST,
         type: 'error',
       });
     });
 
     it('should call addNotification when having generalError4Report error', () => {
-      reportHook.current.generalError4Report = error;
+      reportHook.current.reportInfos[1].generalError4Report = { message: error, shouldShow: true };
 
-      setup(REQUIRED_DATA_LIST);
+      setup(REQUIRED_DATA_LIST, [emptyValueDateRange]);
 
-      expect(addNotification).toBeCalledWith({
+      expect(addNotification).toHaveBeenCalledWith({
+        id: expect.any(String),
         message: MESSAGE.FAILED_TO_REQUEST,
         type: 'error',
       });
     });
 
     it('should retry startToRequestData when click the retry button in Board Metrics', async () => {
-      reportHook.current.generalError4Report = error;
-      setup(REQUIRED_DATA_LIST);
+      reportHook.current.reportInfos[1].generalError4Report = { message: error, shouldShow: true };
+      setup(REQUIRED_DATA_LIST, [emptyValueDateRange]);
 
       await userEvent.click(screen.getAllByText(RETRY)[0]);
 
@@ -559,14 +611,78 @@ describe('Report Step', () => {
     });
 
     it('should retry startToRequestData when click the retry button in Dora Metrics', async () => {
-      reportHook.current.generalError4Report = error;
-      setup(REQUIRED_DATA_LIST);
+      reportHook.current.reportInfos[1].generalError4Report = { message: error, shouldShow: true };
+      setup(REQUIRED_DATA_LIST, [emptyValueDateRange]);
 
       await userEvent.click(screen.getAllByText(RETRY)[1]);
 
       await waitFor(() => {
         expect(useGenerateReportEffect().startToRequestData).toHaveBeenCalledTimes(2);
       });
+    });
+
+    it('should not show notification when sending request', async () => {
+      reportHook.current.hasPollingStarted = true;
+      setup(REQUIRED_DATA_LIST, [emptyValueDateRange]);
+
+      expect(addNotification).toHaveBeenCalledTimes(0);
+    });
+
+    it('should not show notification given the requests all failed', () => {
+      reportHook.current.hasPollingStarted = false;
+      reportHook.current.reportInfos[0].reportData = undefined;
+      reportHook.current.reportInfos[1].reportData = undefined;
+      setup(REQUIRED_DATA_LIST, [fullValueDateRange]);
+      expect(addNotification).toHaveBeenCalledTimes(0);
+    });
+
+    it('should show "file will expire ..." notification given the request is successful', () => {
+      reportHook.current.hasPollingStarted = false;
+      setup(REQUIRED_DATA_LIST, [fullValueDateRange]);
+      expect(addNotification).toHaveBeenCalledWith({
+        message: MESSAGE.EXPIRE_INFORMATION(30),
+      });
+    });
+
+    it('should not show notifications given shown once', () => {
+      reportHook.current.reportInfos = reportHook.current.reportInfos.slice(1);
+      reportHook.current.reportInfos[0].generalError4Report = { shouldShow: false, message: 'error' };
+      reportHook.current.reportInfos[0].generalError4Dora = { shouldShow: false, message: 'error' };
+      reportHook.current.reportInfos[0].generalError4Board = { shouldShow: false, message: 'error' };
+      reportHook.current.reportInfos[0].timeout4Dora = { shouldShow: false, message: 'error' };
+      reportHook.current.reportInfos[0].timeout4Board = { shouldShow: false, message: 'error' };
+      reportHook.current.reportInfos[0].timeout4Report = { shouldShow: false, message: 'error' };
+      reportHook.current.reportInfos[0].reportData!.reportMetricsError = {
+        boardMetricsError: { status: 400, message: 'error' },
+        pipelineMetricsError: { status: 400, message: 'error' },
+        sourceControlMetricsError: { status: 400, message: 'error' },
+      };
+      reportHook.current.reportInfos[0].shouldShowBoardMetricsError = false;
+      reportHook.current.reportInfos[0].shouldShowPipelineMetricsError = false;
+      reportHook.current.reportInfos[0].shouldShowSourceControlMetricsError = false;
+      setup(REQUIRED_DATA_LIST, [emptyValueDateRange]);
+      expect(addNotification).toHaveBeenCalledTimes(0);
+    });
+
+    it('should close error notification when change dateRange', async () => {
+      reportHook.current.reportInfos[1].timeout4Board = { shouldShow: true, message: 'error' };
+      const { getByTestId, getByText } = setup(REQUIRED_DATA_LIST, [fullValueDateRange, emptyValueDateRange]);
+      const expandMoreIcon = getByTestId('ExpandMoreIcon');
+      await act(async () => {
+        await userEvent.click(expandMoreIcon);
+      });
+      const secondDateRange = await getByText(/2024\/02\/04/);
+
+      await userEvent.click(secondDateRange);
+      await userEvent.click(expandMoreIcon);
+      const firstDateRange = screen.getByText(/2024\/02\/18/);
+      await userEvent.click(firstDateRange);
+      expect(addNotification).toHaveBeenCalledWith({
+        id: expect.any(String),
+        message: MESSAGE.LOADING_TIMEOUT('Board metrics'),
+        type: 'error',
+      });
+      expect(closeNotification).toHaveBeenCalledTimes(1);
     });
   });
 });

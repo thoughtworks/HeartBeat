@@ -288,10 +288,14 @@ export const MOCK_IMPORT_FILE = {
   metrics: [],
 };
 
-export const MOCK_DATE_RANGE = [
+export const MockedDateRanges = [
   {
-    startDate: '2023-04-04T00:00:00+08:00',
-    endDate: '2023-04-18T00:00:00+08:00',
+    startDate: '2024-02-04T00:00:00.000+08:00',
+    endDate: '2024-02-17T23:59:59.999+08:00',
+  },
+  {
+    startDate: '2024-02-18T00:00:00.000+08:00',
+    endDate: '2024-02-28T23:59:59.999+08:00',
   },
 ];
 

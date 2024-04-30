@@ -22,6 +22,7 @@ import dayjs from 'dayjs';
 export type DateRange = {
   startDate: string | null;
   endDate: string | null;
+  disabled?: boolean;
 }[];
 
 export interface BasicConfigState {

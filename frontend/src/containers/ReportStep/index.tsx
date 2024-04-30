@@ -1,12 +1,25 @@
 import {
   filterAndMapCycleTimeSettings,
-  formatDateToTimestampString,
   formatDuplicatedNameWithSuffix,
   getJiraBoardToken,
   getRealDoneStatus,
   onlyEmptyAndDoneState,
   sortDateRanges,
 } from '@src/utils/util';
+import {
+  GeneralErrorKey,
+  initReportInfo,
+  IReportError,
+  IReportInfo,
+  TimeoutErrorKey,
+  useGenerateReportEffect,
+} from '@src/hooks/useGenerateReportEffect';
+import {
+  addNotification,
+  closeAllNotifications,
+  closeNotification,
+  Notification,
+} from '@src/context/notification/NotificationSlice';
 import {
   isOnlySelectClassification,
   isSelectBoardMetrics,
@@ -21,46 +34,57 @@ import {
   REPORT_PAGE_TYPE,
   REQUIRED_DATA,
 } from '@src/constants/resources';
-import { addNotification, closeAllNotifications, Notification } from '@src/context/notification/NotificationSlice';
 import { IPipelineConfig, selectMetricsContent } from '@src/context/Metrics/metricsSlice';
 import { backStep, selectTimeStamp } from '@src/context/stepper/StepperSlice';
-import { useGenerateReportEffect } from '@src/hooks/useGenerateReportEffect';
-import React, { useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import { StyledCalendarWrapper } from '@src/containers/ReportStep/style';
 import { ReportButtonGroup } from '@src/containers/ReportButtonGroup';
 import DateRangeViewer from '@src/components/Common/DateRangeViewer';
 import { ReportResponseDTO } from '@src/clients/report/dto/response';
 import BoardMetrics from '@src/containers/ReportStep/BoardMetrics';
 import DoraMetrics from '@src/containers/ReportStep/DoraMetrics';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useAppDispatch } from '@src/hooks/useAppDispatch';
 import { BoardDetail, DoraDetail } from './ReportDetail';
 import { METRIC_TYPES } from '@src/constants/commons';
 import { useAppSelector } from '@src/hooks';
+import { uniqueId } from 'lodash';
 
 export interface ReportStepProps {
   handleSave: () => void;
 }
 
+const timeoutNotificationMessages = {
+  [TimeoutErrorKey[METRIC_TYPES.BOARD]]: 'Board metrics',
+  [TimeoutErrorKey[METRIC_TYPES.DORA]]: 'DORA metrics',
+  [TimeoutErrorKey[METRIC_TYPES.ALL]]: 'Report',
+};
+
 const ReportStep = ({ handleSave }: ReportStepProps) => {
   const dispatch = useAppDispatch();
+  const configData = useAppSelector(selectConfig);
+  const descendingDateRanges = sortDateRanges(configData.basic.dateRange);
+  const [selectedDateRange, setSelectedDateRange] = useState<Record<string, string | null | boolean | undefined>>(
+    descendingDateRanges[0],
+  );
+  const [currentDataInfo, setCurrentDataInfo] = useState<IReportInfo>(initReportInfo());
+
   const {
     startToRequestData,
-    reportData,
+    reportInfos,
     stopPollingReports,
-    timeout4Board,
-    timeout4Dora,
-    timeout4Report,
-    generalError4Board,
-    generalError4Dora,
-    generalError4Report,
+    closeReportInfosErrorStatus,
+    closeBoardMetricsError,
+    closePipelineMetricsError,
+    closeSourceControlMetricsError,
+    hasPollingStarted,
   } = useGenerateReportEffect();
 
   const [exportValidityTimeMin, setExportValidityTimeMin] = useState<number | undefined | null>(undefined);
   const [pageType, setPageType] = useState<string>(REPORT_PAGE_TYPE.SUMMARY);
   const [isCsvFileGeneratedAtEnd, setIsCsvFileGeneratedAtEnd] = useState<boolean>(false);
   const [notifications4SummaryPage, setNotifications4SummaryPage] = useState<Omit<Notification, 'id'>[]>([]);
+  const [notificationIds, setNotificationIds] = useState<string[]>([]);
 
-  const configData = useAppSelector(selectConfig);
   const csvTimeStamp = useAppSelector(selectTimeStamp);
   const {
     cycleTimeSettingsType,
@@ -76,9 +100,8 @@ const ReportStep = ({ handleSave }: ReportStepProps) => {
     leadTimeForChanges,
   } = useAppSelector(selectMetricsContent);
 
-  const descendingDateRanges = sortDateRanges(configData.basic.dateRange);
-  const startDate = configData.basic.dateRange[0]?.startDate ?? '';
-  const endDate = configData.basic.dateRange[0]?.endDate ?? '';
+  const startDate = selectedDateRange?.startDate as string;
+  const endDate = selectedDateRange?.endDate as string;
   const { metrics, calendarType } = configData.basic;
   const boardingMappingStates = [...new Set(cycleTimeSettings.map((item) => item.value))];
   const isOnlyEmptyAndDoneState = onlyEmptyAndDoneState(boardingMappingStates);
@@ -89,10 +112,15 @@ const ReportStep = ({ handleSave }: ReportStepProps) => {
   const isSummaryPage = useMemo(() => pageType === REPORT_PAGE_TYPE.SUMMARY, [pageType]);
 
   const getErrorMessage4Board = () => {
-    if (reportData?.reportMetricsError.boardMetricsError) {
-      return `Failed to get Jira info, status: ${reportData.reportMetricsError.boardMetricsError.status}`;
+    if (currentDataInfo.reportData?.reportMetricsError.boardMetricsError) {
+      return `Failed to get Jira info, status: ${currentDataInfo.reportData.reportMetricsError.boardMetricsError.status}`;
     }
-    return timeout4Board || timeout4Report || generalError4Board || generalError4Report;
+    return (
+      currentDataInfo.timeout4Board.message ||
+      currentDataInfo.timeout4Report.message ||
+      currentDataInfo.generalError4Board.message ||
+      currentDataInfo.generalError4Report.message
+    );
   };
 
   const getJiraBoardSetting = () => {
@@ -172,8 +200,8 @@ const ReportStep = ({ handleSave }: ReportStepProps) => {
     });
 
   const basicReportRequestBody = {
-    startTime: formatDateToTimestampString(startDate),
-    endTime: formatDateToTimestampString(endDate),
+    startTime: null,
+    endTime: null,
     considerHoliday: calendarType === CALENDAR.CHINA,
     csvTimeStamp,
     metrics,
@@ -201,6 +229,15 @@ const ReportStep = ({ handleSave }: ReportStepProps) => {
   };
 
   useEffect(() => {
+    notificationIds.forEach((notificationId) => {
+      closeNotification(notificationId);
+    });
+    setNotificationIds([]);
+    setCurrentDataInfo(reportInfos.find((singleResult) => singleResult.id === selectedDateRange.startDate)!);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [reportInfos, selectedDateRange]);
+
+  useEffect(() => {
     setPageType(onlySelectClassification ? REPORT_PAGE_TYPE.BOARD : REPORT_PAGE_TYPE.SUMMARY);
     return () => {
       stopPollingReports();
@@ -208,7 +245,7 @@ const ReportStep = ({ handleSave }: ReportStepProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     exportValidityTimeMin &&
       isCsvFileGeneratedAtEnd &&
       dispatch(
@@ -218,7 +255,7 @@ const ReportStep = ({ handleSave }: ReportStepProps) => {
       );
   }, [dispatch, exportValidityTimeMin, isCsvFileGeneratedAtEnd]);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (exportValidityTimeMin && isCsvFileGeneratedAtEnd) {
       const startTime = Date.now();
       const timer = setInterval(() => {
@@ -243,14 +280,19 @@ const ReportStep = ({ handleSave }: ReportStepProps) => {
     }
   }, [dispatch, exportValidityTimeMin, isCsvFileGeneratedAtEnd]);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     dispatch(closeAllNotifications());
   }, [dispatch, pageType]);
 
   useEffect(() => {
-    setExportValidityTimeMin(reportData?.exportValidityTime);
-    reportData && setIsCsvFileGeneratedAtEnd(reportData.allMetricsCompleted && reportData.isSuccessfulCreateCsvFile);
-  }, [dispatch, reportData]);
+    if (hasPollingStarted) return;
+    const successfulReportInfos = reportInfos.filter((reportInfo) => reportInfo.reportData);
+    if (successfulReportInfos.length === 0) return;
+    setExportValidityTimeMin(successfulReportInfos[0].reportData?.exportValidityTime);
+    setIsCsvFileGeneratedAtEnd(
+      successfulReportInfos.some((reportInfo) => reportInfo.reportData?.isSuccessfulCreateCsvFile),
+    );
+  }, [dispatch, reportInfos, hasPollingStarted]);
 
   useEffect(() => {
     if (isSummaryPage && notifications4SummaryPage.length > 0) {
@@ -261,106 +303,71 @@ const ReportStep = ({ handleSave }: ReportStepProps) => {
   }, [dispatch, notifications4SummaryPage, isSummaryPage]);
 
   useEffect(() => {
-    if (reportData?.reportMetricsError.boardMetricsError) {
+    if (!currentDataInfo.shouldShowBoardMetricsError) return;
+    if (currentDataInfo.reportData?.reportMetricsError.boardMetricsError) {
+      const notificationId = uniqueId();
+      setNotificationIds((pre) => [...pre, notificationId]);
       setNotifications4SummaryPage((prevState) => [
         ...prevState,
         {
+          id: notificationId,
           message: MESSAGE.FAILED_TO_GET_DATA('Board Metrics'),
           type: 'error',
         },
       ]);
     }
-  }, [reportData?.reportMetricsError.boardMetricsError]);
+    closeBoardMetricsError(selectedDateRange.startDate as string);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentDataInfo.reportData?.reportMetricsError.boardMetricsError]);
 
   useEffect(() => {
-    if (reportData?.reportMetricsError.pipelineMetricsError) {
+    if (!currentDataInfo.shouldShowPipelineMetricsError) return;
+    if (currentDataInfo.reportData?.reportMetricsError.pipelineMetricsError) {
+      const notificationId = uniqueId();
+      setNotificationIds((pre) => [...pre, notificationId]);
       setNotifications4SummaryPage((prevState) => [
         ...prevState,
         {
+          id: notificationId,
           message: MESSAGE.FAILED_TO_GET_DATA('Buildkite'),
           type: 'error',
         },
       ]);
     }
-  }, [reportData?.reportMetricsError.pipelineMetricsError]);
+    closePipelineMetricsError(selectedDateRange.startDate as string);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentDataInfo.reportData?.reportMetricsError.pipelineMetricsError]);
 
   useEffect(() => {
-    if (reportData?.reportMetricsError.sourceControlMetricsError) {
+    if (!currentDataInfo.shouldShowSourceControlMetricsError) return;
+    if (currentDataInfo.reportData?.reportMetricsError.sourceControlMetricsError) {
+      const notificationId = uniqueId();
+      setNotificationIds((pre) => [...pre, notificationId]);
       setNotifications4SummaryPage((prevState) => [
         ...prevState,
         {
+          id: notificationId,
           message: MESSAGE.FAILED_TO_GET_DATA('GitHub'),
           type: 'error',
         },
       ]);
     }
-  }, [reportData?.reportMetricsError.sourceControlMetricsError]);
+    closeSourceControlMetricsError(selectedDateRange.startDate as string);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentDataInfo.reportData?.reportMetricsError.sourceControlMetricsError]);
 
   useEffect(() => {
-    timeout4Report &&
-      setNotifications4SummaryPage((prevState) => [
-        ...prevState,
-        {
-          message: MESSAGE.LOADING_TIMEOUT('Report'),
-          type: 'error',
-        },
-      ]);
-  }, [timeout4Report]);
-
-  useEffect(() => {
-    timeout4Board &&
-      setNotifications4SummaryPage((prevState) => [
-        ...prevState,
-        {
-          message: MESSAGE.LOADING_TIMEOUT('Board metrics'),
-          type: 'error',
-        },
-      ]);
-  }, [timeout4Board]);
-
-  useEffect(() => {
-    timeout4Dora &&
-      setNotifications4SummaryPage((prevState) => [
-        ...prevState,
-        {
-          message: MESSAGE.LOADING_TIMEOUT('DORA metrics'),
-          type: 'error',
-        },
-      ]);
-  }, [timeout4Dora]);
-
-  useEffect(() => {
-    generalError4Board &&
-      setNotifications4SummaryPage((prevState) => [
-        ...prevState,
-        {
-          message: MESSAGE.FAILED_TO_REQUEST,
-          type: 'error',
-        },
-      ]);
-  }, [generalError4Board]);
-
-  useEffect(() => {
-    generalError4Dora &&
-      setNotifications4SummaryPage((prevState) => [
-        ...prevState,
-        {
-          message: MESSAGE.FAILED_TO_REQUEST,
-          type: 'error',
-        },
-      ]);
-  }, [generalError4Dora]);
-
-  useEffect(() => {
-    generalError4Report &&
-      setNotifications4SummaryPage((prevState) => [
-        ...prevState,
-        {
-          message: MESSAGE.FAILED_TO_REQUEST,
-          type: 'error',
-        },
-      ]);
-  }, [generalError4Report]);
+    Object.values(TimeoutErrorKey).forEach((value) => handleTimeoutAndGeneralError(value));
+    Object.values(GeneralErrorKey).forEach((value) => handleTimeoutAndGeneralError(value));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    currentDataInfo.timeout4Board,
+    currentDataInfo.timeout4Report,
+    currentDataInfo.timeout4Dora,
+    currentDataInfo.generalError4Board,
+    currentDataInfo.generalError4Dora,
+    currentDataInfo.generalError4Report,
+  ]);
 
   useEffect(() => {
     startToRequestData(basicReportRequestBody);
@@ -373,7 +380,7 @@ const ReportStep = ({ handleSave }: ReportStepProps) => {
         <BoardMetrics
           startToRequestBoardData={() => startToRequestData(boardReportRequestBody)}
           onShowDetail={() => setPageType(REPORT_PAGE_TYPE.BOARD)}
-          boardReport={reportData}
+          boardReport={currentDataInfo.reportData}
           errorMessage={getErrorMessage4Board()}
         />
       )}
@@ -381,8 +388,13 @@ const ReportStep = ({ handleSave }: ReportStepProps) => {
         <DoraMetrics
           startToRequestDoraData={() => startToRequestData(doraReportRequestBody)}
           onShowDetail={() => setPageType(REPORT_PAGE_TYPE.DORA)}
-          doraReport={reportData}
-          errorMessage={timeout4Dora || timeout4Report || generalError4Dora || generalError4Report}
+          doraReport={currentDataInfo.reportData}
+          errorMessage={
+            currentDataInfo.timeout4Dora.message ||
+            currentDataInfo.timeout4Report.message ||
+            currentDataInfo.generalError4Dora.message ||
+            currentDataInfo.generalError4Report.message
+          }
         />
       )}
     </>
@@ -400,18 +412,43 @@ const ReportStep = ({ handleSave }: ReportStepProps) => {
     setPageType(REPORT_PAGE_TYPE.SUMMARY);
   };
 
+  const handleTimeoutAndGeneralError = (value: string) => {
+    const errorKey = value as keyof IReportError;
+    if (!currentDataInfo[errorKey].shouldShow) return;
+    if (currentDataInfo[errorKey].message) {
+      const notificationId = uniqueId();
+      setNotificationIds((pre) => [...pre, notificationId]);
+      setNotifications4SummaryPage((prevState) => [
+        ...prevState,
+        {
+          id: notificationId,
+          message: timeoutNotificationMessages[errorKey]
+            ? MESSAGE.LOADING_TIMEOUT(timeoutNotificationMessages[errorKey])
+            : MESSAGE.FAILED_TO_REQUEST,
+          type: 'error',
+        },
+      ]);
+    }
+    closeReportInfosErrorStatus(selectedDateRange.startDate as string, errorKey);
+  };
+
   return (
     <>
       {startDate && endDate && (
         <StyledCalendarWrapper data-testid={'calendarWrapper'} isSummaryPage={isSummaryPage}>
-          <DateRangeViewer dateRanges={descendingDateRanges} />
+          <DateRangeViewer
+            dateRangeList={descendingDateRanges}
+            selectedDateRange={selectedDateRange}
+            changeDateRange={(dateRange) => setSelectedDateRange(dateRange)}
+            disabledAll={false}
+          />
         </StyledCalendarWrapper>
       )}
       {isSummaryPage
         ? showSummary()
         : pageType === REPORT_PAGE_TYPE.BOARD
-          ? showBoardDetail(reportData)
-          : !!reportData && showDoraDetail(reportData)}
+          ? showBoardDetail(currentDataInfo.reportData)
+          : !!currentDataInfo.reportData && showDoraDetail(currentDataInfo.reportData)}
       <ReportButtonGroup
         isShowSave={isSummaryPage}
         isShowExportMetrics={isSummaryPage}
@@ -419,7 +456,7 @@ const ReportStep = ({ handleSave }: ReportStepProps) => {
         isShowExportPipelineButton={isSummaryPage ? shouldShowDoraMetrics : pageType === REPORT_PAGE_TYPE.DORA}
         handleBack={() => handleBack()}
         handleSave={() => handleSave()}
-        reportData={reportData}
+        reportData={currentDataInfo.reportData}
         startDate={startDate}
         endDate={endDate}
         csvTimeStamp={csvTimeStamp}

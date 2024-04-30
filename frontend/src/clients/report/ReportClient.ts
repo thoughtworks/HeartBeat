@@ -2,6 +2,11 @@ import { ReportCallbackResponse, ReportResponseDTO } from '@src/clients/report/d
 import { ReportRequestDTO } from '@src/clients/report/dto/request';
 import { HttpClient } from '@src/clients/HttpClient';
 
+export interface IPollingRes {
+  status: number;
+  response: ReportResponseDTO;
+}
+
 export class ReportClient extends HttpClient {
   status = 0;
   reportCallbackResponse: ReportCallbackResponse = {
@@ -94,12 +99,10 @@ export class ReportClient extends HttpClient {
       .catch((e) => {
         throw e;
       });
-    return {
-      response: this.reportCallbackResponse,
-    };
+    return this.reportCallbackResponse;
   };
 
-  polling = async (url: string) => {
+  polling = async (url: string): Promise<IPollingRes> => {
     await this.axiosInstance
       .get(url)
       .then((res) => {

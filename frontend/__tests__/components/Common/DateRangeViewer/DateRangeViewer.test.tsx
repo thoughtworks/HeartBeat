@@ -5,7 +5,7 @@ import { render } from '@testing-library/react';
 
 describe('DateRangeViewer', () => {
   const setup = (dateRanges: DateRange) => {
-    return render(<DateRangeViewer dateRanges={dateRanges} />);
+    return render(<DateRangeViewer dateRangeList={dateRanges} />);
   };
   const mockDateRanges = [
     {

@@ -4,20 +4,19 @@ import { Divider } from '@mui/material';
 import styled from '@emotion/styled';
 import { theme } from '@src/theme';
 
-export const DateRangeContainer = styled.div({
+export const DateRangeContainer = styled('div')(({ color }) => ({
   position: 'relative',
   display: 'flex',
   justifyContent: 'flex-start',
   alignItems: 'center',
-  backgroundColor: theme.palette.secondary.dark,
   borderRadius: '0.5rem',
   border: '0.07rem solid',
   borderColor: theme.palette.grey[400],
   width: 'fit-content',
   padding: '.75rem',
-  color: theme.palette.text.disabled,
   fontSize: '.875rem',
-});
+  color: color,
+}));
 
 export const DateRangeExpandContainer = styled.div({
   position: 'absolute',
@@ -47,27 +46,30 @@ export const DateRangeExpandContainer = styled.div({
 });
 
 interface SingleDateRangeProps {
-  backgroundColor: string;
-  color: string;
+  disabled: boolean;
 }
 
-export const SingleDateRange = styled.div<SingleDateRangeProps>((props) => ({
+export const SingleDateRange = styled('div')(({ disabled }: SingleDateRangeProps) => ({
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
-  backgroundColor: props.backgroundColor,
-  color: props.color,
+  color: theme.palette.text.primary,
   fontSize: '.875rem',
   padding: '0.5rem',
+  cursor: 'pointer',
+
+  ...(disabled && {
+    color: theme.palette.text.disabled,
+    cursor: 'default',
+  }),
 }));
+
 export const StyledArrowForward = styled(ArrowForward)({
-  color: theme.palette.text.disabled,
   margin: '0 .5rem',
   fontSize: '0.875rem',
 });
 
 export const StyledCalendarToday = styled(CalendarToday)({
-  color: theme.palette.text.disabled,
   marginLeft: '1rem',
   fontSize: '.875rem',
 });

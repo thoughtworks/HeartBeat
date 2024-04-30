@@ -21,9 +21,8 @@ describe('report client', () => {
   afterAll(() => server.close());
 
   it('should get response when generate report request status 202', async () => {
-    const excepted = {
-      response: MOCK_RETRIEVE_REPORT_RESPONSE,
-    };
+    const excepted = MOCK_RETRIEVE_REPORT_RESPONSE;
+
     server.use(
       rest.post(MOCK_REPORT_URL, (req, res, ctx) =>
         res(ctx.status(HttpStatusCode.Accepted), ctx.json(MOCK_RETRIEVE_REPORT_RESPONSE)),

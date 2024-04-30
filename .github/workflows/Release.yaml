@@ -24,7 +24,7 @@ jobs:
       - name: Validate Gradle wrapper
         uses: gradle/wrapper-validation-action@v3
       - name: Set up Gradle
-        uses: gradle/gradle-build-action@v3.3.1
+        uses: gradle/gradle-build-action@v3.3.2
       - name: Build
         run: ./gradlew clean build
       - uses: actions/upload-artifact@v4

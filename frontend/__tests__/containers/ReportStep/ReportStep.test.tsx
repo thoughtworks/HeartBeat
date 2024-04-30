@@ -39,7 +39,7 @@ import { ReactNode } from 'react';
 jest.mock('@src/context/notification/NotificationSlice', () => ({
   ...jest.requireActual('@src/context/notification/NotificationSlice'),
   addNotification: jest.fn().mockReturnValue({ type: 'ADD_NOTIFICATION' }),
-  closeNotification: jest.fn(),
+  closeNotification: jest.fn().mockReturnValue({ type: 'CLOSE_NOTIFICATION' }),
 }));
 
 jest.mock('@src/context/stepper/StepperSlice', () => ({

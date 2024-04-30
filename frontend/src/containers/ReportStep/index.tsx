@@ -229,13 +229,17 @@ const ReportStep = ({ handleSave }: ReportStepProps) => {
   };
 
   useEffect(() => {
-    notificationIds.forEach((notificationId) => {
-      closeNotification(notificationId);
-    });
-    setNotificationIds([]);
     setCurrentDataInfo(reportInfos.find((singleResult) => singleResult.id === selectedDateRange.startDate)!);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reportInfos, selectedDateRange]);
+
+  useEffect(() => {
+    notificationIds.forEach((notificationId) => {
+      dispatch(closeNotification(notificationId));
+    });
+    setNotificationIds([]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedDateRange]);
 
   useEffect(() => {
     setPageType(onlySelectClassification ? REPORT_PAGE_TYPE.BOARD : REPORT_PAGE_TYPE.SUMMARY);

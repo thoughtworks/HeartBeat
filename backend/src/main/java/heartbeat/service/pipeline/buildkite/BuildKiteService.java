@@ -80,8 +80,8 @@ public class BuildKiteService {
 
 	public List<String> getPipelineCrewNames(List<BuildKiteBuildInfo> buildKiteBuildInfos) {
 		List<String> buildInfoList = new ArrayList<>(buildKiteBuildInfos.stream()
-			.filter(buildKiteBuildInfo -> Objects.nonNull(buildKiteBuildInfo.getCreator()))
-			.map(buildKiteBuildInfo -> buildKiteBuildInfo.getCreator().getName())
+			.filter(buildKiteBuildInfo -> Objects.nonNull(buildKiteBuildInfo.getAuthor()))
+			.map(buildKiteBuildInfo -> buildKiteBuildInfo.getAuthor().getName())
 			.distinct()
 			.sorted()
 			.toList());

@@ -213,6 +213,7 @@ public class PipelineServiceTest {
 		void shouldReturnValueWhenDeploymentEnvListIsNotEmpty() {
 			List<BuildKiteBuildInfo> fakeBuildKiteBuildInfos = List.of(BuildKiteBuildInfo.builder()
 				.creator(BuildKiteBuildInfo.Creator.builder().name("someone").build())
+				.author(BuildKiteBuildInfo.Author.builder().name("someone").build())
 				.build());
 			GenerateReportRequest request = GenerateReportRequest.builder()
 				.buildKiteSetting(BuildKiteSetting.builder()
@@ -235,24 +236,28 @@ public class PipelineServiceTest {
 
 			assertEquals(result.getDeployTimesList().size(), 1);
 			assertEquals(result.getBuildInfosList().size(), 1);
+			assertEquals(1, result.getBuildInfosList().get(0).getValue().size());
+			assertEquals("someone", result.getBuildInfosList().get(0).getValue().get(0).getAuthor().getName());
 			verify(buildKiteService, times(1)).fetchPipelineBuilds(any(), any(), any(), any());
 			verify(buildKiteService, times(1)).countDeployTimes(any(), any(), any(), any());
 		}
 
 		@Test
-		void shouldFilterCreatorByInputCrews() {
+		void shouldFilterAuthorsByInputCrews() {
 			List<BuildKiteBuildInfo> fakeBuildKiteBuildInfos = List.of(
 					BuildKiteBuildInfo.builder()
 						.creator(BuildKiteBuildInfo.Creator.builder().name("test-creator1").build())
+						.author(BuildKiteBuildInfo.Author.builder().name("test-author1").build())
 						.build(),
 					BuildKiteBuildInfo.builder()
 						.creator(BuildKiteBuildInfo.Creator.builder().name("test-creator2").build())
+						.author(BuildKiteBuildInfo.Author.builder().name("test-author2").build())
 						.build(),
-					BuildKiteBuildInfo.builder().creator(null).build());
+					BuildKiteBuildInfo.builder().author(null).build());
 			GenerateReportRequest request = GenerateReportRequest.builder()
 				.buildKiteSetting(BuildKiteSetting.builder()
 					.deploymentEnvList(List.of(DeploymentEnvironment.builder().id("env1").repository("repo1").build()))
-					.pipelineCrews(List.of("test-creator2", "test-creator3", "Unknown"))
+					.pipelineCrews(List.of("test-author2", "test-author3", "Unknown"))
 					.build())
 				.startTime(MOCK_START_TIME)
 				.endTime(MOCK_END_TIME)

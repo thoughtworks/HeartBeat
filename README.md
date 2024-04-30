@@ -294,10 +294,12 @@ _Image 3-19，Settings for Pipeline_
 They are sharing the similar settings which you need to specify the pipeline step so that Heartbeat will know in which pipeline and step, team consider it as deploy to PROD. So that we could use it to calculate metrics.
 
 | Items         | Description                                       |
-| ------------- --|----------------------------------------------------------------- |
+|---------------|---------------------------------------------------|
 | Organization  | The organization for your pipelines               |
 | Pipeline Name | Your pipeline name                                |
-| Steps         | The pipeline step that consider as deploy to PROD || Branches      | Your selected branches                            |
+| Steps         | The pipeline step that consider as deploy to PROD |
+| Branches      | Your selected branches                            |
+| Crew setting  | Your selected author from github                  |
 
 ## 3.3 Export and import config info
 

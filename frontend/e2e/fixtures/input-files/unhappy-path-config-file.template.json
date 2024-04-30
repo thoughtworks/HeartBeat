@@ -32,7 +32,27 @@
   },
   "crews": [],
   "assigneeFilter": "lastAssignee",
-  "pipelineCrews": ["heartbeat-user", "guzhongren", "Unknown"],
+  "pipelineCrews": [
+    "Chao",
+    "GuangbinMa",
+    "JiangRu1",
+    "Jianxun.Ma",
+    "Nathan Wang",
+    "Steveay",
+    "Yunsong",
+    "andrea999",
+    "guzhongren",
+    "junbo dai",
+    "junbo.dai",
+    "mjx20045912",
+    "neomgb",
+    "sqsq5566",
+    "weiran.sun",
+    "xuebing",
+    "yichen.wang",
+    "李雪冰",
+    "Unknown"
+  ],
   "cycleTime": {
     "type": "byColumn",
     "jiraColumns": [

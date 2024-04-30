@@ -132,7 +132,7 @@ class BuildKiteServiceTest {
 		List<BuildKiteBuildInfo> buildKiteBuildInfoList = new ArrayList<>();
 		buildKiteBuildInfoList.add(BuildKiteBuildInfo.builder()
 			.jobs(List.of(testJob))
-			.author(BuildKiteBuildInfo.Author.builder().name("xx").build())
+			.author(BuildKiteBuildInfo.Author.builder().name("author").build())
 			.creator(BuildKiteBuildInfo.Creator.builder().name("xx").build())
 			.build());
 		ResponseEntity<List<BuildKiteBuildInfo>> responseEntity = new ResponseEntity<>(buildKiteBuildInfoList,
@@ -146,6 +146,9 @@ class BuildKiteServiceTest {
 
 		assertNotNull(pipelineStepsDTO);
 		assertThat(pipelineStepsDTO.getSteps().get(0)).isEqualTo(TEST_JOB_NAME);
+		assertEquals(2, pipelineStepsDTO.getPipelineCrews().size());
+		assertEquals("author", pipelineStepsDTO.getPipelineCrews().get(0));
+		assertEquals("Unknown", pipelineStepsDTO.getPipelineCrews().get(1));
 	}
 
 	@Test

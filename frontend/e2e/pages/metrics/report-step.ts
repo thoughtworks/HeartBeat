@@ -103,8 +103,6 @@ export class ReportStep {
     await expect(this.leadTimeForChangesRows.nth(3)).toContainText(this.combineStrings(['Pipeline Lead Time', '0.50']));
     await expect(this.leadTimeForChangesRows.nth(4)).toContainText(this.combineStrings(['Total Lead Time', '6.62']));
 
-    await expect(this.leadTimeForChangesRows.nth(4)).toContainText(this.combineStrings(['Total Lead Time', '6.62']));
-
     await expect(this.devChangeFailureRateRows.getByRole('cell').nth(0)).toContainText('Heartbeat/ Deploy prod');
     await expect(this.devChangeFailureRateRows.getByRole('cell').nth(1)).toContainText('17.50%(7/40)');
     await expect(this.devMeanTimeToRecoveryRows.getByRole('cell').nth(0)).toContainText('Heartbeat/ Deploy prod');

@@ -127,11 +127,12 @@ _Image 3-6，Classification Settings_
 ![Image 3-7](https://user-images.githubusercontent.com/995849/89784260-f6a08800-db4a-11ea-8ce2-87983363aa18.png)\
 _Image 3-7，Settings for Pipeline_
 
-| Items         | Description              |
-| ------------- | ------------------------ |
-| Organization  | 您的部署流水线所属的组织 |
-| Pipeline Name | 您的流水线名             |
-| Steps         | 流水线步骤名             |
+| Items         | Description  |
+| ------------- |--------------|
+| Organization  | 你的部署流水线所属的组织 |
+| Pipeline Name | 你的流水线名       |
+| Steps         | 流水线步骤名       |
+| Crew setting  | 代码提交者        |
 
 ## 3.2 导入导出配置信息
 

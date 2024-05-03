@@ -1,10 +1,16 @@
 import { MOCK_SOURCE_CONTROL_VERIFY_TOKEN_URL, MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS } from '../fixtures';
 import { sourceControlClient } from '@src/clients/sourceControl/SourceControlClient';
+import { HttpResponse, http } from 'msw';
 import { setupServer } from 'msw/node';
 import { HttpStatusCode } from 'axios';
-import { rest } from 'msw';
 
-const server = setupServer(rest.post(MOCK_SOURCE_CONTROL_VERIFY_TOKEN_URL, (req, res, ctx) => res(ctx.status(204))));
+const server = setupServer(
+  http.post(MOCK_SOURCE_CONTROL_VERIFY_TOKEN_URL, () => {
+    return new HttpResponse(null, {
+      status: HttpStatusCode.NoContent,
+    });
+  }),
+);
 
 describe('verify sourceControl request', () => {
   beforeAll(() => server.listen());
@@ -18,7 +24,11 @@ describe('verify sourceControl request', () => {
 
   it('should set error title when sourceControl verify response status is 401', async () => {
     server.use(
-      rest.post(MOCK_SOURCE_CONTROL_VERIFY_TOKEN_URL, (req, res, ctx) => res(ctx.status(HttpStatusCode.Unauthorized))),
+      http.post(MOCK_SOURCE_CONTROL_VERIFY_TOKEN_URL, () => {
+        return new HttpResponse(null, {
+          status: HttpStatusCode.Unauthorized,
+        });
+      }),
     );
 
     const result = await sourceControlClient.verifyToken(MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS);
@@ -28,9 +38,11 @@ describe('verify sourceControl request', () => {
 
   it('should set default error title when sourceControl verify response status 500', async () => {
     server.use(
-      rest.post(MOCK_SOURCE_CONTROL_VERIFY_TOKEN_URL, (req, res, ctx) =>
-        res(ctx.status(HttpStatusCode.InternalServerError)),
-      ),
+      http.post(MOCK_SOURCE_CONTROL_VERIFY_TOKEN_URL, () => {
+        return new HttpResponse(null, {
+          status: HttpStatusCode.InternalServerError,
+        });
+      }),
     );
 
     const result = await sourceControlClient.verifyToken(MOCK_SOURCE_CONTROL_VERIFY_REQUEST_PARAMS);

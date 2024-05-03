@@ -1,9 +1,9 @@
 import { render, waitFor, within, screen } from '@testing-library/react';
 import { setupStore } from '../../utils/setupStoreUtil';
 import MetricsStep from '@src/containers/MetricsStep';
+import { HttpResponse, http } from 'msw';
 import { Provider } from 'react-redux';
 import { setupServer } from 'msw/node';
-import { rest } from 'msw';
 
 import {
   CLASSIFICATION_SETTING,
@@ -41,9 +41,11 @@ jest.mock('@src/context/notification/NotificationSlice', () => ({
 
 let store = setupStore();
 const server = setupServer(
-  rest.post(MOCK_PIPELINE_GET_INFO_URL, (req, res, ctx) =>
-    res(ctx.status(200), ctx.body(JSON.stringify(MOCK_BUILD_KITE_GET_INFO_RESPONSE))),
-  ),
+  http.post(MOCK_PIPELINE_GET_INFO_URL, () => {
+    return new HttpResponse(JSON.stringify(MOCK_BUILD_KITE_GET_INFO_RESPONSE), {
+      status: HttpStatusCode.Ok,
+    });
+  }),
 );
 
 const setup = () =>
@@ -207,7 +209,13 @@ describe('MetricsStep', () => {
     });
 
     it('should reset real done when change Cycle time settings DONE to other status', async () => {
-      server.use(rest.post(MOCK_BOARD_INFO_URL, (req, res, ctx) => res(ctx.status(500))));
+      server.use(
+        http.post(MOCK_BOARD_INFO_URL, () => {
+          return new HttpResponse(null, {
+            status: HttpStatusCode.InternalServerError,
+          });
+        }),
+      );
       setup();
       const realDoneSettingSection = screen.getByLabelText(REAL_DONE_SETTING_SECTION);
 
@@ -223,7 +231,13 @@ describe('MetricsStep', () => {
     });
 
     it('should reset real done when change Cycle time settings other status to DONE', async () => {
-      server.use(rest.post(MOCK_BOARD_INFO_URL, (req, res, ctx) => res(ctx.status(500))));
+      server.use(
+        http.post(MOCK_BOARD_INFO_URL, () => {
+          return new HttpResponse(null, {
+            status: HttpStatusCode.InternalServerError,
+          });
+        }),
+      );
       setup();
       const cycleTimeSettingsSection = screen.getByLabelText(CYCLE_TIME_SETTINGS_SECTION);
       const realDoneSettingSection = screen.getByLabelText(REAL_DONE_SETTING_SECTION);
@@ -287,8 +301,10 @@ describe('MetricsStep', () => {
     it('should be render no card container when get board card when no data', async () => {
       store.dispatch(updateShouldGetBoardConfig(true));
       server.use(
-        rest.post(MOCK_BOARD_INFO_URL, (_, res, ctx) => {
-          return res(ctx.status(HttpStatusCode.Ok));
+        http.post(MOCK_BOARD_INFO_URL, () => {
+          return new HttpResponse(null, {
+            status: HttpStatusCode.Ok,
+          });
         }),
       );
 
@@ -307,8 +323,10 @@ describe('MetricsStep', () => {
     it('should be render failed message container when get 4xx error', async () => {
       store.dispatch(updateShouldGetBoardConfig(true));
       server.use(
-        rest.post(MOCK_BOARD_INFO_URL, (_, res, ctx) => {
-          return res(ctx.status(HttpStatusCode.BadRequest));
+        http.post(MOCK_BOARD_INFO_URL, () => {
+          return new HttpResponse(null, {
+            status: HttpStatusCode.BadRequest,
+          });
         }),
       );
 
@@ -333,63 +351,63 @@ describe('MetricsStep', () => {
 
     it('should be render form container when got board card success', async () => {
       store.dispatch(updateShouldGetBoardConfig(true));
+      const mockResponse = {
+        ignoredTargetFields: [
+          {
+            key: 'description',
+            name: 'Description',
+            flag: false,
+          },
+          {
+            key: 'customfield_10015',
+            name: 'Start date',
+            flag: false,
+          },
+        ],
+        jiraColumns: [
+          {
+            key: 'To Do',
+            value: {
+              name: 'TODO',
+              statuses: ['TODO'],
+            },
+          },
+          {
+            key: 'In Progress',
+            value: {
+              name: 'Doing',
+              statuses: ['DOING'],
+            },
+          },
+        ],
+        targetFields: [
+          {
+            key: 'issuetype',
+            name: 'Issue Type',
+            flag: false,
+          },
+          {
+            key: 'parent',
+            name: 'Parent',
+            flag: false,
+          },
+        ],
+        users: [
+          'heartbeat user',
+          'Yunsong Yang',
+          'Yufan Wang',
+          'Weiran Sun',
+          'Xuebing Li',
+          'Junbo Dai',
+          'Wenting Yan',
+          'Xingmeng Tao',
+        ],
+      };
       server.use(
-        rest.post(MOCK_BOARD_INFO_URL, (_, res, ctx) => {
-          return res(
-            ctx.status(HttpStatusCode.Ok),
-            ctx.json({
-              ignoredTargetFields: [
-                {
-                  key: 'description',
-                  name: 'Description',
-                  flag: false,
-                },
-                {
-                  key: 'customfield_10015',
-                  name: 'Start date',
-                  flag: false,
-                },
-              ],
-              jiraColumns: [
-                {
-                  key: 'To Do',
-                  value: {
-                    name: 'TODO',
-                    statuses: ['TODO'],
-                  },
-                },
-                {
-                  key: 'In Progress',
-                  value: {
-                    name: 'Doing',
-                    statuses: ['DOING'],
-                  },
-                },
-              ],
-              targetFields: [
-                {
-                  key: 'issuetype',
-                  name: 'Issue Type',
-                  flag: false,
-                },
-                {
-                  key: 'parent',
-                  name: 'Parent',
-                  flag: false,
-                },
-              ],
-              users: [
-                'heartbeat user',
-                'Yunsong Yang',
-                'Yufan Wang',
-                'Weiran Sun',
-                'Xuebing Li',
-                'Junbo Dai',
-                'Wenting Yan',
-                'Xingmeng Tao',
-              ],
-            }),
-          );
+        http.post(MOCK_BOARD_INFO_URL, () => {
+          return new HttpResponse(JSON.stringify(mockResponse), {
+            status: HttpStatusCode.Ok,
+          });
         }),
       );
 
@@ -404,8 +422,8 @@ describe('MetricsStep', () => {
     it('should show retry button when call get info timeout', async () => {
       store.dispatch(updateShouldGetBoardConfig(true));
       server.use(
-        rest.post(MOCK_BOARD_INFO_URL, (_, res) => {
-          return res.networkError('NETWORK_TIMEOUT');
+        http.post(MOCK_BOARD_INFO_URL, () => {
+          return HttpResponse.error();
         }),
       );
       setup();

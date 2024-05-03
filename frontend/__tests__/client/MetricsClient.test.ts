@@ -1,8 +1,8 @@
 import { BASE_URL, MOCK_GET_STEPS_PARAMS, VERIFY_ERROR_MESSAGE } from '../fixtures';
 import { metricsClient } from '@src/clients/MetricsClient';
+import { HttpResponse, http } from 'msw';
 import { setupServer } from 'msw/node';
 import { HttpStatusCode } from 'axios';
-import { rest } from 'msw';
 
 describe('get steps from metrics response', () => {
   const { params, buildId, organizationId, pipelineType, token } = MOCK_GET_STEPS_PARAMS;
@@ -13,8 +13,10 @@ describe('get steps from metrics response', () => {
 
   it('should return steps when getSteps response status 200', async () => {
     server.use(
-      rest.get(getStepsUrl, (req, res, ctx) => {
-        return res(ctx.status(HttpStatusCode.Ok), ctx.json({ steps: ['step1'] }));
+      http.get(getStepsUrl, () => {
+        return new HttpResponse(JSON.stringify({ steps: ['step1'] }), {
+          status: HttpStatusCode.Ok,
+        });
       }),
     );
 
@@ -25,14 +27,11 @@ describe('get steps from metrics response', () => {
 
   it('should throw error when getSteps response status 500', async () => {
     server.use(
-      rest.get(getStepsUrl, (req, res, ctx) =>
-        res(
-          ctx.status(HttpStatusCode.InternalServerError),
-          ctx.json({
-            hintInfo: VERIFY_ERROR_MESSAGE.INTERNAL_SERVER_ERROR,
-          }),
-        ),
-      ),
+      http.get(getStepsUrl, () => {
+        return new HttpResponse(JSON.stringify({ hintInfo: VERIFY_ERROR_MESSAGE.INTERNAL_SERVER_ERROR }), {
+          status: HttpStatusCode.InternalServerError,
+        });
+      }),
     );
 
     await expect(async () => {
@@ -42,9 +41,11 @@ describe('get steps from metrics response', () => {
 
   it('should throw error when getSteps response status 400', async () => {
     server.use(
-      rest.get(getStepsUrl, (req, res, ctx) =>
-        res(ctx.status(HttpStatusCode.BadRequest), ctx.json({ hintInfo: VERIFY_ERROR_MESSAGE.BAD_REQUEST })),
-      ),
+      http.get(getStepsUrl, () => {
+        return new HttpResponse(JSON.stringify({ hintInfo: VERIFY_ERROR_MESSAGE.BAD_REQUEST }), {
+          status: HttpStatusCode.BadRequest,
+        });
+      }),
     );
 
     await expect(async () => {
@@ -53,7 +54,13 @@ describe('get steps from metrics response', () => {
   });
 
   it('should show isNoStep True when getSteps response status 204', async () => {
-    server.use(rest.get(getStepsUrl, (req, res, ctx) => res(ctx.status(HttpStatusCode.NoContent))));
+    server.use(
+      http.get(getStepsUrl, () => {
+        return new HttpResponse(null, {
+          status: HttpStatusCode.NoContent,
+        });
+      }),
+    );
 
     const result = await metricsClient.getSteps(params[0], buildId, organizationId, pipelineType, token);
 

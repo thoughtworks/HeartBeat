@@ -5,14 +5,22 @@ import {
   VERIFY_ERROR_MESSAGE,
 } from '../fixtures';
 import { reportClient } from '@src/clients/report/ReportClient';
+import { HttpResponse, http } from 'msw';
 import { setupServer } from 'msw/node';
 import { HttpStatusCode } from 'axios';
-import { rest } from 'msw';
 
 const MOCK_REPORT_URL = 'http://localhost/api/v1/reports';
 const server = setupServer(
-  rest.post(MOCK_REPORT_URL, (req, res, ctx) => res(ctx.status(HttpStatusCode.Ok))),
-  rest.get(MOCK_REPORT_URL, (req, res, ctx) => res(ctx.status(HttpStatusCode.Ok))),
+  http.post(MOCK_REPORT_URL, () => {
+    return new HttpResponse(null, {
+      status: HttpStatusCode.Ok,
+    });
+  }),
+  http.get(MOCK_REPORT_URL, () => {
+    return new HttpResponse(null, {
+      status: HttpStatusCode.Ok,
+    });
+  }),
 );
 
 describe('report client', () => {
@@ -22,11 +30,12 @@ describe('report client', () => {
 
   it('should get response when generate report request status 202', async () => {
     const excepted = MOCK_RETRIEVE_REPORT_RESPONSE;
-
     server.use(
-      rest.post(MOCK_REPORT_URL, (req, res, ctx) =>
-        res(ctx.status(HttpStatusCode.Accepted), ctx.json(MOCK_RETRIEVE_REPORT_RESPONSE)),
-      ),
+      http.post(MOCK_REPORT_URL, () => {
+        return new HttpResponse(JSON.stringify(MOCK_RETRIEVE_REPORT_RESPONSE), {
+          status: HttpStatusCode.Accepted,
+        });
+      }),
     );
 
     await expect(reportClient.retrieveByUrl(MOCK_GENERATE_REPORT_REQUEST_PARAMS, '/reports')).resolves.toStrictEqual(
@@ -36,14 +45,16 @@ describe('report client', () => {
 
   it('should throw error when generate report response status 500', async () => {
     server.use(
-      rest.post(MOCK_REPORT_URL, (req, res, ctx) =>
-        res(
-          ctx.status(HttpStatusCode.InternalServerError),
-          ctx.json({
+      http.post(MOCK_REPORT_URL, () => {
+        return new HttpResponse(
+          JSON.stringify({
             hintInfo: VERIFY_ERROR_MESSAGE.INTERNAL_SERVER_ERROR,
           }),
-        ),
-      ),
+          {
+            status: HttpStatusCode.InternalServerError,
+          },
+        );
+      }),
     );
 
     await expect(async () => {
@@ -53,14 +64,16 @@ describe('report client', () => {
 
   it('should throw error when generate report response status 400', async () => {
     server.use(
-      rest.post(MOCK_REPORT_URL, (req, res, ctx) =>
-        res(
-          ctx.status(HttpStatusCode.BadRequest),
-          ctx.json({
+      http.post(MOCK_REPORT_URL, () => {
+        return new HttpResponse(
+          JSON.stringify({
             hintInfo: VERIFY_ERROR_MESSAGE.BAD_REQUEST,
           }),
-        ),
-      ),
+          {
+            status: HttpStatusCode.BadRequest,
+          },
+        );
+      }),
     );
 
     await expect(async () => {
@@ -70,14 +83,16 @@ describe('report client', () => {
 
   it('should throw error when calling pollingReport given response status 500', () => {
     server.use(
-      rest.get(MOCK_REPORT_URL, (req, res, ctx) =>
-        res(
-          ctx.status(HttpStatusCode.InternalServerError),
-          ctx.json({
+      http.get(MOCK_REPORT_URL, () => {
+        return new HttpResponse(
+          JSON.stringify({
             hintInfo: VERIFY_ERROR_MESSAGE.INTERNAL_SERVER_ERROR,
           }),
-        ),
-      ),
+          {
+            status: HttpStatusCode.InternalServerError,
+          },
+        );
+      }),
     );
 
     expect(async () => {
@@ -91,9 +106,11 @@ describe('report client', () => {
       response: MOCK_REPORT_RESPONSE,
     };
     server.use(
-      rest.get(MOCK_REPORT_URL, (req, res, ctx) =>
-        res(ctx.status(HttpStatusCode.Created), ctx.json(MOCK_REPORT_RESPONSE)),
-      ),
+      http.get(MOCK_REPORT_URL, () => {
+        return new HttpResponse(JSON.stringify(MOCK_REPORT_RESPONSE), {
+          status: HttpStatusCode.Created,
+        });
+      }),
     );
 
     await expect(reportClient.polling(MOCK_REPORT_URL)).resolves.toEqual(excepted);

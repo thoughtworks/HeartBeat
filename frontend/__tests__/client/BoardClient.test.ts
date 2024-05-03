@@ -6,11 +6,17 @@ import {
   AXIOS_ERROR_MESSAGE,
 } from '../fixtures';
 import { boardClient } from '@src/clients/board/BoardClient';
+import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { HttpStatusCode } from 'axios';
-import { rest } from 'msw';
 
-const server = setupServer(rest.post(MOCK_BOARD_URL_FOR_JIRA, (req, res, ctx) => res(ctx.status(HttpStatusCode.Ok))));
+const server = setupServer(
+  http.post(MOCK_BOARD_URL_FOR_JIRA, () => {
+    return new HttpResponse('', {
+      status: HttpStatusCode.Ok,
+    });
+  }),
+);
 
 describe('verify board request', () => {
   beforeAll(() => server.listen());
@@ -29,7 +35,13 @@ describe('verify board request', () => {
   });
 
   it('should isNoDoneCard is true when board verify response status 204', async () => {
-    server.use(rest.post(MOCK_BOARD_URL_FOR_JIRA, (req, res, ctx) => res(ctx.status(HttpStatusCode.NoContent))));
+    server.use(
+      http.post(MOCK_BOARD_URL_FOR_JIRA, () => {
+        return new HttpResponse(null, {
+          status: HttpStatusCode.NoContent,
+        });
+      }),
+    );
 
     const result = await boardClient.getVerifyBoard(MOCK_BOARD_VERIFY_REQUEST_PARAMS);
 
@@ -39,9 +51,16 @@ describe('verify board request', () => {
 
   it('should throw error when board verify response status 400', async () => {
     server.use(
-      rest.post(MOCK_BOARD_URL_FOR_JIRA, (req, res, ctx) =>
-        res(ctx.status(HttpStatusCode.BadRequest), ctx.json({ hintInfo: VERIFY_ERROR_MESSAGE.BAD_REQUEST })),
-      ),
+      http.post(MOCK_BOARD_URL_FOR_JIRA, () => {
+        return new HttpResponse(
+          JSON.stringify({
+            hintInfo: VERIFY_ERROR_MESSAGE.BAD_REQUEST,
+          }),
+          {
+            status: HttpStatusCode.BadRequest,
+          },
+        );
+      }),
     );
 
     boardClient.getVerifyBoard(MOCK_BOARD_VERIFY_REQUEST_PARAMS).catch((e) => {
@@ -52,9 +71,16 @@ describe('verify board request', () => {
 
   it('should throw error when board verify response status 401', async () => {
     server.use(
-      rest.post(MOCK_BOARD_URL_FOR_JIRA, (req, res, ctx) =>
-        res(ctx.status(HttpStatusCode.Unauthorized), ctx.json({ hintInfo: VERIFY_ERROR_MESSAGE.UNAUTHORIZED })),
-      ),
+      http.post(MOCK_BOARD_URL_FOR_JIRA, () => {
+        return new HttpResponse(
+          JSON.stringify({
+            hintInfo: VERIFY_ERROR_MESSAGE.UNAUTHORIZED,
+          }),
+          {
+            status: HttpStatusCode.Unauthorized,
+          },
+        );
+      }),
     );
 
     await expect(async () => {
@@ -64,14 +90,16 @@ describe('verify board request', () => {
 
   it('should throw error when board verify response status 500', async () => {
     server.use(
-      rest.post(MOCK_BOARD_URL_FOR_JIRA, (req, res, ctx) =>
-        res(
-          ctx.status(HttpStatusCode.InternalServerError),
-          ctx.json({
+      http.post(MOCK_BOARD_URL_FOR_JIRA, () => {
+        return new HttpResponse(
+          JSON.stringify({
             hintInfo: VERIFY_ERROR_MESSAGE.INTERNAL_SERVER_ERROR,
           }),
-        ),
-      ),
+          {
+            status: HttpStatusCode.InternalServerError,
+          },
+        );
+      }),
     );
 
     await expect(async () => {
@@ -81,12 +109,16 @@ describe('verify board request', () => {
 
   it('should throw error when board verify response status 503', async () => {
     server.use(
-      rest.post(MOCK_BOARD_URL_FOR_JIRA, (req, res, ctx) =>
-        res(
-          ctx.status(HttpStatusCode.ServiceUnavailable),
-          ctx.json({ hintInfo: VERIFY_ERROR_MESSAGE.REQUEST_TIMEOUT }),
-        ),
-      ),
+      http.post(MOCK_BOARD_URL_FOR_JIRA, () => {
+        return new HttpResponse(
+          JSON.stringify({
+            hintInfo: VERIFY_ERROR_MESSAGE.REQUEST_TIMEOUT,
+          }),
+          {
+            status: HttpStatusCode.ServiceUnavailable,
+          },
+        );
+      }),
     );
 
     await expect(async () => {
@@ -95,7 +127,13 @@ describe('verify board request', () => {
   });
 
   it('should throw error when board verify response status 300', async () => {
-    server.use(rest.post(MOCK_BOARD_URL_FOR_JIRA, (req, res, ctx) => res(ctx.status(HttpStatusCode.MultipleChoices))));
+    server.use(
+      http.post(MOCK_BOARD_URL_FOR_JIRA, () => {
+        return new HttpResponse('', {
+          status: HttpStatusCode.MultipleChoices,
+        });
+      }),
+    );
 
     await expect(async () => {
       await boardClient.getVerifyBoard(MOCK_BOARD_VERIFY_REQUEST_PARAMS);
@@ -103,7 +141,11 @@ describe('verify board request', () => {
   });
 
   it('should throw `Network Error` when board verify encountered netwrok error', async () => {
-    server.use(rest.post(MOCK_BOARD_URL_FOR_JIRA, (req, res) => res.networkError('Network Error')));
+    server.use(
+      http.post(MOCK_BOARD_URL_FOR_JIRA, () => {
+        return HttpResponse.error();
+      }),
+    );
 
     await expect(async () => {
       await boardClient.getVerifyBoard(MOCK_BOARD_VERIFY_REQUEST_PARAMS);

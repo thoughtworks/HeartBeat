@@ -23,10 +23,10 @@ import { setupStore } from '../../utils/setupStoreUtil';
 import { FormProvider } from '@test/utils/FormProvider';
 import { TimeoutError } from '@src/errors/TimeoutError';
 import userEvent from '@testing-library/user-event';
+import { HttpResponse, delay, http } from 'msw';
 import { Provider } from 'react-redux';
 import { setupServer } from 'msw/node';
 import { HttpStatusCode } from 'axios';
-import { rest } from 'msw';
 
 export const fillPipelineToolFieldsInformation = async () => {
   const tokenInput = within(screen.getByTestId('pipelineToolTextField')).getByLabelText(
@@ -39,7 +39,13 @@ export const fillPipelineToolFieldsInformation = async () => {
 
 let store = null;
 
-const server = setupServer(rest.post(MOCK_PIPELINE_VERIFY_URL, (req, res, ctx) => res(ctx.status(204))));
+const server = setupServer(
+  http.post(MOCK_PIPELINE_VERIFY_URL, () => {
+    return new HttpResponse(null, {
+      status: HttpStatusCode.NoContent,
+    });
+  }),
+);
 
 const originalVerify = pipelineToolClient.verify;
 
@@ -213,7 +219,12 @@ describe('PipelineTool', () => {
 
   it('should check loading animation when click verify button', async () => {
     server.use(
-      rest.post(MOCK_PIPELINE_VERIFY_URL, (_, res, ctx) => res(ctx.delay(300), ctx.status(HttpStatusCode.Ok))),
+      http.post(MOCK_PIPELINE_VERIFY_URL, async () => {
+        await delay(300);
+        return new HttpResponse(null, {
+          status: HttpStatusCode.Ok,
+        });
+      }),
     );
     const { container } = setup();
     await fillPipelineToolFieldsInformation();
@@ -223,7 +234,13 @@ describe('PipelineTool', () => {
   });
 
   it('should check error text appear when pipelineTool verify response status is 401', async () => {
-    server.use(rest.post(MOCK_PIPELINE_VERIFY_URL, (req, res, ctx) => res(ctx.status(HttpStatusCode.Unauthorized))));
+    server.use(
+      http.post(MOCK_PIPELINE_VERIFY_URL, () => {
+        return new HttpResponse(null, {
+          status: HttpStatusCode.Unauthorized,
+        });
+      }),
+    );
     const { getByText } = setup();
     await fillPipelineToolFieldsInformation();
 
@@ -251,7 +268,12 @@ describe('PipelineTool', () => {
 
   it('should allow user to re-submit when user interact again with form given form is already submit successfully', async () => {
     server.use(
-      rest.post(MOCK_PIPELINE_VERIFY_URL, (_, res, ctx) => res(ctx.delay(100), ctx.status(HttpStatusCode.NoContent))),
+      http.post(MOCK_PIPELINE_VERIFY_URL, async () => {
+        await delay(100);
+        return new HttpResponse(null, {
+          status: HttpStatusCode.NoContent,
+        });
+      }),
     );
     setup();
     await fillPipelineToolFieldsInformation();

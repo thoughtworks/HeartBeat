@@ -2,9 +2,9 @@ import { MOCK_BOARD_INFO_URL, FAKE_TOKEN, FAKE_DATE_EARLIER, FAKE_DATE_LATER } f
 import { AXIOS_REQUEST_ERROR_CODE } from '@src/constants/resources';
 import { useGetBoardInfoEffect } from '@src/hooks/useGetBoardInfo';
 import { renderHook, act, waitFor } from '@testing-library/react';
+import { HttpResponse, http } from 'msw';
 import { setupServer } from 'msw/node';
 import { HttpStatusCode } from 'axios';
-import { rest } from 'msw';
 
 const server = setupServer();
 
@@ -67,8 +67,10 @@ describe('use get board info', () => {
     ],
   ])('should got error message when got code is %s', async (code, title, message) => {
     server.use(
-      rest.post(MOCK_BOARD_INFO_URL, (_, res, ctx) => {
-        return res(ctx.status(code));
+      http.post(MOCK_BOARD_INFO_URL, () => {
+        return new HttpResponse(null, {
+          status: code,
+        });
       }),
     );
 
@@ -84,37 +86,37 @@ describe('use get board info', () => {
   });
 
   it('should get data when mock 4xx error', async () => {
+    const mockResponse = {
+      ignoredTargetFields: [
+        {
+          key: 'description',
+          name: 'Description',
+          flag: false,
+        },
+      ],
+      jiraColumns: [
+        {
+          key: 'To Do',
+          value: {
+            name: 'TODO',
+            statuses: ['TODO'],
+          },
+        },
+      ],
+      targetFields: [
+        {
+          key: 'issuetype',
+          name: 'Issue Type',
+          flag: false,
+        },
+      ],
+      users: ['heartbeat user'],
+    };
     server.use(
-      rest.post(MOCK_BOARD_INFO_URL, (_, res, ctx) => {
-        return res(
-          ctx.status(HttpStatusCode.BadRequest),
-          ctx.json({
-            ignoredTargetFields: [
-              {
-                key: 'description',
-                name: 'Description',
-                flag: false,
-              },
-            ],
-            jiraColumns: [
-              {
-                key: 'To Do',
-                value: {
-                  name: 'TODO',
-                  statuses: ['TODO'],
-                },
-              },
-            ],
-            targetFields: [
-              {
-                key: 'issuetype',
-                name: 'Issue Type',
-                flag: false,
-              },
-            ],
-            users: ['heartbeat user'],
-          }),
-        );
+      http.post(MOCK_BOARD_INFO_URL, () => {
+        return new HttpResponse(JSON.stringify(mockResponse), {
+          status: HttpStatusCode.BadRequest,
+        });
       }),
     );
     const { result } = renderHook(() => useGetBoardInfoEffect());
@@ -132,12 +134,14 @@ describe('use get board info', () => {
 
   it('should get data when mock 3xx error', async () => {
     server.use(
-      rest.post(MOCK_BOARD_INFO_URL, (_, res, ctx) => {
-        return res(
-          ctx.status(HttpStatusCode.Unused),
-          ctx.json({
+      http.post(MOCK_BOARD_INFO_URL, () => {
+        return new HttpResponse(
+          JSON.stringify({
             code: AXIOS_REQUEST_ERROR_CODE.TIMEOUT,
           }),
+          {
+            status: HttpStatusCode.Unused,
+          },
         );
       }),
     );
@@ -155,38 +159,45 @@ describe('use get board info', () => {
   });
 
   it('should get data when status is OK', async () => {
+    const mockResponse = {
+      ignoredTargetFields: [
+        {
+          key: 'description',
+          name: 'Description',
+          flag: false,
+        },
+      ],
+      jiraColumns: [
+        {
+          key: 'To Do',
+          value: {
+            name: 'TODO',
+            statuses: ['TODO'],
+          },
+        },
+      ],
+      targetFields: [
+        {
+          key: 'issuetype',
+          name: 'Issue Type',
+          flag: false,
+        },
+      ],
+      users: ['heartbeat user'],
+    };
+
     server.use(
-      rest.post(MOCK_BOARD_INFO_URL, (_, res, ctx) => {
-        return res.once(
-          ctx.status(HttpStatusCode.Ok),
-          ctx.json({
-            ignoredTargetFields: [
-              {
-                key: 'description',
-                name: 'Description',
-                flag: false,
-              },
-            ],
-            jiraColumns: [
-              {
-                key: 'To Do',
-                value: {
-                  name: 'TODO',
-                  statuses: ['TODO'],
-                },
-              },
-            ],
-            targetFields: [
-              {
-                key: 'issuetype',
-                name: 'Issue Type',
-                flag: false,
-              },
-            ],
-            users: ['heartbeat user'],
-          }),
-        );
-      }),
+      http.post(
+        MOCK_BOARD_INFO_URL,
+        () => {
+          return new HttpResponse(JSON.stringify(mockResponse), {
+            status: HttpStatusCode.Ok,
+          });
+        },
+        {
+          once: true,
+        },
+      ),
     );
     const { result } = renderHook(() => useGetBoardInfoEffect());
     await act(() => {

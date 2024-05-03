@@ -20,10 +20,10 @@ import { render, screen, act, waitFor } from '@testing-library/react';
 import { setupStore } from '../../utils/setupStoreUtil';
 import { FormProvider } from '@test/utils/FormProvider';
 import userEvent from '@testing-library/user-event';
+import { HttpResponse, delay, http } from 'msw';
 import { Provider } from 'react-redux';
 import { setupServer } from 'msw/node';
 import { HttpStatusCode } from 'axios';
-import { rest } from 'msw';
 import React from 'react';
 
 const mockValidFormtToken = 'AAAAA_XXXXXX'
@@ -40,7 +40,13 @@ export const fillSourceControlFieldsInformation = async () => {
 
 let store = null;
 
-const server = setupServer(rest.post(MOCK_SOURCE_CONTROL_VERIFY_TOKEN_URL, (req, res, ctx) => res(ctx.status(204))));
+const server = setupServer(
+  http.post(MOCK_SOURCE_CONTROL_VERIFY_TOKEN_URL, () => {
+    return new HttpResponse(null, {
+      status: HttpStatusCode.NoContent,
+    });
+  }),
+);
 
 const originalVerifyToken = sourceControlClient.verifyToken;
 
@@ -225,7 +231,11 @@ describe('SourceControl', () => {
 
   it('should show error notification when sourceControl verify response status is 401', async () => {
     server.use(
-      rest.post(MOCK_SOURCE_CONTROL_VERIFY_TOKEN_URL, (req, res, ctx) => res(ctx.status(HttpStatusCode.Unauthorized))),
+      http.post(MOCK_SOURCE_CONTROL_VERIFY_TOKEN_URL, () => {
+        return new HttpResponse(null, {
+          status: HttpStatusCode.Unauthorized,
+        });
+      }),
     );
     setup();
 
@@ -253,9 +263,12 @@ describe('SourceControl', () => {
 
   it('should allow user to re-submit when user interact again with form given form is already submit successfully', async () => {
     server.use(
-      rest.post(MOCK_SOURCE_CONTROL_VERIFY_TOKEN_URL, (req, res, ctx) =>
-        res(ctx.delay(100), ctx.status(HttpStatusCode.NoContent)),
-      ),
+      http.post(MOCK_SOURCE_CONTROL_VERIFY_TOKEN_URL, async () => {
+        await delay(100);
+        return new HttpResponse(null, {
+          status: HttpStatusCode.NoContent,
+        });
+      }),
     );
     setup();
     await fillSourceControlFieldsInformation();

@@ -42,21 +42,28 @@ import userEvent from '@testing-library/user-event';
 import ConfigStep from '@src/containers/ConfigStep';
 import { closeMuiModal } from '@test/testUtils';
 import { useForm } from 'react-hook-form';
+import { HttpResponse, http } from 'msw';
 import { Provider } from 'react-redux';
 import { setupServer } from 'msw/node';
-import { rest } from 'msw';
+import { HttpStatusCode } from 'axios';
 import dayjs from 'dayjs';
 
 const server = setupServer(
-  rest.post(MOCK_PIPELINE_VERIFY_URL, (_, res, ctx) => res(ctx.status(204))),
-  rest.post(MOCK_BOARD_URL_FOR_JIRA, (_, res, ctx) =>
-    res(
-      ctx.status(200),
-      ctx.json({
+  http.post(MOCK_PIPELINE_VERIFY_URL, () => {
+    return new HttpResponse(null, {
+      status: HttpStatusCode.NoContent,
+    });
+  }),
+  http.post(MOCK_BOARD_URL_FOR_JIRA, () => {
+    return new HttpResponse(
+      JSON.stringify({
         projectKey: 'FAKE',
       }),
-    ),
-  ),
+      {
+        status: HttpStatusCode.Ok,
+      },
+    );
+  }),
 );
 
 export const fillBoardFieldsInformation = async () => {

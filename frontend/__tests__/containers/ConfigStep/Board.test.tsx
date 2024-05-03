@@ -20,10 +20,10 @@ import { setupStore } from '../../utils/setupStoreUtil';
 import { FormProvider } from '@test/utils/FormProvider';
 import { TimeoutError } from '@src/errors/TimeoutError';
 import userEvent from '@testing-library/user-event';
+import { HttpResponse, http, delay } from 'msw';
 import { Provider } from 'react-redux';
 import { setupServer } from 'msw/node';
 import { HttpStatusCode } from 'axios';
-import { rest } from 'msw';
 
 export const fillBoardFieldsInformation = async () => {
   await userEvent.type(screen.getByLabelText(/board id/i), '1');
@@ -36,16 +36,16 @@ let store = null;
 
 const server = setupServer();
 
-const mockVerifySuccess = (delay = 0) => {
+const mockVerifySuccess = (delayValue = 0) => {
   server.use(
-    rest.post(MOCK_BOARD_URL_FOR_JIRA, (_, res, ctx) =>
-      res(
-        ctx.json({
+    http.post(MOCK_BOARD_URL_FOR_JIRA, async () => {
+      await delay(delayValue);
+      return new HttpResponse(
+        JSON.stringify({
           projectKey: 'FAKE',
         }),
-        ctx.delay(delay),
-      ),
-    ),
+      );
+    }),
   );
 };
 
@@ -245,7 +245,13 @@ describe('Board', () => {
   });
 
   it('should show error message when board verify response status is 401', async () => {
-    server.use(rest.post(MOCK_BOARD_URL_FOR_JIRA, (_, res, ctx) => res(ctx.status(HttpStatusCode.Unauthorized))));
+    server.use(
+      http.post(MOCK_BOARD_URL_FOR_JIRA, () => {
+        return new HttpResponse(null, {
+          status: HttpStatusCode.Unauthorized,
+        });
+      }),
+    );
     setup();
     await fillBoardFieldsInformation();
 

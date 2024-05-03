@@ -33,10 +33,10 @@ import { setupStore } from '../../utils/setupStoreUtil';
 import userEvent from '@testing-library/user-event';
 import { exportToJsonFile } from '@src/utils/util';
 import { navigateMock } from '../../setupTests';
+import { HttpResponse, http } from 'msw';
 import { Provider } from 'react-redux';
 import { setupServer } from 'msw/node';
 import { HttpStatusCode } from 'axios';
-import { rest } from 'msw';
 import dayjs from 'dayjs';
 import React from 'react';
 
@@ -121,8 +121,16 @@ jest.mock('@src/hooks/useGenerateReportEffect', () => ({
 }));
 
 const server = setupServer(
-  rest.post(MOCK_REPORT_URL, (_, res, ctx) => res(ctx.status(HttpStatusCode.Ok))),
-  rest.post(MOCK_BOARD_URL_FOR_JIRA, (_, res, ctx) => res(ctx.status(HttpStatusCode.NoContent))),
+  http.post(MOCK_REPORT_URL, () => {
+    return new HttpResponse(null, {
+      status: HttpStatusCode.Ok,
+    });
+  }),
+  http.post(MOCK_BOARD_URL_FOR_JIRA, () => {
+    return new HttpResponse(null, {
+      status: HttpStatusCode.NoContent,
+    });
+  }),
 );
 
 const mockLocation = { ...window.location, reload: jest.fn() };
@@ -263,7 +271,13 @@ describe('MetricsStepper', () => {
   });
 
   it('should enable next when every selected component is show and verified', async () => {
-    server.use(rest.post(MOCK_PIPELINE_VERIFY_URL, (_, res, ctx) => res(ctx.status(HttpStatusCode.NoContent))));
+    server.use(
+      http.post(MOCK_PIPELINE_VERIFY_URL, () => {
+        return new HttpResponse(null, {
+          status: HttpStatusCode.NoContent,
+        });
+      }),
+    );
     await act(async () => {
       setup();
     });

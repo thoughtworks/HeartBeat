@@ -5,8 +5,9 @@
     ".+\\.svg": "<rootDir>/__tests__/__mocks__/svgTransformer.ts"
   },
   "globalSetup": "./global-setup.ts",
+  "setupFiles": ["./jest.polyfills.ts"],
   "setupFilesAfterEnv": ["<rootDir>/__tests__/setupTests.ts"],
-  "testEnvironment": "jsdom",
+  "testEnvironment": "<rootDir>/jsdom.extended.ts",
   "testRegex": "/__tests__/.*(test|spec)\\.(jsx?|tsx?|ts?)$",
   "moduleFileExtensions": ["ts", "tsx", "js", "jsx", "json", "node"],
   "moduleNameMapper": {
@@ -28,5 +29,8 @@
       "statements": 100
     }
   },
-  "testTimeout": 30000
+  "testTimeout": 30000,
+  "testEnvironmentOptions": {
+    "customExportConditions": [""]
+  }
 }

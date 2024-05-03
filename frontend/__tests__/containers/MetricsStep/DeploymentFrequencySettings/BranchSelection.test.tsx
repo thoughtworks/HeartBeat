@@ -4,12 +4,19 @@ import { updatePipelineToolVerifyResponse, updateSourceControl } from '@src/cont
 import { render, screen, waitFor } from '@testing-library/react';
 import { setupStore } from '@test/utils/setupStoreUtil';
 import userEvent from '@testing-library/user-event';
+import { HttpResponse, http } from 'msw';
 import { Provider } from 'react-redux';
 import { setupServer } from 'msw/node';
-import { rest } from 'msw';
+import { HttpStatusCode } from 'axios';
 import React from 'react';
 
-const server = setupServer(rest.post(MOCK_SOURCE_CONTROL_VERIFY_BRANCH_URL, (req, res, ctx) => res(ctx.status(204))));
+const server = setupServer(
+  http.post(MOCK_SOURCE_CONTROL_VERIFY_BRANCH_URL, () => {
+    return new HttpResponse(null, {
+      status: HttpStatusCode.NoContent,
+    });
+  }),
+);
 
 export const MOCK_SOURCE_CONTROL_BRANCHES_SELECTED = ['OPT-1', 'OPT-2', 'OPT-3'];
 
@@ -85,7 +92,13 @@ describe('BranchSelection', () => {
   });
 
   it('should show error text when API return 400 error', async () => {
-    server.use(rest.post(MOCK_SOURCE_CONTROL_VERIFY_BRANCH_URL, (req, res, ctx) => res(ctx.status(400))));
+    server.use(
+      http.post(MOCK_SOURCE_CONTROL_VERIFY_BRANCH_URL, () => {
+        return new HttpResponse(null, {
+          status: HttpStatusCode.BadRequest,
+        });
+      }),
+    );
     setup();
 
     await waitFor(() => {
@@ -94,10 +107,20 @@ describe('BranchSelection', () => {
   });
 
   it('should show cancel button when retry successfully', async () => {
-    server.use(rest.post(MOCK_SOURCE_CONTROL_VERIFY_BRANCH_URL, (req, res) => res.networkError('error')));
+    server.use(
+      http.post(MOCK_SOURCE_CONTROL_VERIFY_BRANCH_URL, () => {
+        return HttpResponse.error();
+      }),
+    );
     setup();
     const retryButtons = await screen.findAllByTestId('ReplayIcon');
-    server.use(rest.post(MOCK_SOURCE_CONTROL_VERIFY_BRANCH_URL, (req, res, ctx) => res(ctx.status(204))));
+    server.use(
+      http.post(MOCK_SOURCE_CONTROL_VERIFY_BRANCH_URL, () => {
+        return new HttpResponse(null, {
+          status: HttpStatusCode.NoContent,
+        });
+      }),
+    );
 
     await userEvent.click(retryButtons[0]);
 

@@ -5,13 +5,15 @@ import {
   MOCK_PIPELINE_VERIFY_URL,
 } from '../fixtures';
 import { pipelineToolClient } from '@src/clients/pipeline/PipelineToolClient';
+import { HttpResponse, http } from 'msw';
 import { setupServer } from 'msw/node';
 import { HttpStatusCode } from 'axios';
-import { rest } from 'msw';
 
 const server = setupServer(
-  rest.post(MOCK_PIPELINE_VERIFY_URL, (req, res, ctx) => {
-    return res(ctx.status(HttpStatusCode.NoContent));
+  http.post(MOCK_PIPELINE_VERIFY_URL, () => {
+    return new HttpResponse(null, {
+      status: HttpStatusCode.NoContent,
+    });
   }),
 );
 
@@ -43,7 +45,13 @@ describe('PipelineToolClient', () => {
       ];
 
       it.each(errorCases)('should return error code when verify endponint returns error', async ({ code }) => {
-        server.use(rest.post(MOCK_PIPELINE_VERIFY_URL, (req, res, ctx) => res(ctx.status(code))));
+        server.use(
+          http.post(MOCK_PIPELINE_VERIFY_URL, () => {
+            return new HttpResponse(null, {
+              status: code,
+            });
+          }),
+        );
 
         const result = await pipelineToolClient.verify(MOCK_PIPELINE_VERIFY_REQUEST_PARAMS);
 
@@ -55,9 +63,11 @@ describe('PipelineToolClient', () => {
   describe('Get pipelineTool info request', () => {
     it('should return 200 code and corresponding data when pipelineTool get info returns code 200', async () => {
       server.use(
-        rest.post(MOCK_PIPELINE_GET_INFO_URL, (req, res, ctx) =>
-          res(ctx.status(HttpStatusCode.Ok), ctx.json(MOCK_BUILD_KITE_GET_INFO_RESPONSE)),
-        ),
+        http.post(MOCK_PIPELINE_GET_INFO_URL, () => {
+          return new HttpResponse(JSON.stringify(MOCK_BUILD_KITE_GET_INFO_RESPONSE), {
+            status: HttpStatusCode.Ok,
+          });
+        }),
       );
 
       const result = await pipelineToolClient.getInfo(MOCK_PIPELINE_VERIFY_REQUEST_PARAMS);
@@ -102,7 +112,13 @@ describe('PipelineToolClient', () => {
       it.each(errorCases)(
         `should return result with code:$code and title:$errorTitle and unify errorMessage when verify endpoint returns code:$code`,
         async ({ code, errorTitle, errorMessage }) => {
-          server.use(rest.post(MOCK_PIPELINE_GET_INFO_URL, (req, res, ctx) => res(ctx.status(code))));
+          server.use(
+            http.post(MOCK_PIPELINE_GET_INFO_URL, () => {
+              return new HttpResponse(null, {
+                status: code,
+              });
+            }),
+          );
 
           const result = await pipelineToolClient.getInfo(MOCK_PIPELINE_VERIFY_REQUEST_PARAMS);
 
@@ -115,8 +131,8 @@ describe('PipelineToolClient', () => {
 
       it('should return ERR_NETWORK error as its code when axios client detect network error', async () => {
         server.use(
-          rest.post(MOCK_PIPELINE_GET_INFO_URL, (req, res) => {
-            return res.networkError('mock network error');
+          http.post(MOCK_PIPELINE_GET_INFO_URL, () => {
+            return HttpResponse.error();
           }),
         );
 
@@ -128,8 +144,10 @@ describe('PipelineToolClient', () => {
 
       it('should return "Unknown error" as a last resort when axios error code didn\'t match the predeifned erorr cases', async () => {
         server.use(
-          rest.post(MOCK_PIPELINE_GET_INFO_URL, (req, res, ctx) => {
-            return res(ctx.status(-1), ctx.body('mock error not covered by httpClient'));
+          http.post(MOCK_PIPELINE_GET_INFO_URL, () => {
+            return new HttpResponse(JSON.stringify('mock error not covered by httpClient'), {
+              status: -1,
+            });
           }),
         );
 

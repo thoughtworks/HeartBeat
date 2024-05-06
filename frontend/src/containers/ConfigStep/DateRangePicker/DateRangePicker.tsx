@@ -44,8 +44,8 @@ export const DateRangePicker = ({
   onRemove,
   rangeList,
 }: IRangePickerProps) => {
-  const isShowRemoveButton = rangeList && rangeList.length > 1;
-  const dateRangeGroupExcludeSelf = rangeList!.filter(({ sortIndex }: { sortIndex: number }) => sortIndex !== index);
+  const isShowRemoveButton = rangeList.length > 1;
+  const dateRangeGroupExcludeSelf = rangeList.filter(({ sortIndex }: { sortIndex: number }) => sortIndex !== index);
   const shouldStartDateDisableDate = isDateDisabled.bind(null, dateRangeGroupExcludeSelf);
   const shouldEndDateDisableDate = isDateDisabled.bind(null, dateRangeGroupExcludeSelf);
   const startDateFieldName = `dateRange[${index}].startDate`;
@@ -76,15 +76,15 @@ export const DateRangePicker = ({
 
     if (isNull(validationError)) {
       if (isNull(value)) {
-        onError?.('startDateError', BASIC_INFO_ERROR_MESSAGE.dateRange.startDate.required, index);
+        onError('startDateError', BASIC_INFO_ERROR_MESSAGE.dateRange.startDate.required, index);
       }
       setValue(startDateFieldName, result.startDate, { shouldValidate: true });
       setValue(endDateFieldName, result.endDate, { shouldValidate: true });
-      onChange?.(result, index);
     } else {
       setValue(startDateFieldName, AGGREGATED_DATE_ERROR_REASON, { shouldValidate: true });
-      onError?.('startDateError', validationError, index);
+      onError('startDateError', validationError, index);
     }
+    onChange(result, index);
   };
 
   const changeEndDate = (value: Nullable<Dayjs>, { validationError }: { validationError: DateValidationError }) => {
@@ -100,20 +100,18 @@ export const DateRangePicker = ({
 
     if (isNull(validationError)) {
       if (isNull(value)) {
-        onError?.('endDateError', BASIC_INFO_ERROR_MESSAGE.dateRange.endDate.required, index);
+        onError('endDateError', BASIC_INFO_ERROR_MESSAGE.dateRange.endDate.required, index);
       }
       setValue(startDateFieldName, result.startDate, { shouldValidate: true });
       setValue(endDateFieldName, result.endDate, { shouldValidate: true });
-      onChange?.(result, index);
     } else {
       setValue(endDateFieldName, AGGREGATED_DATE_ERROR_REASON, { shouldValidate: true });
-      onError?.('endDateError', validationError, index);
+      onError('endDateError', validationError, index);
     }
+    onChange(result, index);
   };
 
-  const removeSelfHandler = () => {
-    onRemove?.(index);
-  };
+  const removeSelfHandler = () => onRemove(index);
 
   return (
     <StyledFeaturedRangePickerContainer>

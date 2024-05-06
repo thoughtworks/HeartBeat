@@ -5,46 +5,43 @@ import {
   SortingButtoningContainer,
   SortingTextButton,
 } from '@src/containers/ConfigStep/DateRangePicker/style';
+import { selectDateRangeSortType, updateDateRangeSortType } from '@src/context/config/configSlice';
 import { SortType } from '@src/containers/ConfigStep/DateRangePicker/types';
-import { updateDateRangeSortType } from '@src/context/config/configSlice';
+import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch';
 import { SORTING_DATE_RANGE_TEXT } from '@src/constants/resources';
 import { ArrowDropDown, ArrowDropUp } from '@mui/icons-material';
-import { useAppDispatch } from '@src/hooks/useAppDispatch';
 import { Box } from '@mui/material';
-import { useState } from 'react';
 
 type Props = {
-  onChange: (type: SortType) => void;
-  sortType: SortType;
+  disabled: boolean;
 };
 
-export const SortingDateRange = ({ onChange, sortType }: Props) => {
+export const SortingDateRange = ({ disabled }: Props) => {
   const dispatch = useAppDispatch();
-  const [dateRangeSortType, setDateRangeSortType] = useState(sortType);
+  const currentSortType = useAppSelector(selectDateRangeSortType);
 
   const handleChangeSort = () => {
-    const totalSortTypes = Object.values(SortType).length;
-    const currentIndex = Object.values(SortType).indexOf(dateRangeSortType);
+    const sortTypes = Object.values(SortType);
+    const totalSortTypes = sortTypes.length;
+    const currentIndex = sortTypes.indexOf(currentSortType);
     const newIndex = (currentIndex + 1) % totalSortTypes;
-    const newSortType = Object.values(SortType)[newIndex];
+    const newSortType = sortTypes[newIndex];
 
-    setDateRangeSortType(newSortType);
     dispatch(updateDateRangeSortType(newSortType));
-    onChange?.(newSortType);
   };
 
   return (
     <Box aria-label='Sorting date range'>
       <SortingButtoningContainer>
-        <SortingTextButton disableRipple>{SORTING_DATE_RANGE_TEXT[dateRangeSortType]}</SortingTextButton>
-        <SortingButton aria-label='sort button' onClick={handleChangeSort}>
-          {dateRangeSortType === SortType.ASCENDING ? (
-            <AscendingIcon fontSize='inherit' />
+        <SortingTextButton disableRipple>{SORTING_DATE_RANGE_TEXT[currentSortType]}</SortingTextButton>
+        <SortingButton aria-label='sort button' onClick={handleChangeSort} disabled={disabled}>
+          {currentSortType === SortType.ASCENDING ? (
+            <AscendingIcon disabled={disabled} />
           ) : (
             <ArrowDropUp fontSize='inherit' />
           )}
-          {dateRangeSortType === SortType.DESCENDING ? (
-            <DescendingIcon fontSize='inherit' />
+          {currentSortType === SortType.DESCENDING ? (
+            <DescendingIcon disabled={disabled} />
           ) : (
             <ArrowDropDown fontSize='inherit' />
           )}

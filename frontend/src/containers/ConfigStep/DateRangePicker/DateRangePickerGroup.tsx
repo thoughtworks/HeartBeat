@@ -1,10 +1,10 @@
+import { SortedDateRangeType, sortFn, TProps, TSortErrorTypes } from '@src/containers/ConfigStep/DateRangePicker/types';
 import { updateShouldGetBoardConfig, updateShouldGetPipelineConfig } from '@src/context/Metrics/metricsSlice';
-import { Props, SortedDateRangeType, sortFn } from '@src/containers/ConfigStep/DateRangePicker/types';
+import { selectDateRange, selectDateRangeSortType, updateDateRange } from '@src/context/config/configSlice';
 import { DateRangePickerGroupContainer } from '@src/containers/ConfigStep/DateRangePicker/style';
 import { DateRangePicker } from '@src/containers/ConfigStep/DateRangePicker/DateRangePicker';
 import { ADD_TIME_RANGE_BUTTON_TEXT, MAX_TIME_RANGE_AMOUNT } from '@src/constants/resources';
 import { BASIC_INFO_ERROR_MESSAGE } from '@src/containers/ConfigStep/Form/literal';
-import { selectDateRange, updateDateRange } from '@src/context/config/configSlice';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch';
 import { AddButton } from '@src/components/Common/AddButtonOneLine';
@@ -14,13 +14,11 @@ import { useFormContext } from 'react-hook-form';
 import { Nullable } from '@src/utils/types';
 import { useEffect, useState } from 'react';
 import sortBy from 'lodash/sortBy';
-import remove from 'lodash/remove';
 import isNull from 'lodash/isNull';
 import get from 'lodash/get';
 
 const deriveErrorMessageByDate = (date: Nullable<string>, message: string) => (isNull(date) ? message : null);
-
-const fillDateRangeGroup = (
+const enhanceRangeWithMeta = (
   item: {
     startDate: string | null;
     endDate: string | null;
@@ -33,25 +31,29 @@ const fillDateRangeGroup = (
   sortIndex: index,
 });
 
-export const DateRangePickerGroup = ({ sortType, onError }: Props) => {
+export const DateRangePickerGroup = ({ onError }: TProps) => {
   const dispatch = useAppDispatch();
   const dateRangeGroup = useAppSelector(selectDateRange);
+  const sortType = useAppSelector(selectDateRangeSortType);
   const isAddButtonDisabled = dateRangeGroup.length === MAX_TIME_RANGE_AMOUNT;
-  const [sortedDateRangeList, setSortedDateRangeList] = useState<SortedDateRangeType[]>(
-    dateRangeGroup.map(fillDateRangeGroup),
+  const [rangeListWithMeta, setRangeListWithMeta] = useState<SortedDateRangeType[]>(
+    dateRangeGroup.map(enhanceRangeWithMeta),
   );
   const { setValue } = useFormContext();
 
   useEffect(() => {
-    const rangeListWithErrors = sortedDateRangeList.filter(
+    const rangeListWithErrors = rangeListWithMeta.filter(
       ({ startDateError, endDateError }) => startDateError || endDateError,
     );
     onError?.(rangeListWithErrors);
-  }, [onError, sortedDateRangeList]);
+  }, [onError, rangeListWithMeta]);
 
-  const handleError = (type: string, error: DateValidationError | string, index: number) => {
-    const newList = sortedDateRangeList.map((item) => ({ ...item, [type]: item.sortIndex === index ? error : null }));
-    setSortedDateRangeList(newList);
+  const handleError = (type: TSortErrorTypes, error: DateValidationError | string, index: number) => {
+    const newList = rangeListWithMeta.map((item) => ({
+      ...item,
+      [type]: item.sortIndex === index ? error : item[type],
+    }));
+    setRangeListWithMeta(newList);
   };
 
   const dispatchUpdateConfig = () => {
@@ -60,8 +62,8 @@ export const DateRangePickerGroup = ({ sortType, onError }: Props) => {
   };
 
   const addRangeHandler = () => {
-    const result = [...sortedDateRangeList, { startDate: null, endDate: null }];
-    setSortedDateRangeList(result.map(fillDateRangeGroup));
+    const result = [...rangeListWithMeta, { startDate: null, endDate: null }];
+    setRangeListWithMeta(result.map(enhanceRangeWithMeta));
     setValue(
       `dateRange`,
       result.map(({ startDate, endDate }) => ({ startDate, endDate })),
@@ -74,7 +76,7 @@ export const DateRangePickerGroup = ({ sortType, onError }: Props) => {
     { startDate, endDate }: { startDate: string | null; endDate: string | null },
     index: number,
   ) => {
-    const result = sortedDateRangeList.map((item) =>
+    const result = rangeListWithMeta.map((item) =>
       item.sortIndex === index
         ? {
             ...item,
@@ -83,22 +85,23 @@ export const DateRangePickerGroup = ({ sortType, onError }: Props) => {
             startDateError: deriveErrorMessageByDate(startDate, BASIC_INFO_ERROR_MESSAGE.dateRange.startDate.required),
             endDateError: deriveErrorMessageByDate(endDate, BASIC_INFO_ERROR_MESSAGE.dateRange.endDate.required),
           }
-        : item,
+        : { ...item },
     );
-    setSortedDateRangeList(result);
+    setRangeListWithMeta(result);
     dispatchUpdateConfig();
     dispatch(updateDateRange(result.map(({ startDate, endDate }) => ({ startDate, endDate }))));
   };
 
   const handleRemove = (index: number) => {
-    const result = [...sortedDateRangeList];
-    remove(result, ({ sortIndex }) => sortIndex === index);
+    const result = [...rangeListWithMeta]
+      .filter(({ sortIndex }) => sortIndex !== index)
+      .map((item, index) => ({ ...item, sortIndex: index }));
     setValue(
       `dateRange`,
       result.map(({ startDate, endDate }) => ({ startDate, endDate })),
       { shouldValidate: true },
     );
-    setSortedDateRangeList(result);
+    setRangeListWithMeta(result);
     dispatchUpdateConfig();
     dispatch(updateDateRange(result.map(({ startDate, endDate }) => ({ startDate, endDate }))));
   };
@@ -106,7 +109,7 @@ export const DateRangePickerGroup = ({ sortType, onError }: Props) => {
   return (
     <DateRangePickerGroupContainer>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
-        {sortBy(sortedDateRangeList, get(sortFn, sortType)).map(({ startDate, endDate, sortIndex }, index) => (
+        {sortBy(rangeListWithMeta, get(sortFn, sortType)).map(({ startDate, endDate, sortIndex }, index) => (
           <DateRangePicker
             startDate={startDate}
             endDate={endDate}
@@ -115,7 +118,7 @@ export const DateRangePickerGroup = ({ sortType, onError }: Props) => {
             onChange={handleChange}
             onError={handleError}
             onRemove={handleRemove}
-            rangeList={sortedDateRangeList}
+            rangeList={rangeListWithMeta}
           />
         ))}
         <AddButton

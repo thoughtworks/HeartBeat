@@ -174,6 +174,7 @@ describe('config reducer', () => {
       payload: {
         ...MockBasicState,
         dateRange: mockDateRange,
+        sortType: SortType.DEFAULT,
       },
     };
 
@@ -202,5 +203,54 @@ describe('config reducer', () => {
     const config = configReducer(initialState, action);
 
     expect(config.basic.dateRange[0]).toEqual(mockDateRange);
+  });
+
+  it('should set warning message when imported sortType is invalid', () => {
+    const initialState = {
+      ...initialConfigState,
+      isProjectCreated: false,
+    };
+    const mockDateRange = [
+      {
+        startDate: '2024-01-15T00:00:00.000+08:00',
+        endDate: '2024-01-16T00:00:00.000+08:00',
+      },
+      {
+        startDate: '2024-01-17T00:00:00.000+08:00',
+        endDate: '2024-01-18T00:00:00.000+08:00',
+      },
+    ];
+    const action = {
+      type: 'config/updateBasicConfigState',
+      payload: { ...MockBasicState, dateRange: mockDateRange, sortType: 'test' },
+    };
+    const config = configReducer(initialState, action);
+    expect(config.warningMessage).toBe(CONFIG_PAGE_VERIFY_IMPORT_ERROR_MESSAGE);
+  });
+
+  it('should not set warning message when imported date ranges has length 1 and importedSortType is null', () => {
+    const initialState = {
+      ...initialConfigState,
+      isProjectCreated: false,
+    };
+    const action = {
+      type: 'config/updateBasicConfigState',
+      payload: { ...MockBasicState, dateRange: [MockBasicState.dateRange[0]], sortType: null },
+    };
+    const config = configReducer(initialState, action);
+    expect(config.warningMessage).toBe(null);
+  });
+
+  it('should set warning message when imported date ranges has length 1 and importedSortType is valid', () => {
+    const initialState = {
+      ...initialConfigState,
+      isProjectCreated: false,
+    };
+    const action = {
+      type: 'config/updateBasicConfigState',
+      payload: { ...MockBasicState, dateRange: [MockBasicState.dateRange[0]], sortType: SortType.DEFAULT },
+    };
+    const config = configReducer(initialState, action);
+    expect(config.warningMessage).toBe(null);
   });
 });

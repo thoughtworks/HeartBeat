@@ -5,6 +5,10 @@ import { DatePicker } from '@mui/x-date-pickers';
 import { styled } from '@mui/material/styles';
 import { theme } from '@src/theme';
 
+type IconProps = {
+  disabled: boolean;
+};
+
 export const DateRangePickerGroupContainer = styled('div')({
   border: `${theme.main.cardBorder}`,
   borderRadius: '0.25rem',
@@ -88,10 +92,12 @@ export const SortingButtoningContainer = styled('div')({
   display: 'flex',
 });
 
-export const AscendingIcon = styled(ArrowDropUp)({
-  color: theme.main.backgroundColor,
-});
+export const AscendingIcon = styled(ArrowDropUp)<IconProps>(({ theme, disabled }) => ({
+  color: disabled ? theme.main.button.disabled.color : theme.main.backgroundColor,
+  fontSize: 'inherit',
+}));
 
-export const DescendingIcon = styled(ArrowDropDown)({
-  color: theme.main.backgroundColor,
-});
+export const DescendingIcon = styled(ArrowDropDown)<IconProps>(({ theme, disabled }) => ({
+  color: disabled ? theme.main.button.disabled.color : theme.main.backgroundColor,
+  fontSize: 'inherit',
+}));

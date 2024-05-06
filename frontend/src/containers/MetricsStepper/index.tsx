@@ -91,11 +91,6 @@ const MetricsStepper = () => {
     mode: 'onChange',
   });
 
-  useEffect(() => {
-    basicInfoMethods.trigger();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   const { isValid: isBasicInfoValid } = basicInfoMethods.formState;
   const { isValid: isBoardConfigValid, isSubmitSuccessful: isBoardConfigSubmitSuccessful } =
     boardConfigMethods.formState;

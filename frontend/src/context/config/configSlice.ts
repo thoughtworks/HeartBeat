@@ -86,6 +86,8 @@ const getMetricsInfo = (metrics: string[]) => {
   };
 };
 
+const isSortType = (value: string): value is SortType => Object.values(SortType).includes(value as SortType);
+
 export const configSlice = createSlice({
   name: 'config',
   initialState: {
@@ -130,6 +132,8 @@ export const configSlice = createSlice({
         Array.isArray(importedDateRanges) && importedDateRanges.length > MAX_TIME_RANGE_AMOUNT
           ? importedDateRanges.slice(0, MAX_TIME_RANGE_AMOUNT)
           : importedDateRanges;
+      const importedSortType = action.payload.sortType;
+      action.payload.sortType = isSortType(importedSortType) ? importedSortType : SortType.DEFAULT;
       state.basic.metrics = metrics;
       state.board.isShow = shouldBoardShow;
       state.pipelineTool.isShow = shouldPipelineToolShow;
@@ -141,7 +145,8 @@ export const configSlice = createSlice({
           isArray(importedDateRanges) &&
           importedDateRanges.length > 0 &&
           importedDateRanges.length <= 6 &&
-          metrics.length > 0
+          metrics.length > 0 &&
+          ((importedDateRanges.length === 1 && !importedSortType) || isSortType(importedSortType))
             ? null
             : MESSAGE.CONFIG_PAGE_VERIFY_IMPORT_ERROR;
       }

@@ -269,7 +269,7 @@ export const useGenerateReportEffect = (): IUseGenerateReportEffect => {
     });
   };
 
-  const shutReportInfosErrorStatus = (id: string, errorKey: string) => {
+  const closeReportInfosErrorStatus = (id: string, errorKey: string) => {
     setReportInfos((preReportInfos) => {
       return preReportInfos.map((reportInfo) => {
         if (reportInfo.id === id) {
@@ -281,7 +281,7 @@ export const useGenerateReportEffect = (): IUseGenerateReportEffect => {
     });
   };
 
-  const shutBoardMetricsError = (id: string) => {
+  const closeBoardMetricsError = (id: string) => {
     setReportInfos((preReportInfos) => {
       return preReportInfos.map((reportInfo) => {
         if (reportInfo.id === id) {
@@ -292,7 +292,7 @@ export const useGenerateReportEffect = (): IUseGenerateReportEffect => {
     });
   };
 
-  const shutPipelineMetricsError = (id: string) => {
+  const closePipelineMetricsError = (id: string) => {
     setReportInfos((preReportInfos) => {
       return preReportInfos.map((reportInfo) => {
         if (reportInfo.id === id) {
@@ -303,7 +303,7 @@ export const useGenerateReportEffect = (): IUseGenerateReportEffect => {
     });
   };
 
-  const shutSourceControlMetricsError = (id: string) => {
+  const closeSourceControlMetricsError = (id: string) => {
     setReportInfos((preReportInfos) => {
       return preReportInfos.map((reportInfo) => {
         if (reportInfo.id === id) {
@@ -318,10 +318,10 @@ export const useGenerateReportEffect = (): IUseGenerateReportEffect => {
     startToRequestData,
     stopPollingReports,
     reportInfos,
-    closeReportInfosErrorStatus: shutReportInfosErrorStatus,
-    closeBoardMetricsError: shutBoardMetricsError,
-    closePipelineMetricsError: shutPipelineMetricsError,
-    closeSourceControlMetricsError: shutSourceControlMetricsError,
+    closeReportInfosErrorStatus,
+    closeBoardMetricsError,
+    closePipelineMetricsError,
+    closeSourceControlMetricsError,
     hasPollingStarted,
   };
 };

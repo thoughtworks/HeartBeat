@@ -83,7 +83,7 @@ const ReportStep = ({ handleSave }: ReportStepProps) => {
   const [pageType, setPageType] = useState<string>(REPORT_PAGE_TYPE.SUMMARY);
   const [isCsvFileGeneratedAtEnd, setIsCsvFileGeneratedAtEnd] = useState<boolean>(false);
   const [notifications4SummaryPage, setNotifications4SummaryPage] = useState<Omit<Notification, 'id'>[]>([]);
-  const [notificationIds, setNotificationIds] = useState<string[]>([]);
+  const [errorNotificationIds, setErrorNotificationIds] = useState<string[]>([]);
 
   const csvTimeStamp = useAppSelector(selectTimeStamp);
   const {
@@ -234,10 +234,10 @@ const ReportStep = ({ handleSave }: ReportStepProps) => {
   }, [reportInfos, selectedDateRange]);
 
   useEffect(() => {
-    notificationIds.forEach((notificationId) => {
+    errorNotificationIds.forEach((notificationId) => {
       dispatch(closeNotification(notificationId));
     });
-    setNotificationIds([]);
+    setErrorNotificationIds([]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedDateRange]);
 
@@ -310,7 +310,7 @@ const ReportStep = ({ handleSave }: ReportStepProps) => {
     if (!currentDataInfo.shouldShowBoardMetricsError) return;
     if (currentDataInfo.reportData?.reportMetricsError.boardMetricsError) {
       const notificationId = uniqueId();
-      setNotificationIds((pre) => [...pre, notificationId]);
+      setErrorNotificationIds((pre) => [...pre, notificationId]);
       setNotifications4SummaryPage((prevState) => [
         ...prevState,
         {
@@ -328,7 +328,7 @@ const ReportStep = ({ handleSave }: ReportStepProps) => {
     if (!currentDataInfo.shouldShowPipelineMetricsError) return;
     if (currentDataInfo.reportData?.reportMetricsError.pipelineMetricsError) {
       const notificationId = uniqueId();
-      setNotificationIds((pre) => [...pre, notificationId]);
+      setErrorNotificationIds((pre) => [...pre, notificationId]);
       setNotifications4SummaryPage((prevState) => [
         ...prevState,
         {
@@ -346,7 +346,7 @@ const ReportStep = ({ handleSave }: ReportStepProps) => {
     if (!currentDataInfo.shouldShowSourceControlMetricsError) return;
     if (currentDataInfo.reportData?.reportMetricsError.sourceControlMetricsError) {
       const notificationId = uniqueId();
-      setNotificationIds((pre) => [...pre, notificationId]);
+      setErrorNotificationIds((pre) => [...pre, notificationId]);
       setNotifications4SummaryPage((prevState) => [
         ...prevState,
         {
@@ -421,7 +421,7 @@ const ReportStep = ({ handleSave }: ReportStepProps) => {
     if (!currentDataInfo[errorKey].shouldShow) return;
     if (currentDataInfo[errorKey].message) {
       const notificationId = uniqueId();
-      setNotificationIds((pre) => [...pre, notificationId]);
+      setErrorNotificationIds((pre) => [...pre, notificationId]);
       setNotifications4SummaryPage((prevState) => [
         ...prevState,
         {

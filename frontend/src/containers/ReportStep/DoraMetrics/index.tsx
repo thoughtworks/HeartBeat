@@ -12,11 +12,11 @@ import {
 import { StyledMetricsSection, StyledShowMore, StyledTitleWrapper } from '@src/containers/ReportStep/DoraMetrics/style';
 import { formatMillisecondsToHours, formatMinToHours } from '@src/utils/util';
 import { ReportTitle } from '@src/components/Common/ReportGrid/ReportTitle';
+import { StyledRetry } from '@src/containers/ReportStep/BoardMetrics/style';
 import { ReportResponseDTO } from '@src/clients/report/dto/response';
 import { StyledSpacing } from '@src/containers/ReportStep/style';
 import { ReportGrid } from '@src/components/Common/ReportGrid';
 import { selectConfig } from '@src/context/config/configSlice';
-import { StyledRetry } from '../BoardMetrics/BoardMetrics';
 import { useAppSelector } from '@src/hooks';
 import React from 'react';
 import _ from 'lodash';

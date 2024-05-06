@@ -1,4 +1,12 @@
 import {
+  GridContainer,
+  StyledLoading,
+  StyledMetricsSection,
+  StyledRetry,
+  StyledShowMore,
+  StyledTitleWrapper,
+} from '@src/containers/ReportStep/BoardMetrics/style';
+import {
   BOARD_METRICS,
   BOARD_METRICS_MAPPING,
   METRICS_SUBTITLE,
@@ -8,14 +16,6 @@ import {
   RETRY,
   SHOW_MORE,
 } from '@src/constants/resources';
-import {
-  StyledLoading,
-  StyledMetricsSection,
-  StyledRetry,
-  StyledShowMore,
-  StyledTitleWrapper,
-} from '@src/containers/ReportStep/BoardMetrics/BoardMetrics';
-import { GridContainer } from '@src/containers/ReportStep/BoardMetrics/style';
 import { ReportTitle } from '@src/components/Common/ReportGrid/ReportTitle';
 import { selectMetricsContent } from '@src/context/Metrics/metricsSlice';
 import { ReportResponseDTO } from '@src/clients/report/dto/response';

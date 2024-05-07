@@ -7,7 +7,7 @@ import {
 import { DEFAULT_SPRINT_INTERVAL_OFFSET_DAYS, REMOVE_BUTTON_TEXT, DATE_RANGE_FORMAT } from '@src/constants/resources';
 import { isDateDisabled, calculateLastAvailableDate } from '@src/containers/ConfigStep/DateRangePicker/validation';
 import { BASIC_INFO_ERROR_MESSAGE, AGGREGATED_DATE_ERROR_REASON } from '@src/containers/ConfigStep/Form/literal';
-import { IRangePickerProps } from '@src/containers/ConfigStep/DateRangePicker/types';
+import { IRangeOnChangeData, IRangePickerProps } from '@src/containers/ConfigStep/DateRangePicker/types';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import { DateValidationError } from '@mui/x-date-pickers';
 import { TextField, TextFieldProps } from '@mui/material';
@@ -35,15 +35,7 @@ const HelperTextForEndDate = (props: TextFieldProps) => {
   return <TextField {...props} variant='standard' required={true} error={isError} helperText={isError && helperText} />;
 };
 
-export const DateRangePicker = ({
-  startDate,
-  endDate,
-  index,
-  onError,
-  onChange,
-  onRemove,
-  rangeList,
-}: IRangePickerProps) => {
+export const DateRangePicker = ({ startDate, endDate, index, onChange, onRemove, rangeList }: IRangePickerProps) => {
   const isShowRemoveButton = rangeList.length > 1;
   const dateRangeGroupExcludeSelf = rangeList.filter(({ sortIndex }: { sortIndex: number }) => sortIndex !== index);
   const shouldStartDateDisableDate = isDateDisabled.bind(null, dateRangeGroupExcludeSelf);
@@ -64,49 +56,65 @@ export const DateRangePicker = ({
           : draftDaysAddition;
     }
 
-    const result = isNull(value)
-      ? {
-          startDate: null,
-          endDate: null,
-        }
-      : {
-          startDate: value.startOf('date').format(DATE_RANGE_FORMAT),
-          endDate: value.endOf('date').add(daysAddToEndDate, 'day').format(DATE_RANGE_FORMAT),
-        };
-
+    let result: IRangeOnChangeData = { startDate: null, endDate: null, startDateError: null, endDateError: null };
     if (isNull(validationError)) {
       if (isNull(value)) {
-        onError('startDateError', BASIC_INFO_ERROR_MESSAGE.dateRange.startDate.required, index);
+        result = {
+          startDate: null,
+          endDate: null,
+          startDateError: BASIC_INFO_ERROR_MESSAGE.dateRange.startDate.required,
+          endDateError: BASIC_INFO_ERROR_MESSAGE.dateRange.endDate.required,
+        };
+      } else {
+        result = {
+          startDate: value.startOf('date').format(DATE_RANGE_FORMAT),
+          endDate: value.endOf('date').add(daysAddToEndDate, 'day').format(DATE_RANGE_FORMAT),
+          startDateError: null,
+          endDateError: null,
+        };
       }
       setValue(startDateFieldName, result.startDate, { shouldValidate: true });
       setValue(endDateFieldName, result.endDate, { shouldValidate: true });
     } else {
+      result = {
+        startDate: value!.startOf('date').format(DATE_RANGE_FORMAT),
+        endDate,
+        startDateError: BASIC_INFO_ERROR_MESSAGE.dateRange.startDate.invalid,
+        endDateError: rangeList.find((item) => item.sortIndex === index)!.endDateError,
+      };
       setValue(startDateFieldName, AGGREGATED_DATE_ERROR_REASON, { shouldValidate: true });
-      onError('startDateError', validationError, index);
     }
     onChange(result, index);
   };
 
   const changeEndDate = (value: Nullable<Dayjs>, { validationError }: { validationError: DateValidationError }) => {
-    const result = isNull(value)
-      ? {
-          startDate,
-          endDate: null,
-        }
-      : {
-          startDate,
-          endDate: value.endOf('date').format(DATE_RANGE_FORMAT),
-        };
-
+    let result: IRangeOnChangeData = { startDate: null, endDate: null, startDateError: null, endDateError: null };
     if (isNull(validationError)) {
       if (isNull(value)) {
-        onError('endDateError', BASIC_INFO_ERROR_MESSAGE.dateRange.endDate.required, index);
+        result = {
+          startDate,
+          endDate: null,
+          startDateError: rangeList.find((item) => item.sortIndex === index)!.startDateError,
+          endDateError: BASIC_INFO_ERROR_MESSAGE.dateRange.endDate.required,
+        };
+      } else {
+        result = {
+          startDate,
+          endDate: value.endOf('date').format(DATE_RANGE_FORMAT),
+          startDateError: null,
+          endDateError: null,
+        };
       }
       setValue(startDateFieldName, result.startDate, { shouldValidate: true });
       setValue(endDateFieldName, result.endDate, { shouldValidate: true });
     } else {
+      result = {
+        startDate,
+        endDate: value!.endOf('date').format(DATE_RANGE_FORMAT),
+        startDateError: rangeList.find((item) => item.sortIndex === index)!.startDateError,
+        endDateError: BASIC_INFO_ERROR_MESSAGE.dateRange.endDate.invalid,
+      };
       setValue(endDateFieldName, AGGREGATED_DATE_ERROR_REASON, { shouldValidate: true });
-      onError('endDateError', validationError, index);
     }
     onChange(result, index);
   };

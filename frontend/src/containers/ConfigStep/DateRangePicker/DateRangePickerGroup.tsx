@@ -1,4 +1,9 @@
-import { SortedDateRangeType, sortFn, TProps, TSortErrorTypes } from '@src/containers/ConfigStep/DateRangePicker/types';
+import {
+  IRangeOnChangeData,
+  SortedDateRangeType,
+  sortFn,
+  TProps,
+} from '@src/containers/ConfigStep/DateRangePicker/types';
 import { updateShouldGetBoardConfig, updateShouldGetPipelineConfig } from '@src/context/Metrics/metricsSlice';
 import { selectDateRange, selectDateRangeSortType, updateDateRange } from '@src/context/config/configSlice';
 import { DateRangePickerGroupContainer } from '@src/containers/ConfigStep/DateRangePicker/style';
@@ -9,7 +14,6 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch';
 import { AddButton } from '@src/components/Common/AddButtonOneLine';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { DateValidationError } from '@mui/x-date-pickers';
 import { useFormContext } from 'react-hook-form';
 import { Nullable } from '@src/utils/types';
 import { useEffect, useState } from 'react';
@@ -48,14 +52,6 @@ export const DateRangePickerGroup = ({ onError }: TProps) => {
     onError?.(rangeListWithErrors);
   }, [onError, rangeListWithMeta]);
 
-  const handleError = (type: TSortErrorTypes, error: DateValidationError | string, index: number) => {
-    const newList = rangeListWithMeta.map((item) => ({
-      ...item,
-      [type]: item.sortIndex === index ? error : item[type],
-    }));
-    setRangeListWithMeta(newList);
-  };
-
   const dispatchUpdateConfig = () => {
     dispatch(updateShouldGetBoardConfig(true));
     dispatch(updateShouldGetPipelineConfig(true));
@@ -72,18 +68,15 @@ export const DateRangePickerGroup = ({ onError }: TProps) => {
     dispatch(updateDateRange(result.map(({ startDate, endDate }) => ({ startDate, endDate }))));
   };
 
-  const handleChange = (
-    { startDate, endDate }: { startDate: string | null; endDate: string | null },
-    index: number,
-  ) => {
+  const handleChange = ({ startDate, endDate, startDateError, endDateError }: IRangeOnChangeData, index: number) => {
     const result = rangeListWithMeta.map((item) =>
       item.sortIndex === index
         ? {
             ...item,
             startDate,
             endDate,
-            startDateError: deriveErrorMessageByDate(startDate, BASIC_INFO_ERROR_MESSAGE.dateRange.startDate.required),
-            endDateError: deriveErrorMessageByDate(endDate, BASIC_INFO_ERROR_MESSAGE.dateRange.endDate.required),
+            startDateError,
+            endDateError,
           }
         : { ...item },
     );
@@ -116,7 +109,6 @@ export const DateRangePickerGroup = ({ onError }: TProps) => {
             index={sortIndex}
             key={index}
             onChange={handleChange}
-            onError={handleError}
             onRemove={handleRemove}
             rangeList={rangeListWithMeta}
           />

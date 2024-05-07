@@ -1,7 +1,6 @@
 import { DateValidationError } from '@mui/x-date-pickers';
+import { Nullable } from '@src/utils/types';
 import dayjs from 'dayjs';
-
-export type TSortErrorTypes = 'startDateError' | 'endDateError';
 
 export type SortedDateRangeType = {
   startDate: string | null;
@@ -11,13 +10,19 @@ export type SortedDateRangeType = {
   endDateError: DateValidationError | string | null;
 };
 
+export interface IRangeOnChangeData {
+  startDate: Nullable<string>;
+  endDate: Nullable<string>;
+  startDateError: Nullable<string>;
+  endDateError: Nullable<string>;
+}
+
 export interface IRangePickerProps {
   startDate: string | null;
   endDate: string | null;
   index: number;
   key?: string | number;
-  onError: (type: TSortErrorTypes, error: DateValidationError | string, index: number) => void;
-  onChange: (data: { startDate: string | null; endDate: string | null }, index: number) => void;
+  onChange: (data: IRangeOnChangeData, index: number) => void;
   onRemove: (index: number) => void;
   rangeList: SortedDateRangeType[];
 }

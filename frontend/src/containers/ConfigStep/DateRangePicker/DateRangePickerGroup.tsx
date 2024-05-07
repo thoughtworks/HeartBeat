@@ -11,6 +11,7 @@ import { DateRangePicker } from '@src/containers/ConfigStep/DateRangePicker/Date
 import { ADD_TIME_RANGE_BUTTON_TEXT, MAX_TIME_RANGE_AMOUNT } from '@src/constants/resources';
 import { BASIC_INFO_ERROR_MESSAGE } from '@src/containers/ConfigStep/Form/literal';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { updateShouldMetricsLoad } from '@src/context/stepper/StepperSlice';
 import { useAppDispatch, useAppSelector } from '@src/hooks/useAppDispatch';
 import { AddButton } from '@src/components/Common/AddButtonOneLine';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -55,6 +56,7 @@ export const DateRangePickerGroup = ({ onError }: TProps) => {
   const dispatchUpdateConfig = () => {
     dispatch(updateShouldGetBoardConfig(true));
     dispatch(updateShouldGetPipelineConfig(true));
+    dispatch(updateShouldMetricsLoad(true));
   };
 
   const addRangeHandler = () => {

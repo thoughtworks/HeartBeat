@@ -2,7 +2,10 @@ import { MOCK_BOARD_INFO_URL, FAKE_TOKEN, FAKE_DATE_EARLIER, FAKE_DATE_LATER } f
 import { AXIOS_REQUEST_ERROR_CODE } from '@src/constants/resources';
 import { useGetBoardInfoEffect } from '@src/hooks/useGetBoardInfo';
 import { renderHook, act, waitFor } from '@testing-library/react';
+import { setupStore } from '@test/utils/setupStoreUtil';
+import React, { ReactNode } from 'react';
 import { HttpResponse, http } from 'msw';
+import { Provider } from 'react-redux';
 import { setupServer } from 'msw/node';
 import { HttpStatusCode } from 'axios';
 
@@ -33,8 +36,14 @@ describe('use get board info', () => {
     jest.clearAllMocks();
     server.close();
   });
+  const store = setupStore();
+  const wrapper = ({ children }: { children: ReactNode }) => {
+    return <Provider store={store}>{children}</Provider>;
+  };
+  const setup = () => renderHook(() => useGetBoardInfoEffect(), { wrapper });
+
   it('should got init data when hook render', () => {
-    const { result } = renderHook(() => useGetBoardInfoEffect());
+    const { result } = setup();
     expect(result.current.isLoading).toBe(false);
     expect(result.current.errorMessage).toMatchObject({});
   });
@@ -74,7 +83,7 @@ describe('use get board info', () => {
       }),
     );
 
-    const { result } = renderHook(() => useGetBoardInfoEffect());
+    const { result } = setup();
     await act(() => {
       result.current.getBoardInfo(mockBoardConfig);
     });
@@ -119,7 +128,7 @@ describe('use get board info', () => {
         });
       }),
     );
-    const { result } = renderHook(() => useGetBoardInfoEffect());
+    const { result } = setup();
     await act(() => {
       result.current.getBoardInfo(mockBoardConfig);
     });
@@ -145,7 +154,7 @@ describe('use get board info', () => {
         );
       }),
     );
-    const { result } = renderHook(() => useGetBoardInfoEffect());
+    const { result } = setup();
     await act(() => {
       result.current.getBoardInfo(mockBoardConfig);
     });
@@ -199,8 +208,8 @@ describe('use get board info', () => {
         },
       ),
     );
-    const { result } = renderHook(() => useGetBoardInfoEffect());
-    await act(() => {
+    const { result } = setup();
+    act(() => {
       result.current.getBoardInfo(mockBoardConfig);
     });
   });

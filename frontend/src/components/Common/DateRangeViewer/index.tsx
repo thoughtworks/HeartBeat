@@ -1,15 +1,19 @@
 import {
   DateRangeContainer,
   DateRangeExpandContainer,
+  DateRangeFailedIconContainer,
   SingleDateRange,
   StyledArrowForward,
   StyledCalendarToday,
   StyledDivider,
   StyledExpandMoreIcon,
 } from './style';
+import { selectFailedTimeRange, selectStepNumber } from '@src/context/stepper/StepperSlice';
 import React, { useRef, useState, forwardRef, useEffect, useCallback } from 'react';
+import { formatDate, formatDateToTimestampString } from '@src/utils/util';
+import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
 import { DateRange } from '@src/context/config/configSlice';
-import { formatDate } from '@src/utils/util';
+import { useAppSelector } from '@src/hooks';
 import { theme } from '@src/theme';
 
 type Props = {
@@ -22,6 +26,8 @@ type Props = {
 const DateRangeViewer = ({ dateRangeList, changeDateRange, selectedDateRange, disabledAll = true }: Props) => {
   const [showMoreDateRange, setShowMoreDateRange] = useState(false);
   const DateRangeExpandRef = useRef<HTMLDivElement>(null);
+  const failedTimeRange = useAppSelector(selectFailedTimeRange);
+  const stepNumber = useAppSelector(selectStepNumber);
 
   const handleClickOutside = useCallback((event: MouseEvent) => {
     if (DateRangeExpandRef.current && !DateRangeExpandRef.current?.contains(event.target as Node)) {
@@ -46,12 +52,16 @@ const DateRangeViewer = ({ dateRangeList, changeDateRange, selectedDateRange, di
       <DateRangeExpandContainer ref={ref}>
         {dateRangeList.map((dateRange) => {
           const disabled = dateRange.disabled || disabledAll;
+          const hasMetricsError = failedTimeRange.includes(formatDateToTimestampString(dateRange.startDate as string));
           return (
             <SingleDateRange
               disabled={disabled}
               onClick={() => handleClick(dateRange.startDate!)}
               key={dateRange.startDate!}
             >
+              <DateRangeFailedIconContainer>
+                {hasMetricsError && stepNumber === 1 && <PriorityHighIcon color='error' />}
+              </DateRangeFailedIconContainer>
               {formatDate(dateRange.startDate as string)}
               <StyledArrowForward />
               {formatDate(dateRange.endDate as string)}

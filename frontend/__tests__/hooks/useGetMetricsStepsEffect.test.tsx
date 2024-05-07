@@ -150,6 +150,6 @@ describe('use get steps effect', () => {
     });
 
     expect(result.current.errorMessage).toEqual('Failed to get BuildKite steps: timeout');
-    expect(mockDispatch).toHaveBeenCalledTimes(1);
+    expect(mockDispatch).toHaveBeenCalledTimes(7);
   });
 });

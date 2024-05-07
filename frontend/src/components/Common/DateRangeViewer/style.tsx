@@ -69,6 +69,13 @@ export const StyledArrowForward = styled(ArrowForward)({
   fontSize: '0.875rem',
 });
 
+export const DateRangeFailedIconContainer = styled.div({
+  minWidth: '1.25rem',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+});
+
 export const StyledCalendarToday = styled(CalendarToday)({
   marginLeft: '1rem',
   fontSize: '.875rem',

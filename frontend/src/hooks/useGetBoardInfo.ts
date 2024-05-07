@@ -1,7 +1,10 @@
 import { AXIOS_REQUEST_ERROR_CODE, BOARD_CONFIG_INFO_ERROR, BOARD_CONFIG_INFO_TITLE } from '@src/constants/resources';
+import { updateFailedTimeRange } from '@src/context/stepper/StepperSlice';
 import { boardInfoClient } from '@src/clients/board/BoardInfoClient';
 import { BoardInfoConfigDTO } from '@src/clients/board/dto/request';
 import { METRICS_DATA_FAIL_STATUS } from '@src/constants/commons';
+import { formatDateToTimestampString } from '@src/utils/util';
+import { useAppDispatch } from '@src/hooks/index';
 import { ReactNode, useState } from 'react';
 import { HttpStatusCode } from 'axios';
 import get from 'lodash/get';
@@ -64,9 +67,11 @@ const errorStatusMap = (status: METRICS_DATA_FAIL_STATUS) => {
 };
 
 export const useGetBoardInfoEffect = (): useGetBoardInfoInterface => {
+  const dispatch = useAppDispatch();
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState({});
   const [boardInfoFailedStatus, setBoardInfoFailedStatus] = useState(METRICS_DATA_FAIL_STATUS.NOT_FAILED);
+  const localFailedTimeRange: string[] = [];
 
   const getBoardInfo = async (data: BoardInfoConfigDTO) => {
     setIsLoading(true);
@@ -98,6 +103,7 @@ export const useGetBoardInfoEffect = (): useGetBoardInfoInterface => {
             if (!res.data) {
               errorCount++;
               localBoardInfoFailedStatus = METRICS_DATA_FAIL_STATUS.PARTIAL_FAILED_NO_CARDS;
+              localFailedTimeRange.push(formatDateToTimestampString(info.startDate as string));
               setBoardInfoFailedStatus(METRICS_DATA_FAIL_STATUS.PARTIAL_FAILED_NO_CARDS);
             }
             return res;
@@ -105,6 +111,7 @@ export const useGetBoardInfoEffect = (): useGetBoardInfoInterface => {
           .catch((err) => {
             errorCount++;
             localBoardInfoFailedStatus = boardInfoPartialFailedStatusMapping(err?.code);
+            localFailedTimeRange.push(formatDateToTimestampString(info.startDate as string));
             setBoardInfoFailedStatus(localBoardInfoFailedStatus);
             return err;
           });
@@ -128,6 +135,7 @@ export const useGetBoardInfoEffect = (): useGetBoardInfoInterface => {
         })
         .finally(() => {
           setIsLoading(false);
+          dispatch(updateFailedTimeRange(localFailedTimeRange));
         });
     }
   };

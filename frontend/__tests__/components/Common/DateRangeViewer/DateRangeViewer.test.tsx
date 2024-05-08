@@ -1,5 +1,6 @@
 import { nextStep, updateFailedTimeRange } from '@src/context/stepper/StepperSlice';
 import DateRangeViewer from '@src/components/Common/DateRangeViewer';
+import { formatDateToTimestampString } from '@src/utils/util';
 import { DateRange } from '@src/context/config/configSlice';
 import { setupStore } from '@test/utils/setupStoreUtil';
 import { render, screen } from '@testing-library/react';
@@ -62,17 +63,21 @@ describe('DateRangeViewer', () => {
   });
 
   it('should show priority high icon when click expand button and step number is 1', async () => {
-    const failedTimeRanges = ['1706716800000'];
+    const failedTimeRangeList = [formatDateToTimestampString('2024-02-01T00:00:00.000+08:00')];
     store.dispatch(nextStep());
-    store.dispatch(updateFailedTimeRange(failedTimeRanges));
+    store.dispatch(updateFailedTimeRange(failedTimeRangeList));
     const { getByLabelText } = setup(mockDateRanges);
+
     await userEvent.click(getByLabelText('expandMore'));
+
     expect(screen.getByTestId('PriorityHighIcon')).toBeInTheDocument();
   });
 
   it('should not show priority high icon when click expand button and step number is 0', async () => {
     const { getByLabelText } = setup(mockDateRanges);
+
     await userEvent.click(getByLabelText('expandMore'));
+
     expect(screen.queryByTestId('PriorityHighIcon')).not.toBeInTheDocument();
   });
 });

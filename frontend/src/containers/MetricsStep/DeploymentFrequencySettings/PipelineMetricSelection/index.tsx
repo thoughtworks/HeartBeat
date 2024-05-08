@@ -25,7 +25,7 @@ import { useGetMetricsStepsEffect } from '@src/hooks/useGetMetricsStepsEffect';
 import { addNotification } from '@src/context/notification/NotificationSlice';
 import { uniqPipelineListCrews, updateResponseCrews } from '@src/utils/util';
 import { MESSAGE, NO_PIPELINE_STEP_ERROR } from '@src/constants/resources';
-import { shouldMetricsLoad } from '@src/context/stepper/StepperSlice';
+import { shouldMetricsLoaded } from '@src/context/stepper/StepperSlice';
 import { ErrorNotification } from '@src/components/ErrorNotification';
 import { METRICS_DATA_FAIL_STATUS } from '@src/constants/commons';
 import { useAppDispatch, useAppSelector } from '@src/hooks';
@@ -73,7 +73,7 @@ export const PipelineMetricSelection = ({
   const pipelineNameWarningMessage = selectPipelineNameWarningMessage(storeContext, id);
   const stepWarningMessage = selectStepWarningMessage(storeContext, id);
   const [isShowNoStepWarning, setIsShowNoStepWarning] = useState(false);
-  const shouldLoad = useAppSelector(shouldMetricsLoad);
+  const shouldLoad = useAppSelector(shouldMetricsLoaded);
   const pipelineList = useAppSelector(selectPipelineList);
   const shouldGetPipelineConfig = useAppSelector(selectShouldGetPipelineConfig);
   const isLoadingRef = useRef(false);

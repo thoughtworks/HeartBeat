@@ -31,7 +31,7 @@ import {
 import { DeploymentFrequencySettings } from '@src/containers/MetricsStep/DeploymentFrequencySettings';
 import { addNotification, closeAllNotifications } from '@src/context/notification/NotificationSlice';
 import { Classification } from '@src/containers/MetricsStep/Classification';
-import { shouldMetricsLoad } from '@src/context/stepper/StepperSlice';
+import { shouldMetricsLoaded } from '@src/context/stepper/StepperSlice';
 import DateRangeViewer from '@src/components/Common/DateRangeViewer';
 import { useGetBoardInfoEffect } from '@src/hooks/useGetBoardInfo';
 import { combineBoardInfo, sortDateRanges } from '@src/utils/util';
@@ -69,7 +69,7 @@ const MetricsStep = () => {
     cycleTimeSettingsType === CYCLE_TIME_SETTINGS_TYPES.BY_COLUMN &&
     cycleTimeSettings.filter((e) => e.value === DONE).length > 1;
   const { getBoardInfo, isLoading, errorMessage, boardInfoFailedStatus } = useGetBoardInfoEffect();
-  const shouldLoad = useAppSelector(shouldMetricsLoad);
+  const shouldLoad = useAppSelector(shouldMetricsLoaded);
   const shouldGetBoardConfig = useAppSelector(selectShouldGetBoardConfig);
 
   const getInfo = useCallback(

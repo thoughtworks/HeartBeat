@@ -26,7 +26,7 @@ type Props = {
 const DateRangeViewer = ({ dateRangeList, changeDateRange, selectedDateRange, disabledAll = true }: Props) => {
   const [showMoreDateRange, setShowMoreDateRange] = useState(false);
   const DateRangeExpandRef = useRef<HTMLDivElement>(null);
-  const failedTimeRange = useAppSelector(selectFailedTimeRange);
+  const failedTimeRangeList = useAppSelector(selectFailedTimeRange);
   const stepNumber = useAppSelector(selectStepNumber);
 
   const handleClickOutside = useCallback((event: MouseEvent) => {
@@ -52,7 +52,9 @@ const DateRangeViewer = ({ dateRangeList, changeDateRange, selectedDateRange, di
       <DateRangeExpandContainer ref={ref}>
         {dateRangeList.map((dateRange) => {
           const disabled = dateRange.disabled || disabledAll;
-          const hasMetricsError = failedTimeRange.includes(formatDateToTimestampString(dateRange.startDate as string));
+          const hasMetricsError = failedTimeRangeList.includes(
+            formatDateToTimestampString(dateRange.startDate as string),
+          );
           return (
             <SingleDateRange
               disabled={disabled}

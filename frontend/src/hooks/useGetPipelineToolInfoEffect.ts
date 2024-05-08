@@ -6,7 +6,7 @@ import {
 import { pipelineToolClient, IGetPipelineToolInfoResult } from '@src/clients/pipeline/PipelineToolClient';
 import { selectShouldGetPipelineConfig, updatePipelineSettings } from '@src/context/Metrics/metricsSlice';
 import { clearMetricsPipelineFormMeta } from '@src/context/meta/metaSlice';
-import { shouldMetricsLoad } from '@src/context/stepper/StepperSlice';
+import { shouldMetricsLoaded } from '@src/context/stepper/StepperSlice';
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { useAppDispatch, useAppSelector } from '@src/hooks';
 
@@ -29,7 +29,7 @@ export const useGetPipelineToolInfoEffect = (): IUseVerifyPipeLineToolStateInter
   const [info, setInfo] = useState<IGetPipelineToolInfoResult>(defaultInfoStructure);
   const isProjectCreated = useAppSelector(selectIsProjectCreated);
   const restoredPipelineTool = useAppSelector(selectPipelineTool);
-  const shouldLoad = useAppSelector(shouldMetricsLoad);
+  const shouldLoad = useAppSelector(shouldMetricsLoaded);
   const shouldGetPipelineConfig = useAppSelector(selectShouldGetPipelineConfig);
   const [isFirstFetch, setIsFirstFetch] = useState(shouldGetPipelineConfig);
 

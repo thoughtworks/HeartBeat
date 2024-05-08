@@ -71,7 +71,7 @@ export const useGetBoardInfoEffect = (): useGetBoardInfoInterface => {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState({});
   const [boardInfoFailedStatus, setBoardInfoFailedStatus] = useState(METRICS_DATA_FAIL_STATUS.NOT_FAILED);
-  const localFailedTimeRange: string[] = [];
+  const localFailedTimeRangeList: string[] = [];
 
   const getBoardInfo = async (data: BoardInfoConfigDTO) => {
     setIsLoading(true);
@@ -103,7 +103,7 @@ export const useGetBoardInfoEffect = (): useGetBoardInfoInterface => {
             if (!res.data) {
               errorCount++;
               localBoardInfoFailedStatus = METRICS_DATA_FAIL_STATUS.PARTIAL_FAILED_NO_CARDS;
-              localFailedTimeRange.push(formatDateToTimestampString(info.startDate as string));
+              localFailedTimeRangeList.push(formatDateToTimestampString(info.startDate as string));
               setBoardInfoFailedStatus(METRICS_DATA_FAIL_STATUS.PARTIAL_FAILED_NO_CARDS);
             }
             return res;
@@ -111,7 +111,7 @@ export const useGetBoardInfoEffect = (): useGetBoardInfoInterface => {
           .catch((err) => {
             errorCount++;
             localBoardInfoFailedStatus = boardInfoPartialFailedStatusMapping(err?.code);
-            localFailedTimeRange.push(formatDateToTimestampString(info.startDate as string));
+            localFailedTimeRangeList.push(formatDateToTimestampString(info.startDate as string));
             setBoardInfoFailedStatus(localBoardInfoFailedStatus);
             return err;
           });
@@ -135,7 +135,7 @@ export const useGetBoardInfoEffect = (): useGetBoardInfoInterface => {
         })
         .finally(() => {
           setIsLoading(false);
-          dispatch(updateFailedTimeRange(localFailedTimeRange));
+          dispatch(updateFailedTimeRange(localFailedTimeRangeList));
         });
     }
   };

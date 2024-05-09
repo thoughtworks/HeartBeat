@@ -1,5 +1,5 @@
 import { act, render, screen, waitFor, within } from '@testing-library/react';
-import { updateAssigneeFilter } from '@src/context/Metrics/metricsSlice';
+import {savePipelineCrews, saveUsers, updateAssigneeFilter} from '@src/context/Metrics/metricsSlice';
 import { Crews } from '@src/containers/MetricsStep/Crews';
 import { setupStore } from '../../utils/setupStoreUtil';
 import userEvent from '@testing-library/user-event';
@@ -10,11 +10,6 @@ const mockTitle = 'Crews Setting';
 const mockLabel = 'Included Crews';
 const assigneeFilterLabels = ['Last assignee', 'Historical assignee'];
 const assigneeFilterValues = ['lastAssignee', 'historicalAssignee'];
-
-jest.mock('@src/context/Metrics/metricsSlice', () => ({
-  ...jest.requireActual('@src/context/Metrics/metricsSlice'),
-  selectMetricsContent: jest.fn().mockReturnValue({ users: ['crew A', 'crew B'], pipelineCrews: ['A', 'B'] }),
-}));
 
 const mockedUseAppDispatch = jest.fn();
 jest.mock('@src/hooks/useAppDispatch', () => ({
@@ -47,17 +42,29 @@ describe('Crew', () => {
   });
 
   it('should selected all options by default when initializing given type is board', () => {
+    store.dispatch(saveUsers(['crew A', 'crew B']));
     setup();
 
     expect(screen.getByRole('button', { name: 'crew A' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'crew B' })).toBeInTheDocument();
   });
-  it('should selected all options by default when initializing given type is other', () => {
+
+  it('should show detail options when initializing given type is other and click Included crews button', async () => {
+    store.dispatch(savePipelineCrews(['crew B', 'crew C']));
     setup('other');
 
-    expect(screen.getByRole('button', { name: 'A' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'B' })).toBeInTheDocument();
+    await act(async () => {
+      await userEvent.click(screen.getByRole('combobox', { name: mockLabel }));
+    });
+    const listBox = within(screen.getByRole('listbox'));
+    expect(listBox.getByRole('option', { name: 'All' })).toBeVisible();
+    expect(listBox.getByRole('option', { name: 'crew A' })).toBeVisible();
+    expect(listBox.getByRole('option', { name: 'crew B' })).toBeVisible();
+    expect(() => {
+      listBox.getByRole('option', { name: 'crew C' });
+    }).toThrow();
   });
+
   it('should show detail options when click Included crews button', async () => {
     setup();
 
@@ -72,6 +79,7 @@ describe('Crew', () => {
   });
 
   it('should show error message when crews is null', async () => {
+    store.dispatch(saveUsers(['crew A', 'crew B']));
     setup();
     await act(async () => {
       await userEvent.click(screen.getByRole('combobox', { name: mockLabel }));
@@ -85,6 +93,7 @@ describe('Crew', () => {
   });
 
   it('should show other selections when cancel one option given default all selections in crews', async () => {
+    store.dispatch(saveUsers(['crew A', 'crew B']));
     setup();
 
     await act(async () => {
@@ -101,6 +110,7 @@ describe('Crew', () => {
   });
 
   it('should clear crews data when check all option', async () => {
+    store.dispatch(saveUsers(['crew A', 'crew B']));
     setup();
 
     await act(async () => {

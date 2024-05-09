@@ -593,6 +593,12 @@ describe('saveMetricsSetting reducer', () => {
     expect(savedPipelineCrews.pipelineCrews).toBe(crews);
   });
 
+  it('should return empty array given crews is undefined', () => {
+    const savedPipelineCrews = saveMetricsSettingReducer(initState, savePipelineCrews(undefined));
+
+    expect(savedPipelineCrews.pipelineCrews).toEqual([]);
+  });
+
   it('should update ShouldRetryPipelineConfig', async () => {
     store.dispatch(updateShouldRetryPipelineConfig(true));
     expect(selectShouldRetryPipelineConfig(store.getState())).toEqual(true);

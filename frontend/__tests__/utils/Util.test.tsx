@@ -14,10 +14,12 @@ import {
   sortDateRanges,
   sortDisabledOptions,
   transformToCleanedBuildKiteEmoji,
+  updateResponseCrews,
 } from '@src/utils/util';
 import { CleanedBuildKiteEmoji, OriginBuildKiteEmoji } from '@src/constants/emojis/emoji';
 import { CYCLE_TIME_SETTINGS_TYPES, METRICS_CONSTANTS } from '@src/constants/resources';
 import { ICycleTimeSetting, IPipelineConfig } from '@src/context/Metrics/metricsSlice';
+import { IPipeline } from '@src/context/config/pipelineTool/verifyResponseSlice';
 import { BoardInfoResponse } from '@src/hooks/useGetBoardInfo';
 import { EMPTY_STRING } from '@src/constants/commons';
 import { PIPELINE_TOOL_TYPES } from '../fixtures';
@@ -568,5 +570,38 @@ describe('combineBoardInfo function', () => {
   it('should combine board info', () => {
     const combineBoardData = combineBoardInfo(boardInfoResponses);
     expect(combineBoardData).toStrictEqual(expectResults);
+  });
+});
+
+describe('updateResponseCrews function', () => {
+  const mockData = {
+    id: '0',
+    name: 'pipelineName',
+    orgId: '',
+    orgName: 'orgName',
+    repository: '',
+    steps: [] as string[],
+    branches: [] as string[],
+    crews: ['a', 'b', 'c'],
+  } as IPipeline;
+  it('should update crews when pipelineName and org both matched', () => {
+    const expectData = [
+      {
+        ...mockData,
+        crews: [],
+      },
+    ];
+    const result = updateResponseCrews('orgName', 'pipelineName', [mockData]);
+    expect(result).toEqual(expectData);
+  });
+
+  it('should not update crews when pipelineName or org not matched', () => {
+    const expectData = [
+      {
+        ...mockData,
+      },
+    ];
+    const result = updateResponseCrews('xxx', 'xxx', [mockData]);
+    expect(result).toEqual(expectData);
   });
 });

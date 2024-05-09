@@ -2,7 +2,7 @@ import { CYCLE_TIME_LIST, CYCLE_TIME_SETTINGS_TYPES, METRICS_CONSTANTS } from '@
 import { CleanedBuildKiteEmoji, OriginBuildKiteEmoji } from '@src/constants/emojis/emoji';
 import { ICycleTimeSetting, IPipelineConfig } from '@src/context/Metrics/metricsSlice';
 import { ITargetFieldType } from '@src/components/Common/MultiAutoComplete/styles';
-import { pipeline } from '@src/context/config/pipelineTool/verifyResponseSlice';
+import { IPipeline } from '@src/context/config/pipelineTool/verifyResponseSlice';
 import { includes, isEqual, sortBy, uniq, uniqBy } from 'lodash';
 import { BoardInfoResponse } from '@src/hooks/useGetBoardInfo';
 import { DATE_FORMAT_TEMPLATE } from '@src/constants/template';
@@ -159,7 +159,7 @@ export const convertCycleTimeSettings = (
   return cycleTimeSettings?.map(({ status, value }: ICycleTimeSetting) => ({ [status]: value }));
 };
 
-export const updateResponseCrews = (organization: string, pipelineName: string, pipelineList: pipeline[]) => {
+export const updateResponseCrews = (organization: string, pipelineName: string, pipelineList: IPipeline[]) => {
   return pipelineList.map((pipeline) =>
     pipeline.name === pipelineName && pipeline.orgName === organization
       ? {
@@ -170,7 +170,7 @@ export const updateResponseCrews = (organization: string, pipelineName: string, 
   );
 };
 
-export const uniqPipelineListCrews = (pipelineList: pipeline[]) =>
+export const uniqPipelineListCrews = (pipelineList: IPipeline[]) =>
   uniq(pipelineList.flatMap(({ crews }) => crews)).filter((crew) => crew !== undefined);
 
 export function existBlockState(cycleTimeSettings: ICycleTimeSetting[]) {

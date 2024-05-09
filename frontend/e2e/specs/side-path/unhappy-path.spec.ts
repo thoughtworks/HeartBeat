@@ -56,6 +56,9 @@ test('unhappy path when import file', async ({ homePage, configStep, metricsStep
   await configStep.goToMetrics();
 
   await metricsStep.checkBoardNoCard();
+  await metricsStep.addNewPipelineAndSelectOrgAndName();
+  await metricsStep.checkPipelineLength(2);
+  await metricsStep.removePipeline(1);
   await metricsStep.checkPipelineFillNoStep(importUnhappyPathProjectFromFile.deployment);
   await metricsStep.goToPreviousStep();
   await configStep.typeInDateRange(dateRange);
@@ -72,7 +75,7 @@ test('unhappy path when import file', async ({ homePage, configStep, metricsStep
   await metricsStep.selectCrews(modifiedCorrectProjectFromFile.crews);
   await metricsStep.deselectBranch(modifiedCorrectProjectFromFile.deletedBranch);
   await metricsStep.addNewPipelineAndSelectSamePipeline(importUnhappyPathProjectFromFile.deployment);
-  await metricsStep.RemoveFirstNewPipeline();
+  await metricsStep.removePipeline(1);
   await metricsStep.selectDoneHeartbeatState(ModifiedhbStateData[6]);
   await metricsStep.validateNextButtonNotClickable();
   await metricsStep.selectDoneHeartbeatState(hbStateData[6]);

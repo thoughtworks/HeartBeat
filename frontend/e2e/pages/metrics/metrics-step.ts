@@ -582,13 +582,27 @@ export class MetricsStep {
       .getByLabel('Open')
       .nth(1)
       .click();
-    await expect(this.page.getByRole('option', { name: firstPipelineConfig.pipelineName })).not.toBeEnabled();
   }
 
-  async RemoveFirstNewPipeline() {
-    const pipelineList = this.pipelineSettingSection.getByText('Organization *Pipeline Name *Remove');
+  async addNewPipelineAndSelectOrgAndName() {
+    await this.pipelineNewPipelineButton.click();
+    await this.pipelineSettingSection.getByText('Organization *Remove').getByLabel('Open').click();
+    await this.page.getByRole('option', { name: 'Thoughtworks-Heartbeat' }).click();
+    await this.pipelineSettingSection
+      .getByText('Organization *Pipeline Name *Remove')
+      .getByLabel('Open')
+      .nth(1)
+      .click();
+    await this.page.getByRole('option', { name: 'Heartbeat-E2E' }).click();
+  }
 
-    await pipelineList.nth(0).getByRole('button', { name: 'remove' }).click();
+  async checkPipelineLength(length: number) {
+    const pipelineLength = await this.pipelineSettingSection.getByText('Organization *').count();
+    expect(pipelineLength).toEqual(length);
+  }
+
+  async removePipeline(index: number) {
+    await this.pipelineSettingSection.getByText('Remove').nth(index).click();
   }
 
   async checkPipelineFillNoStep(pipelineSettings: typeof metricsStepData.deployment) {

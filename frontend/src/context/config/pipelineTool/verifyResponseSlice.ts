@@ -1,8 +1,8 @@
 export interface IPipelineToolVerifyResponse {
-  pipelineList: pipeline[];
+  pipelineList: IPipeline[];
 }
 
-export interface pipeline {
+export interface IPipeline {
   id: string;
   name: string;
   orgId: string;

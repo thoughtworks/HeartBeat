@@ -241,7 +241,7 @@ describe('PipelineMetricSelection', () => {
     });
 
     await waitFor(() => {
-      expect(mockHandleClickRemoveButton).toHaveBeenCalledTimes(2);
+      expect(mockHandleClickRemoveButton).toHaveBeenCalledTimes(0);
     });
   });
 

@@ -10,7 +10,7 @@ import {
 import { initialPipelineToolState, IPipelineToolState } from '@src/context/config/pipelineTool/pipelineToolSlice';
 import { initialSourceControlState, ISourceControl } from '@src/context/config/sourceControl/sourceControlSlice';
 import { IBoardState, initialBoardState } from '@src/context/config/board/boardSlice';
-import { pipeline } from '@src/context/config/pipelineTool/verifyResponseSlice';
+import { IPipeline } from '@src/context/config/pipelineTool/verifyResponseSlice';
 import { uniqPipelineListCrews, updateResponseCrews } from '@src/utils/util';
 import { SortType } from '@src/containers/ConfigStep/DateRangePicker/types';
 import { createSlice } from '@reduxjs/toolkit';
@@ -171,7 +171,7 @@ export const configSlice = createSlice({
     },
     updatePipelineToolVerifyResponse: (state, action) => {
       const { pipelineList } = action.payload;
-      state.pipelineTool.verifiedResponse.pipelineList = pipelineList.map((pipeline: pipeline) => ({
+      state.pipelineTool.verifiedResponse.pipelineList = pipelineList.map((pipeline: IPipeline) => ({
         ...pipeline,
         steps: [],
       }));

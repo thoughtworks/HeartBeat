@@ -110,24 +110,20 @@ export const PipelineMetricSelection = ({
     );
     setLoadingCompletedNumber((value) => Math.max(value - 1, 0));
     getSteps(params, organizationId, buildId, pipelineType, token).then((res) => {
-      if (res && !res.haveStep) {
-        isShowRemoveButton && handleRemoveClick();
-      } else {
-        const steps = res?.response ?? [];
-        const branches = res?.branches ?? [];
-        const pipelineCrews = res?.pipelineCrews ?? [];
-        dispatch(
-          updatePipelineToolVerifyResponseSteps({
-            organization,
-            pipelineName: _pipelineName,
-            steps,
-            branches,
-            pipelineCrews,
-          }),
-        );
-        res?.haveStep && dispatch(updatePipelineStep({ steps, id, type, branches, pipelineCrews }));
-        dispatch(updateShouldGetPipelineConfig(false));
-      }
+      const steps = res?.response ?? [];
+      const branches = res?.branches ?? [];
+      const pipelineCrews = res?.pipelineCrews ?? [];
+      dispatch(
+        updatePipelineToolVerifyResponseSteps({
+          organization,
+          pipelineName: _pipelineName,
+          steps,
+          branches,
+          pipelineCrews,
+        }),
+      );
+      res?.haveStep && dispatch(updatePipelineStep({ steps, id, type, branches, pipelineCrews }));
+      dispatch(updateShouldGetPipelineConfig(false));
       res && setIsShowNoStepWarning(!res.haveStep);
     });
   };

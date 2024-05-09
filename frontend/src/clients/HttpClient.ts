@@ -42,7 +42,10 @@ export class HttpClient {
               throw new ForbiddenError(errorMessage, HttpStatusCode.Forbidden, description);
             default:
               if (status >= 500) {
-                window.location.href = ROUTE.ERROR_PAGE;
+                if (error.response.config.url.startsWith('/reports')) {
+                } else {
+                  window.location.href = ROUTE.ERROR_PAGE;
+                }
                 throw new InternalServerError(errorMessage, status, description);
               }
               throw new UnknownError();

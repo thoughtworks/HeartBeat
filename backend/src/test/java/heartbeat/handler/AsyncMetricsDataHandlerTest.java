@@ -90,7 +90,7 @@ class AsyncMetricsDataHandlerTest {
 		@Test
 		void shouldDeleteMetricsDataReadyWhenMetricsFileIsExpire() throws IOException {
 			long currentTimeMillis = System.currentTimeMillis();
-			String prefix = "prefix-";
+			String prefix = "prefix-20240417-20240418-";
 			String currentTimeFileId = prefix + currentTimeMillis;
 			String expireTimeFileId = prefix + (currentTimeMillis - 1900000L);
 			String expireTimeLockFileId = prefix + (currentTimeMillis - 1900000L) + ".lock";

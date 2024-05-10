@@ -957,7 +957,7 @@ class GenerateReporterServiceTest {
 		@Test
 		void shouldDeleteFailWhenDeleteCSV() {
 			File mockFile = mock(File.class);
-			when(mockFile.getName()).thenReturn("file1-1683734399999.CSV");
+			when(mockFile.getName()).thenReturn("file1-20240417-20240418-1683734399999.CSV");
 			when(mockFile.delete()).thenReturn(false);
 			File[] mockFiles = new File[] { mockFile };
 			File directory = mock(File.class);
@@ -985,7 +985,7 @@ class GenerateReporterServiceTest {
 		@Test
 		void shouldDeleteFailWhenDeleteFile() {
 			File mockFile = mock(File.class);
-			when(mockFile.getName()).thenReturn("board-1683734399999");
+			when(mockFile.getName()).thenReturn("board-20240417-20240418-1683734399999");
 			when(mockFile.delete()).thenReturn(false);
 			when(mockFile.exists()).thenReturn(true);
 			File[] mockFiles = new File[] { mockFile };
@@ -1000,7 +1000,7 @@ class GenerateReporterServiceTest {
 		@Test
 		void shouldDeleteTempFailWhenDeleteFile() {
 			File mockFile = mock(File.class);
-			when(mockFile.getName()).thenReturn("board-1683734399999.tmp");
+			when(mockFile.getName()).thenReturn("board-20240417-20240418-1683734399999.tmp");
 			when(mockFile.delete()).thenReturn(true);
 			when(mockFile.exists()).thenReturn(false);
 			File[] mockFiles = new File[] { mockFile };

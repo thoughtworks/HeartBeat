@@ -25,6 +25,10 @@ class AsyncReportRequestHandlerTest {
 
 	public static final String APP_OUTPUT_REPORT = "./app/output/report";
 
+	public static final String START_TIME = "20240417";
+
+	public static final String END_TIME = "20240418";
+
 	@InjectMocks
 	AsyncReportRequestHandler asyncReportRequestHandler;
 
@@ -47,8 +51,8 @@ class AsyncReportRequestHandlerTest {
 		long currentTimeMillis = System.currentTimeMillis();
 		String currentTime = Long.toString(currentTimeMillis);
 		String expireTime = Long.toString(currentTimeMillis - 1900000L);
-		String unExpireFile = IdUtil.getBoardReportFileId(currentTime);
-		String expireFile = IdUtil.getBoardReportFileId(expireTime);
+		String unExpireFile = getBoardReportFileId(currentTime);
+		String expireFile = getBoardReportFileId(expireTime);
 		asyncReportRequestHandler.putReport(unExpireFile, ReportResponse.builder().build());
 		asyncReportRequestHandler.putReport(expireFile, ReportResponse.builder().build());
 
@@ -77,6 +81,10 @@ class AsyncReportRequestHandlerTest {
 	void shouldThrowGenerateReportExceptionGivenFileNameInvalidWhenHandlerPutData() {
 		assertThrows(GenerateReportException.class,
 				() -> asyncReportRequestHandler.putReport("../", ReportResponse.builder().build()));
+	}
+
+	private String getBoardReportFileId(String timestamp) {
+		return "board-" + START_TIME + "-" + END_TIME + "-" + timestamp;
 	}
 
 }

@@ -156,7 +156,7 @@ public class AsyncDataBaseHandler {
 			for (File file : files) {
 				String fileName = file.getName();
 				String[] splitResult = fileName.split(FILENAME_SPLIT_PATTERN);
-				String timeStamp = splitResult[1];
+				String timeStamp = splitResult[3];
 				if (validateExpire(currentTimeStamp, Long.parseLong(timeStamp)) && !file.delete() && file.exists()) {
 					log.error("Failed to deleted expired fIleType: {} file, file name: {}", fIleType.getType(),
 							fileName);

@@ -59,6 +59,9 @@ declare module '@mui/material/styles' {
           borderColor: string;
         };
       };
+      downloadListLabel: {
+        backgroundColor: string;
+      };
     };
   }
 
@@ -142,6 +145,9 @@ export const theme = createTheme({
         backgroundColor: '#E9ECFF',
         borderColor: '#939DDA',
       },
+    },
+    downloadListLabel: {
+      backgroundColor: '#4350AF1A',
     },
   },
   typography: {

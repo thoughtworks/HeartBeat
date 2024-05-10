@@ -15,17 +15,18 @@ import {
   useGenerateReportEffect,
 } from '@src/hooks/useGenerateReportEffect';
 import {
-  addNotification,
-  closeAllNotifications,
-  closeNotification,
-  Notification,
-} from '@src/context/notification/NotificationSlice';
-import {
+  DateRange,
   isOnlySelectClassification,
   isSelectBoardMetrics,
   isSelectDoraMetrics,
   selectConfig,
 } from '@src/context/config/configSlice';
+import {
+  addNotification,
+  closeAllNotifications,
+  closeNotification,
+  Notification,
+} from '@src/context/notification/NotificationSlice';
 import {
   BOARD_METRICS,
   CALENDAR,
@@ -35,11 +36,11 @@ import {
   REQUIRED_DATA,
 } from '@src/constants/resources';
 import { IPipelineConfig, selectMetricsContent } from '@src/context/Metrics/metricsSlice';
+import { AllErrorResponse, ReportResponseDTO } from '@src/clients/report/dto/response';
 import { backStep, selectTimeStamp } from '@src/context/stepper/StepperSlice';
 import { StyledCalendarWrapper } from '@src/containers/ReportStep/style';
 import { ReportButtonGroup } from '@src/containers/ReportButtonGroup';
 import DateRangeViewer from '@src/components/Common/DateRangeViewer';
-import { ReportResponseDTO } from '@src/clients/report/dto/response';
 import BoardMetrics from '@src/containers/ReportStep/BoardMetrics';
 import DoraMetrics from '@src/containers/ReportStep/DoraMetrics';
 import React, { useEffect, useMemo, useState } from 'react';
@@ -58,6 +59,15 @@ const timeoutNotificationMessages = {
   [TimeoutErrorKey[METRIC_TYPES.DORA]]: 'DORA metrics',
   [TimeoutErrorKey[METRIC_TYPES.ALL]]: 'Report',
 };
+
+export interface DateRangeRequestResult {
+  startDate: string;
+  endDate: string;
+  overallMetricsCompleted: boolean | null;
+  boardMetricsCompleted: boolean | null;
+  doraMetricsCompleted: boolean | null;
+  reportMetricsError: AllErrorResponse;
+}
 
 const ReportStep = ({ handleSave }: ReportStepProps) => {
   const dispatch = useAppDispatch();
@@ -110,6 +120,23 @@ const ReportStep = ({ handleSave }: ReportStepProps) => {
   const shouldShowDoraMetrics = useAppSelector(isSelectDoraMetrics);
   const onlySelectClassification = useAppSelector(isOnlySelectClassification);
   const isSummaryPage = useMemo(() => pageType === REPORT_PAGE_TYPE.SUMMARY, [pageType]);
+
+  const mapDateResult = (descendingDateRanges: DateRange, reportInfos: IReportInfo[]) =>
+    descendingDateRanges.map(({ startDate, endDate }) => {
+      const reportData = reportInfos.find((singleResult) => singleResult.id === startDate)?.reportData ?? null;
+      return {
+        startDate: startDate,
+        endDate: endDate,
+        overallMetricsCompleted: reportData?.overallMetricsCompleted ?? null,
+        boardMetricsCompleted: reportData?.boardMetricsCompleted ?? null,
+        doraMetricsCompleted: reportData?.doraMetricsCompleted ?? null,
+        reportMetricsError: reportData?.reportMetricsError ?? {
+          boardMetricsError: null,
+          pipelineMetricsError: null,
+          sourceControlMetricsError: null,
+        },
+      } as DateRangeRequestResult;
+    });
 
   const getErrorMessage4Board = () => {
     if (currentDataInfo.reportData?.reportMetricsError.boardMetricsError) {
@@ -460,10 +487,8 @@ const ReportStep = ({ handleSave }: ReportStepProps) => {
         isShowExportPipelineButton={isSummaryPage ? shouldShowDoraMetrics : pageType === REPORT_PAGE_TYPE.DORA}
         handleBack={() => handleBack()}
         handleSave={() => handleSave()}
-        reportData={currentDataInfo.reportData}
-        startDate={startDate}
-        endDate={endDate}
         csvTimeStamp={csvTimeStamp}
+        dateRangeRequestResults={mapDateResult(descendingDateRanges, reportInfos)}
       />
     </>
   );

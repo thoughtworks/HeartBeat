@@ -1,41 +1,80 @@
 import { StyledButtonGroup, StyledExportButton, StyledRightButtonGroup } from '@src/containers/ReportButtonGroup/style';
+import { DateRangeItem, DownloadDialog } from '@src/containers/ReportStep/DownloadDialog';
 import { BackButton, SaveButton } from '@src/containers/MetricsStepper/style';
 import { ExpiredDialog } from '@src/containers/ReportStep/ExpiredDialog';
 import { CSVReportRequestDTO } from '@src/clients/report/dto/request';
 import { COMMON_BUTTONS, REPORT_TYPES } from '@src/constants/commons';
-import { ReportResponseDTO } from '@src/clients/report/dto/response';
+import { AllErrorResponse } from '@src/clients/report/dto/response';
+import { DateRangeRequestResult } from '@src/containers/ReportStep';
 import { useExportCsvEffect } from '@src/hooks/useExportCsvEffect';
 import SaveAltIcon from '@mui/icons-material/SaveAlt';
 import { TIPS } from '@src/constants/resources';
 import { Tooltip } from '@mui/material';
-import React from 'react';
+import React, { useState } from 'react';
 
 interface ReportButtonGroupProps {
   handleSave?: () => void;
   handleBack: () => void;
   csvTimeStamp: number;
-  startDate: string;
-  endDate: string;
-  reportData: ReportResponseDTO | undefined;
   isShowSave: boolean;
   isShowExportBoardButton: boolean;
   isShowExportPipelineButton: boolean;
   isShowExportMetrics: boolean;
+  dateRangeRequestResults: DateRangeRequestResult[];
 }
 
 export const ReportButtonGroup = ({
   handleSave,
   handleBack,
   csvTimeStamp,
-  startDate,
-  endDate,
-  reportData,
   isShowSave,
   isShowExportMetrics,
   isShowExportBoardButton,
   isShowExportPipelineButton,
+  dateRangeRequestResults,
 }: ReportButtonGroupProps) => {
+  const [isShowDialog, setIsShowDialog] = useState(false);
+  const [downloadReportList, setDownloadReportList] = useState<DateRangeItem[]>([]);
+  const [dataType, setDataType] = useState<REPORT_TYPES | null>(null);
   const { fetchExportData, isExpired } = useExportCsvEffect();
+
+  const isReportHasError = (reportMetricsError: AllErrorResponse) => {
+    return (
+      !!reportMetricsError.boardMetricsError ||
+      !!reportMetricsError.pipelineMetricsError ||
+      !!reportMetricsError.sourceControlMetricsError
+    );
+  };
+
+  const isReportHasDoraError = (reportMetricsError: AllErrorResponse) => {
+    return !!reportMetricsError.pipelineMetricsError || !!reportMetricsError.sourceControlMetricsError;
+  };
+
+  const overallMetricsResults = dateRangeRequestResults.map((item) => ({
+    startDate: item.startDate,
+    endDate: item.endDate,
+    disabled: !(item.overallMetricsCompleted && !isReportHasError(item.reportMetricsError)),
+  }));
+  const boardMetricsResults = dateRangeRequestResults.map((item) => ({
+    startDate: item.startDate,
+    endDate: item.endDate,
+    disabled: !(item.boardMetricsCompleted && !item.reportMetricsError.boardMetricsError),
+  }));
+  const pipelineMetricsResults = dateRangeRequestResults.map((item) => ({
+    startDate: item.startDate,
+    endDate: item.endDate,
+    disabled: !(item.doraMetricsCompleted && !isReportHasDoraError(item.reportMetricsError)),
+  }));
+
+  const isExportMetricsButtonClickable =
+    dateRangeRequestResults.every(({ overallMetricsCompleted }) => overallMetricsCompleted) &&
+    overallMetricsResults.some(({ disabled }) => !disabled);
+  const isExportBoardButtonClickable =
+    dateRangeRequestResults.every(({ boardMetricsCompleted }) => boardMetricsCompleted) &&
+    boardMetricsResults.some(({ disabled }) => !disabled);
+  const isExportPipelineButtonClickable =
+    dateRangeRequestResults.every(({ doraMetricsCompleted }) => doraMetricsCompleted) &&
+    pipelineMetricsResults.some(({ disabled }) => !disabled);
 
   const exportCSV = (dataType: REPORT_TYPES, startDate: string, endDate: string): CSVReportRequestDTO => ({
     dataType: dataType,
@@ -44,23 +83,31 @@ export const ReportButtonGroup = ({
     endDate: endDate,
   });
 
-  const handleDownload = (dataType: REPORT_TYPES, startDate: string, endDate: string) => {
-    fetchExportData(exportCSV(dataType, startDate, endDate));
+  const handleDownload = (dateRange: DateRangeItem[], dataType: REPORT_TYPES) => {
+    if (dateRange.length > 1) {
+      setDownloadReportList(dateRange);
+      setDataType(dataType);
+      setIsShowDialog(true);
+    } else {
+      fetchExportData(exportCSV(dataType, dateRange[0].startDate, dateRange[0].endDate));
+    }
   };
 
-  const pipelineButtonDisabled =
-    !reportData ||
-    reportData.doraMetricsCompleted === false ||
-    reportData?.reportMetricsError?.pipelineMetricsError ||
-    reportData?.reportMetricsError?.sourceControlMetricsError;
-
-  const isReportHasError =
-    !!reportData?.reportMetricsError.boardMetricsError ||
-    !!reportData?.reportMetricsError.pipelineMetricsError ||
-    !!reportData?.reportMetricsError.sourceControlMetricsError;
+  const handleCloseDialog = () => {
+    setIsShowDialog(false);
+    setDataType(null);
+  };
 
   return (
     <>
+      {dataType && (
+        <DownloadDialog
+          isShowDialog={isShowDialog}
+          handleClose={handleCloseDialog}
+          dateRangeList={downloadReportList}
+          downloadCSVFile={(startDate, endDate) => fetchExportData(exportCSV(dataType, startDate, endDate))}
+        />
+      )}
       <StyledButtonGroup isShowSave={isShowSave}>
         {isShowSave && (
           <Tooltip title={TIPS.SAVE_CONFIG} placement={'right'}>
@@ -75,24 +122,24 @@ export const ReportButtonGroup = ({
           </BackButton>
           {isShowExportMetrics && (
             <StyledExportButton
-              disabled={!(reportData?.overallMetricsCompleted && !isReportHasError)}
-              onClick={() => handleDownload(REPORT_TYPES.METRICS, startDate, endDate)}
+              disabled={!isExportMetricsButtonClickable}
+              onClick={() => handleDownload(overallMetricsResults, REPORT_TYPES.METRICS)}
             >
               {COMMON_BUTTONS.EXPORT_METRIC_DATA}
             </StyledExportButton>
           )}
           {isShowExportBoardButton && (
             <StyledExportButton
-              disabled={!(reportData?.boardMetricsCompleted && !reportData?.reportMetricsError?.boardMetricsError)}
-              onClick={() => handleDownload(REPORT_TYPES.BOARD, startDate, endDate)}
+              disabled={!isExportBoardButtonClickable}
+              onClick={() => handleDownload(boardMetricsResults, REPORT_TYPES.BOARD)}
             >
               {COMMON_BUTTONS.EXPORT_BOARD_DATA}
             </StyledExportButton>
           )}
           {isShowExportPipelineButton && (
             <StyledExportButton
-              disabled={!!pipelineButtonDisabled}
-              onClick={() => handleDownload(REPORT_TYPES.PIPELINE, startDate, endDate)}
+              disabled={!isExportPipelineButtonClickable}
+              onClick={() => handleDownload(pipelineMetricsResults, REPORT_TYPES.PIPELINE)}
             >
               {COMMON_BUTTONS.EXPORT_PIPELINE_DATA}
             </StyledExportButton>

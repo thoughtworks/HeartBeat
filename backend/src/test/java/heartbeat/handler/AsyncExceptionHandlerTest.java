@@ -34,6 +34,10 @@ class AsyncExceptionHandlerTest {
 
 	public static final String APP_OUTPUT_ERROR = "./app/output/error";
 
+	public static final String START_TIME = "20240417";
+
+	public static final String END_TIME = "20240418";
+
 	@InjectMocks
 	AsyncExceptionHandler asyncExceptionHandler;
 
@@ -56,8 +60,8 @@ class AsyncExceptionHandlerTest {
 		long fileId = System.currentTimeMillis();
 		String currentTime = Long.toString(fileId);
 		String expireTime = Long.toString(fileId - 1900000L);
-		String unExpireFile = IdUtil.getBoardReportFileId(currentTime);
-		String expireFile = IdUtil.getBoardReportFileId(expireTime);
+		String unExpireFile = getBoardReportFileId(currentTime);
+		String expireFile = getBoardReportFileId(expireTime);
 		asyncExceptionHandler.put(unExpireFile, new UnauthorizedException(""));
 		asyncExceptionHandler.put(expireFile, new UnauthorizedException(""));
 
@@ -74,8 +78,8 @@ class AsyncExceptionHandlerTest {
 		long fileId = System.currentTimeMillis();
 		String currentTime = Long.toString(fileId);
 		String expireTime = Long.toString(fileId - 1900000L);
-		String unExpireFile = IdUtil.getBoardReportFileId(currentTime) + ".tmp";
-		String expireFile = IdUtil.getBoardReportFileId(expireTime) + ".tmp";
+		String unExpireFile = getBoardReportFileId(currentTime) + ".tmp";
+		String expireFile = getBoardReportFileId(expireTime) + ".tmp";
 		asyncExceptionHandler.put(unExpireFile, new UnauthorizedException(""));
 		asyncExceptionHandler.put(expireFile, new UnauthorizedException(""));
 
@@ -92,8 +96,8 @@ class AsyncExceptionHandlerTest {
 		long fileId = System.currentTimeMillis();
 		String currentTime = Long.toString(fileId);
 		String expireTime = Long.toString(fileId - 1900000L);
-		String unExpireFile = IdUtil.getBoardReportFileId(currentTime);
-		String expireFile = IdUtil.getBoardReportFileId(expireTime);
+		String unExpireFile = getBoardReportFileId(currentTime);
+		String expireFile = getBoardReportFileId(expireTime);
 		asyncExceptionHandler.put(unExpireFile, new UnauthorizedException(""));
 		asyncExceptionHandler.put(expireFile, new UnauthorizedException(""));
 		CyclicBarrier barrier = new CyclicBarrier(3);
@@ -125,7 +129,7 @@ class AsyncExceptionHandlerTest {
 	void shouldPutAndGetAsyncException() {
 		long currentTimeMillis = System.currentTimeMillis();
 		String currentTime = Long.toString(currentTimeMillis);
-		String boardReportId = IdUtil.getBoardReportFileId(currentTime);
+		String boardReportId = getBoardReportFileId(currentTime);
 		asyncExceptionHandler.put(boardReportId, new UnauthorizedException("test"));
 
 		var baseException = asyncExceptionHandler.get(boardReportId);
@@ -147,7 +151,7 @@ class AsyncExceptionHandlerTest {
 	@Test
 	void shouldThrowExceptionGivenCannotReadFileWhenGetFile() throws IOException {
 		new File("./app/output/error/").mkdirs();
-		String boardReportId = IdUtil.getBoardReportFileId(Long.toString(System.currentTimeMillis()));
+		String boardReportId = getBoardReportFileId(Long.toString(System.currentTimeMillis()));
 		Path filePath = Paths.get("./app/output/error/" + boardReportId);
 		Files.createFile(filePath);
 		Files.write(filePath, "test".getBytes());
@@ -163,7 +167,7 @@ class AsyncExceptionHandlerTest {
 		boolean mkdirs = new File(APP_OUTPUT_ERROR).mkdirs();
 		long currentTimeMillis = System.currentTimeMillis();
 		String currentTime = Long.toString(currentTimeMillis);
-		String boardReportId = IdUtil.getBoardReportFileId(currentTime);
+		String boardReportId = getBoardReportFileId(currentTime);
 
 		asyncExceptionHandler.put(boardReportId, new UnauthorizedException("test"));
 
@@ -177,7 +181,7 @@ class AsyncExceptionHandlerTest {
 	void shouldPutAndRemoveAsyncException() {
 		long currentTimeMillis = System.currentTimeMillis();
 		String currentTime = Long.toString(currentTimeMillis);
-		String boardReportId = IdUtil.getBoardReportFileId(currentTime);
+		String boardReportId = getBoardReportFileId(currentTime);
 		asyncExceptionHandler.put(boardReportId, new UnauthorizedException("test"));
 
 		AsyncExceptionDTO baseException = asyncExceptionHandler.remove(boardReportId);
@@ -190,7 +194,7 @@ class AsyncExceptionHandlerTest {
 	@Test
 	void shouldReturnExceptionGivenWrongFileWhenReadAndRemoveAsyncException() throws IOException {
 		new File("./app/output/error/").mkdirs();
-		String boardReportId = IdUtil.getBoardReportFileId(Long.toString(System.currentTimeMillis()));
+		String boardReportId = getBoardReportFileId(Long.toString(System.currentTimeMillis()));
 		Path filePath = Paths.get("./app/output/error/" + boardReportId);
 		Files.createFile(filePath);
 		Files.write(filePath, "test".getBytes());
@@ -204,7 +208,7 @@ class AsyncExceptionHandlerTest {
 	@Test
 	void shouldThrowExceptionWhenDeleteFile() {
 		File mockFile = mock(File.class);
-		when(mockFile.getName()).thenReturn("board-1683734399999");
+		when(mockFile.getName()).thenReturn("board-20240417-20240418-1683734399999");
 		when(mockFile.delete()).thenThrow(new RuntimeException("test"));
 		File[] mockFiles = new File[] { mockFile };
 		File directory = mock(File.class);
@@ -217,7 +221,7 @@ class AsyncExceptionHandlerTest {
 	@Test
 	void shouldDeleteFailWhenDeleteFile() {
 		File mockFile = mock(File.class);
-		when(mockFile.getName()).thenReturn("board-1683734399999");
+		when(mockFile.getName()).thenReturn("board-20240417-20240418-1683734399999");
 		when(mockFile.delete()).thenReturn(false);
 		when(mockFile.exists()).thenReturn(true);
 		File[] mockFiles = new File[] { mockFile };
@@ -235,6 +239,10 @@ class AsyncExceptionHandlerTest {
 
 	private void deleteTestFile(String reportId) {
 		asyncExceptionHandler.remove(reportId);
+	}
+
+	private String getBoardReportFileId(String timestamp) {
+		return "board-" + START_TIME + "-" + END_TIME + "-" + timestamp;
 	}
 
 }

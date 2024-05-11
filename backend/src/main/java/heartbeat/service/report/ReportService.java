@@ -67,11 +67,8 @@ public class ReportService {
 			threadList.add(metricTypeThread);
 		}
 
-		CompletableFuture.runAsync(() -> {
-			for (CompletableFuture<Void> thread : threadList) {
-				thread.join();
-			}
-
+		CompletableFuture<Void> allFutures = CompletableFuture.allOf(threadList.toArray(new CompletableFuture[0]));
+		allFutures.thenRun(() -> {
 			ReportResponse reportResponse = generateReporterService.getComposedReportResponse(request.getCsvTimeStamp(),
 					convertTimeStampToYYYYMMDD(request.getStartTime()),
 					convertTimeStampToYYYYMMDD(request.getEndTime()));

@@ -2,13 +2,16 @@ import {
   updatePipelineToolVerifyResponse,
   selectIsProjectCreated,
   selectPipelineTool,
+  selectDateRange,
 } from '@src/context/config/configSlice';
+import { shouldMetricsLoaded, updateMetricsPageFailedTimeRangeInfos } from '@src/context/stepper/StepperSlice';
 import { pipelineToolClient, IGetPipelineToolInfoResult } from '@src/clients/pipeline/PipelineToolClient';
 import { selectShouldGetPipelineConfig, updatePipelineSettings } from '@src/context/Metrics/metricsSlice';
 import { clearMetricsPipelineFormMeta } from '@src/context/meta/metaSlice';
-import { shouldMetricsLoaded } from '@src/context/stepper/StepperSlice';
 import { useEffect, useState, useRef, useCallback } from 'react';
+import { formatDateToTimestampString } from '@src/utils/util';
 import { useAppDispatch, useAppSelector } from '@src/hooks';
+import { HttpStatusCode } from 'axios';
 
 export interface IUseVerifyPipeLineToolStateInterface {
   result: IGetPipelineToolInfoResult;
@@ -31,6 +34,7 @@ export const useGetPipelineToolInfoEffect = (): IUseVerifyPipeLineToolStateInter
   const restoredPipelineTool = useAppSelector(selectPipelineTool);
   const shouldLoad = useAppSelector(shouldMetricsLoaded);
   const shouldGetPipelineConfig = useAppSelector(selectShouldGetPipelineConfig);
+  const dateRangeList = useAppSelector(selectDateRange);
   const [isFirstFetch, setIsFirstFetch] = useState(shouldGetPipelineConfig);
 
   const getPipelineToolInfo = useCallback(async () => {
@@ -42,12 +46,25 @@ export const useGetPipelineToolInfoEffect = (): IUseVerifyPipeLineToolStateInter
     try {
       const response = await pipelineToolClient.getInfo(params);
       setInfo(response);
-      dispatch(updatePipelineToolVerifyResponse(response.data));
-      dispatch(updatePipelineSettings({ ...response.data, isProjectCreated }));
+      if (response.code === HttpStatusCode.Ok) {
+        dispatch(updatePipelineToolVerifyResponse(response.data));
+        dispatch(updatePipelineSettings({ ...response.data, isProjectCreated }));
+      }
+      dispatch(
+        updateMetricsPageFailedTimeRangeInfos(
+          dateRangeList.map((dateRange) => ({
+            startDate: formatDateToTimestampString(dateRange.startDate!),
+            errors: {
+              pipelineInfoError: response.code !== HttpStatusCode.Ok,
+            },
+          })),
+        ),
+      );
     } finally {
       setIsLoading(false);
       setIsFirstFetch(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, isProjectCreated, restoredPipelineTool.type, restoredPipelineTool.token]);
 
   useEffect(() => {

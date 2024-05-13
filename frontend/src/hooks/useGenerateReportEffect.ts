@@ -94,6 +94,9 @@ export const useGenerateReportEffect = (): IUseGenerateReportEffect => {
   const startToRequestData = async (params: ReportRequestDTO) => {
     const { metricTypes } = params;
     resetTimeoutMessage(metricTypes);
+    if (hasPollingStarted || nextHasPollingStarted) return;
+    nextHasPollingStarted = true;
+    setHasPollingStarted(nextHasPollingStarted);
     const res: PromiseSettledResult<ReportCallbackResponse>[] = await Promise.allSettled(
       dateRangeList.map(({ startDate, endDate }) =>
         reportClient.retrieveByUrl(
@@ -108,10 +111,6 @@ export const useGenerateReportEffect = (): IUseGenerateReportEffect => {
     );
 
     updateErrorAfterFetchReport(res, metricTypes);
-
-    if (hasPollingStarted) return;
-    nextHasPollingStarted = true;
-    setHasPollingStarted(nextHasPollingStarted);
 
     const { pollingInfos, pollingInterval } = assemblePollingParams(res);
 

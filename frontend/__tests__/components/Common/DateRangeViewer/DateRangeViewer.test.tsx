@@ -1,4 +1,4 @@
-import { nextStep, updateFailedTimeRange } from '@src/context/stepper/StepperSlice';
+import { nextStep, updateMetricsPageFailedTimeRangeInfos } from '@src/context/stepper/StepperSlice';
 import DateRangeViewer from '@src/components/Common/DateRangeViewer';
 import { formatDateToTimestampString } from '@src/utils/util';
 import { DateRange } from '@src/context/config/configSlice';
@@ -63,17 +63,46 @@ describe('DateRangeViewer', () => {
   });
 
   it('should show priority high icon when click expand button and step number is 1', async () => {
-    const failedTimeRangeList = [formatDateToTimestampString('2024-02-01T00:00:00.000+08:00')];
+    const failedTimeRangeList = [
+      {
+        startDate: formatDateToTimestampString('2024-02-01T00:00:00.000+08:00'),
+        errors: { boardInfoError: true },
+      },
+      {
+        startDate: formatDateToTimestampString('2024-03-19T00:00:00.000+08:00'),
+        errors: { pipelineStepError: true },
+      },
+      {
+        startDate: formatDateToTimestampString('2024-04-01T00:00:00.000+08:00'),
+        errors: { pipelineInfoError: true },
+      },
+    ];
     store.dispatch(nextStep());
-    store.dispatch(updateFailedTimeRange(failedTimeRangeList));
+    store.dispatch(updateMetricsPageFailedTimeRangeInfos(failedTimeRangeList));
     const { getByLabelText } = setup(mockDateRanges);
+    expect(screen.getByTestId('PriorityHighIcon')).toBeInTheDocument();
 
     await userEvent.click(getByLabelText('expandMore'));
-
-    expect(screen.getByTestId('PriorityHighIcon')).toBeInTheDocument();
+    expect(screen.getAllByTestId('PriorityHighIcon')).toHaveLength(4);
   });
 
   it('should not show priority high icon when click expand button and step number is 0', async () => {
+    const failedTimeRangeList = [
+      {
+        startDate: formatDateToTimestampString('2024-02-01T00:00:00.000+08:00'),
+        errors: { boardInfoError: false },
+      },
+      {
+        startDate: formatDateToTimestampString('2024-03-19T00:00:00.000+08:00'),
+        errors: { pipelineStepError: false },
+      },
+      {
+        startDate: formatDateToTimestampString('2024-04-01T00:00:00.000+08:00'),
+        errors: { pipelineInfoError: false },
+      },
+    ];
+    store.dispatch(nextStep());
+    store.dispatch(updateMetricsPageFailedTimeRangeInfos(failedTimeRangeList));
     const { getByLabelText } = setup(mockDateRanges);
 
     await userEvent.click(getByLabelText('expandMore'));

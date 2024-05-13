@@ -269,14 +269,6 @@ const ReportStep = ({ handleSave }: ReportStepProps) => {
   }, [selectedDateRange]);
 
   useEffect(() => {
-    setPageType(onlySelectClassification ? REPORT_PAGE_TYPE.BOARD : REPORT_PAGE_TYPE.SUMMARY);
-    return () => {
-      stopPollingReports();
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
     exportValidityTimeMin &&
       isCsvFileGeneratedAtEnd &&
       dispatch(
@@ -401,7 +393,11 @@ const ReportStep = ({ handleSave }: ReportStepProps) => {
   ]);
 
   useEffect(() => {
+    setPageType(onlySelectClassification ? REPORT_PAGE_TYPE.BOARD : REPORT_PAGE_TYPE.SUMMARY);
     startToRequestData(basicReportRequestBody);
+    return () => {
+      stopPollingReports();
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

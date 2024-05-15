@@ -18,19 +18,20 @@ import type { RootState } from '@src/store';
 import merge from 'lodash/merge';
 import { isArray } from 'lodash';
 import dayjs from 'dayjs';
-
-export type DateRange = {
+export interface DateRange {
   startDate: string | null;
   endDate: string | null;
   disabled?: boolean;
-}[];
+}
+
+export type DateRangeList = DateRange[];
 
 export interface BasicConfigState {
   isProjectCreated: boolean;
   basic: {
     projectName: string;
     calendarType: string;
-    dateRange: DateRange;
+    dateRange: DateRangeList;
     sortType: SortType;
     metrics: string[];
   };

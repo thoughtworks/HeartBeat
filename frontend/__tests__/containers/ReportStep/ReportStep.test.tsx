@@ -16,7 +16,7 @@ import {
   SHOW_MORE,
 } from '../../fixtures';
 import {
-  DateRange,
+  DateRangeList,
   updateDateRange,
   updateJiraVerifyResponse,
   updateMetrics,
@@ -133,7 +133,7 @@ describe('Report Step', () => {
     ];
   };
   const handleSaveMock = jest.fn();
-  const setup = (params: string[], dateRange: DateRange = [fullValueDateRange]) => {
+  const setup = (params: string[], dateRange: DateRangeList = [fullValueDateRange]) => {
     dateRange && store.dispatch(updateDateRange(dateRange));
     store.dispatch(
       updateJiraVerifyResponse({

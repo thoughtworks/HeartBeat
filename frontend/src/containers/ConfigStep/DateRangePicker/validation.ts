@@ -1,12 +1,12 @@
 import dayjsSameOrBeforePlugin from 'dayjs/plugin/isSameOrBefore';
+import { DateRangeList } from '@src/context/config/configSlice';
 import dayjsSameOrAfterPlugin from 'dayjs/plugin/isSameOrAfter';
-import { DateRange } from '@src/context/config/configSlice';
 import dayjs, { Dayjs } from 'dayjs';
 
 dayjs.extend(dayjsSameOrBeforePlugin);
 dayjs.extend(dayjsSameOrAfterPlugin);
 
-export const calculateLastAvailableDate = (date: Dayjs, coveredRange: DateRange) => {
+export const calculateLastAvailableDate = (date: Dayjs, coveredRange: DateRangeList) => {
   let lastAvailableDate = dayjs(new Date()).startOf('date');
   let minimumDiffDays = lastAvailableDate.diff(date, 'days');
 
@@ -24,7 +24,7 @@ export const calculateLastAvailableDate = (date: Dayjs, coveredRange: DateRange)
   return lastAvailableDate;
 };
 
-export const isDateDisabled = (coveredRange: DateRange, date: Dayjs) =>
+export const isDateDisabled = (coveredRange: DateRangeList, date: Dayjs) =>
   coveredRange.some(
     ({ startDate, endDate }) => date.isSameOrAfter(startDate, 'date') && date.isSameOrBefore(endDate, 'date'),
   );

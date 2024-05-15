@@ -22,6 +22,7 @@ describe('stepper reducer', () => {
         timeStamp: 0,
         shouldMetricsLoaded: true,
         metricsPageFailedTimeRangeInfos: {},
+        reportPageFailedTimeRangeInfos: {},
       },
       nextStep(),
     );
@@ -36,6 +37,7 @@ describe('stepper reducer', () => {
         timeStamp: 0,
         shouldMetricsLoaded: true,
         metricsPageFailedTimeRangeInfos: {},
+        reportPageFailedTimeRangeInfos: {},
       },
       backStep(),
     );
@@ -50,6 +52,7 @@ describe('stepper reducer', () => {
         timeStamp: 0,
         shouldMetricsLoaded: true,
         metricsPageFailedTimeRangeInfos: {},
+        reportPageFailedTimeRangeInfos: {},
       },
       backStep(),
     );
@@ -65,6 +68,7 @@ describe('stepper reducer', () => {
         timeStamp: 0,
         shouldMetricsLoaded: true,
         metricsPageFailedTimeRangeInfos: {},
+        reportPageFailedTimeRangeInfos: {},
       },
       updateTimeStamp(mockTime),
     );

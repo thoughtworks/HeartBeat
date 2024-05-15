@@ -7,6 +7,14 @@ import {
   sortDateRanges,
 } from '@src/utils/util';
 import {
+  DateRange,
+  DateRangeList,
+  isOnlySelectClassification,
+  isSelectBoardMetrics,
+  isSelectDoraMetrics,
+  selectConfig,
+} from '@src/context/config/configSlice';
+import {
   GeneralErrorKey,
   initReportInfo,
   IReportError,
@@ -14,13 +22,6 @@ import {
   TimeoutErrorKey,
   useGenerateReportEffect,
 } from '@src/hooks/useGenerateReportEffect';
-import {
-  DateRange,
-  isOnlySelectClassification,
-  isSelectBoardMetrics,
-  isSelectDoraMetrics,
-  selectConfig,
-} from '@src/context/config/configSlice';
 import {
   addNotification,
   closeAllNotifications,
@@ -73,9 +74,7 @@ const ReportStep = ({ handleSave }: ReportStepProps) => {
   const dispatch = useAppDispatch();
   const configData = useAppSelector(selectConfig);
   const descendingDateRanges = sortDateRanges(configData.basic.dateRange);
-  const [selectedDateRange, setSelectedDateRange] = useState<Record<string, string | null | boolean | undefined>>(
-    descendingDateRanges[0],
-  );
+  const [selectedDateRange, setSelectedDateRange] = useState<DateRange>(descendingDateRanges[0]);
   const [currentDataInfo, setCurrentDataInfo] = useState<IReportInfo>(initReportInfo());
 
   const {
@@ -121,7 +120,7 @@ const ReportStep = ({ handleSave }: ReportStepProps) => {
   const onlySelectClassification = useAppSelector(isOnlySelectClassification);
   const isSummaryPage = useMemo(() => pageType === REPORT_PAGE_TYPE.SUMMARY, [pageType]);
 
-  const mapDateResult = (descendingDateRanges: DateRange, reportInfos: IReportInfo[]) =>
+  const mapDateResult = (descendingDateRanges: DateRangeList, reportInfos: IReportInfo[]) =>
     descendingDateRanges.map(({ startDate, endDate }) => {
       const reportData = reportInfos.find((singleResult) => singleResult.id === startDate)?.reportData ?? null;
       return {

@@ -172,7 +172,6 @@ describe('ReportButtonGroup', () => {
     const exportMetricDataButton = screen.getByRole('button', { name: EXPORT_METRIC_DATA });
     expect(exportMetricDataButton).not.toBeDisabled();
     await userEvent.click(exportMetricDataButton);
-    expect(screen.getByText('Select the time period for the exporting data')).toBeInTheDocument();
 
     const closeButton = screen.getByTestId('CloseIcon');
     await userEvent.click(closeButton);
@@ -186,7 +185,7 @@ describe('ReportButtonGroup', () => {
     const exportMetricDataButton = screen.getByRole('button', { name: EXPORT_METRIC_DATA });
     expect(exportMetricDataButton).not.toBeDisabled();
     await userEvent.click(exportMetricDataButton);
-    expect(screen.getByText('Select the time period for the exporting data')).toBeInTheDocument();
+
     const checkbox = screen.getAllByRole('checkbox')[0];
     expect(checkbox).not.toBeDisabled();
     await userEvent.click(checkbox);

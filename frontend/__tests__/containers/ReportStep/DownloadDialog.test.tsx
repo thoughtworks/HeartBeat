@@ -25,6 +25,7 @@ describe('DownloadDialog', () => {
   const setup = (dateRangeList: DateRangeItem[]) => {
     render(
       <DownloadDialog
+        title='Metrics'
         isShowDialog={true}
         handleClose={handleCloseFn}
         dateRangeList={dateRangeList}

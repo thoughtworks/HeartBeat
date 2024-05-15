@@ -3,6 +3,7 @@ import {
   DialogContainer,
   StyledButton,
   StyledCalendarToday,
+  StyledDialog,
   StyledDialogContent,
   StyledDialogTitle,
   StyledFormControlLabel,
@@ -11,8 +12,8 @@ import {
   tooltipModifiers,
 } from '@src/containers/ReportStep/DownloadDialog/style';
 import { DISABLED_DATE_RANGE_MESSAGE } from '@src/constants/resources';
-import { Checkbox, Dialog, Tooltip } from '@mui/material';
 import { COMMON_BUTTONS } from '@src/constants/commons';
+import { Checkbox, Tooltip } from '@mui/material';
 import { formatDate } from '@src/utils/util';
 import React, { useState } from 'react';
 
@@ -21,6 +22,7 @@ interface DownloadDialogProps {
   handleClose: () => void;
   dateRangeList: DateRangeItem[];
   downloadCSVFile: (startDate: string, endDate: string) => void;
+  title: string;
 }
 
 export interface DateRangeItem {
@@ -29,7 +31,13 @@ export interface DateRangeItem {
   disabled: boolean;
 }
 
-export const DownloadDialog = ({ isShowDialog, handleClose, dateRangeList, downloadCSVFile }: DownloadDialogProps) => {
+export const DownloadDialog = ({
+  isShowDialog,
+  handleClose,
+  dateRangeList,
+  downloadCSVFile,
+  title,
+}: DownloadDialogProps) => {
   const [selectedRangeItems, setSelectedRangeItems] = useState<DateRangeItem[]>([]);
   const confirmButtonDisabled = selectedRangeItems.length === 0;
 
@@ -68,16 +76,16 @@ export const DownloadDialog = ({ isShowDialog, handleClose, dateRangeList, downl
   };
 
   return (
-    <Dialog open={isShowDialog} maxWidth='md'>
+    <StyledDialog open={isShowDialog} maxWidth='md'>
       <DialogContainer>
         <StyledDialogTitle>
-          <strong>Export Board Data</strong>
+          <strong>Export {title} Data</strong>
           <CloseButton onClick={handleClose} />
         </StyledDialogTitle>
         <StyledDialogContent dividers>
           <TimePeriodSelectionMessage>
             <StyledCalendarToday />
-            <strong>Select the time period for the exporting data</strong>
+            <strong>Select the time period</strong>
           </TimePeriodSelectionMessage>
           <StyledFormGroup>
             {dateRangeList.map((item) => (
@@ -95,6 +103,6 @@ export const DownloadDialog = ({ isShowDialog, handleClose, dateRangeList, downl
           </StyledButton>
         </StyledDialogContent>
       </DialogContainer>
-    </Dialog>
+    </StyledDialog>
   );
 };

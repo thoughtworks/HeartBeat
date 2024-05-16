@@ -444,4 +444,4 @@ export enum SORTING_DATE_RANGE_TEXT {
 }
 
 export const DISABLED_DATE_RANGE_MESSAGE =
-  'Unavailable time period indicates that report generation during this period has failed.';
+  'Report generated failed during this period.';

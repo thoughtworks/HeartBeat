@@ -226,9 +226,19 @@ export const useGenerateReportEffect = (): IUseGenerateReportEffect => {
   ) {
     const updateReportPageFailedTimeRangeInfosPayload: IPageFailedDateRangePayload<IReportPageFailedDateRange>[] = [];
     pollingResponsesWithId.forEach((currentRes) => {
+      const isRejected = currentRes.status === REJECTED;
       updateReportPageFailedTimeRangeInfosPayload.push({
         startDate: formatDateToTimestampString(currentRes.id),
-        errors: { isPollingError: currentRes.status === REJECTED },
+        errors: {
+          isPollingError: isRejected,
+          isBoardMetricsError: isRejected ? false : !!currentRes.value.response.reportMetricsError.boardMetricsError,
+          isSourceControlMetricsError: isRejected
+            ? false
+            : !!currentRes.value.response.reportMetricsError.sourceControlMetricsError,
+          isPipelineMetricsError: isRejected
+            ? false
+            : !!currentRes.value.response.reportMetricsError.sourceControlMetricsError,
+        },
       });
     });
     dispatch(updateReportPageFailedTimeRangeInfos(updateReportPageFailedTimeRangeInfosPayload));

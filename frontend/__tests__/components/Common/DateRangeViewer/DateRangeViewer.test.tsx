@@ -3,14 +3,16 @@ import {
   updateMetricsPageFailedTimeRangeInfos,
   updateReportPageFailedTimeRangeInfos,
 } from '@src/context/stepper/StepperSlice';
+import { formatDateToTimestampString, sortDateRanges } from '@src/utils/util';
 import DateRangeViewer from '@src/components/Common/DateRangeViewer';
 import { DateRangeList } from '@src/context/config/configSlice';
-import { formatDateToTimestampString } from '@src/utils/util';
 import { setupStore } from '@test/utils/setupStoreUtil';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import React from 'react';
+
+const changeDateRange = jest.fn();
 
 describe('DateRangeViewer', () => {
   let store = setupStore();
@@ -133,6 +135,35 @@ describe('DateRangeViewer', () => {
 
       expect(screen.queryByTestId('PriorityHighIcon')).not.toBeInTheDocument();
     });
+
+    it('should not close the extension date ranges given metrics page and click inside of extension', async () => {
+      const { getByLabelText, getByText, rerender } = render(
+        <Provider store={store}>
+          <DateRangeViewer
+            dateRangeList={sortDateRanges(mockDateRanges)}
+            disabledAll={false}
+            changeDateRange={changeDateRange}
+          />
+        </Provider>,
+      );
+      await userEvent.click(getByLabelText('expandMore'));
+      await userEvent.click(getByText(/2024\/03\/19/));
+      expect(changeDateRange).toHaveBeenCalledTimes(1);
+
+      rerender(
+        <Provider store={store}>
+          <DateRangeViewer
+            dateRangeList={sortDateRanges(mockDateRanges)}
+            disabledAll={true}
+            changeDateRange={changeDateRange}
+          />
+        </Provider>,
+      );
+
+      await userEvent.click(getByLabelText('expandMore'));
+      await userEvent.click(getByText(/2024\/03\/19/));
+      expect(changeDateRange).toHaveBeenCalledTimes(1);
+    });
   });
 
   describe('DateRangeViewer in report page', () => {
@@ -157,6 +188,21 @@ describe('DateRangeViewer', () => {
     });
 
     it('should show priority high icon in report page given click expand button and there are some error infos', async () => {
+      const dateRangeList = [
+        ...mockDateRanges,
+        {
+          startDate: '2023-03-19T00:00:00.000+08:00',
+          endDate: '2024-03-21T23:59:59.999+08:00',
+        },
+        {
+          startDate: '2023-02-01T00:00:00.000+08:00',
+          endDate: '2024-02-14T23:59:59.999+08:00',
+        },
+        {
+          startDate: '2023-04-01T00:00:00.000+08:00',
+          endDate: '2024-04-08T23:59:59.999+08:00',
+        },
+      ];
       const failedTimeRangeList = [
         {
           startDate: formatDateToTimestampString('2024-02-01T00:00:00.000+08:00'),
@@ -170,13 +216,25 @@ describe('DateRangeViewer', () => {
           startDate: formatDateToTimestampString('2024-04-01T00:00:00.000+08:00'),
           errors: { isPollingError: false },
         },
+        {
+          startDate: formatDateToTimestampString('2023-02-01T00:00:00.000+08:00'),
+          errors: { isBoardMetricsError: true },
+        },
+        {
+          startDate: formatDateToTimestampString('2023-03-19T00:00:00.000+08:00'),
+          errors: { isPipelineMetricsError: true },
+        },
+        {
+          startDate: formatDateToTimestampString('2023-04-01T00:00:00.000+08:00'),
+          errors: { isSourceControlMetricsError: true },
+        },
       ];
       store.dispatch(updateReportPageFailedTimeRangeInfos(failedTimeRangeList));
-      const { getByLabelText } = setup(mockDateRanges);
+      const { getByLabelText } = setup(dateRangeList);
       expect(screen.getByTestId('PriorityHighIcon')).toBeInTheDocument();
 
       await userEvent.click(getByLabelText('expandMore'));
-      expect(screen.getAllByTestId('PriorityHighIcon')).toHaveLength(3);
+      expect(screen.getAllByTestId('PriorityHighIcon')).toHaveLength(6);
     });
   });
 

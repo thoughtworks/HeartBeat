@@ -83,6 +83,9 @@ export const SingleDateRange = styled('div')(({ disabled, backgroundColor }: Sin
     color: theme.palette.text.disabled,
     cursor: 'default',
   }),
+  '&:hover': {
+    backgroundColor: theme.palette.secondary.dark,
+  },
 }));
 
 export const DateRangeFailedIconContainer = styled.div({

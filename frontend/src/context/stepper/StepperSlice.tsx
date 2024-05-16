@@ -11,6 +11,9 @@ export interface IMetricsPageFailedDateRange {
 export interface IReportPageFailedDateRange {
   isGainPollingUrlError?: boolean;
   isPollingError?: boolean;
+  isBoardMetricsError?: boolean;
+  isPipelineMetricsError?: boolean;
+  isSourceControlMetricsError?: boolean;
 }
 
 export interface IPageFailedDateRangePayload<T> {
@@ -45,6 +48,9 @@ export const stepperSlice = createSlice({
     nextStep: (state) => {
       if (state.shouldMetricsLoaded && state.stepNumber === 0) {
         state.metricsPageFailedTimeRangeInfos = {};
+      }
+      if (state.stepNumber === 1) {
+        state.reportPageFailedTimeRangeInfos = {};
       }
       state.shouldMetricsLoaded = true;
       state.stepNumber += 1;

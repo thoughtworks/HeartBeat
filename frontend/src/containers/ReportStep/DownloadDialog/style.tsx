@@ -49,7 +49,7 @@ export const TimePeriodSelectionMessage = styled('div')({
   display: 'flex',
   justifyContent: 'flex-start',
   alignItems: 'center',
-  fontSize: '1rem',
+  fontSize: '0.875rem',
 });
 
 export const StyledFormGroup = styled(FormGroup)({
@@ -77,6 +77,9 @@ export const StyledFormControlLabel = styled(FormControlLabel)(({ checked }) => 
   borderRadius: '0.75rem',
   border: `0.0625rem solid ${theme.main.boardColor}`,
   margin: '0.375rem 0',
+  '& .MuiTypography-root': {
+    fontSize: '0.875rem',
+  },
 
   ...(checked && {
     background: theme.main.downloadListLabel.backgroundColor,

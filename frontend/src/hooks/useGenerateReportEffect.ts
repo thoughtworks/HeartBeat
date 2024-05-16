@@ -237,7 +237,7 @@ export const useGenerateReportEffect = (): IUseGenerateReportEffect => {
             : !!currentRes.value.response.reportMetricsError.sourceControlMetricsError,
           isPipelineMetricsError: isRejected
             ? false
-            : !!currentRes.value.response.reportMetricsError.sourceControlMetricsError,
+            : !!currentRes.value.response.reportMetricsError.pipelineMetricsError,
         },
       });
     });

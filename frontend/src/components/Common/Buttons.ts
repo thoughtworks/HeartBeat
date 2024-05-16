@@ -16,3 +16,9 @@ export const ReverifyButton = styled(BasicButton)({
 export const ResetButton = styled(BasicButton)({
   marginLeft: '0.5rem',
 });
+
+export const ChartListButton = styled(BasicButton)({
+  width: '5.5rem',
+  border: 'solid 0.1rem',
+  borderColor: theme.main.button.borderLine,
+});

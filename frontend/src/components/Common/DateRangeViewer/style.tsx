@@ -1,6 +1,6 @@
 import { ArrowForward, CalendarToday, ExpandMore } from '@mui/icons-material';
 import { Z_INDEX } from '@src/constants/commons';
-import { Divider } from '@mui/material';
+import { Chip, Divider } from '@mui/material';
 import styled from '@emotion/styled';
 import { theme } from '@src/theme';
 
@@ -122,4 +122,9 @@ export const StyledExpandContainer = styled('div')({
   justifyContent: 'center',
   alignItems: 'center',
   cursor: 'pointer',
+});
+
+export const StyledChip = styled(Chip)({
+  marginRight: '1rem',
+  color: theme.palette.text.disabled,
 });

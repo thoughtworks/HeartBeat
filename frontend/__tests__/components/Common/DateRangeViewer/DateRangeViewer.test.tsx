@@ -44,6 +44,24 @@ describe('DateRangeViewer', () => {
       endDate: '2024-04-08T23:59:59.999+08:00',
     },
   ];
+
+  const mockDateRangesDisabled = [
+    {
+      startDate: '2024-03-19T00:00:00.000+08:00',
+      endDate: '2024-03-21T23:59:59.999+08:00',
+      disabled: true,
+    },
+    {
+      startDate: '2024-02-01T00:00:00.000+08:00',
+      endDate: '2024-02-14T23:59:59.999+08:00',
+      disabled: true,
+    },
+    {
+      startDate: '2024-04-01T00:00:00.000+08:00',
+      endDate: '2024-04-08T23:59:59.999+08:00',
+      disabled: true,
+    },
+  ];
   it('should show date when render component given startDate and endDate', () => {
     const { getByText } = setup(mockDateRanges);
     expect(getByText(/2024\/03\/19/)).toBeInTheDocument();
@@ -118,10 +136,6 @@ describe('DateRangeViewer', () => {
   });
 
   describe('DateRangeViewer in report page', () => {
-    beforeEach(() => {
-      store.dispatch(nextStep());
-      store.dispatch(nextStep());
-    });
     it('should not show priority high icon in report page given click expand button and there is no error info', async () => {
       const failedTimeRangeList = [
         {
@@ -164,5 +178,13 @@ describe('DateRangeViewer', () => {
       await userEvent.click(getByLabelText('expandMore'));
       expect(screen.getAllByTestId('PriorityHighIcon')).toHaveLength(3);
     });
+  });
+
+  it('should show time range count when DateRangeViewer is disabled in Report page', async () => {
+    store.dispatch(nextStep());
+    store.dispatch(nextStep());
+    setup(mockDateRangesDisabled);
+
+    expect(screen.getByLabelText('date-count-chip')).toBeInTheDocument();
   });
 });

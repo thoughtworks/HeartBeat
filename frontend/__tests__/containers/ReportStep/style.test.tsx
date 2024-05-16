@@ -11,12 +11,12 @@ describe('Report step styled components', () => {
 
     const component1 = screen.getByLabelText('test component 1');
 
-    expect(component1).toHaveStyle({ 'margin-bottom': '-3.5rem' });
+    expect(component1).toHaveStyle({ 'margin-bottom': '0rem' });
 
     wrapper.rerender(<StyledCalendarWrapper aria-label='test component 2' isSummaryPage={false} />);
 
     const component2 = screen.getByLabelText('test component 2');
 
-    expect(component2).toHaveStyle({ 'margin-bottom': '-2rem' });
+    expect(component2).toHaveStyle({ 'margin-bottom': '2rem' });
   });
 });

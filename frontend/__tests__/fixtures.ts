@@ -1,7 +1,8 @@
+import { DATA_LOADING_FAILED, DEFAULT_MESSAGE, SOURCE_CONTROL_TYPES } from '@src/constants/resources';
 import { CSVReportRequestDTO, ReportRequestDTO } from '@src/clients/report/dto/request';
 import { SortType } from '@src/containers/ConfigStep/DateRangePicker/types';
 import { ReportResponseDTO } from '@src/clients/report/dto/response';
-import { SOURCE_CONTROL_TYPES } from '@src/constants/resources';
+import { IReportInfo } from '@src/hooks/useGenerateReportEffect';
 import { IStepsParams } from '@src/clients/MetricsClient';
 import { METRIC_TYPES } from '@src/constants/commons';
 
@@ -565,6 +566,38 @@ export const EMPTY_REPORT_VALUES: ReportResponseDTO = {
   overallMetricsCompleted: false,
   allMetricsCompleted: false,
   isSuccessfulCreateCsvFile: false,
+  reportMetricsError,
+};
+
+export const BAD_REPORT_VALUES: IReportInfo = {
+  id: '',
+  timeout4Board: { message: DATA_LOADING_FAILED, shouldShow: true },
+  timeout4Dora: { message: DATA_LOADING_FAILED, shouldShow: true },
+  timeout4Report: { message: DATA_LOADING_FAILED, shouldShow: true },
+  generalError4Board: { message: DEFAULT_MESSAGE, shouldShow: true },
+  generalError4Dora: { message: DEFAULT_MESSAGE, shouldShow: true },
+  generalError4Report: { message: DEFAULT_MESSAGE, shouldShow: true },
+  shouldShowBoardMetricsError: true,
+  shouldShowPipelineMetricsError: true,
+  shouldShowSourceControlMetricsError: true,
+  reportData: { ...MOCK_REPORT_RESPONSE },
+};
+
+export const DORA_DATA_FAILED_REPORT_VALUES: ReportResponseDTO = {
+  velocity: null,
+  classificationList: null,
+  cycleTime: null,
+  rework: null,
+  deploymentFrequency: null,
+  devChangeFailureRate: null,
+  devMeanTimeToRecovery: null,
+  leadTimeForChanges: null,
+  exportValidityTime: null,
+  boardMetricsCompleted: true,
+  doraMetricsCompleted: false,
+  overallMetricsCompleted: true,
+  allMetricsCompleted: true,
+  isSuccessfulCreateCsvFile: true,
   reportMetricsError,
 };
 

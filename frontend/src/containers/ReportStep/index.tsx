@@ -23,23 +23,32 @@ import {
   useGenerateReportEffect,
 } from '@src/hooks/useGenerateReportEffect';
 import {
-  addNotification,
-  closeAllNotifications,
-  closeNotification,
-  Notification,
-} from '@src/context/notification/NotificationSlice';
-import {
   BOARD_METRICS,
   CALENDAR,
   DORA_METRICS,
   MESSAGE,
   REPORT_PAGE_TYPE,
   REQUIRED_DATA,
+  RETRY,
 } from '@src/constants/resources';
+import {
+  addNotification,
+  closeAllNotifications,
+  closeNotification,
+  Notification,
+} from '@src/context/notification/NotificationSlice';
+import {
+  StyledCalendarWrapper,
+  StyledRetry,
+  StyledTab,
+  StyledTabs,
+  StyledTabWrapper,
+} from '@src/containers/ReportStep/style';
 import { IPipelineConfig, selectMetricsContent } from '@src/context/Metrics/metricsSlice';
 import { AllErrorResponse, ReportResponseDTO } from '@src/clients/report/dto/response';
+import { DoraMetricsChart } from '@src/containers/ReportStep/DoraMetricsChart';
 import { backStep, selectTimeStamp } from '@src/context/stepper/StepperSlice';
-import { StyledCalendarWrapper } from '@src/containers/ReportStep/style';
+import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 import { ReportButtonGroup } from '@src/containers/ReportButtonGroup';
 import DateRangeViewer from '@src/components/Common/DateRangeViewer';
 import BoardMetrics from '@src/containers/ReportStep/BoardMetrics';
@@ -47,7 +56,9 @@ import DoraMetrics from '@src/containers/ReportStep/DoraMetrics';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useAppDispatch } from '@src/hooks/useAppDispatch';
 import { BoardDetail, DoraDetail } from './ReportDetail';
+import BarChartIcon from '@mui/icons-material/BarChart';
 import { METRIC_TYPES } from '@src/constants/commons';
+import { Box, Tab, Tabs } from '@mui/material';
 import { useAppSelector } from '@src/hooks';
 import { uniqueId } from 'lodash';
 
@@ -74,7 +85,18 @@ const ReportStep = ({ handleSave }: ReportStepProps) => {
   const dispatch = useAppDispatch();
   const configData = useAppSelector(selectConfig);
   const descendingDateRanges = sortDateRanges(configData.basic.dateRange);
+  const allDateRanges = descendingDateRanges.reverse().map((range) => {
+    const start = new Date(range.startDate!);
+    const end = new Date(range.endDate!);
+    const formattedStart = `${(start.getMonth() + 1).toString().padStart(2, '0')}/${start.getDate().toString().padStart(2, '0')}`;
+    const formattedEnd = `${(end.getMonth() + 1).toString().padStart(2, '0')}/${end.getDate().toString().padStart(2, '0')}`;
+
+    return `${formattedStart}-${formattedEnd}`;
+  });
+
   const [selectedDateRange, setSelectedDateRange] = useState<DateRange>(descendingDateRanges[0]);
+  const [chartIndex, setChartIndex] = React.useState(0);
+  const [displayType, setDisplayType] = React.useState(0);
   const [currentDataInfo, setCurrentDataInfo] = useState<IReportInfo>(initReportInfo());
 
   const {
@@ -119,6 +141,10 @@ const ReportStep = ({ handleSave }: ReportStepProps) => {
   const shouldShowDoraMetrics = useAppSelector(isSelectDoraMetrics);
   const onlySelectClassification = useAppSelector(isOnlySelectClassification);
   const isSummaryPage = useMemo(() => pageType === REPORT_PAGE_TYPE.SUMMARY, [pageType]);
+  const isChartPage = useMemo(
+    () => pageType === REPORT_PAGE_TYPE.DORA_CHART || pageType === REPORT_PAGE_TYPE.BOARD_CHART,
+    [pageType],
+  );
 
   const mapDateResult = (descendingDateRanges: DateRangeList, reportInfos: IReportInfo[]) =>
     descendingDateRanges.map(({ startDate, endDate }) => {
@@ -303,7 +329,9 @@ const ReportStep = ({ handleSave }: ReportStepProps) => {
   }, [dispatch, exportValidityTimeMin, isCsvFileGeneratedAtEnd]);
 
   useEffect(() => {
-    dispatch(closeAllNotifications());
+    if (pageType === REPORT_PAGE_TYPE.DORA || pageType === REPORT_PAGE_TYPE.BOARD) {
+      dispatch(closeAllNotifications());
+    }
   }, [dispatch, pageType]);
 
   useEffect(() => {
@@ -317,12 +345,12 @@ const ReportStep = ({ handleSave }: ReportStepProps) => {
   }, [dispatch, reportInfos, hasPollingStarted]);
 
   useEffect(() => {
-    if (isSummaryPage && notifications4SummaryPage.length > 0) {
+    if ((isSummaryPage || isChartPage) && notifications4SummaryPage.length > 0) {
       const notification = notifications4SummaryPage[0];
       notification && dispatch(addNotification(notification));
       setNotifications4SummaryPage(notifications4SummaryPage.slice(1));
     }
-  }, [dispatch, notifications4SummaryPage, isSummaryPage]);
+  }, [dispatch, notifications4SummaryPage, isSummaryPage, isChartPage]);
 
   useEffect(() => {
     if (!currentDataInfo.shouldShowBoardMetricsError) return;
@@ -425,6 +453,10 @@ const ReportStep = ({ handleSave }: ReportStepProps) => {
       )}
     </>
   );
+
+  const showDoraChart = (data: (ReportResponseDTO | undefined)[]) => (
+    <DoraMetricsChart data={data} dateRanges={allDateRanges} />
+  );
   const showBoardDetail = (data?: ReportResponseDTO) => (
     <BoardDetail onBack={() => handleBack()} data={data} errorMessage={getErrorMessage4Board()} />
   );
@@ -436,6 +468,11 @@ const ReportStep = ({ handleSave }: ReportStepProps) => {
 
   const backToSummaryPage = () => {
     setPageType(REPORT_PAGE_TYPE.SUMMARY);
+  };
+
+  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+    setChartIndex(newValue);
+    setPageType(newValue === 1 ? REPORT_PAGE_TYPE.DORA_CHART : REPORT_PAGE_TYPE.BOARD_CHART);
   };
 
   const handleTimeoutAndGeneralError = (value: string) => {
@@ -458,28 +495,120 @@ const ReportStep = ({ handleSave }: ReportStepProps) => {
     closeReportInfosErrorStatus(selectedDateRange.startDate as string, errorKey);
   };
 
+  const handleClick = (event: React.SyntheticEvent, newValue: number) => {
+    const pageType = newValue === 0 ? REPORT_PAGE_TYPE.SUMMARY : REPORT_PAGE_TYPE.DORA_CHART;
+
+    setDisplayType(newValue);
+    setPageType(pageType);
+  };
+
+  const handleListClick = () => {
+    setPageType(REPORT_PAGE_TYPE.SUMMARY);
+  };
+
+  const handleChartClick = () => {
+    setPageType(REPORT_PAGE_TYPE.DORA_CHART);
+  };
+
+  const handleChartRetry = () => {
+    pageType === REPORT_PAGE_TYPE.DORA_CHART
+      ? startToRequestData(doraReportRequestBody)
+      : startToRequestData(boardReportRequestBody);
+  };
+
+  const tabProps = (index: number) => {
+    return {
+      id: `simple-tab-${index}`,
+      'aria-controls': `simple-tabpanel-${index}`,
+    };
+  };
+
+  const showPage = (pageType: string, reportData: ReportResponseDTO | undefined) => {
+    switch (pageType) {
+      case REPORT_PAGE_TYPE.SUMMARY:
+        return showSummary();
+      case REPORT_PAGE_TYPE.BOARD:
+        return showBoardDetail(reportData);
+      case REPORT_PAGE_TYPE.DORA:
+        return !!reportData && showDoraDetail(reportData);
+      case REPORT_PAGE_TYPE.DORA_CHART:
+        return showDoraChart(reportInfos.map((infos) => infos.reportData));
+    }
+  };
+
+  const isShowingChart = () => {
+    return pageType === REPORT_PAGE_TYPE.BOARD_CHART || pageType === REPORT_PAGE_TYPE.DORA_CHART;
+  };
+
+  const shouldShowChartRetryButton = () => {
+    return (
+      (currentDataInfo['timeout4Report'].message ||
+        currentDataInfo['timeout4Dora'].message ||
+        currentDataInfo['timeout4Board'].message) &&
+      isShowingChart()
+    );
+  };
+
   return (
     <>
       {startDate && endDate && (
         <StyledCalendarWrapper data-testid={'calendarWrapper'} isSummaryPage={isSummaryPage}>
+          <StyledTabWrapper>
+            <Box sx={{ marginRight: '2.5rem' }}>
+              <StyledTabs value={displayType} onChange={handleClick} aria-label='display types'>
+                <StyledTab
+                  onClick={handleListClick}
+                  sx={{
+                    borderRight: 'none',
+                    borderRadius: '0.16rem 0 0 0.16rem',
+                  }}
+                  icon={<FormatListBulletedIcon />}
+                  iconPosition='start'
+                  label='List'
+                />
+                <StyledTab
+                  onClick={handleChartClick}
+                  sx={{
+                    borderLeft: 'none',
+                    borderRadius: '0 0.16rem 0.16rem 0',
+                  }}
+                  icon={<BarChartIcon />}
+                  iconPosition='start'
+                  label='Chart'
+                  disabled={onlySelectClassification}
+                />
+              </StyledTabs>
+            </Box>
+            <Box>
+              <Tabs value={chartIndex} onChange={handleChange} aria-label='chart tabs'>
+                <Tab label='Board' {...tabProps(0)} />
+                <Tab label='DORA' {...tabProps(1)} />
+              </Tabs>
+            </Box>
+          </StyledTabWrapper>
+
+          {shouldShowChartRetryButton() && (
+            <StyledRetry aria-label='chart retry' onClick={handleChartRetry}>
+              {RETRY}
+            </StyledRetry>
+          )}
           <DateRangeViewer
             dateRangeList={descendingDateRanges}
             selectedDateRange={selectedDateRange}
             changeDateRange={(dateRange) => setSelectedDateRange(dateRange)}
-            disabledAll={false}
+            isShowingChart={isShowingChart()}
+            disabledAll={isShowingChart()}
           />
         </StyledCalendarWrapper>
       )}
-      {isSummaryPage
-        ? showSummary()
-        : pageType === REPORT_PAGE_TYPE.BOARD
-          ? showBoardDetail(currentDataInfo.reportData)
-          : !!currentDataInfo.reportData && showDoraDetail(currentDataInfo.reportData)}
+      {showPage(pageType, currentDataInfo.reportData)}
       <ReportButtonGroup
         isShowSave={isSummaryPage}
         isShowExportMetrics={isSummaryPage}
         isShowExportBoardButton={isSummaryPage ? shouldShowBoardMetrics : pageType === REPORT_PAGE_TYPE.BOARD}
         isShowExportPipelineButton={isSummaryPage ? shouldShowDoraMetrics : pageType === REPORT_PAGE_TYPE.DORA}
+        isShowExportDoraChartButton={pageType === REPORT_PAGE_TYPE.DORA_CHART}
+        isShowExportBoardChartButton={pageType === REPORT_PAGE_TYPE.BOARD_CHART}
         handleBack={() => handleBack()}
         handleSave={() => handleSave()}
         csvTimeStamp={csvTimeStamp}

@@ -29,7 +29,7 @@ import React from 'react';
 interface BoardMetricsProps {
   startToRequestBoardData: () => void;
   onShowDetail: () => void;
-  boardReport?: ReportResponseDTO;
+  boardReport: ReportResponseDTO | undefined;
   errorMessage: string;
 }
 

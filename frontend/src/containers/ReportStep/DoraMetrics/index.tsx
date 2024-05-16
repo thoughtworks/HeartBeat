@@ -24,7 +24,7 @@ import _ from 'lodash';
 interface DoraMetricsProps {
   startToRequestDoraData: () => void;
   onShowDetail: () => void;
-  doraReport?: ReportResponseDTO;
+  doraReport: ReportResponseDTO | undefined;
   errorMessage: string;
 }
 

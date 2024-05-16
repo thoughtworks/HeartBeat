@@ -9,6 +9,14 @@ declare module '@mui/material/styles' {
   // allow configuration using `createTheme`
   interface ThemeOptions {
     main: {
+      chart: {
+        barColorA: string;
+        barColorB: string;
+        barColorC: string;
+        deploymentFrequencyChartColor: string;
+        devChangeFailureRateColor: string;
+        devMeanTimeToRecoveryColor: string;
+      };
       backgroundColor: string;
       color: string;
       secondColor: string;
@@ -22,6 +30,7 @@ declare module '@mui/material/styles' {
         secondary: string;
       };
       button: {
+        borderLine: string;
         disabled: {
           backgroundColor: string;
           color: string;
@@ -95,6 +104,14 @@ export const theme = createTheme({
     },
   },
   main: {
+    chart: {
+      barColorA: '#003D4F',
+      barColorB: '#47A1AD',
+      barColorC: '#F2617A',
+      deploymentFrequencyChartColor: '#F2617A',
+      devChangeFailureRateColor: '#003D4F',
+      devMeanTimeToRecoveryColor: '#634F7D',
+    },
     backgroundColor: indigo[FIVE_HUNDRED],
     color: '#fff',
     secondColor: 'black',
@@ -109,6 +126,7 @@ export const theme = createTheme({
       secondary: 'sans-serif, -apple-system, BlinkMacSystemFont, Segoe UI, Arial',
     },
     button: {
+      borderLine: '#D9D9D9',
       disabled: {
         backgroundColor: '#E0E0E0',
         color: '#929292',

@@ -66,3 +66,20 @@ export const StyledAlertWrapper = styled('div')({
   position: 'absolute',
   top: '3.5rem',
 });
+
+export const ChartWrapper = styled('div')({
+  boxSizing: 'border-box',
+  height: '25rem',
+  padding: '1.5rem',
+  borderRadius: '0.75rem',
+  border: theme.main.cardBorder,
+  background: theme.main.color,
+  boxShadow: theme.main.cardShadow,
+  position: 'relative',
+});
+
+export const ChartContainer = styled('div')({
+  display: 'grid',
+  gridTemplateColumns: 'repeat(2, 1fr)',
+  gap: '1.25rem',
+});

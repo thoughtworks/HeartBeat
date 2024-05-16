@@ -9,6 +9,8 @@ export const REPORT_PAGE_TYPE = {
   SUMMARY: 'Summary',
   BOARD: 'BoardReport',
   DORA: 'DoraReport',
+  BOARD_CHART: 'BoardChart',
+  DORA_CHART: 'DoraChart',
 };
 
 export const REJECTED = 'rejected';
@@ -32,6 +34,14 @@ export const BOARD_METRICS_MAPPING: Record<string, string> = {
   Velocity: 'velocity',
   Classification: 'classificationList',
   'Rework times': 'rework',
+};
+
+export const CYCLE_TIME_MAPPING: Record<string, string> = {
+  'Waiting for testing': 'Waiting for testing time',
+  'In Dev': 'Total development time',
+  Review: 'Review time',
+  Block: 'Block time',
+  Testing: 'Testing time',
 };
 
 export const DORA_METRICS_MAPPING: Record<string, string> = {
@@ -289,6 +299,7 @@ export const MESSAGE = {
     'Failed to get partial Pipeline configuration, please go back to the previous page and change your pipeline token with correct access permission, or click "Next" button to go to Report page.',
   PIPELINE_STEP_REQUEST_PARTIAL_FAILED_OTHERS:
     'Failed to get partial Pipeline configuration, you can click "Next" button to go to Report page.',
+  DORA_CHART_LOADING_FAILED: 'Dora metrics loading timeout, Please click "Retry"!',
 };
 
 export const METRICS_CYCLE_SETTING_TABLE_HEADER_BY_COLUMN = [
@@ -445,3 +456,62 @@ export enum SORTING_DATE_RANGE_TEXT {
 
 export const DISABLED_DATE_RANGE_MESSAGE =
   'Unavailable time period indicates that report generation during this period has failed.';
+
+export const EMPTY_DATA_MAPPER_DORA_CHART = (value: string) => {
+  return {
+    deploymentFrequencyList: [
+      {
+        id: 0,
+        name: 'Heartbeat/:rocket: Deploy prod',
+        valueList: [
+          {
+            value: value,
+          },
+        ],
+      },
+    ],
+    devMeanTimeToRecoveryList: [
+      {
+        id: 0,
+        name: 'Heartbeat/:rocket: Deploy prod',
+        valueList: [
+          {
+            value: value,
+          },
+        ],
+      },
+    ],
+    leadTimeForChangesList: [
+      {
+        id: 0,
+        name: 'Average',
+        valuesList: [
+          {
+            name: 'PR Lead Time',
+            value: value,
+          },
+          {
+            name: 'Pipeline Lead Time',
+            value: value,
+          },
+          {
+            name: 'Total Lead Time',
+            value: value,
+          },
+        ],
+      },
+    ],
+    devChangeFailureRateList: [
+      {
+        id: 0,
+        name: 'Heartbeat/:rocket: Deploy prod',
+        valueList: [
+          {
+            value: value + '%(0/0)',
+          },
+        ],
+      },
+    ],
+    exportValidityTimeMin: 0.0005,
+  };
+};

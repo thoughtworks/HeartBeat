@@ -2,6 +2,7 @@ import {
   BACK,
   BOARD_METRICS_TITLE,
   CLASSIFICATION,
+  DORA_DATA_FAILED_REPORT_VALUES,
   EMPTY_REPORT_VALUES,
   EXPORT_BOARD_DATA,
   EXPORT_METRIC_DATA,
@@ -23,17 +24,18 @@ import {
   updatePipelineToolVerifyResponse,
 } from '@src/context/config/configSlice';
 import { addADeploymentFrequencySetting, updateDeploymentFrequencySettings } from '@src/context/Metrics/metricsSlice';
+import { DATA_LOADING_FAILED, DEFAULT_MESSAGE, MESSAGE } from '@src/constants/resources';
 import { act, render, renderHook, screen, waitFor } from '@testing-library/react';
 import { closeNotification } from '@src/context/notification/NotificationSlice';
 import { addNotification } from '@src/context/notification/NotificationSlice';
 import { useGenerateReportEffect } from '@src/hooks/useGenerateReportEffect';
-import { DEFAULT_MESSAGE, MESSAGE } from '@src/constants/resources';
 import { useExportCsvEffect } from '@src/hooks/useExportCsvEffect';
 import { backStep } from '@src/context/stepper/StepperSlice';
 import { setupStore } from '../../utils/setupStoreUtil';
 import userEvent from '@testing-library/user-event';
 import ReportStep from '@src/containers/ReportStep';
 import { Provider } from 'react-redux';
+import * as echarts from 'echarts';
 import { ReactNode } from 'react';
 
 jest.mock('@src/context/notification/NotificationSlice', () => ({
@@ -666,14 +668,14 @@ describe('Report Step', () => {
 
     it('should close error notification when change dateRange', async () => {
       reportHook.current.reportInfos[1].timeout4Board = { shouldShow: true, message: 'error' };
-      const { getByTestId, getByText } = setup(REQUIRED_DATA_LIST, [fullValueDateRange, emptyValueDateRange]);
+      const { getByTestId, getAllByText } = setup(REQUIRED_DATA_LIST, [fullValueDateRange, emptyValueDateRange]);
       const expandMoreIcon = getByTestId('ExpandMoreIcon');
       await act(async () => {
         await userEvent.click(expandMoreIcon);
       });
-      const secondDateRange = await getByText(/2024\/02\/04/);
+      const secondDateRange = await getAllByText(/2024\/02\/04/);
 
-      await userEvent.click(secondDateRange);
+      await userEvent.click(secondDateRange[0]);
       await userEvent.click(expandMoreIcon);
       const firstDateRange = screen.getByText(/2024\/02\/18/);
       await userEvent.click(firstDateRange);
@@ -683,6 +685,90 @@ describe('Report Step', () => {
         type: 'error',
       });
       expect(closeNotification).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('Dora chart test', () => {
+    beforeEach(() => {
+      jest.spyOn(echarts, 'init').mockImplementation(
+        () =>
+          ({
+            setOption: jest.fn(),
+            resize: jest.fn(),
+            dispatchAction: jest.fn(),
+            dispose: jest.fn(),
+            //eslint-disable-next-line @typescript-eslint/no-explicit-any
+          }) as any,
+      );
+    });
+
+    it('should correctly render dora chart', async () => {
+      setup(REQUIRED_DATA_LIST, [fullValueDateRange]);
+
+      const switchChartButton = screen.getByText('Chart');
+      await userEvent.click(switchChartButton);
+
+      expect(addNotification).toHaveBeenCalledWith({
+        message: MESSAGE.EXPIRE_INFORMATION(30),
+      });
+      expect(addNotification).toHaveBeenCalledTimes(1);
+    });
+
+    it('should render dora chart with empty value when exception was thrown', async () => {
+      reportHook.current.reportInfos[0] = {
+        id: emptyValueDateRange.startDate,
+        timeout4Board: { message: DATA_LOADING_FAILED, shouldShow: true },
+        timeout4Dora: { message: DATA_LOADING_FAILED, shouldShow: true },
+        timeout4Report: { message: DATA_LOADING_FAILED, shouldShow: true },
+        generalError4Board: { message: DEFAULT_MESSAGE, shouldShow: true },
+        generalError4Dora: { message: DEFAULT_MESSAGE, shouldShow: true },
+        generalError4Report: { message: DEFAULT_MESSAGE, shouldShow: true },
+        shouldShowBoardMetricsError: true,
+        shouldShowPipelineMetricsError: true,
+        shouldShowSourceControlMetricsError: true,
+        reportData: { ...EMPTY_REPORT_VALUES },
+      };
+      reportHook.current.reportInfos[0].reportData = { ...EMPTY_REPORT_VALUES };
+
+      setup(REQUIRED_DATA_LIST, [emptyValueDateRange]);
+
+      const switchChartButton = screen.getByText('Chart');
+      await userEvent.click(switchChartButton);
+
+      const switchDoraChartButton = screen.getByText('DORA');
+      await userEvent.click(switchDoraChartButton);
+
+      const chartRetryButton = screen.getByText(RETRY);
+      await userEvent.click(chartRetryButton);
+
+      const switchBoardChartButton = screen.getByText('Board');
+      await userEvent.click(switchBoardChartButton);
+
+      const chartRetryButtonInBoardPage = screen.getByText(RETRY);
+      await userEvent.click(chartRetryButtonInBoardPage);
+
+      expect(addNotification).toHaveBeenCalledTimes(3);
+    });
+
+    it('should render metrics list when click list from chart page', async () => {
+      reportHook.current.reportInfos[0].reportData = { ...EMPTY_REPORT_VALUES };
+      reportHook.current.reportInfos[1].reportData = { ...DORA_DATA_FAILED_REPORT_VALUES };
+
+      setup(REQUIRED_DATA_LIST, [emptyValueDateRange]);
+
+      const switchChartButton = screen.getByText('Chart');
+      const switchMetricsListButton = screen.getByText('List');
+      await userEvent.click(switchChartButton);
+      await userEvent.click(switchMetricsListButton);
+
+      expect(screen.getByText('Board Metrics')).toBeInTheDocument();
+      expect(screen.getByText('Velocity')).toBeInTheDocument();
+      expect(screen.getByText('Cycle Time')).toBeInTheDocument();
+      expect(screen.getByText('DORA Metrics')).toBeInTheDocument();
+      expect(screen.getByText('Lead Time For Changes')).toBeInTheDocument();
+      expect(screen.getByText('Deployment Frequency')).toBeInTheDocument();
+      expect(screen.getByText('Dev Change Failure Rate')).toBeInTheDocument();
+      expect(screen.getByText('Dev Mean Time To Recovery')).toBeInTheDocument();
     });
   });
 });

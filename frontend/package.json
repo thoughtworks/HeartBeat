@@ -53,6 +53,7 @@
     "@mui/x-date-pickers": "^7.3.2",
     "@reduxjs/toolkit": "^2.2.3",
     "axios": "^1.6.8",
+    "echarts": "^5.5.0",
     "dayjs": "^1.11.11",
     "lodash": "^4.17.21",
     "lodash.camelcase": "^4.3.0",

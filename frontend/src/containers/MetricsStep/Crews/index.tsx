@@ -15,11 +15,17 @@ interface crewsProps {
   type?: string;
 }
 
+function getValidSelectedCrews(configCrews: string[], realCrews: string[]): string[] {
+  return configCrews.filter((crew: string): boolean => realCrews.includes(crew));
+}
+
 export const Crews = ({ options, title, label, type = 'board' }: crewsProps) => {
   const isBoardCrews = type === 'board';
   const dispatch = useAppDispatch();
   const { users, pipelineCrews } = useAppSelector(selectMetricsContent);
-  const [selectedCrews, setSelectedCrews] = useState<string[]>(isBoardCrews ? users : pipelineCrews);
+  const [selectedCrews, setSelectedCrews] = useState<string[]>(
+    isBoardCrews ? users : getValidSelectedCrews(pipelineCrews, options),
+  );
   const isAllSelected = options.length > 0 && selectedCrews.length === options.length;
   const isEmptyCrewData = selectedCrews.length === 0;
 

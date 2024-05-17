@@ -123,6 +123,38 @@ public class PipelineServiceTest {
 		}
 
 		@Test
+		void shouldReturnEmptyPipelineLeadTimeWhenCodebaseSettingIsNotEmptyAndTokenIsEmpty() {
+			List<BuildKiteBuildInfo> fakeBuildKiteBuildInfos = new ArrayList<>();
+			GenerateReportRequest request = GenerateReportRequest.builder()
+				.buildKiteSetting(BuildKiteSetting.builder()
+					.deploymentEnvList(List.of(DeploymentEnvironment.builder().id("env1").repository("repo1").build(),
+							DeploymentEnvironment.builder().id("env2").repository("repo2").build()))
+					.build())
+				.startTime(MOCK_START_TIME)
+				.endTime(MOCK_END_TIME)
+				.codebaseSetting(CodebaseSetting.builder().build())
+				.metrics(new ArrayList<>())
+				.build();
+
+			when(buildKiteService.fetchPipelineBuilds(eq(MOCK_TOKEN), any(), eq(MOCK_START_TIME), eq(MOCK_END_TIME)))
+				.thenReturn(fakeBuildKiteBuildInfos);
+			when(buildKiteService.countDeployTimes(any(), eq(fakeBuildKiteBuildInfos), eq(MOCK_START_TIME),
+					eq(MOCK_END_TIME)))
+				.thenReturn(DeployTimes.builder().build());
+			when(gitHubService.fetchPipelinesLeadTime(any(), any(), eq(MOCK_TOKEN)))
+				.thenReturn(List.of(PipelineLeadTime.builder().build()));
+
+			FetchedData.BuildKiteData result = pipelineService.fetchGitHubData(request);
+
+			assertEquals(0, result.getPipelineLeadTimes().size());
+			assertEquals(2, result.getBuildInfosList().size());
+			assertEquals(2, result.getDeployTimesList().size());
+			verify(buildKiteService, times(2)).countDeployTimes(any(), any(), any(), any());
+			verify(buildKiteService, times(2)).countDeployTimes(any(), any(), any(), any());
+			verify(gitHubService, times(0)).fetchPipelinesLeadTime(any(), any(), eq(MOCK_TOKEN));
+		}
+
+		@Test
 		void shouldGetSecondValueInRoadMapWhenDeployEnvironmentListHasTwoElementWithSameKey() {
 			List<BuildKiteBuildInfo> fakeBuildKiteBuildInfos = new ArrayList<>();
 			GenerateReportRequest request = GenerateReportRequest.builder()
@@ -155,10 +187,10 @@ public class PipelineServiceTest {
 		void shouldFilterAuthorByInputCrews() {
 			List<BuildKiteBuildInfo> fakeBuildKiteBuildInfos = List.of(
 					BuildKiteBuildInfo.builder()
-						.author(BuildKiteBuildInfo.Author.builder().name("test-author1").build())
+						.author(BuildKiteBuildInfo.Author.builder().username("test-author1").build())
 						.build(),
 					BuildKiteBuildInfo.builder()
-						.author(BuildKiteBuildInfo.Author.builder().name("test-author2").build())
+						.author(BuildKiteBuildInfo.Author.builder().username("test-author2").build())
 						.build());
 			GenerateReportRequest request = GenerateReportRequest.builder()
 				.buildKiteSetting(BuildKiteSetting.builder()
@@ -213,7 +245,7 @@ public class PipelineServiceTest {
 		void shouldReturnValueWhenDeploymentEnvListIsNotEmpty() {
 			List<BuildKiteBuildInfo> fakeBuildKiteBuildInfos = List.of(BuildKiteBuildInfo.builder()
 				.creator(BuildKiteBuildInfo.Creator.builder().name("someone").build())
-				.author(BuildKiteBuildInfo.Author.builder().name("someone").build())
+				.author(BuildKiteBuildInfo.Author.builder().username("someone").build())
 				.build());
 			GenerateReportRequest request = GenerateReportRequest.builder()
 				.buildKiteSetting(BuildKiteSetting.builder()
@@ -237,7 +269,7 @@ public class PipelineServiceTest {
 			assertEquals(result.getDeployTimesList().size(), 1);
 			assertEquals(result.getBuildInfosList().size(), 1);
 			assertEquals(1, result.getBuildInfosList().get(0).getValue().size());
-			assertEquals("someone", result.getBuildInfosList().get(0).getValue().get(0).getAuthor().getName());
+			assertEquals("someone", result.getBuildInfosList().get(0).getValue().get(0).getAuthor().getUsername());
 			verify(buildKiteService, times(1)).fetchPipelineBuilds(any(), any(), any(), any());
 			verify(buildKiteService, times(1)).countDeployTimes(any(), any(), any(), any());
 		}
@@ -247,11 +279,15 @@ public class PipelineServiceTest {
 			List<BuildKiteBuildInfo> fakeBuildKiteBuildInfos = List.of(
 					BuildKiteBuildInfo.builder()
 						.creator(BuildKiteBuildInfo.Creator.builder().name("test-creator1").build())
-						.author(BuildKiteBuildInfo.Author.builder().name("test-author1").build())
+						.author(BuildKiteBuildInfo.Author.builder().username("test-author1").build())
 						.build(),
 					BuildKiteBuildInfo.builder()
 						.creator(BuildKiteBuildInfo.Creator.builder().name("test-creator2").build())
-						.author(BuildKiteBuildInfo.Author.builder().name("test-author2").build())
+						.author(BuildKiteBuildInfo.Author.builder().username("test-author2").build())
+						.build(),
+					BuildKiteBuildInfo.builder()
+						.creator(BuildKiteBuildInfo.Creator.builder().name("test-creator3").build())
+						.author(BuildKiteBuildInfo.Author.builder().name("test-author3").build())
 						.build(),
 					BuildKiteBuildInfo.builder().author(null).build());
 			GenerateReportRequest request = GenerateReportRequest.builder()
@@ -273,10 +309,16 @@ public class PipelineServiceTest {
 			FetchedData.BuildKiteData result = pipelineService.fetchBuildKiteInfo(request);
 
 			assertEquals(1, result.getBuildInfosList().size());
-			assertEquals(2, result.getBuildInfosList().get(0).getValue().size());
 			assertEquals(1, result.getDeployTimesList().size());
 			verify(buildKiteService, times(1)).fetchPipelineBuilds(any(), any(), any(), any());
 			verify(buildKiteService, times(1)).countDeployTimes(any(), any(), any(), any());
+
+			List<BuildKiteBuildInfo> buildKiteBuildInfoList = result.getBuildInfosList().get(0).getValue();
+			assertEquals(3, buildKiteBuildInfoList.size());
+			assertEquals("test-author2", buildKiteBuildInfoList.get(0).getAuthor().getUsername());
+			assertEquals("test-author3", buildKiteBuildInfoList.get(1).getAuthor().getUsername());
+			assertEquals("Unknown", buildKiteBuildInfoList.get(2).getAuthor().getUsername());
+
 		}
 
 	}
@@ -360,7 +402,7 @@ public class PipelineServiceTest {
 		void shouldGenerateValueHasCommit() {
 			List<BuildKiteBuildInfo> kiteBuildInfos = List.of(BuildKiteBuildInfo.builder()
 				.commit("commit")
-				.author(BuildKiteBuildInfo.Author.builder().name("xxxx").build())
+				.author(BuildKiteBuildInfo.Author.builder().username("xxxx").build())
 				.build());
 			when(buildKiteService.getPipelineStepNames(eq(kiteBuildInfos))).thenReturn(List.of("check"));
 			when(buildKiteService.getStepsBeforeEndStep(any(), any())).thenReturn(List.of("check"));
@@ -378,7 +420,7 @@ public class PipelineServiceTest {
 			assertEquals(1, result.size());
 			PipelineCSVInfo pipelineCSVInfo = result.get(0);
 			assertEquals("env-name", pipelineCSVInfo.getPipeLineName());
-			assertEquals("xxxx", pipelineCSVInfo.getBuildInfo().getAuthor().getName());
+			assertEquals("xxxx", pipelineCSVInfo.getBuildInfo().getAuthor().getUsername());
 			assertEquals(fakeDeploy, pipelineCSVInfo.getDeployInfo());
 			verify(buildKiteService, times(1)).getPipelineStepNames(any());
 			verify(buildKiteService, times(1)).getBuildKiteJob(any(), any(), any(), any(), any());
@@ -388,7 +430,7 @@ public class PipelineServiceTest {
 		void shouldGenerateValueWithLeadTimeWhenLeadTimeExisting() {
 			List<BuildKiteBuildInfo> kiteBuildInfos = List.of(BuildKiteBuildInfo.builder()
 				.commit("commit")
-				.author(BuildKiteBuildInfo.Author.builder().name("xxxx").build())
+				.author(BuildKiteBuildInfo.Author.builder().username("xxxx").build())
 				.build());
 			when(buildKiteService.getPipelineStepNames(eq(kiteBuildInfos))).thenReturn(List.of("check"));
 			when(buildKiteService.getStepsBeforeEndStep(any(), any())).thenReturn(List.of("check"));
@@ -410,7 +452,7 @@ public class PipelineServiceTest {
 			assertEquals(1, result.size());
 			PipelineCSVInfo pipelineCSVInfo = result.get(0);
 			assertEquals("env-name", pipelineCSVInfo.getPipeLineName());
-			assertEquals("xxxx", pipelineCSVInfo.getBuildInfo().getAuthor().getName());
+			assertEquals("xxxx", pipelineCSVInfo.getBuildInfo().getAuthor().getUsername());
 			assertEquals(fakeDeploy, pipelineCSVInfo.getDeployInfo());
 			verify(buildKiteService, times(1)).getPipelineStepNames(any());
 			verify(buildKiteService, times(1)).getBuildKiteJob(any(), any(), any(), any(), any());
@@ -420,7 +462,7 @@ public class PipelineServiceTest {
 		void shouldGenerateValueWithOrganizationWhenDeployHasOrganization() {
 			List<BuildKiteBuildInfo> kiteBuildInfos = List.of(BuildKiteBuildInfo.builder()
 				.commit("commit")
-				.author(BuildKiteBuildInfo.Author.builder().name("xxxx").build())
+				.author(BuildKiteBuildInfo.Author.builder().username("xxxx").build())
 				.build());
 			when(buildKiteService.getPipelineStepNames(eq(kiteBuildInfos))).thenReturn(List.of("check"));
 			when(buildKiteService.getStepsBeforeEndStep(any(), any())).thenReturn(List.of("check"));
@@ -446,7 +488,7 @@ public class PipelineServiceTest {
 			assertEquals(1, result.size());
 			PipelineCSVInfo pipelineCSVInfo = result.get(0);
 			assertEquals("Thoughtworks-Heartbeat", pipelineCSVInfo.getOrganizationName());
-			assertEquals("xxxx", pipelineCSVInfo.getBuildInfo().getAuthor().getName());
+			assertEquals("xxxx", pipelineCSVInfo.getBuildInfo().getAuthor().getUsername());
 			assertEquals(fakeDeploy, pipelineCSVInfo.getDeployInfo());
 			verify(buildKiteService, times(1)).getPipelineStepNames(any());
 			verify(buildKiteService, times(1)).getBuildKiteJob(any(), any(), any(), any(), any());
@@ -456,7 +498,7 @@ public class PipelineServiceTest {
 		void shouldGenerateValueWhenBuildKiteDataAuthorIsNotNull() {
 			List<BuildKiteBuildInfo> kiteBuildInfos = List.of(BuildKiteBuildInfo.builder()
 				.commit("commit")
-				.author(BuildKiteBuildInfo.Author.builder().name("xxxx").build())
+				.author(BuildKiteBuildInfo.Author.builder().username("xxxx").build())
 				.build());
 			when(buildKiteService.getPipelineStepNames(kiteBuildInfos)).thenReturn(List.of("check"));
 			when(buildKiteService.getStepsBeforeEndStep(any(), any())).thenReturn(List.of("check"));
@@ -482,7 +524,7 @@ public class PipelineServiceTest {
 			assertEquals(1, result.size());
 			PipelineCSVInfo pipelineCSVInfo = result.get(0);
 			assertEquals("Thoughtworks-Heartbeat", pipelineCSVInfo.getOrganizationName());
-			assertEquals("xxxx", pipelineCSVInfo.getBuildInfo().getAuthor().getName());
+			assertEquals("xxxx", pipelineCSVInfo.getBuildInfo().getAuthor().getUsername());
 			assertEquals(fakeDeploy, pipelineCSVInfo.getDeployInfo());
 			verify(buildKiteService, times(1)).getPipelineStepNames(any());
 			verify(buildKiteService, times(1)).getBuildKiteJob(any(), any(), any(), any(), any());

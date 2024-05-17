@@ -724,16 +724,23 @@ export class MetricsStep {
     expect(savedClassification).toEqual(expect.arrayContaining(fixtureClassification));
     expect(fixtureClassification).toEqual(expect.arrayContaining(savedClassification));
 
+    const savedPipelineCrews = fileCopy.pipelineCrews;
+    const fixturePipelineCrews = fixtureCopy.pipelineCrews;
+    expect(savedPipelineCrews).toEqual(expect.arrayContaining(fixturePipelineCrews));
+    expect(fixturePipelineCrews).toEqual(expect.arrayContaining(savedPipelineCrews));
+
     /**
      * Then compare regular fields
      */
     delete fileCopy.metrics;
     delete fileCopy.crews;
     delete fileCopy.classification;
+    delete fileCopy.pipelineCrews;
     delete fileCopy.doneStatus;
     delete fixtureCopy.metrics;
     delete fixtureCopy.crews;
     delete fixtureCopy.classification;
+    delete fixtureCopy.pipelineCrews;
     delete fixtureCopy.doneStatus;
     expect(fileCopy).toEqual(fixtureCopy);
   }

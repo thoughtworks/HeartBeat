@@ -231,13 +231,10 @@ export const useGenerateReportEffect = (): IUseGenerateReportEffect => {
         startDate: formatDateToTimestampString(currentRes.id),
         errors: {
           isPollingError: isRejected,
-          isBoardMetricsError: isRejected ? false : !!currentRes.value.response.reportMetricsError.boardMetricsError,
-          isSourceControlMetricsError: isRejected
-            ? false
-            : !!currentRes.value.response.reportMetricsError.sourceControlMetricsError,
-          isPipelineMetricsError: isRejected
-            ? false
-            : !!currentRes.value.response.reportMetricsError.pipelineMetricsError,
+          isBoardMetricsError: !isRejected && !!currentRes.value.response.reportMetricsError.boardMetricsError,
+          isSourceControlMetricsError:
+            !isRejected && !!currentRes.value.response.reportMetricsError.sourceControlMetricsError,
+          isPipelineMetricsError: !isRejected && !!currentRes.value.response.reportMetricsError.pipelineMetricsError,
         },
       });
     });

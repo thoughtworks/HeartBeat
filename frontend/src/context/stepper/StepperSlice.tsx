@@ -1,5 +1,5 @@
+import { STEP_NUMBER } from '@src/constants/commons';
 import { createSlice } from '@reduxjs/toolkit';
-import { ZERO } from '@src/constants/commons';
 import type { RootState } from '@src/store';
 
 export interface IMetricsPageFailedDateRange {
@@ -30,7 +30,7 @@ export interface StepState {
 }
 
 const initialState: StepState = {
-  stepNumber: 0,
+  stepNumber: STEP_NUMBER.CONFIG_PAGE,
   timeStamp: 0,
   shouldMetricsLoaded: true,
   metricsPageFailedTimeRangeInfos: {},
@@ -46,10 +46,10 @@ export const stepperSlice = createSlice({
       state.timeStamp = initialState.timeStamp;
     },
     nextStep: (state) => {
-      if (state.shouldMetricsLoaded && state.stepNumber === 0) {
+      if (state.shouldMetricsLoaded && state.stepNumber === STEP_NUMBER.CONFIG_PAGE) {
         state.metricsPageFailedTimeRangeInfos = {};
       }
-      if (state.stepNumber === 1) {
+      if (state.stepNumber === STEP_NUMBER.METRICS_PAGE) {
         state.reportPageFailedTimeRangeInfos = {};
       }
       state.shouldMetricsLoaded = true;
@@ -57,7 +57,7 @@ export const stepperSlice = createSlice({
     },
     backStep: (state) => {
       state.shouldMetricsLoaded = false;
-      state.stepNumber = state.stepNumber === ZERO ? ZERO : state.stepNumber - 1;
+      state.stepNumber = state.stepNumber === STEP_NUMBER.CONFIG_PAGE ? STEP_NUMBER.CONFIG_PAGE : state.stepNumber - 1;
     },
     updateShouldMetricsLoaded: (state, action) => {
       state.shouldMetricsLoaded = action.payload;

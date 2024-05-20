@@ -6,11 +6,12 @@ import { CONFIG_TITLE, PIPELINE_TOOL_TYPES } from '@src/constants/resources';
 import { ConfigButtonGrop } from '@src/containers/ConfigStep/ConfigButton';
 import { IPipelineToolData } from '@src/containers/ConfigStep/Form/schema';
 import { ConfigSelectionTitle } from '@src/containers/MetricsStep/style';
-import { TimeoutAlert } from '@src/containers/ConfigStep/TimeoutAlert';
 import { StyledAlterWrapper } from '@src/containers/ConfigStep/style';
 import { updatePipelineTool } from '@src/context/config/configSlice';
+import { FormAlert } from '@src/containers/ConfigStep/FormAlert';
 import { Controller, useFormContext } from 'react-hook-form';
 import { useAppDispatch } from '@src/hooks/useAppDispatch';
+import { formAlertTypes } from '@src/constants/commons';
 import { Loading } from '@src/components/Loading';
 
 export const PipelineTool = () => {
@@ -36,7 +37,12 @@ export const PipelineTool = () => {
       {isLoading && <Loading />}
       <ConfigSelectionTitle>{CONFIG_TITLE.PIPELINE_TOOL}</ConfigSelectionTitle>
       <StyledAlterWrapper>
-        <TimeoutAlert showAlert={isVerifyTimeOut} onClose={closeTimeoutAlert} moduleType={'Pipeline Tool'} />
+        <FormAlert
+          showAlert={isVerifyTimeOut}
+          onClose={closeTimeoutAlert}
+          moduleType={'Pipeline Tool'}
+          formAlertType={formAlertTypes.TIMEOUT}
+        />
       </StyledAlterWrapper>
       <StyledForm onSubmit={handleSubmit(onSubmit)} onReset={resetFields}>
         <FormSingleSelect

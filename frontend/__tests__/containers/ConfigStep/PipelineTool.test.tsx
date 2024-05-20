@@ -110,11 +110,11 @@ describe('PipelineTool', () => {
 
     await userEvent.click(screen.getByText(VERIFY));
 
-    expect(screen.getByTestId(TIMEOUT_ALERT_TEST_ID)).toBeInTheDocument();
+    expect(screen.getByLabelText(TIMEOUT_ALERT_TEST_ID)).toBeInTheDocument();
 
     await userEvent.click(screen.getByRole('button', { name: RESET }));
 
-    expect(screen.queryByTestId(TIMEOUT_ALERT_TEST_ID)).not.toBeInTheDocument();
+    expect(screen.queryByLabelText(TIMEOUT_ALERT_TEST_ID)).not.toBeInTheDocument();
   });
 
   it('should hidden timeout alert when the error type of api call becomes other', async () => {
@@ -124,13 +124,13 @@ describe('PipelineTool', () => {
 
     await userEvent.click(screen.getByText(VERIFY));
 
-    expect(screen.getByTestId(TIMEOUT_ALERT_TEST_ID)).toBeInTheDocument();
+    expect(screen.getByLabelText(TIMEOUT_ALERT_TEST_ID)).toBeInTheDocument();
 
     pipelineToolClient.verify = jest.fn().mockResolvedValue({ code: HttpStatusCode.Unauthorized });
 
     await userEvent.click(screen.getByText(REVERIFY));
 
-    expect(screen.queryByTestId(TIMEOUT_ALERT_TEST_ID)).not.toBeInTheDocument();
+    expect(screen.queryByLabelText(TIMEOUT_ALERT_TEST_ID)).not.toBeInTheDocument();
   });
 
   it('should show detail options when click pipelineTool fields', async () => {
@@ -259,11 +259,11 @@ describe('PipelineTool', () => {
 
     await userEvent.click(screen.getByText(VERIFY));
 
-    expect(await screen.getByTestId(TIMEOUT_ALERT_TEST_ID)).toBeInTheDocument();
+    expect(await screen.getByLabelText(TIMEOUT_ALERT_TEST_ID)).toBeInTheDocument();
 
     await userEvent.click(screen.getByLabelText('Close'));
 
-    expect(screen.queryByTestId(TIMEOUT_ALERT_TEST_ID)).not.toBeInTheDocument();
+    expect(screen.queryByLabelText(TIMEOUT_ALERT_TEST_ID)).not.toBeInTheDocument();
   });
 
   it('should allow user to re-submit when user interact again with form given form is already submit successfully', async () => {

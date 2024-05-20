@@ -67,6 +67,7 @@ export class ConfigStep {
   readonly boardVerifiedButton: Locator;
   readonly boardResetButton: Locator;
   readonly boardTokenErrorMessage: Locator;
+  readonly boardVerifyFailedPopupMessage: Locator;
   readonly pipelineToolContainer: Locator;
   readonly pipelineToolTypeSelect: Locator;
   readonly pipelineToolTypeBuildKiteOption: Locator;
@@ -144,6 +145,9 @@ export class ConfigStep {
     this.boardResetButton = this.boardContainer.getByRole('button', { name: 'Reset' });
     this.boardTokenErrorMessage = this.boardContainer.getByText(
       'Token is invalid, please change your token with correct access permission!',
+    );
+    this.boardVerifyFailedPopupMessage = this.boardContainer.getByText(
+      'Email and Token are bound for verification. Please modify at least one of the Email or Token before reverify!',
     );
 
     this.pipelineToolContainer = page.getByLabel('Pipeline Tool Config');
@@ -484,6 +488,7 @@ export class ConfigStep {
 
   async checkAllConfigInvalid() {
     await expect(this.boardTokenErrorMessage).toBeVisible();
+    await expect(this.boardVerifyFailedPopupMessage).toBeVisible();
     await expect(this.pipelineTokenErrorMessage).toBeVisible();
     await expect(this.sourceControlTokenErrorMessage).toBeVisible();
   }

@@ -5,9 +5,10 @@ import { FormTextField } from '@src/containers/ConfigStep/Board/FormTextField';
 import { FormSingleSelect } from '@src/containers/ConfigStep/Form/FormSelect';
 import { ConfigButtonGrop } from '@src/containers/ConfigStep/ConfigButton';
 import { ConfigSelectionTitle } from '@src/containers/MetricsStep/style';
-import { TimeoutAlert } from '@src/containers/ConfigStep/TimeoutAlert';
 import { StyledAlterWrapper } from '@src/containers/ConfigStep/style';
 import { CONFIG_TITLE, BOARD_TYPES } from '@src/constants/resources';
+import { FormAlert } from '@src/containers/ConfigStep/FormAlert';
+import { formAlertTypes } from '@src/constants/commons';
 import { Loading } from '@src/components/Loading';
 import { useFormContext } from 'react-hook-form';
 
@@ -19,17 +20,28 @@ export const Board = () => {
     handleSubmit,
   } = useFormContext();
   const isVerifyTimeOut = errors.token?.message === BOARD_CONFIG_ERROR_MESSAGE.token.timeout;
+  const isBoardVerifyFailed =
+    errors.token?.message === BOARD_CONFIG_ERROR_MESSAGE.email.verifyFailed ||
+    errors.token?.message === BOARD_CONFIG_ERROR_MESSAGE.token.verifyFailed;
   const isVerified = isValid && isSubmitSuccessful;
 
   const onSubmit = async () => await verifyJira();
-  const closeTimeoutAlert = () => clearErrors(fields[FIELD_KEY.TOKEN].key);
+  const closeAlert = () => clearErrors(fields[FIELD_KEY.TOKEN].key);
 
   return (
     <ConfigSectionContainer aria-label='Board Config'>
       {isLoading && <Loading />}
       <ConfigSelectionTitle>{CONFIG_TITLE.BOARD}</ConfigSelectionTitle>
       <StyledAlterWrapper>
-        <TimeoutAlert showAlert={isVerifyTimeOut} onClose={closeTimeoutAlert} moduleType={'Board'} />
+        <FormAlert
+          showAlert={isVerifyTimeOut}
+          onClose={closeAlert}
+          moduleType={'Board'}
+          formAlertType={formAlertTypes.TIMEOUT}
+        />
+      </StyledAlterWrapper>
+      <StyledAlterWrapper>
+        <FormAlert showAlert={isBoardVerifyFailed} onClose={closeAlert} formAlertType={formAlertTypes.BOARD_VERIFY} />
       </StyledAlterWrapper>
       <StyledForm onSubmit={handleSubmit(onSubmit)} onReset={resetFields}>
         {fields.map(({ key, col, label }) =>

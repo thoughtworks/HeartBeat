@@ -25,6 +25,12 @@ interface ReportButtonGroupProps {
   isShowExportBoardChartButton: boolean;
 }
 
+const SINGLE_DATE_RANGE_DOWNLOAD_KEY = {
+  ENABLE_EXPORT_METRIC_DATA: 'enableExportMetricData',
+  ENABLE_EXPORT_BOARD_DATA: 'enableExportBoardData',
+  ENABLE_EXPORT_PIPELINE_DATA: 'enableExportPipelineData',
+};
+
 export const ReportButtonGroup = ({
   handleSave,
   handleBack,
@@ -54,31 +60,38 @@ export const ReportButtonGroup = ({
     return !!reportMetricsError.pipelineMetricsError || !!reportMetricsError.sourceControlMetricsError;
   };
 
-  const overallMetricsResults = dateRangeRequestResults.map((item) => ({
-    startDate: item.startDate,
-    endDate: item.endDate,
-    disabled: !(item.overallMetricsCompleted && !isReportHasError(item.reportMetricsError)),
-  }));
-  const boardMetricsResults = dateRangeRequestResults.map((item) => ({
-    startDate: item.startDate,
-    endDate: item.endDate,
-    disabled: !(item.boardMetricsCompleted && !item.reportMetricsError.boardMetricsError),
-  }));
-  const pipelineMetricsResults = dateRangeRequestResults.map((item) => ({
-    startDate: item.startDate,
-    endDate: item.endDate,
-    disabled: !(item.doraMetricsCompleted && !isReportHasDoraError(item.reportMetricsError)),
-  }));
+  const dateRangeListWithStatus = dateRangeRequestResults.map((item) => {
+    let enableExportMetricData: boolean = false;
+    let enableExportBoardData: boolean = false;
+    let enableExportPipelineData: boolean = false;
+    const reportData = item.reportData;
+    if (reportData) {
+      enableExportMetricData = reportData.overallMetricsCompleted && !isReportHasError(reportData.reportMetricsError);
+      enableExportBoardData = !!reportData.boardMetricsCompleted && !reportData.reportMetricsError.boardMetricsError;
+      enableExportPipelineData =
+        !!reportData.doraMetricsCompleted && !isReportHasDoraError(reportData.reportMetricsError);
+    }
+    return {
+      startDate: item.startDate,
+      endDate: item.endDate,
+      [SINGLE_DATE_RANGE_DOWNLOAD_KEY.ENABLE_EXPORT_METRIC_DATA]: enableExportMetricData,
+      [SINGLE_DATE_RANGE_DOWNLOAD_KEY.ENABLE_EXPORT_BOARD_DATA]: enableExportBoardData,
+      [SINGLE_DATE_RANGE_DOWNLOAD_KEY.ENABLE_EXPORT_PIPELINE_DATA]: enableExportPipelineData,
+    };
+  });
 
-  const isExportMetricsButtonClickable =
-    dateRangeRequestResults.every(({ overallMetricsCompleted }) => overallMetricsCompleted) &&
-    overallMetricsResults.some(({ disabled }) => !disabled);
-  const isExportBoardButtonClickable =
-    dateRangeRequestResults.every(({ boardMetricsCompleted }) => boardMetricsCompleted) &&
-    boardMetricsResults.some(({ disabled }) => !disabled);
-  const isExportPipelineButtonClickable =
-    dateRangeRequestResults.every(({ doraMetricsCompleted }) => doraMetricsCompleted) &&
-    pipelineMetricsResults.some(({ disabled }) => !disabled);
+  const successRequestResults = dateRangeRequestResults.filter((result) => result.reportData);
+  const exportButtonsClickable = {
+    exportMetricData:
+      successRequestResults.every(({ reportData }) => reportData!.overallMetricsCompleted) &&
+      dateRangeListWithStatus.some(({ enableExportMetricData }) => enableExportMetricData),
+    exportBoardData:
+      successRequestResults.every(({ reportData }) => reportData!.boardMetricsCompleted) &&
+      dateRangeListWithStatus.some(({ enableExportBoardData }) => enableExportBoardData),
+    exportPipelineData:
+      successRequestResults.every(({ reportData }) => reportData!.doraMetricsCompleted) &&
+      dateRangeListWithStatus.some(({ enableExportPipelineData }) => enableExportPipelineData),
+  };
 
   const exportCSV = (dataType: REPORT_TYPES, startDate: string, endDate: string): CSVReportRequestDTO => ({
     dataType: dataType,
@@ -100,6 +113,19 @@ export const ReportButtonGroup = ({
   const handleCloseDialog = () => {
     setIsShowDialog(false);
     setDataType(null);
+  };
+
+  const getDownloadInfos = (dataType: REPORT_TYPES): DateRangeItem[] => {
+    const REPORT_TYPE_MAPPING = {
+      [REPORT_TYPES.BOARD]: SINGLE_DATE_RANGE_DOWNLOAD_KEY.ENABLE_EXPORT_BOARD_DATA,
+      [REPORT_TYPES.PIPELINE]: SINGLE_DATE_RANGE_DOWNLOAD_KEY.ENABLE_EXPORT_PIPELINE_DATA,
+      [REPORT_TYPES.METRICS]: SINGLE_DATE_RANGE_DOWNLOAD_KEY.ENABLE_EXPORT_METRIC_DATA,
+    };
+    return dateRangeListWithStatus.map((dateRangeWithStatus) => ({
+      startDate: dateRangeWithStatus.startDate,
+      endDate: dateRangeWithStatus.endDate,
+      disabled: dateRangeWithStatus[REPORT_TYPE_MAPPING[dataType]] as boolean,
+    }));
   };
 
   return (
@@ -127,30 +153,32 @@ export const ReportButtonGroup = ({
           </BackButton>
           {isShowExportMetrics && (
             <StyledExportButton
-              disabled={!isExportMetricsButtonClickable}
-              onClick={() => handleDownload(overallMetricsResults, REPORT_TYPES.METRICS)}
+              disabled={!exportButtonsClickable.exportMetricData}
+              onClick={() => handleDownload(getDownloadInfos(REPORT_TYPES.METRICS), REPORT_TYPES.METRICS)}
             >
               {COMMON_BUTTONS.EXPORT_METRIC_DATA}
             </StyledExportButton>
           )}
           {isShowExportBoardButton && (
             <StyledExportButton
-              disabled={!isExportBoardButtonClickable}
-              onClick={() => handleDownload(boardMetricsResults, REPORT_TYPES.BOARD)}
+              disabled={!exportButtonsClickable.exportBoardData}
+              onClick={() => handleDownload(getDownloadInfos(REPORT_TYPES.BOARD), REPORT_TYPES.BOARD)}
             >
               {COMMON_BUTTONS.EXPORT_BOARD_DATA}
             </StyledExportButton>
           )}
           {isShowExportPipelineButton && (
             <StyledExportButton
-              disabled={!isExportPipelineButtonClickable}
-              onClick={() => handleDownload(pipelineMetricsResults, REPORT_TYPES.PIPELINE)}
+              disabled={!exportButtonsClickable.exportPipelineData}
+              onClick={() => handleDownload(getDownloadInfos(REPORT_TYPES.PIPELINE), REPORT_TYPES.PIPELINE)}
             >
               {COMMON_BUTTONS.EXPORT_PIPELINE_DATA}
             </StyledExportButton>
           )}
           {(isShowExportDoraChartButton || isShowExportBoardChartButton) && (
-            <StyledExportButton disabled={!isExportPipelineButtonClickable || !isExportBoardButtonClickable}>
+            <StyledExportButton
+              disabled={!exportButtonsClickable.exportPipelineData || !exportButtonsClickable.exportBoardData}
+            >
               {isShowExportDoraChartButton && COMMON_BUTTONS.EXPORT_DORA_CHART}
             </StyledExportButton>
           )}

@@ -45,12 +45,12 @@ import {
   StyledTabWrapper,
 } from '@src/containers/ReportStep/style';
 import { IPipelineConfig, selectMetricsContent } from '@src/context/Metrics/metricsSlice';
-import { AllErrorResponse, ReportResponseDTO } from '@src/clients/report/dto/response';
 import { DoraMetricsChart } from '@src/containers/ReportStep/DoraMetricsChart';
 import { backStep, selectTimeStamp } from '@src/context/stepper/StepperSlice';
 import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 import { ReportButtonGroup } from '@src/containers/ReportButtonGroup';
 import DateRangeViewer from '@src/components/Common/DateRangeViewer';
+import { ReportResponseDTO } from '@src/clients/report/dto/response';
 import BoardMetrics from '@src/containers/ReportStep/BoardMetrics';
 import DoraMetrics from '@src/containers/ReportStep/DoraMetrics';
 import React, { useEffect, useMemo, useState } from 'react';
@@ -75,10 +75,7 @@ const timeoutNotificationMessages = {
 export interface DateRangeRequestResult {
   startDate: string;
   endDate: string;
-  overallMetricsCompleted: boolean | null;
-  boardMetricsCompleted: boolean | null;
-  doraMetricsCompleted: boolean | null;
-  reportMetricsError: AllErrorResponse;
+  reportData: ReportResponseDTO | undefined;
 }
 
 const ReportStep = ({ handleSave }: ReportStepProps) => {
@@ -148,18 +145,11 @@ const ReportStep = ({ handleSave }: ReportStepProps) => {
 
   const mapDateResult = (descendingDateRanges: DateRangeList, reportInfos: IReportInfo[]) =>
     descendingDateRanges.map(({ startDate, endDate }) => {
-      const reportData = reportInfos.find((singleResult) => singleResult.id === startDate)?.reportData ?? null;
+      const reportData = reportInfos.find((singleResult) => singleResult.id === startDate)!.reportData;
       return {
         startDate: startDate,
         endDate: endDate,
-        overallMetricsCompleted: reportData?.overallMetricsCompleted ?? null,
-        boardMetricsCompleted: reportData?.boardMetricsCompleted ?? null,
-        doraMetricsCompleted: reportData?.doraMetricsCompleted ?? null,
-        reportMetricsError: reportData?.reportMetricsError ?? {
-          boardMetricsError: null,
-          pipelineMetricsError: null,
-          sourceControlMetricsError: null,
-        },
+        reportData,
       } as DateRangeRequestResult;
     });
 

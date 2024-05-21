@@ -1,5 +1,6 @@
 import { EXPORT_BOARD_DATA, EXPORT_METRIC_DATA, EXPORT_PIPELINE_DATA } from '../fixtures';
 import { ReportButtonGroup } from '@src/containers/ReportButtonGroup';
+import { ReportResponseDTO } from '@src/clients/report/dto/response';
 import { DateRangeRequestResult } from '@src/containers/ReportStep';
 import { render, renderHook, screen } from '@testing-library/react';
 import { useExportCsvEffect } from '@src/hooks/useExportCsvEffect';
@@ -41,52 +42,70 @@ describe('ReportButtonGroup', () => {
     sourceControlMetricsError: null,
   };
 
-  const firstBasicMockDateRangeRequestResult = {
+  const firstBasicMockReportData = {
     startDate: '2024-01-01T00:00:00.000+08:00',
     endDate: '2024-01-14T23:59:59.000+08:00',
-    overallMetricsCompleted: true,
-    boardMetricsCompleted: true,
-    doraMetricsCompleted: true,
-    reportMetricsError: nullMockError,
-  };
-  const secondBasicMockDateRangeRequestResult = {
-    startDate: '2024-01-15T00:00:00.000+08:00',
-    endDate: '2024-01-31T23:59:59.000+08:00',
-    overallMetricsCompleted: true,
-    boardMetricsCompleted: true,
-    doraMetricsCompleted: true,
-    reportMetricsError: nullMockError,
+    reportData: {
+      overallMetricsCompleted: true,
+      boardMetricsCompleted: true,
+      doraMetricsCompleted: true,
+      reportMetricsError: nullMockError,
+    } as ReportResponseDTO,
   };
 
-  const successMockData: DateRangeRequestResult[] = [
-    firstBasicMockDateRangeRequestResult,
-    secondBasicMockDateRangeRequestResult,
-  ];
+  const secondBasicMockReportData = {
+    startDate: '2024-01-15T00:00:00.000+08:00',
+    endDate: '2024-01-31T23:59:59.000+08:00',
+    reportData: {
+      overallMetricsCompleted: true,
+      boardMetricsCompleted: true,
+      doraMetricsCompleted: true,
+      reportMetricsError: nullMockError,
+    } as ReportResponseDTO,
+  };
+
+  const thirdBasicMockReportData = {
+    startDate: '2024-01-15T00:00:00.000+08:00',
+    endDate: '2024-01-31T23:59:59.000+08:00',
+    reportData: undefined,
+  };
+
+  const successMockData: DateRangeRequestResult[] = [firstBasicMockReportData, secondBasicMockReportData];
   const pendingMockData: DateRangeRequestResult[] = [
-    firstBasicMockDateRangeRequestResult,
+    firstBasicMockReportData,
     {
-      ...secondBasicMockDateRangeRequestResult,
-      overallMetricsCompleted: false,
-      boardMetricsCompleted: false,
-      doraMetricsCompleted: false,
+      ...secondBasicMockReportData,
+      reportData: {
+        ...secondBasicMockReportData.reportData,
+        overallMetricsCompleted: false,
+        boardMetricsCompleted: false,
+        doraMetricsCompleted: false,
+      },
     },
   ];
   const partialFailedMockData: DateRangeRequestResult[] = [
-    firstBasicMockDateRangeRequestResult,
+    firstBasicMockReportData,
     {
-      ...secondBasicMockDateRangeRequestResult,
-      reportMetricsError: basicMockError,
+      ...secondBasicMockReportData,
+      reportData: { ...secondBasicMockReportData.reportData, reportMetricsError: basicMockError },
     },
   ];
   const allFailedMockData: DateRangeRequestResult[] = [
     {
-      ...firstBasicMockDateRangeRequestResult,
-      reportMetricsError: basicMockError,
+      ...firstBasicMockReportData,
+      reportData: {
+        ...firstBasicMockReportData.reportData,
+        reportMetricsError: basicMockError,
+      },
     },
     {
-      ...secondBasicMockDateRangeRequestResult,
-      reportMetricsError: basicMockError,
+      ...secondBasicMockReportData,
+      reportData: {
+        ...secondBasicMockReportData.reportData,
+        reportMetricsError: basicMockError,
+      },
     },
+    thirdBasicMockReportData,
   ];
 
   const setup = (dateRangeRequestResults: DateRangeRequestResult[]) => {
@@ -159,7 +178,7 @@ describe('ReportButtonGroup', () => {
   it.each(buttonNames)(
     'should not open download dialog when clicking the %s button given only setting one dataRange',
     async (buttonName) => {
-      setup([firstBasicMockDateRangeRequestResult]);
+      setup([firstBasicMockReportData]);
       const exportButton = screen.getByRole('button', { name: buttonName });
       expect(exportButton).not.toBeDisabled();
 

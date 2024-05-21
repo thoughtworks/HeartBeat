@@ -124,7 +124,7 @@ export const ReportButtonGroup = ({
     return dateRangeListWithStatus.map((dateRangeWithStatus) => ({
       startDate: dateRangeWithStatus.startDate,
       endDate: dateRangeWithStatus.endDate,
-      disabled: dateRangeWithStatus[REPORT_TYPE_MAPPING[dataType]] as boolean,
+      disabled: !dateRangeWithStatus[REPORT_TYPE_MAPPING[dataType]] as boolean,
     }));
   };
 

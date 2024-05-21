@@ -147,7 +147,7 @@ export class ConfigStep {
       'Token is invalid, please change your token with correct access permission!',
     );
     this.boardVerifyFailedPopupMessage = this.boardContainer.getByText(
-      'Email and Token are bound for verification. Please modify at least one of the Email or Token before reverify!',
+      'Email and Token are bound for verification. Please modify one of the Email or Token before verify!',
     );
 
     this.pipelineToolContainer = page.getByLabel('Pipeline Tool Config');

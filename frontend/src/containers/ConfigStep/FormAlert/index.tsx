@@ -14,8 +14,8 @@ interface PropsInterface {
 
 const FormAlertAriaLabelMap = (formAlertType: formAlertTypes): string => {
   const formAlertAriaLabelMap = {
-    [formAlertTypes.TIMEOUT]: 'timeoutAlert',
-    [formAlertTypes.BOARD_VERIFY]: 'boardVerifyAlert',
+    [formAlertTypes.TIMEOUT]: 'timeout alert',
+    [formAlertTypes.BOARD_VERIFY]: 'board verify alert',
   };
 
   return formAlertAriaLabelMap[formAlertType];
@@ -32,8 +32,8 @@ export const FormAlert = ({ showAlert, onClose, moduleType, formAlertType }: Pro
     } else if (formAlertType === formAlertTypes.BOARD_VERIFY) {
       return (
         <EllipsisText fitContent>
-          <BoldText>Email</BoldText> and <BoldText>Token</BoldText> are bound for verification. Please modify at least
-          one of the Email or Token before reverify!
+          <BoldText>Email</BoldText> and <BoldText>Token</BoldText> are bound for verification. Please modify one of the
+          Email or Token before verify!
         </EllipsisText>
       );
     }

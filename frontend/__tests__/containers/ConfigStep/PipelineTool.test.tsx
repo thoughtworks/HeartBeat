@@ -11,7 +11,7 @@ import {
   FAKE_PIPELINE_TOKEN,
   REVERIFY,
   PIPELINE_TOOL_TOKEN_INPUT_LABEL,
-  TIMEOUT_ALERT_TEST_ID,
+  TIMEOUT_ALERT_ARIA_LABEL,
 } from '../../fixtures';
 import { pipelineToolDefaultValues } from '@src/containers/ConfigStep/Form/useDefaultValues';
 import { pipelineToolClient } from '@src/clients/pipeline/PipelineToolClient';
@@ -110,11 +110,11 @@ describe('PipelineTool', () => {
 
     await userEvent.click(screen.getByText(VERIFY));
 
-    expect(screen.getByLabelText(TIMEOUT_ALERT_TEST_ID)).toBeInTheDocument();
+    expect(screen.getByLabelText(TIMEOUT_ALERT_ARIA_LABEL)).toBeInTheDocument();
 
     await userEvent.click(screen.getByRole('button', { name: RESET }));
 
-    expect(screen.queryByLabelText(TIMEOUT_ALERT_TEST_ID)).not.toBeInTheDocument();
+    expect(screen.queryByLabelText(TIMEOUT_ALERT_ARIA_LABEL)).not.toBeInTheDocument();
   });
 
   it('should hidden timeout alert when the error type of api call becomes other', async () => {
@@ -124,13 +124,13 @@ describe('PipelineTool', () => {
 
     await userEvent.click(screen.getByText(VERIFY));
 
-    expect(screen.getByLabelText(TIMEOUT_ALERT_TEST_ID)).toBeInTheDocument();
+    expect(screen.getByLabelText(TIMEOUT_ALERT_ARIA_LABEL)).toBeInTheDocument();
 
     pipelineToolClient.verify = jest.fn().mockResolvedValue({ code: HttpStatusCode.Unauthorized });
 
     await userEvent.click(screen.getByText(REVERIFY));
 
-    expect(screen.queryByLabelText(TIMEOUT_ALERT_TEST_ID)).not.toBeInTheDocument();
+    expect(screen.queryByLabelText(TIMEOUT_ALERT_ARIA_LABEL)).not.toBeInTheDocument();
   });
 
   it('should show detail options when click pipelineTool fields', async () => {
@@ -259,11 +259,11 @@ describe('PipelineTool', () => {
 
     await userEvent.click(screen.getByText(VERIFY));
 
-    expect(await screen.getByLabelText(TIMEOUT_ALERT_TEST_ID)).toBeInTheDocument();
+    expect(await screen.getByLabelText(TIMEOUT_ALERT_ARIA_LABEL)).toBeInTheDocument();
 
     await userEvent.click(screen.getByLabelText('Close'));
 
-    expect(screen.queryByLabelText(TIMEOUT_ALERT_TEST_ID)).not.toBeInTheDocument();
+    expect(screen.queryByLabelText(TIMEOUT_ALERT_ARIA_LABEL)).not.toBeInTheDocument();
   });
 
   it('should allow user to re-submit when user interact again with form given form is already submit successfully', async () => {

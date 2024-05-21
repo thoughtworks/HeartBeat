@@ -21,27 +21,23 @@ export const Board = () => {
   } = useFormContext();
   const isVerifyTimeOut = errors.token?.message === BOARD_CONFIG_ERROR_MESSAGE.token.timeout;
   const isBoardVerifyFailed =
-    errors.token?.message === BOARD_CONFIG_ERROR_MESSAGE.email.verifyFailed ||
+    errors.email?.message === BOARD_CONFIG_ERROR_MESSAGE.email.verifyFailed ||
     errors.token?.message === BOARD_CONFIG_ERROR_MESSAGE.token.verifyFailed;
   const isVerified = isValid && isSubmitSuccessful;
+  const showAlert = isVerifyTimeOut || isBoardVerifyFailed;
+  const formAlertType = isVerifyTimeOut ? formAlertTypes.TIMEOUT : formAlertTypes.BOARD_VERIFY;
 
   const onSubmit = async () => await verifyJira();
-  const closeAlert = () => clearErrors(fields[FIELD_KEY.TOKEN].key);
+  const closeAlert = () => clearErrors([fields[FIELD_KEY.EMAIL].key, fields[FIELD_KEY.TOKEN].key]);
 
   return (
     <ConfigSectionContainer aria-label='Board Config'>
       {isLoading && <Loading />}
       <ConfigSelectionTitle>{CONFIG_TITLE.BOARD}</ConfigSelectionTitle>
       <StyledAlterWrapper>
-        <FormAlert
-          showAlert={isVerifyTimeOut}
-          onClose={closeAlert}
-          moduleType={'Board'}
-          formAlertType={formAlertTypes.TIMEOUT}
-        />
-      </StyledAlterWrapper>
-      <StyledAlterWrapper>
-        <FormAlert showAlert={isBoardVerifyFailed} onClose={closeAlert} formAlertType={formAlertTypes.BOARD_VERIFY} />
+        {showAlert && (
+          <FormAlert showAlert={showAlert} onClose={closeAlert} moduleType={'Board'} formAlertType={formAlertType} />
+        )}
       </StyledAlterWrapper>
       <StyledForm onSubmit={handleSubmit(onSubmit)} onReset={resetFields}>
         {fields.map(({ key, col, label }) =>

@@ -119,11 +119,11 @@ describe('SourceControl', () => {
     });
 
     await userEvent.click(screen.getByText(VERIFY));
-    expect(getByLabelText('timeoutAlert')).toBeInTheDocument();
+    expect(getByLabelText('timeout alert')).toBeInTheDocument();
 
     await userEvent.click(screen.getByRole('button', { name: RESET }));
 
-    expect(queryByLabelText('timeoutAlert')).not.toBeInTheDocument();
+    expect(queryByLabelText('timeout alert')).not.toBeInTheDocument();
   });
 
   it('should hidden timeout alert when the error type of api call becomes other', async () => {
@@ -135,7 +135,7 @@ describe('SourceControl', () => {
 
     await userEvent.click(screen.getByText(VERIFY));
 
-    expect(getByLabelText('timeoutAlert')).toBeInTheDocument();
+    expect(getByLabelText('timeout alert')).toBeInTheDocument();
 
     sourceControlClient.verifyToken = jest.fn().mockResolvedValue({
       code: HttpStatusCode.Unauthorized,
@@ -143,7 +143,7 @@ describe('SourceControl', () => {
 
     await userEvent.click(screen.getByText(REVERIFY));
 
-    expect(queryByLabelText('timeoutAlert')).not.toBeInTheDocument();
+    expect(queryByLabelText('timeout alert')).not.toBeInTheDocument();
   });
 
   it('should enable verify button when all fields checked correctly given disable verify button', async () => {
@@ -254,11 +254,11 @@ describe('SourceControl', () => {
 
     await userEvent.click(screen.getByText(VERIFY));
 
-    expect(await screen.getByLabelText('timeoutAlert')).toBeInTheDocument();
+    expect(await screen.getByLabelText('timeout alert')).toBeInTheDocument();
 
     await userEvent.click(screen.getByLabelText('Close'));
 
-    expect(screen.queryByLabelText('timeoutAlert')).not.toBeInTheDocument();
+    expect(screen.queryByLabelText('timeout alert')).not.toBeInTheDocument();
   });
 
   it('should allow user to re-submit when user interact again with form given form is already submit successfully', async () => {

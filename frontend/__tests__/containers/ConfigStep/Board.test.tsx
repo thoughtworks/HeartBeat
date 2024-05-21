@@ -184,11 +184,11 @@ describe('Board', () => {
 
     await userEvent.click(screen.getByText(VERIFY));
 
-    expect(getByLabelText('timeoutAlert')).toBeInTheDocument();
+    expect(getByLabelText('timeout alert')).toBeInTheDocument();
 
     await userEvent.click(screen.getByRole('button', { name: RESET }));
 
-    expect(queryByLabelText('timeoutAlert')).not.toBeInTheDocument();
+    expect(queryByLabelText('timeout alert')).not.toBeInTheDocument();
   });
 
   it('should hidden timeout alert when the error type of api call becomes other', async () => {
@@ -199,14 +199,14 @@ describe('Board', () => {
 
     await userEvent.click(screen.getByText(VERIFY));
 
-    expect(getByLabelText('timeoutAlert')).toBeInTheDocument();
+    expect(getByLabelText('timeout alert')).toBeInTheDocument();
 
     const mockedError = new TimeoutError('', HttpStatusCode.Unauthorized);
     boardClient.getVerifyBoard = jest.fn().mockImplementation(() => Promise.reject(mockedError));
 
     await userEvent.click(screen.getByText(REVERIFY));
 
-    expect(queryByLabelText('timeoutAlert')).not.toBeInTheDocument();
+    expect(queryByLabelText('timeout alert')).not.toBeInTheDocument();
   });
 
   it('should show board verify alert given board verify unauthorized', async () => {
@@ -217,7 +217,7 @@ describe('Board', () => {
 
     await userEvent.click(screen.getByText(VERIFY));
 
-    expect(getByLabelText('boardVerifyAlert')).toBeInTheDocument();
+    expect(getByLabelText('board verify alert')).toBeInTheDocument();
   });
 
   it('should close board verify alert when user manually close the alert', async () => {
@@ -228,11 +228,11 @@ describe('Board', () => {
 
     await userEvent.click(screen.getByText(VERIFY));
 
-    expect(screen.getByLabelText('boardVerifyAlert')).toBeInTheDocument();
+    expect(screen.getByLabelText('board verify alert')).toBeInTheDocument();
 
     await userEvent.click(screen.getByLabelText('Close'));
 
-    expect(screen.queryByLabelText('boardVerifyAlert')).not.toBeInTheDocument();
+    expect(screen.queryByLabelText('board verify alert')).not.toBeInTheDocument();
   });
 
   it('should show reset button and verified button when verify succeed ', async () => {
@@ -299,11 +299,11 @@ describe('Board', () => {
 
     await userEvent.click(screen.getByText(VERIFY));
 
-    expect(screen.getByLabelText('timeoutAlert')).toBeInTheDocument();
+    expect(screen.getByLabelText('timeout alert')).toBeInTheDocument();
 
     await userEvent.click(screen.getByLabelText('Close'));
 
-    expect(screen.queryByLabelText('timeoutAlert')).not.toBeInTheDocument();
+    expect(screen.queryByLabelText('timeout alert')).not.toBeInTheDocument();
   });
 
   it('should allow user to re-submit when user interact again with form given form is already submit successfully', async () => {

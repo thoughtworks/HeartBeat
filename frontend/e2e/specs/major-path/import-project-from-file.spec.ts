@@ -45,6 +45,7 @@ test('Import project from file', async ({ homePage, configStep, metricsStep, rep
   await metricsStep.checkHeartbeatStateIsSet(hbStateDataEmptyByStatus, true);
   await metricsStep.selectHeartbeatState(hbStateData, true);
   await metricsStep.checkHeartbeatStateIsSet(hbStateData, true);
+  await metricsStep.selectGivenPipelineCrews(importMultipleDoneProjectFromFile.pipelineCrews);
 
   await metricsStep.selectReworkSettings(metricsStepData.reworkTimesSettings);
 

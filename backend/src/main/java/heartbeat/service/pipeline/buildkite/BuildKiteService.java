@@ -33,9 +33,10 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.IntStream;
+
+import static java.util.Optional.ofNullable;
 
 @Service
 @RequiredArgsConstructor
@@ -79,9 +80,11 @@ public class BuildKiteService {
 	}
 
 	public List<String> getPipelineCrewNames(List<BuildKiteBuildInfo> buildKiteBuildInfos) {
+
 		List<String> buildInfoList = new ArrayList<>(buildKiteBuildInfos.stream()
-			.filter(buildKiteBuildInfo -> Objects.nonNull(buildKiteBuildInfo.getAuthor()))
-			.map(buildKiteBuildInfo -> buildKiteBuildInfo.getAuthor().getName())
+			.map(BuildKiteBuildInfo::getAuthor)
+			.filter(Objects::nonNull)
+			.map(it -> ofNullable(it.getUsername()).orElse(it.getName()))
 			.distinct()
 			.sorted()
 			.toList());
@@ -129,7 +132,7 @@ public class BuildKiteService {
 				.build();
 		}
 		catch (RuntimeException e) {
-			Throwable cause = Optional.ofNullable(e.getCause()).orElse(e);
+			Throwable cause = ofNullable(e.getCause()).orElse(e);
 			log.error("Failed to get pipeline steps, organization id: {}, pipeline id: {}, e: {}", organizationId,
 					pipelineId, cause.getMessage());
 			if (cause instanceof BaseException baseException) {
@@ -217,7 +220,7 @@ public class BuildKiteService {
 			return buildKiteBuildInfos;
 		}
 		catch (RuntimeException e) {
-			Throwable cause = Optional.ofNullable(e.getCause()).orElse(e);
+			Throwable cause = ofNullable(e.getCause()).orElse(e);
 			log.error("Failed to get pipeline builds_param:{}, e: {}", deploymentEnvironment, cause.getMessage());
 			if (cause instanceof BaseException baseException) {
 				throw baseException;
@@ -267,7 +270,7 @@ public class BuildKiteService {
 			verifyTokenScopes(buildKiteTokenInfo);
 		}
 		catch (RuntimeException e) {
-			Throwable cause = Optional.ofNullable(e.getCause()).orElse(e);
+			Throwable cause = ofNullable(e.getCause()).orElse(e);
 			log.error("Failed to call BuildKite, e: {}", cause.getMessage());
 			if (cause instanceof BaseException baseException) {
 				throw baseException;
@@ -297,7 +300,7 @@ public class BuildKiteService {
 			return BuildKiteResponseDTO.builder().pipelineList(buildKiteInfoList).build();
 		}
 		catch (RuntimeException e) {
-			Throwable cause = Optional.ofNullable(e.getCause()).orElse(e);
+			Throwable cause = ofNullable(e.getCause()).orElse(e);
 			log.error("Failed to call BuildKite, e: {}", cause.getMessage());
 			if (cause instanceof BaseException baseException) {
 				throw baseException;

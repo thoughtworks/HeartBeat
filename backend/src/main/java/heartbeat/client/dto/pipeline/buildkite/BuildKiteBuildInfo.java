@@ -41,7 +41,7 @@ public class BuildKiteBuildInfo implements Serializable {
 	@Builder
 	public static class Author implements Serializable {
 
-		private String userName;
+		private String username;
 
 		private String name;
 

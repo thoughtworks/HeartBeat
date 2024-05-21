@@ -22,6 +22,7 @@ import React, { useRef, useState, forwardRef, useEffect, useCallback } from 'rea
 import { DateRange, DateRangeList } from '@src/context/config/configSlice';
 import { formatDate, formatDateToTimestampString } from '@src/utils/util';
 import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
+import { STEP_NUMBER } from '@src/constants/commons';
 import { useAppSelector } from '@src/hooks';
 import { theme } from '@src/theme';
 
@@ -46,11 +47,11 @@ const DateRangeViewer = ({
   const reportPageFailedTimeRangeInfos = useAppSelector(selectReportPageFailedTimeRangeInfos);
   const stepNumber = useAppSelector(selectStepNumber);
   const currentDateRange: DateRange = selectedDateRange || dateRangeList[0];
-  const isMetricsPage = stepNumber === 1;
-  const isReportPage = stepNumber === 2;
+  const isMetricsPage = stepNumber === STEP_NUMBER.METRICS_PAGE;
+  const isReportPage = stepNumber === STEP_NUMBER.REPORT_PAGE;
 
   const backgroundColor =
-    stepNumber === 1
+    stepNumber === STEP_NUMBER.METRICS_PAGE
       ? theme.palette.secondary.dark
       : isShowingChart
         ? theme.palette.secondary.dark
@@ -132,9 +133,9 @@ const DateRangeViewer = ({
         <DateRangeFailedIconContainer>
           {currentDateRangeHasFailed && <PriorityHighIcon color='error' />}
         </DateRangeFailedIconContainer>
-        {formatDate(currentDateRange.startDate!)}
+        {formatDate(isShowingChart ? dateRangeList[0].startDate! : currentDateRange.startDate!)}
         <StyledArrowForward />
-        {formatDate(currentDateRange.endDate!)}
+        {formatDate(isShowingChart ? dateRangeList.slice(-1)[0].endDate! : currentDateRange.endDate!)}
         <StyledCalendarToday />
       </DateRangeContainer>
       {disabledAll && isReportPage ? (

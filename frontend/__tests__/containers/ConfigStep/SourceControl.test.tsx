@@ -112,22 +112,22 @@ describe('SourceControl', () => {
   });
 
   it('should hidden timeout alert when click reset button', async () => {
-    const { getByTestId, queryByTestId } = setup();
+    const { getByLabelText, queryByLabelText } = setup();
     await fillSourceControlFieldsInformation();
     sourceControlClient.verifyToken = jest.fn().mockResolvedValue({
       code: AXIOS_REQUEST_ERROR_CODE.TIMEOUT,
     });
 
     await userEvent.click(screen.getByText(VERIFY));
-    expect(getByTestId('timeoutAlert')).toBeInTheDocument();
+    expect(getByLabelText('timeout alert')).toBeInTheDocument();
 
     await userEvent.click(screen.getByRole('button', { name: RESET }));
 
-    expect(queryByTestId('timeoutAlert')).not.toBeInTheDocument();
+    expect(queryByLabelText('timeout alert')).not.toBeInTheDocument();
   });
 
   it('should hidden timeout alert when the error type of api call becomes other', async () => {
-    const { getByTestId, queryByTestId } = setup();
+    const { getByLabelText, queryByLabelText } = setup();
     await fillSourceControlFieldsInformation();
     sourceControlClient.verifyToken = jest.fn().mockResolvedValue({
       code: AXIOS_REQUEST_ERROR_CODE.TIMEOUT,
@@ -135,7 +135,7 @@ describe('SourceControl', () => {
 
     await userEvent.click(screen.getByText(VERIFY));
 
-    expect(getByTestId('timeoutAlert')).toBeInTheDocument();
+    expect(getByLabelText('timeout alert')).toBeInTheDocument();
 
     sourceControlClient.verifyToken = jest.fn().mockResolvedValue({
       code: HttpStatusCode.Unauthorized,
@@ -143,7 +143,7 @@ describe('SourceControl', () => {
 
     await userEvent.click(screen.getByText(REVERIFY));
 
-    expect(queryByTestId('timeoutAlert')).not.toBeInTheDocument();
+    expect(queryByLabelText('timeout alert')).not.toBeInTheDocument();
   });
 
   it('should enable verify button when all fields checked correctly given disable verify button', async () => {
@@ -254,11 +254,11 @@ describe('SourceControl', () => {
 
     await userEvent.click(screen.getByText(VERIFY));
 
-    expect(await screen.getByTestId('timeoutAlert')).toBeInTheDocument();
+    expect(await screen.getByLabelText('timeout alert')).toBeInTheDocument();
 
     await userEvent.click(screen.getByLabelText('Close'));
 
-    expect(screen.queryByLabelText('timeoutAlert')).not.toBeInTheDocument();
+    expect(screen.queryByLabelText('timeout alert')).not.toBeInTheDocument();
   });
 
   it('should allow user to re-submit when user interact again with form given form is already submit successfully', async () => {

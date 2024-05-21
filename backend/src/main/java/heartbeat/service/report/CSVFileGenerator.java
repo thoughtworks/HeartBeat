@@ -3,6 +3,7 @@ package heartbeat.service.report;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.opencsv.CSVWriter;
+import heartbeat.client.dto.pipeline.buildkite.BuildKiteBuildInfo;
 import heartbeat.controller.board.dto.response.JiraCardDTO;
 import heartbeat.controller.report.dto.request.ReportType;
 import heartbeat.controller.report.dto.response.AvgDeploymentFrequency;
@@ -53,6 +54,7 @@ import java.util.stream.Stream;
 import static heartbeat.service.report.calculator.ClassificationCalculator.pickDisplayNameFromObj;
 import static heartbeat.util.DecimalUtil.formatDecimalFour;
 import static heartbeat.util.TimeUtil.convertToSimpleISOFormat;
+import static java.util.Optional.ofNullable;
 import static java.util.concurrent.TimeUnit.HOURS;
 
 @RequiredArgsConstructor
@@ -124,15 +126,12 @@ public class CSVFileGenerator {
 	}
 
 	private String[] getRowData(PipelineCSVInfo csvInfo) {
-		String committerName = null;
-		if (csvInfo.getBuildInfo().getAuthor() != null && csvInfo.getBuildInfo().getAuthor().getName() != null) {
-			committerName = String.valueOf(csvInfo.getBuildInfo().getAuthor().getName());
-		}
+		String committerName = ofNullable(csvInfo.getBuildInfo().getAuthor())
+			.map(BuildKiteBuildInfo.Author::getUsername)
+			.orElse(null);
 
-		String creatorName = null;
-		if (csvInfo.getBuildInfo().getCreator() != null && csvInfo.getBuildInfo().getCreator().getName() != null) {
-			creatorName = csvInfo.getBuildInfo().getCreator().getName();
-		}
+		String creatorName = ofNullable(csvInfo.getBuildInfo().getCreator()).map(BuildKiteBuildInfo.Creator::getName)
+			.orElse(null);
 
 		String organization = csvInfo.getOrganizationName();
 		String pipelineName = csvInfo.getPipeLineName();

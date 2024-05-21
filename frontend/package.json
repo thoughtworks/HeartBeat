@@ -69,7 +69,7 @@
     "yup": "^1.4.0"
   },
   "devDependencies": {
-    "@dotenvx/dotenvx": "^0.37.1",
+    "@dotenvx/dotenvx": "^0.39.0",
     "@playwright/test": "^1.43.1",
     "@testing-library/jest-dom": "^6.4.3",
     "@testing-library/react": "^15.0.6",

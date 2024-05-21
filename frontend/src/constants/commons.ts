@@ -6,7 +6,11 @@ export const DEFAULT_HELPER_TEXT = '';
 
 export const FIVE_HUNDRED = 500;
 
-export const ZERO = 0;
+export const STEP_NUMBER = {
+  CONFIG_PAGE: 0,
+  METRICS_PAGE: 1,
+  REPORT_PAGE: 2,
+};
 
 export const EMPTY_STRING = '';
 
@@ -59,6 +63,11 @@ export enum REPORT_TYPES {
   METRICS = 'metric',
   BOARD = 'board',
   PIPELINE = 'pipeline',
+}
+
+export enum formAlertTypes {
+  TIMEOUT,
+  BOARD_VERIFY,
 }
 
 export enum METRIC_TYPES {

@@ -301,6 +301,12 @@ They are sharing the similar settings which you need to specify the pipeline ste
 | Branches      | Your selected branches                            |
 | Crew setting  | Your selected author from github                  |
 
+##### 3.2.5.1 Crew setting
+
+The data source of **crew setting** is Github code committer. Heartbeat will list distinct code committers for those builds of the selected periods. And the value of code committer is the GitHub username.
+
+If builds were manually/scheduled triggered or could not find code committer from Github, Heartbeat will mark as "Unknown" in crew setting.
+
 ## 3.3 Export and import config info
 
 ### 3.3.1 Export Config Json File

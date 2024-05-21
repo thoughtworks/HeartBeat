@@ -59,6 +59,7 @@ const MetricsStep = () => {
   const { cycleTimeSettings, cycleTimeSettingsType } = useAppSelector(selectMetricsContent);
   const dateRanges = useAppSelector(selectDateRange);
   const descendingSortedDateRanges = sortDateRanges(dateRanges);
+
   const { startDate, endDate } = descendingSortedDateRanges[0];
   const isShowCrewsAndRealDone =
     requiredData.includes(REQUIRED_DATA.VELOCITY) ||

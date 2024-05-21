@@ -735,4 +735,4 @@ export const COMMON_TIME_FORMAT = 'YYYY-MM-DDTHH:mm:ss.SSSZ';
 
 export const PIPELINE_TOOL_TOKEN_INPUT_LABEL = 'input token';
 
-export const TIMEOUT_ALERT_TEST_ID = 'timeoutAlert';
+export const TIMEOUT_ALERT_ARIA_LABEL = 'timeout alert';

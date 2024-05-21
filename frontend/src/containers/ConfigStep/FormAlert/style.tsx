@@ -9,10 +9,10 @@ export const StyledAlert = styled(Alert)({
     backgroundColor: theme.main.alert.error.backgroundColor,
     borderRadius: '0.5rem',
     padding: '0 1rem',
-    maxWidth: '50%',
+    maxWidth: '78%',
     alignItems: 'center',
     justifyContent: 'center',
-    '& .MuiAlert-icon': {
+    '&.MuiAlert-icon': {
       marginTop: '0.125rem',
     },
   },

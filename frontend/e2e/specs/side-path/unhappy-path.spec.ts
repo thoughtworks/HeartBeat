@@ -79,6 +79,7 @@ test('unhappy path when import file', async ({ homePage, configStep, metricsStep
   await metricsStep.selectDoneHeartbeatState(ModifiedhbStateData[6]);
   await metricsStep.validateNextButtonNotClickable();
   await metricsStep.selectDoneHeartbeatState(hbStateData[6]);
+  await metricsStep.selectGivenPipelineCrews(modifiedCorrectProjectFromFile.pipelineCrews);
   await metricsStep.selectReworkSettings(modifiedCorrectProjectFromFile.reworkTimesSettings);
   await metricsStep.goToReportPage();
 

@@ -49,7 +49,7 @@
     "@typescript-eslint/eslint-plugin": "^7.3.1",
     "@typescript-eslint/parser": "^7.3.1",
     "algoliasearch": "^4.22.1",
-    "astro": "^4.5.7",
+    "astro": "^4.16.19",
     "astro-auto-import": "^0.4.2",
     "astro-eslint-parser": "^0.16.3",
     "astro-expressive-code": "^0.33.5",
@@ -98,7 +98,7 @@
     "unist-util-visit": "^5.0.0",
     "unist-util-walker": "^1.0.0",
     "vfile": "^6.0.1",
-    "vitest": "^1.4.0"
+    "vitest": "^1.6.1"
   },
   "dependencies": {
     "@akebifiky/remark-simple-plantuml": "^1.0.2",
